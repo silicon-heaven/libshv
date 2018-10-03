@@ -269,6 +269,7 @@ static void js_add_map_val(js_env *jsenv, js_var *self, js_var *val)
 {
 	log_var(jsenv, "add map val", val->val);
 	napi_set_property(jsenv->env, self->val, self->map_key, val->val);
+	napi_get_null(jsenv->env, &self->map_key);
 	log_var(jsenv, "result", self->val);
 }
 
@@ -276,6 +277,7 @@ static void js_add_meta_val(js_env *jsenv, js_var *self, js_var *val)
 {
 	log_var(jsenv, "add meta val", val->val);
 	napi_set_property(jsenv->env, self->meta, self->map_key, val->val);
+	napi_get_null(jsenv->env, &self->map_key);
 	log_var(jsenv, "meta result", self->meta);
 }
 
