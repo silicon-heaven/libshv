@@ -23,8 +23,12 @@ static void js_env_init(js_env *self, napi_env env)
 	self->meta_just_closed = false;
 }
 
+bool debug = false;
 static void logs(js_env *jsenv, const char * format, ...)
 {
+	if(!debug)
+	  return;
+	
 	char buffer[1024];
 
 	va_list args;
@@ -43,6 +47,9 @@ static void logs(js_env *jsenv, const char * format, ...)
 
 static void log_var(js_env *jsenv, const char * format, napi_value val)
 {
+	if(!debug)
+	  return;
+	
 	napi_value s1;
 	napi_create_string_utf8(jsenv->env, format, strlen(format), &s1);
 	napi_value global, console_obj, log;
