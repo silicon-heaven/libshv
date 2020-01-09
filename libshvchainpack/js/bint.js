@@ -1,6 +1,6 @@
 "use strict"
 
-function BInt(n)
+export function BInt(n)
 {
 	if(Number.isInteger(n)) {
 		this.val = BInt.parseInt(n);

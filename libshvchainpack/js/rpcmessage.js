@@ -51,6 +51,8 @@ RpcMessage.prototype.setResult = function(result) {return this.rpcValue.value[Rp
 RpcMessage.prototype.error = function() {return this.isValid()? this.rpcValue.value[RpcMessage.KeyError]: null; }
 RpcMessage.prototype.setError = function(err) {return this.rpcValue.value[RpcMessage.KeyError] = err; }
 
-RpcMessage.prototype.toString = function() {return this.isValid()? this.rpcValue.toString(): ""; }
+RpcMessage.prototype.toString = function() {return this.isValid() ? this.rpcValue.toString() : ""; }
 RpcMessage.prototype.toCpon = function() {return this.isValid()? this.rpcValue.toCpon(): ""; }
 RpcMessage.prototype.toChainPack = function() {return this.isValid()? this.rpcValue.toChainPack(): ""; }
+
+export { RpcMessage }

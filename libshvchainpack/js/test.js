@@ -1,6 +1,8 @@
 "use strict"
 
-class Test
+import { RpcValue } from './rpcvalue'
+
+export class Test
 {
 	checkEq(e1, e2, msg)
 	{

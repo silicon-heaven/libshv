@@ -1,6 +1,8 @@
 "use strict"
 
-function RpcValue(value, meta, type)
+import { CponWriter, Cpon } from './cpon'
+
+export function RpcValue(value, meta, type)
 {
 	if(value)
 		this.value = value;

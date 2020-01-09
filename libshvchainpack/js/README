@@ -1,0 +1,7 @@
+# How to run
+
+* `npm i` - to install all neccessary packages
+
+* `npm run start` - to run devel server (all changes in source files are automatically reloaded), then in html use: `<script type="text/javascript" src="http://localhost:8080/main.bundle.js"></script>`
+
+* `npm run build` - to build production version. In html use: `<script type="text/javascript" src="PROJECT_PATH/dist/main.js"></script>`

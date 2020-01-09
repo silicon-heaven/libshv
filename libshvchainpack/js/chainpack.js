@@ -1,6 +1,9 @@
 "use strict"
 
-function ChainPack()
+import { PackContext } from './cpcontext'
+import { BInt } from './bint'
+
+export function ChainPack()
 {
 }
 
@@ -37,7 +40,7 @@ ChainPack.isLittleEndian = (function() {
 	return new Int16Array(buffer)[0] === 256;
 })();
 
-function ChainPackReader(unpack_context)
+export function ChainPackReader(unpack_context)
 {
 	if(unpack_context.constructor.name === "ArrayBuffer")
 		unpack_context = new UnpackContext(unpack_context)
@@ -286,7 +289,7 @@ ChainPackReader.prototype.readMap = function()
 	return map;
 }
 
-function ChainPackWriter()
+export function ChainPackWriter()
 {
 	this.ctx = new PackContext();
 }

@@ -1,5 +1,8 @@
 "use strict"
 
+import { PackContext } from './cpcontext'
+import { RpcValue } from './rpcvalue'
+
 function Cpon()
 {
 }
@@ -756,3 +759,5 @@ CponWriter.prototype.writeDecimal = function(val)
 		this.ctx.putByte(str.charCodeAt(i));
 	}
 }
+
+export { Cpon, CponWriter, CponReader }
