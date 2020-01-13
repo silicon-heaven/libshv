@@ -30,6 +30,7 @@ win32:LIBDIR = $$SHV_PROJECT_TOP_BUILDDIR/bin
 
 LIBS += \
         -L$$LIBDIR \
+        -L$$SHV_PROJECT_TOP_BUILDDIR/3rdparty/necrolog/lib \
 
 LIBS += \
     -lnecrolog \
