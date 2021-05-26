@@ -559,26 +559,7 @@ void GraphWidget::wheelEvent(QWheelEvent *event)
 		event->accept();
 		return;
 	}
-	if(event->modifiers() == Qt::ControlModifier) {
-		/// resize vertical header cell on Ctrl + mouse_wheel
-		for (int i = 0; i < m_graph->channelCount(); ++i) {
-			GraphChannel *ch = m_graph->channelAt(i);
-			if(ch->verticalHeaderRect().contains(pos)) {
-				static constexpr int STEP = 2;
-				timeline::GraphChannel::Style ch_style = ch->style();
-				double deg = event->angleDelta().y();
-				int new_h = static_cast<int>(deg * ch->verticalHeaderRect().height() / 120 / STEP);
-				new_h = ch->verticalHeaderRect().height() + new_h;
-				double new_u = m_graph->px2u(new_h);
-				//shvInfo() << i << ch.verticalHeaderRect().height() << new_h << new_u;
-				ch_style.setHeightMax(new_u);
-				ch_style.setHeightMin(new_u);
-				ch->setStyle(ch_style);
-				makeLayout();
-				return;
-			}
-		}
-	}
+
 	Super::wheelEvent(event);
 }
 
