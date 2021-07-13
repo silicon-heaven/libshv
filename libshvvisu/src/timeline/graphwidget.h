@@ -6,6 +6,8 @@
 
 #include <shv/coreqt/utils.h>
 
+#include <QLabel>
+#include <QTimer>
 #include <QWidget>
 
 namespace shv {
@@ -47,6 +49,11 @@ protected:
 	void wheelEvent(QWheelEvent *event) override;
 	void contextMenuEvent(QContextMenuEvent *event) override;
 
+	void dragEnterEvent(QDragEnterEvent *event) override;
+	void dragLeaveEvent(QDragLeaveEvent *event) override;
+	void dragMoveEvent(QDragMoveEvent *event) override;
+	void dropEvent(QDropEvent *event) override;
+
 	void hideCrossHair();
 
 	virtual void showGraphContextMenu(const QPoint &mouse_pos);
@@ -62,14 +69,25 @@ protected:
 	bool isMouseAboveMiniMapSlider(const QPoint &pos) const;
 	int posToChannelVerticalHeader(const QPoint &pos) const;
 	int posToChannel(const QPoint &pos) const;
+	void scrollToCurrentMousePosOnMouseMove();
+	bool scrollOnMouseMove(const QPoint &mouse_pos);
+	void moveYellowThickLineAccordingToPos(const QPoint &mouse_pos);
+	int targetChannel(const QPoint &mouse_pos) const;
 
 protected:
 	Graph *m_graph = nullptr;
 	QSize m_graphPreferredSize;
-	enum class MouseOperation { None = 0, MiniMapLeftResize, MiniMapRightResize, ChannelHeaderResize, MiniMapScrollZoom, GraphDataAreaLeftPress, GraphDataAreaLeftCtrlPress, GraphDataAreaLeftCtrlShiftPress, GraphAreaMove, GraphAreaSelection, GraphDataAreaRightPress};
+	enum class MouseOperation { None = 0, MiniMapLeftResize, MiniMapRightResize, ChannelHeaderResize, MiniMapScrollZoom, ChannelHeaderMove, GraphDataAreaLeftPress, GraphDataAreaLeftCtrlPress, GraphDataAreaLeftCtrlShiftPress, GraphAreaMove, GraphAreaSelection, GraphDataAreaRightPress };
 	MouseOperation m_mouseOperation = MouseOperation::None;
 	QPoint m_recentMousePos;
 	int m_resizeChannelIx = -1;
+
+	struct ChannelHeaderMoveContext {
+		QTimer *mouseMoveScrollTimer;
+		QWidget *channelDropMarker;
+		int draggedChannel;
+	};
+	ChannelHeaderMoveContext *m_channelHeaderMoveContext;
 };
 
 }}}

@@ -97,6 +97,7 @@ public:
 	GraphChannel* channelAt(int ix, bool throw_exc = shv::core::Exception::Throw);
 	const GraphChannel* channelAt(int ix, bool throw_exc = shv::core::Exception::Throw) const;
 	int channelMetaTypeId(int ix) const;
+	void moveChannel(int channel, int new_pos);
 
 	void showAllChannels();
 	QSet<QString> channelPaths();

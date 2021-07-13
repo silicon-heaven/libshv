@@ -183,6 +183,18 @@ int Graph::channelMetaTypeId(int ix) const
 	return m_model->channelInfo(ch->modelIndex()).metaTypeId;
 }
 
+void Graph::moveChannel(int channel, int new_pos)
+{
+	if (channel > new_pos) {
+		m_channels.insert(new_pos, m_channels.takeAt(channel));
+	}
+	else {
+		m_channels.insert(new_pos - 1, m_channels.takeAt(channel));
+	}
+	emit presentationDirty(QRect());
+	emit layoutChanged();
+}
+
 void Graph::showAllChannels()
 {
 	m_channelFilter.setMatchingPaths(channelPaths());
@@ -477,7 +489,7 @@ void Graph::setCrossHairPos(const Graph::CrossHairPos &pos)
 		}
 	}
 	dirty_rect = dirty_rect.united(m_layout.xAxisRect);
-	emit emitPresentationDirty(dirty_rect);
+	emit presentationDirty(dirty_rect);
 }
 
 void Graph::setCurrentTime(timemsec_t time)
@@ -491,10 +503,10 @@ void Graph::setCurrentTime(timemsec_t time)
 		}
 		return r;
 	};
-	emitPresentationDirty(dirty_rect(m_state.currentTime));
+	emit presentationDirty(dirty_rect(m_state.currentTime));
 	m_state.currentTime = time;
-	emitPresentationDirty(dirty_rect(m_state.currentTime));
-	emit emitPresentationDirty(m_layout.xAxisRect);
+	emit presentationDirty(dirty_rect(m_state.currentTime));
+	emit presentationDirty(m_layout.xAxisRect);
 }
 
 void Graph::setSelectionRect(const QRect &rect)
