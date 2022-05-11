@@ -432,7 +432,7 @@ private slots:
 	void initTestCase()
 	{
 		//shv::chainpack::Exception::setAbortOnException(true);
-		NecroLog::setTopicsLogTresholds("ShvJournal:D");
+		//NecroLog::setTopicsLogTresholds("ShvJournal:D");
 		qDebug() << "Registered topics:" << NecroLog::registeredTopicsInfo();
 		{
 			Channel &c = channels["temperature"];
