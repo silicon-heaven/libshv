@@ -257,7 +257,7 @@ private:
 					}
 				}
 				std::vector<bool> v = {true, false};
-				QVERIFY(some_errors == v);
+				QCOMPARE(some_errors, v);
 			}
 			qDebug() << "------------- testing getlog() filtered";
 			{
@@ -293,6 +293,39 @@ private:
 					QVERIFY(e.isSnapshotValue());
 					QVERIFY(!e.isSpontaneous());
 				}
+			}
+			qDebug() << "------------- testing SINCE_LAST filtered";
+			{
+				ShvGetLogParams params;
+				params.withSnapshot = true;
+				params.withPathsDict = false;
+				params.since = ShvGetLogParams::SINCE_LAST;
+				params.pathPattern = "someError";
+				RpcValue log1 = file_journal.getLog(params);
+				//someError is false in last log file, so it should not be in snapshot
+				QVERIFY(log1.asList().empty());
+			}
+			qDebug() << "------------- testing since middle msec";
+			NecroLog::setTopicsLogTresholds("ShvJournal:D");
+			{
+				ShvGetLogParams params;
+				params.withSnapshot = true;
+				params.withPathsDict = false;
+				params.since = RpcValue::DateTime::fromMSecsSinceEpoch(msec_middle - 1);
+				params.pathPattern = "someError";
+				RpcValue log1 = file_journal.getLog(params);
+				write_cpon_file(TEST_DIR + "/log1-since-middle.cpon", log1);
+				int cnt = 0;
+				ShvLogRpcValueReader rd(log1);
+				while(rd.next()) {
+					const ShvJournalEntry &e = rd.entry();
+					//shvWarning() << "entry:" << e.toRpcValueMap().toCpon();
+					QVERIFY(!e.isSpontaneous());
+					QVERIFY(e.path == "someError");
+					QVERIFY(e.value == (cnt == 0)? true: false);
+					cnt++;
+				}
+				QVERIFY(cnt == 2);
 			}
 
 			qDebug() << "------------- Generating dirty log + memory log";
