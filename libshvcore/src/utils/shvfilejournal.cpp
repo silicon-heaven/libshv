@@ -181,7 +181,7 @@ void ShvFileJournal::append(const ShvJournalEntry &entry)
 		logIShvJournal() << "Append to log failed, journal dir will be read again, SD card might be replaced:" << e.what();
 	}
 	try {
-		ensureJournalDir();
+		createJournalDirIfNotExist();
 		checkJournalContext_helper(true);
 		appendThrow(entry);
 	}
@@ -233,8 +233,8 @@ void ShvFileJournal::appendThrow(const ShvJournalEntry &entry)
 
 void ShvFileJournal::createNewLogFile(int64_t journal_file_start_msec)
 {
+	checkJournalContext();
 	if(journal_file_start_msec == 0) {
-		checkJournalContext();
 		journal_file_start_msec = RpcValue::DateTime::now().msecsSinceEpoch();
 		if(!m_journalContext.files.empty() && m_journalContext.files[m_journalContext.files.size() - 1] >= journal_file_start_msec)
 			SHV_EXCEPTION("Journal context corrupted, new log file is older than last existing one.");
@@ -276,7 +276,7 @@ void ShvFileJournal::checkJournalContext_helper(bool force)
 		m_journalContext.recentTimeStamp = 0;
 		m_journalContext.journalDirExists = journalDirExists();
 		if(!m_journalContext.journalDirExists)
-			ensureJournalDir();
+			createJournalDirIfNotExist();
 		if(m_journalContext.journalDirExists)
 			updateJournalStatus();
 		else
@@ -289,7 +289,7 @@ void ShvFileJournal::checkJournalContext_helper(bool force)
 	}
 }
 
-void ShvFileJournal::ensureJournalDir()
+void ShvFileJournal::createJournalDirIfNotExist()
 {
 	if(!mkpath(journalDir())) {
 		m_journalContext.journalDirExists = false;
@@ -701,7 +701,7 @@ chainpack::RpcValue ShvFileJournal::getLog(const ShvFileJournal::JournalContext 
 			}
 			else {
 				/// take previous file
-				logMShvJournal() << "\t" << "lower bound found, taking previous file:" << *first_file_it << journal_context.fileMsecToFileName(*first_file_it);
+				logMShvJournal() << "\t" << "lower bound found:" << *first_file_it << journal_context.fileMsecToFileName(*first_file_it) << "taking previous file";
 				--first_file_it;
 			}
 		}
@@ -760,6 +760,7 @@ chainpack::RpcValue ShvFileJournal::getLog(const ShvFileJournal::JournalContext 
 							logDShvJournal() << "\t Setting missing snapshot entry to default value, path:" << key;
 							if(auto it = snapshot_ctx.snapshot.keyvals.find(key); it != snapshot_ctx.snapshot.keyvals.end()) {
 								ShvJournalEntry e = it->second;
+								e.epochMsec = rd.snapshotMsec();
 								e.value.setDefaultValue();
 								e.setSnapshotValue(true);
 								generated_entries.push_back(std::move(e));
@@ -791,7 +792,7 @@ chainpack::RpcValue ShvFileJournal::getLog(const ShvFileJournal::JournalContext 
 					bool before_since = params_since_msec > 0 && entry.epochMsec < params_since_msec;
 					bool after_until = params_until_msec > 0 && entry.epochMsec >= params_until_msec;
 					if(before_since) {
-						//logDShvJournal() << "\t SNAPSHOT entry:" << entry.toRpcValueMap().toCpon();
+						logDShvJournal() << "\t SNAPSHOT entry:" << entry.toRpcValueMap().toCpon();
 					}
 					else if(after_until) {
 						goto log_finish;

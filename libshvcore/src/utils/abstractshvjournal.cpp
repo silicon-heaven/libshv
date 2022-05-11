@@ -31,6 +31,11 @@ chainpack::RpcValue AbstractShvJournal::getSnapShotMap()
 	SHV_EXCEPTION("getSnapShot() not implemented");
 }
 
+void AbstractShvJournal::clearSnapshot()
+{
+	m_snapshot = {};
+}
+
 static bool is_property_of_live_object(const std::string &property_path, const std::set<std::string> &object_paths)
 {
 	// not optimal, but we do not expect to have thousands live objects in the snapshot

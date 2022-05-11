@@ -100,7 +100,7 @@ private:
 	void rotateJournal();
 	void updateJournalStatus();
 	void checkRecentTimeStamp();
-	void ensureJournalDir();
+	void createJournalDirIfNotExist();
 	bool journalDirExists();
 
 	void appendThrow(const ShvJournalEntry &entry);

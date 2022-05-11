@@ -108,21 +108,9 @@ ShvLogTypeInfo typeInfo
 			}
 		},
 		{
-			"VehicleDectedMap",
+			"VehicleData",
 			{
 				ShvLogTypeDescr::Type::Map,
-				{
-					{"vehicleId", "UInt"},
-					{"dir", "String", RpcValue::List{"", "L", "R", "S"}},
-					{"CommError", "Bool"},
-				},
-				ShvLogTypeDescr::SampleType::Discrete
-			}
-		},
-		{
-			"VehicleDectedList",
-			{
-				ShvLogTypeDescr::Type::List,
 				{
 					{"vehicleId", "UInt"},
 					{"dir", "String", RpcValue::List{"", "L", "R", "S"}},
@@ -137,8 +125,9 @@ ShvLogTypeInfo typeInfo
 		{ "temperature", {"Temperature"} },
 		{ "voltage", {"Voltage"} },
 		{ "doorOpen", {"Bool"} },
+		{ "someError", {"Bool"} },
 		{ "vetra/status", {"VetraStatus"} },
-		{ "vetra/vehicleDetected", {"VehicleDectedList"} },
+		{ "vetra/vehicleDetected", {"VehicleData"} },
 	},
 };
 }
@@ -162,50 +151,66 @@ private:
 			file_journal.setJournalSizeLimit(file_journal.fileSizeLimit() * 10);
 			qDebug() << "------------- Generating log files";
 			auto msec = RpcValue::DateTime::now().msecsSinceEpoch();
-			int64_t msec1 = msec;
+			int64_t msec_start = msec;
+			int64_t msec_middle;
 			std::random_device randev;
 			std::mt19937 mt(randev());
 			std::uniform_int_distribution<int> rndmsec(0, 2000);
 			std::uniform_int_distribution<int> rndval(0, 1000);
-			constexpr int CNT = 60000;
-			for (int i = 0; i < CNT; ++i) {
-				msec += rndmsec(mt);
-				for(auto &kv : channels) {
-					Channel &c = kv.second;
-					if(i % c.period == 0) {
-						ShvJournalEntry e;
-						e.epochMsec = msec;
-						e.path = kv.first;
-						RpcValue rv((c.maxVal - c.minVal) * rndval(mt) / 1000 + c.minVal);
-						if(e.path == "temperature") {
-							e.value = RpcValue::Decimal(rv.toInt(), -2);
+			bool some_error = false;
+			constexpr int CNT = 30000;
+			for(int j=0; j<2; ++j) {
+				msec_middle = msec;
+				file_journal.clearSnapshot();
+				file_journal.createNewLogFile(msec);
+				for (int i = 0; i < CNT; ++i) {
+					msec += rndmsec(mt);
+					for(auto &kv : channels) {
+						Channel &c = kv.second;
+						if(i % c.period == 0) {
+							ShvJournalEntry e;
+							e.epochMsec = msec;
+							e.path = kv.first;
+							e.domain = c.domain;
+							e.value = RpcValue((c.maxVal - c.minVal) * rndval(mt) / 1000 + c.minVal);
+							if(e.path == "temperature") {
+								e.value = RpcValue::Decimal(e.value.toInt(), -2);
+							}
+							else if(e.path == "voltage") {
+								e.shortTime = msec % 0x100;
+							}
+							else if(e.path == "doorOpen") {
+								e.value = (rndval(mt) > 500);
+							}
+							else if(e.path == "someError") {
+								if(!some_error) {
+									// write some error only once
+									some_error = true;
+									e.value = true;
+								}
+								else {
+									e.value = {};
+								}
+							}
+							else if(e.path == "vetra/vehicleDetected") {
+								e.value = RpcValue::Map{{"id", e.value}, {"direction", (i % 2)? "R": "L"}};
+								e.setSpontaneous(true);
+							}
+							if(e.value.isValid())
+								file_journal.append(e);
 						}
-						else if(e.path == "doorOpen") {
-							e.value = (rndval(mt) > 500);
-						}
-						else if(e.path == "vetra/vehicleDetected") {
-							e.value = RpcValue::List{rv, i %2? "R": "L"};
-							e.setSpontaneous(true);
-						}
-						else {
-							e.value = rv;
-						}
-						e.domain = c.domain;
-						//e.shortTime = msec % 0x100;
-						//qDebug() << i << "-->" << e.value.toCpon();
-						file_journal.append(e);
 					}
 				}
 			}
 			qDebug() << "\t" << CNT << "records written, recent timestamp:" << RpcValue::DateTime::fromMSecsSinceEpoch(file_journal.recentlyWrittenEntryDateTime()).toIsoString();
-			int64_t msec2 = msec;
+			int64_t msec_end = msec;
 			qDebug() << "------------- testing getlog()";
 			{
 				ShvGetLogParams params;
 				params.withSnapshot = true;
 				params.withPathsDict = false;
-				params.since = RpcValue::DateTime::fromMSecsSinceEpoch(msec1 + (msec2 - msec1) / 4);
-				params.until = RpcValue::DateTime::fromMSecsSinceEpoch(msec2 - (msec2 - msec1) / 4);
+				params.since = RpcValue::DateTime::fromMSecsSinceEpoch(msec_start + (msec_end - msec_start) / 4);
+				params.until = RpcValue::DateTime::fromMSecsSinceEpoch(msec_end - (msec_end - msec_start) / 4);
 				qDebug() << "\t params:" << params.toRpcValue().toCpon();
 				RpcValue log1 = file_journal.getLog(params);
 				string fn = TEST_DIR + "/log1.chpk";
@@ -222,11 +227,37 @@ private:
 				int cnt = 0;
 				ShvLogFileReader rd(fn);
 				while(rd.next()) {
-					rd.entry();
+					//rd.entry();
 					cnt++;
 				}
 				QVERIFY(cnt == rd.logHeader().recordCount());
 				QVERIFY(cnt == (int)log1.toList().size());
+			}
+			qDebug() << "------------- testing getlog() file merge snapshot erasure";
+			{
+				ShvGetLogParams params;
+				params.withSnapshot = true;
+				params.withPathsDict = false;
+				params.since = RpcValue::DateTime::fromMSecsSinceEpoch(msec_middle - 100);
+				params.until = RpcValue::DateTime::fromMSecsSinceEpoch(msec_middle + 100);
+				qDebug() << "\t params:" << params.toRpcValue().toCpon();
+				RpcValue log1 = file_journal.getLog(params);
+				{
+					string fn2 = TEST_DIR + "/log-merged.cpon";
+					qDebug() << "\t file:" << fn2;
+					write_cpon_file(fn2, log1);
+				}
+				std::vector<bool> some_errors;
+				ShvLogRpcValueReader rd(log1);
+				while(rd.next()) {
+					const ShvJournalEntry &e = rd.entry();
+					if(e.path == "someError") {
+						qDebug() << "\t e:" << e.toRpcValue().toCpon();
+						some_errors.push_back(e.value.toBool());
+					}
+				}
+				std::vector<bool> v = {true, false};
+				QVERIFY(some_errors == v);
 			}
 			qDebug() << "------------- testing getlog() filtered";
 			{
@@ -234,7 +265,7 @@ private:
 				params.withSnapshot = true;
 				params.withPathsDict = false;
 				params.pathPattern = "doorOpen";
-				params.since = RpcValue::DateTime::fromMSecsSinceEpoch(msec1 + (msec2 - msec1) / 4);
+				params.since = RpcValue::DateTime::fromMSecsSinceEpoch(msec_start + (msec_end - msec_start) / 4);
 				//params.until = RpcValue::DateTime::fromMSecsSinceEpoch(msec2 - (msec2 - msec1) / 4);
 				qDebug() << "\t params:" << params.toRpcValue().toCpon();
 				RpcValue log1 = file_journal.getLog(params);
@@ -247,7 +278,7 @@ private:
 					QVERIFY(e.path == "doorOpen");
 				}
 			}
-			qDebug() << "------------- testing SINCE_NOW";
+			qDebug() << "------------- testing SINCE_LAST";
 			{
 				ShvGetLogParams params;
 				params.withSnapshot = true;
@@ -401,7 +432,7 @@ private slots:
 	void initTestCase()
 	{
 		//shv::chainpack::Exception::setAbortOnException(true);
-		//NecroLog::setTopicsLogTresholds("ShvJournal:D");
+		NecroLog::setTopicsLogTresholds("ShvJournal:D");
 		qDebug() << "Registered topics:" << NecroLog::registeredTopicsInfo();
 		{
 			Channel &c = channels["temperature"];
@@ -427,8 +458,16 @@ private slots:
 			c.domain = ShvJournalEntry::DOMAIN_VAL_CHANGE;
 		}
 		{
+			Channel &c = channels["someError"];
+			c.value = false;
+			c.period = 5;
+			c.minVal = 0;
+			c.maxVal = 1;
+			c.domain = ShvJournalEntry::DOMAIN_VAL_CHANGE;
+		}
+		{
 			Channel &c = channels["vetra/vehicleDetected"];
-			c.value = RpcValue::List{1234, "R"};
+			c.value = RpcValue::Map{{"vehicleId", 1234}, {"direction", "R"}};
 			c.period = 100;
 			c.minVal = 6000;
 			c.maxVal = 6999;
@@ -437,7 +476,7 @@ private slots:
 		}
 		{
 			Channel &c = channels["vetra/status"];
-			c.value = 10;
+			c.value = 100;
 			c.minVal = 0;
 			c.maxVal = 0xFF;
 			c.domain = ShvJournalEntry::DOMAIN_VAL_CHANGE;
