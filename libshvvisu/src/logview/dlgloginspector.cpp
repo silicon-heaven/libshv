@@ -404,6 +404,8 @@ void DlgLogInspector::parseLog(shv::chainpack::RpcValue log)
 		shv::core::utils::ShvLogRpcValueReader rd(log, shv::core::Exception::Throw);
 		m_graphModel->clear();
 		m_graphModel->beginAppendValues();
+		m_graphModel->setTypeInfo(rd.logHeader().typeInfo());
+
 		ShortTime anca_hook_short_time;
 		while(rd.next()) {
 			const core::utils::ShvJournalEntry &entry = rd.entry();
