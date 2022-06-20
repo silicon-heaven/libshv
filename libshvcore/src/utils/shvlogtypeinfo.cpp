@@ -144,9 +144,25 @@ std::vector<ShvLogTypeDescrField> ShvLogTypeDescr::fields() const
 	return ret;
 }
 
+ShvLogTypeDescr &ShvLogTypeDescr::setFields(const std::vector<ShvLogTypeDescrField> &fields)
+{
+	RpcValue::List cp_fields;
+	for (const ShvLogTypeDescrField &field : fields) {
+		cp_fields.push_back(field.toRpcValue());
+	}
+	setDataValue(KEY_FIELDS, cp_fields);
+	return *this;
+}
+
 ShvLogTypeDescr::SampleType ShvLogTypeDescr::sampleType() const
 {
 	return static_cast<SampleType>(dataValue(KEY_SAMPLE_TYPE).toInt());
+}
+
+ShvLogTypeDescr &ShvLogTypeDescr::setSampleType(ShvLogTypeDescr::SampleType st)
+{
+	setDataValue(KEY_SAMPLE_TYPE, (int)st);
+	return *this;
 }
 
 const std::string ShvLogTypeDescr::typeToString(ShvLogTypeDescr::Type t)

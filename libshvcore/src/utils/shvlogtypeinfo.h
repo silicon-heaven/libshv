@@ -90,7 +90,9 @@ public:
 	Type type() const;
 	ShvLogTypeDescr& setType(Type t);
 	std::vector<ShvLogTypeDescrField> fields() const;
+	ShvLogTypeDescr &setFields(const std::vector<ShvLogTypeDescrField> &fields);
 	SampleType sampleType() const; // = SampleType::Continuous;
+	ShvLogTypeDescr &setSampleType(SampleType st);
 
 	//ShvLogTypeDescr& withTags(const chainpack::RpcValue::Map &tags) { this->tags = tags; return *this; }
 	ShvLogTypeDescr& withType(Type t);
