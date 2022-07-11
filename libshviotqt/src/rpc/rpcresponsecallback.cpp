@@ -1,5 +1,6 @@
 #include "rpcresponsecallback.h"
 #include "clientconnection.h"
+#include "rpc.h"
 
 #include <shv/chainpack/rpcmessage.h>
 #include <shv/coreqt/log.h>
@@ -128,8 +129,9 @@ RpcCall::RpcCall(ClientConnection *connection)
 			emit result(_result);
 		else
 			emit error(_error);
-		deleteLater();
 	});
+
+	connect(this, &RpcCall::maybeResult, this, &QObject::deleteLater, Qt::QueuedConnection);
 }
 
 RpcCall *RpcCall::createSubscriptionRequest(ClientConnection *connection, const QString &shv_path, const QString &method)
