@@ -31,7 +31,7 @@ public:
 	void prevSample();
 	QMap<QString, QString> yValues() const;
 
-	Q_SIGNAL void currentTimeChanged();
+	Q_SIGNAL void currentTimeChanged(timemsec_t time);
 
 protected:
 	const Graph *m_graph = nullptr;

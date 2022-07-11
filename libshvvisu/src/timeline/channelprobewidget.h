@@ -35,7 +35,7 @@ protected:
 
 	bool eventFilter(QObject *o, QEvent *e) override;
 
-	void loadValues();
+	void loadValues(int64_t time);
 	ChannelProbeWidget::FrameSection getFrameSection();
 	QCursor frameSectionCursor(FrameSection fs);
 

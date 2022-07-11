@@ -22,7 +22,7 @@ QColor ChannelProbe::color() const
 void ChannelProbe::setCurrentTime(timemsec_t time)
 {
 	m_currentTime = time;
-	emit currentTimeChanged();
+	emit currentTimeChanged(time);
 }
 
 timemsec_t ChannelProbe::currentTime() const

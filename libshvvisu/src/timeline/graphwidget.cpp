@@ -872,7 +872,8 @@ void GraphWidget::createProbe(int channel_ix, timemsec_t time)
 	ChannelProbe *probe = m_graph->addChannelProbe(channel_ix, time);
 	Q_ASSERT(probe);
 
-	connect(probe, &ChannelProbe::currentTimeChanged, probe, [this]() {
+	connect(probe, &ChannelProbe::currentTimeChanged, probe, [this](int64_t time) {
+		m_graph->setCurrentTime(time);
 		update();
 	});
 
