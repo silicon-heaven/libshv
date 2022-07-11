@@ -854,13 +854,13 @@ ShvLogTypeInfo ShvLogTypeInfo::fromNodesTree(const chainpack::RpcValue &v)
 {
 	ShvLogTypeInfo ret;
 	{
-		const RpcValue types = v.asMap().value("typeInfo").asMap().value("types");
+		const RpcValue types = v.metaData().value("typeInfo").asMap().value("types");
 		const RpcValue::Map &m = types.asMap();
 		for(const auto &kv : m) {
 			ret.m_types[kv.first] = ShvLogTypeDescr::fromRpcValue(kv.second);
 		}
 	}
-	const RpcValue node_types = v.asMap().value("nodeTypes");
+	const RpcValue node_types = v.metaData().value("nodeTypes");
 	fromNodesTree_helper(ret, v, {}, {}, {}, node_types.asMap());
 	return ret;
 }
