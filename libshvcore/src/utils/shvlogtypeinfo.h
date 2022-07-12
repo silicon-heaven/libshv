@@ -94,7 +94,12 @@ public:
 	ShvLogTypeDescr(const std::string &type_name) { setType(typeFromString(type_name)); }
 	ShvLogTypeDescr(Type t, SampleType st = SampleType::Continuous)
 		: ShvLogTypeDescr(t, std::vector<ShvLogFieldDescr>(), st) {}
-	ShvLogTypeDescr(Type t, std::vector<ShvLogFieldDescr> &&flds, SampleType st = SampleType::Continuous);
+	ShvLogTypeDescr(Type t, std::vector<ShvLogFieldDescr> &&flds, SampleType st = SampleType::Continuous)
+	{
+		setType(t);
+		setFields(flds);
+		setSampleType(st);
+	}
 
 	Type type() const;
 	ShvLogTypeDescr& setType(Type t);
