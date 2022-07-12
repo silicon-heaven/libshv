@@ -816,7 +816,7 @@ static void fromNodesTree_helper(shv::core::utils::ShvLogTypeInfo &type_info,
 	}
 	//shvInfo() << "id:" << node->nodeId() << "node path:" << node_shv_path << "shv path:" << shv_path;
 	//StringViewList node_shv_dir_list = ShvPath::splitPath(node_shv_path);
-	for(const RpcValue &rv : node.asMap().value("methods").asList()) {
+	for(const RpcValue &rv : node.metaValue("methods").asList()) {
 		const auto mm = MetaMethod::fromRpcValue(rv);
 		const string &method_name = mm.name();
 		if(method_name == Rpc::METH_LS || method_name == Rpc::METH_DIR)
@@ -854,13 +854,13 @@ ShvLogTypeInfo ShvLogTypeInfo::fromNodesTree(const chainpack::RpcValue &v)
 {
 	ShvLogTypeInfo ret;
 	{
-		const RpcValue types = v.metaData().value("typeInfo").asMap().value("types");
+		const RpcValue types = v.metaValue("typeInfo").asMap().value("types");
 		const RpcValue::Map &m = types.asMap();
 		for(const auto &kv : m) {
 			ret.m_types[kv.first] = ShvLogTypeDescr::fromRpcValue(kv.second);
 		}
 	}
-	const RpcValue node_types = v.metaData().value("nodeTypes");
+	const RpcValue node_types = v.metaValue("nodeTypes");
 	fromNodesTree_helper(ret, v, {}, {}, {}, node_types.asMap());
 	return ret;
 }
