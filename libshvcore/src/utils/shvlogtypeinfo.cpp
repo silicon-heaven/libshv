@@ -774,17 +774,18 @@ void ShvLogTypeInfo::forEachNode(std::function<void (const std::string &shv_path
 	for(const auto& [path, node_descr] : m_nodeDescriptions) {
 		if(auto ix = path.find('/'); ix != string::npos) {
 			string device_id = path.substr(0, ix);
+			string property_id = path.substr(ix + 1);
 			if(auto it = device_id_to_path.find(device_id); it != device_id_to_path.end()) {
 				// device paths
 				for(const auto &device_path : it->second) {
-					string shv_path = shv::core::Utils::joinPath(device_path, path);
+					string shv_path = shv::core::Utils::joinPath(device_path, property_id);
 					fn(shv_path, node_descr);
 				}
 				continue;
 			}
 		}
 		// not device paths
-		fn(path, node_descr);
+//		fn(path, node_descr);
 	}
 }
 
