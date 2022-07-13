@@ -228,6 +228,11 @@ void GraphModel::appendValue(int channel, Sample &&sample)
 					 << sample.time << shv::chainpack::RpcValue::DateTime::fromMSecsSinceEpoch(sample.time).toIsoString();
 		return;
 	}
+	if (!dat.isEmpty() &&
+		channelInfo(channel).typeDescr.sampleType() == shv::core::utils::ShvLogTypeDescr::SampleType::Continuous &&
+		dat.last().value == sample.value) {
+		return;
+	}
 	//m_appendSince = qMin(sampleAt.time, m_appendSince);
 	//m_appendUntil = qMax(sampleAt.time, m_appendUntil);
 	dat.push_back(std::move(sample));
