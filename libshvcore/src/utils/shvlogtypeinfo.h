@@ -52,6 +52,7 @@ public:
 	std::string label() const;
 	std::string description() const;
 	chainpack::RpcValue value() const;
+	std::string visualStyleName() const;
 	std::string alarm() const;
 	int alarmLevel() const;
 	std::string alarmDescription() const { return description(); }
@@ -119,12 +120,6 @@ public:
 	static const std::string sampleTypeToString(SampleType t);
 	static SampleType sampleTypeFromString(const std::string &s);
 
-	/// unit should be property of node description,
-	/// but FlatLine stores it also type description
-	std::string unit() const;
-	ShvLogTypeDescr& setUnit(const std::string &unit);
-
-	std::string visualStyleName() const;
 	std::string alarm() const;
 	ShvLogTypeDescr& setAlarm(const std::string &alarm);
 	int alarmLevel() const;
@@ -148,14 +143,24 @@ public:
 	//ShvLogNodeDescr(const chainpack::RpcValue &v) : Super(v) {} DANGEROUS
 
 	std::string typeName() const;
+	ShvLogNodeDescr &setTypeName(const std::string &type_name);
 	std::string label() const;
+	ShvLogNodeDescr &setLabel(const std::string &label);
 	std::string description() const;
+	ShvLogNodeDescr &setDescription(const std::string &description);
 	std::string unit() const;
-	//std::string alarm() const;
+	ShvLogNodeDescr &setUnit(const std::string &unit);
+	std::string visualStyleName() const;
+	ShvLogNodeDescr &setVisualStyleName(const std::string &visual_style_name);
+	int decimalPlaces() const;
+	ShvLogNodeDescr &setDecimalPlaces(int decimal_places);
+	std::string alarm() const;
+	ShvLogNodeDescr &setAlarm(const std::string &alarm);
 	//int alarmLevel() const;
 	//chainpack::RpcValue tags() const;
 	std::vector<ShvLogMethodDescr> methods() const;
 	ShvLogMethodDescr method(const std::string &name) const;
+	chainpack::RpcValue value(const std::string &key) const;
 
 	chainpack::RpcValue toRpcValue() const;
 	static ShvLogNodeDescr fromRpcValue(const chainpack::RpcValue &v);

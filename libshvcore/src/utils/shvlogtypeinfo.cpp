@@ -101,6 +101,11 @@ RpcValue ShvLogFieldDescr::value() const
 	return dataValue(KEY_VALUE);
 }
 
+string ShvLogFieldDescr::visualStyleName() const
+{
+	return dataValue(KEY_VISUAL_STYLE).asString();
+}
+
 string ShvLogFieldDescr::alarm() const
 {
 	return dataValue(KEY_ALARM).asString();
@@ -299,32 +304,6 @@ ShvLogTypeDescr::SampleType ShvLogTypeDescr::sampleTypeFromString(const std::str
 	return SampleType::Invalid;
 }
 
-string ShvLogTypeDescr::unit() const
-{
-	return dataValue(KEY_UNIT).asString();
-}
-
-ShvLogTypeDescr &ShvLogTypeDescr::setUnit(const std::string &unit)
-{
-	setDataValue(KEY_UNIT, unit);
-	return *this;
-}
-/*
-void ShvLogTypeDescr::applyTags(const RpcValue::Map &t)
-{
-	if (type == Type::Invalid)
-		type = typeFromString(t.value("typeName").toStdString());
-
-	if (t.hasKey("sampleType"))
-		sampleType = sampleTypeFromString(t.value("sampleType").asString());
-
-	//if (t.hasKey(description))
-	//	description = t.value(KEY_DESCRIPTION).toStdString();
-
-	tags.insert(t.begin(), t.end());
-}
-*/
-
 RpcValue ShvLogTypeDescr::defaultRpcValue() const
 {
 	using namespace chainpack;
@@ -346,11 +325,6 @@ RpcValue ShvLogTypeDescr::defaultRpcValue() const
 	}
 
 	return RpcValue::fromType(RpcValue::Type::Null);
-}
-
-std::string ShvLogTypeDescr::visualStyleName() const
-{
-	return dataValue(KEY_VISUAL_STYLE).asString();
 }
 
 std::string ShvLogTypeDescr::alarm() const
@@ -433,9 +407,21 @@ string ShvLogNodeDescr::typeName() const
 	return dataValue(KEY_TYPE_NAME).asString();
 }
 
+ShvLogNodeDescr &ShvLogNodeDescr::setTypeName(const string &type_name)
+{
+	setDataValue(KEY_TYPE_NAME, type_name);
+	return *this;
+}
+
 string ShvLogNodeDescr::label() const
 {
 	return dataValue(KEY_LABEL).asString();
+}
+
+ShvLogNodeDescr &ShvLogNodeDescr::setLabel(const string &label)
+{
+	setDataValue(KEY_LABEL, label);
+	return *this;
 }
 
 string ShvLogNodeDescr::description() const
@@ -443,9 +429,43 @@ string ShvLogNodeDescr::description() const
 	return dataValue(KEY_DESCRIPTION).asString();
 }
 
+ShvLogNodeDescr &ShvLogNodeDescr::setDescription(const string &description)
+{
+	setDataValue(KEY_DESCRIPTION, description);
+	return *this;
+}
+
 string ShvLogNodeDescr::unit() const
 {
 	return dataValue(KEY_UNIT).asString();
+}
+
+ShvLogNodeDescr &ShvLogNodeDescr::setUnit(const string &unit)
+{
+	setDataValue(KEY_UNIT, unit);
+	return *this;
+}
+
+string ShvLogNodeDescr::visualStyleName() const
+{
+	return dataValue(KEY_VISUAL_STYLE).asString();
+}
+
+ShvLogNodeDescr &ShvLogNodeDescr::setVisualStyleName(const string &visual_style_name)
+{
+	setDataValue(KEY_VISUAL_STYLE, visual_style_name);
+	return *this;
+}
+
+int ShvLogNodeDescr::decimalPlaces() const
+{
+	return dataValue(KEY_DEC_PLACES).toInt();
+}
+
+ShvLogNodeDescr &ShvLogNodeDescr::setDecimalPlaces(int decimal_places)
+{
+	setDataValue(KEY_DEC_PLACES, decimal_places);
+	return *this;
 }
 
 std::vector<ShvLogMethodDescr> ShvLogNodeDescr::methods() const
@@ -469,12 +489,23 @@ ShvLogMethodDescr ShvLogNodeDescr::method(const std::string &name) const
 	return {};
 }
 
-/*
+RpcValue ShvLogNodeDescr::value(const string &key) const
+{
+	return dataValue(key);
+}
+
 string ShvLogNodeDescr::alarm() const
 {
 	return dataValue(KEY_ALARM, std::string()).asString();
 }
 
+ShvLogNodeDescr &ShvLogNodeDescr::setAlarm(const string &alarm)
+{
+	setDataValue(KEY_ALARM, alarm);
+	return *this;
+}
+
+/*
 int ShvLogNodeDescr::alarmLevel() const
 {
 	return dataValue(KEY_ALARM_LEVEL).toInt();
@@ -807,7 +838,9 @@ static void fromNodesTree_helper(shv::core::utils::ShvLogTypeInfo &type_info,
 	RpcValue::Map property_descr;
 	RpcValue::List property_methods;
 	String shv_path = _shv_path;
-	if(shv_path.indexOf("/status/") != string::npos) {
+	if((shv_path.indexOf("/status/") != string::npos) ||
+		(shv_path.indexOf("/reasonAB/") != string::npos) ||
+		(shv_path.indexOf("/reasonEI/") != string::npos)) {
 		// TODO: find better way how to exclude subtrees created from type description
 		return;
 	}
