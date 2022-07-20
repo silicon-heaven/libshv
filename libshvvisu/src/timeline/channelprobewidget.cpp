@@ -37,7 +37,7 @@ ChannelProbeWidget::ChannelProbeWidget(ChannelProbe *probe, QWidget *parent) :
 	ui->fHeader->installEventFilter(this);
 	ui->twData->viewport()->installEventFilter(this);
 
-	loadValues(m_probe->currentTime());
+	loadValues();
 
 	ui->twData->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 
@@ -134,9 +134,8 @@ bool ChannelProbeWidget::eventFilter(QObject *o, QEvent *e)
 	return Super::eventFilter(o, e);
 }
 
-void ChannelProbeWidget::loadValues(int64_t time)
+void ChannelProbeWidget::loadValues()
 {
-	Q_UNUSED(time);
 	ui->edCurentTime->setText(m_probe->currentTimeIsoFormat());
 	ui->twData->clearContents();
 	ui->twData->setRowCount(0);
