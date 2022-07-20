@@ -873,7 +873,17 @@ void GraphWidget::createProbe(int channel_ix, timemsec_t time)
 	Q_ASSERT(probe);
 
 	connect(probe, &ChannelProbe::currentTimeChanged, probe, [this](int64_t time) {
-		m_graph->setCurrentTime(time);
+		bool is_time_visible = m_graph->xRangeZoom().isInRange(time);
+
+		if (!is_time_visible) {
+			XRange x_range;
+			timemsec_t half_interval = m_graph->xRangeZoom().interval() / 2;
+			x_range.min = time - half_interval;
+			x_range.max = time + half_interval;
+
+			m_graph->setXRangeZoom(x_range);
+		}
+
 		update();
 	});
 
