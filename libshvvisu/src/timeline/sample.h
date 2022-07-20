@@ -41,7 +41,7 @@ struct Range
 	Range& normalize() {if (min > max)  std::swap(min, max); return *this; }
 	bool isValid() const { return interval() >= 0; }
 	bool isEmpty() const { return interval() == 0; }
-	bool isInRange(T tm) const { return ((tm >= min) && (tm <= max)); }
+	bool contains(T t) const { return ((t >= min) && (t <= max)); }
 	T interval() const {return max - min;}
 	Range<T> united(const Range<T> &o) const {
 		if(isValid() && o.isValid()) {

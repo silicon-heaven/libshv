@@ -683,9 +683,9 @@ void Graph::setXRangeZoom(const XRange &r)
 {
 	XRange prev_r = m_state.xRangeZoom;
 	XRange new_r = r;
-	if(!m_state.xRange.isInRange(new_r.min))
+	if(!m_state.xRange.contains(new_r.min))
 		new_r.min = m_state.xRange.min;
-	if(!m_state.xRange.isInRange(new_r.max))
+	if(!m_state.xRange.contains(new_r.max))
 		new_r.max = m_state.xRange.max;
 	if(prev_r.max < new_r.max && prev_r.interval() == new_r.interval()) {
 		/// if zoom is just moved right (not scaled), snap to xrange max
