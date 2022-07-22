@@ -52,6 +52,7 @@ public:
 	std::string label() const;
 	std::string description() const;
 	chainpack::RpcValue value() const;
+	std::string visualStyleName() const;
 	std::string alarm() const;
 	int alarmLevel() const;
 	std::string alarmDescription() const { return description(); }
@@ -119,12 +120,6 @@ public:
 	static const std::string sampleTypeToString(SampleType t);
 	static SampleType sampleTypeFromString(const std::string &s);
 
-	/// unit should be property of node description,
-	/// but FlatLine stores it also type description
-	std::string unit() const;
-	ShvTypeDescr& setUnit(const std::string &unit);
-
-	std::string visualStyleName() const;
 	std::string alarm() const;
 	ShvTypeDescr& setAlarm(const std::string &alarm);
 	int alarmLevel() const;
@@ -148,12 +143,18 @@ public:
 	//ShvLogNodeDescr(const chainpack::RpcValue &v) : Super(v) {} DANGEROUS
 
 	std::string typeName() const;
+	ShvNodeDescr &setTypeName(const std::string &type_name);
 	std::string label() const;
+	ShvNodeDescr &setLabel(const std::string &label);
 	std::string description() const;
+	ShvNodeDescr &setDescription(const std::string &description);
 	std::string unit() const;
-	//std::string alarm() const;
-	//int alarmLevel() const;
-	//chainpack::RpcValue tags() const;
+	ShvNodeDescr &setUnit(const std::string &unit);
+	std::string visualStyleName() const;
+	ShvNodeDescr &setVisualStyleName(const std::string &visual_style_name);
+	std::string alarm() const;
+	ShvNodeDescr &setAlarm(const std::string &alarm);
+
 	std::vector<ShvMethodDescr> methods() const;
 	ShvMethodDescr method(const std::string &name) const;
 
