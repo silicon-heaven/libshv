@@ -21,7 +21,7 @@ add_library(libshviotqt SHARED
     src/utils.cpp
     src/utils/network.cpp
     )
-target_link_libraries(libshviotqt PUBLIC Qt::Network libshvcoreqt)
+target_link_libraries(libshviotqt PUBLIC Qt::Network Qt::SerialPort libshvcoreqt)
 target_include_directories(libshviotqt PUBLIC include)
 target_compile_definitions(libshviotqt PRIVATE SHVIOTQT_BUILD_DLL)
 
