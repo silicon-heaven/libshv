@@ -43,6 +43,7 @@ public:
 	size_t size() const { return  m_entries.size(); }
 	const ShvJournalEntry& at(size_t ix) const { return  m_entries.at(ix); }
 	void clear() { m_entries.clear(); }
+	void removeLastEntry() { if (m_entries.size()) m_entries.pop_back(); }
 	//size_t timeToUpperBoundIndex(int64_t time) const;
 private:
 	using Entry = ShvJournalEntry;
