@@ -112,7 +112,9 @@
 	public: void setter_prefix##name_rest(const ptype &val) {d->getter_prefix##name_rest = val;}
 
 class QVariant;
+#if QT_VERSION_MAJOR < 6
 class QStringList;
+#endif
 
 namespace shv {
 namespace chainpack { class RpcValue; }
