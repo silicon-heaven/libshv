@@ -1,6 +1,9 @@
 #pragma once
 
 #include "shvnode.h"
+#if QT_VERSION_MAJOR >= 6
+#include "../rpc/rpc.h"
+#endif
 
 namespace shv {
 namespace iotqt {
