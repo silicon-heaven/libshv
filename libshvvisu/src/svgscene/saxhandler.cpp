@@ -340,11 +340,11 @@ static QColor parseColor(const QString &color, const QString &opacity)
 	return ret;
 }
 
-static QMatrix parseTransformationMatrix(const QStringRef &value)
+static QTransform parseTransformationMatrix(const QStringRef &value)
 {
 	if (value.isEmpty())
-		return QMatrix();
-	QMatrix matrix;
+		return QTransform();
+	QTransform matrix;
 	const QChar *str = value.constData();
 	const QChar *end = str + value.length();
 	while (str < end) {
@@ -423,7 +423,7 @@ static QMatrix parseTransformationMatrix(const QStringRef &value)
 		if(state == Matrix) {
 			if(points.count() != 6)
 				goto error;
-			matrix = QMatrix(points[0], points[1],
+			matrix = QTransform(points[0], points[1],
 					points[2], points[3],
 					points[4], points[5]) * matrix;
 		} else if (state == Translate) {
@@ -1224,7 +1224,7 @@ void SaxHandler::setXmlAttributes(QGraphicsItem *git, const SaxHandler::SvgEleme
 void SaxHandler::setTransform(QGraphicsItem *it, const QString &str_val)
 {
 	QStringRef transform(&str_val);
-	QMatrix mx = parseTransformationMatrix(transform.trimmed());
+	QTransform mx = parseTransformationMatrix(transform.trimmed());
 	if(!mx.isIdentity()) {
 		QTransform t(mx);
 		//logSvgI() << typeid (*it).name() << "setting matrix:" << t.dx() << t.dy();
