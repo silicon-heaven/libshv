@@ -21,7 +21,6 @@
 #include <QDrag>
 #include <QMimeData>
 #include <cmath>
-#include <QDesktopWidget>
 #include <QMessageBox>
 
 #define logMouseSelection() nCDebug("MouseSelection")
@@ -492,7 +491,7 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 			mime->setText(QString());
 			drag->setMimeData(mime);
 			QPoint p = mapToGlobal(header_rect.topLeft());
-			drag->setPixmap(screen()->grabWindow(QDesktopWidget().winId(), p.x(), p.y(), header_rect.width(), header_rect.height()));
+			drag->setPixmap(screen()->grabWindow(winId(), p.x(), p.y(), header_rect.width(), header_rect.height()));
 			drag->setHotSpot(mapToGlobal(pos) - p);
 			setAcceptDrops(true);
 
