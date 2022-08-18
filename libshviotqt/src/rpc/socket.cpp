@@ -242,9 +242,11 @@ SerialPortSocket::SerialPortSocket(QSerialPort *port, QObject *parent)
 		case QSerialPort::OpenError:
 			emit error(QAbstractSocket::ConnectionRefusedError);
 			break;
+#if QT_VERSION_MAJOR < 6
 		case QSerialPort::ParityError:
 		case QSerialPort::FramingError:
 		case QSerialPort::BreakConditionError:
+#endif
 		case QSerialPort::WriteError:
 		case QSerialPort::ReadError:
 			emit error(QAbstractSocket::OperationError);
