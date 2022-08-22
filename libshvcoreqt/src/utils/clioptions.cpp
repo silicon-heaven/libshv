@@ -42,19 +42,19 @@ CLIOptions::Option::Option()
 	*this = sharedNull();
 }
 
-CLIOptions::Option::Option(QVariant::Type type)
+CLIOptions::Option::Option(QMetaType::Type type)
 {
 	d = new Data(type);
 }
 
 CLIOptions::Option& CLIOptions::Option::setValueString(const QString& val_str)
 {
-	QVariant::Type t = type();
+	QMetaType::Type t = type();
 	switch(t) {
-	case(QVariant::Invalid):
+	case(QMetaType::UnknownType):
 		shvWarning() << "Setting value:" << val_str << "to an invalid type option.";
 		break;
-	case(QVariant::Bool):
+	case(QMetaType::Bool):
 	{
 		if(val_str.isEmpty()) {
 			setValue(true);
@@ -78,7 +78,7 @@ CLIOptions::Option& CLIOptions::Option::setValueString(const QString& val_str)
 		}
 		break;
 	}
-	case(QVariant::Int):
+	case(QMetaType::Int):
 	{
 		bool ok;
 		setValue(val_str.toInt(&ok));
@@ -86,7 +86,7 @@ CLIOptions::Option& CLIOptions::Option::setValueString(const QString& val_str)
 			shvWarning() << "Value:" << val_str << "cannot be converted to Int.";
 		break;
 	}
-	case(QVariant::Double):
+	case(QMetaType::Double):
 	{
 		bool ok;
 		setValue(val_str.toDouble(&ok));
@@ -107,8 +107,8 @@ CLIOptions::CLIOptions(QObject *parent)
 #if not defined(SHVCOREQT_BUILD_DLL)
 #warning shv::coreqt::utils::CLIOptions is deprecated use shv::core::utils::CLIOptions instead
 #endif
-	addOption("abortOnException").setType(QVariant::Bool).setNames("--abort-on-exception").setComment(tr("Abort application on exception"));
-	addOption("help").setType(QVariant::Bool).setNames("-h", "--help").setComment(tr("Print help"));
+	addOption("abortOnException").setType(QMetaType::Bool).setNames("--abort-on-exception").setComment(tr("Abort application on exception"));
+	addOption("help").setType(QMetaType::Bool).setNames("-h", "--help").setComment(tr("Print help"));
 	//addOption("config").setType(QVariant::String).setNames("--config").setComment(tr("Config name, it is loaded from {app-name}[.conf] if file exists in {config-path}"));
 	//addOption("configDir").setType(QVariant::String).setNames("--config-dir").setComment("Directory where server config fiels are searched, default value: {app-dir-path}.");
 }
@@ -187,8 +187,6 @@ QVariant CLIOptions::value_helper(const QString &name, bool throw_exception) con
 	QVariant ret = opt.value();
 	if(!ret.isValid())
 		ret = opt.defaultValue();
-	if(!ret.isValid())
-		ret = QVariant(opt.type());
 	return ret;
 }
 
@@ -355,8 +353,8 @@ void CLIOptions::printHelp(std::ostream &os) const
 		it.next();
 		Option opt = it.value();
 		os << opt.names().join(", ").toStdString();
-		if(opt.type() != QVariant::Bool) {
-			if(opt.type() == QVariant::Int || opt.type() == QVariant::Double) os << " " << "number";
+		if(opt.type() != QMetaType::Bool) {
+			if(opt.type() == QMetaType::Int || opt.type() == QMetaType::Double) os << " " << "number";
 			else os << " " << "'string'";
 		}
 		//os << ':';
@@ -411,8 +409,8 @@ chainpack::RpcValue CLIOptions::qVariantToRpcValue(const QVariant &v)
 ConfigCLIOptions::ConfigCLIOptions(QObject *parent)
 	: Super(parent)
 {
-	addOption("config").setType(QVariant::String).setNames("--config").setComment("Application config name, it is loaded from {config}[.conf] if file exists in {config-dir}, deault value is {app-name}.conf");
-	addOption("configDir").setType(QVariant::String).setNames("--config-dir").setComment("Directory where application config fiels are searched, default value: {app-dir-path}.");
+	addOption("config").setType(QMetaType::Type::QString).setNames("--config").setComment("Application config name, it is loaded from {config}[.conf] if file exists in {config-dir}, deault value is {app-name}.conf");
+	addOption("configDir").setType(QMetaType::QString).setNames("--config-dir").setComment("Directory where application config fiels are searched, default value: {app-dir-path}.");
 }
 
 void ConfigCLIOptions::parse(const QStringList &cmd_line_args)

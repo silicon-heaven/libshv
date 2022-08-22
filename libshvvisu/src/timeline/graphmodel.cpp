@@ -82,18 +82,18 @@ static shv::core::utils::ShvTypeDescr::Type qt_to_shv_type(int meta_type_id)
 {
 	using Type = shv::core::utils::ShvTypeDescr::Type;
 	switch (meta_type_id) {
-	case QVariant::Map:
+	case QMetaType::QVariantMap:
 		return Type::Map;
-	case QVariant::Double:
+	case QMetaType::Double:
 		return Type::Double;
-	case QVariant::LongLong:
-	case QVariant::ULongLong:
-	case QVariant::UInt:
-	case QVariant::Int:
+	case QMetaType::LongLong:
+	case QMetaType::ULongLong:
+	case QMetaType::UInt:
+	case QMetaType::Int:
 		return Type::Int;
-	case QVariant::Bool:
+	case QMetaType::Bool:
 		return Type::Bool;
-	case QVariant::String:
+	case QMetaType::QString:
 		return Type::String;
 	}
 	return Type::Invalid;
