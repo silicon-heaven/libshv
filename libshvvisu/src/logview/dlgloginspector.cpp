@@ -426,7 +426,11 @@ void DlgLogInspector::parseLog(shv::chainpack::RpcValue log)
 			QVariant v = shv::coreqt::Utils::rpcValueToQVariant(entry.value, &ok);
 			if(ok && v.isValid()) {
 				shvDebug() << entry.path << v.typeName();
+#if QT_VERSION_MAJOR >= 6
 				if(entry.path == "data" && v.typeId() == QMetaType::QVariantList) {
+#else
+				if(entry.path == "data" && v.type() == QVariant::Map) {
+#endif
 					// Anca hook
 					QVariantList vl = v.toList();
 					uint16_t short_msec = static_cast<uint16_t>(vl.value(0).toInt());

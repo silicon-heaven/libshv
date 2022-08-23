@@ -2172,7 +2172,11 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 				/// show sample value
 				QVariant qv = toolTipValues(crossbar_pos).value("samplePrettyValue");
 				QStringList lines;
+#if QT_VERSION_MAJOR >= 6
 				if(qv.typeId() == QMetaType::QVariantMap) {
+#else
+				if(qv.type() == QVariant::Map) {
+#endif
 					auto m = qv.toMap();
 					for(auto it = m.begin(); it != m.end(); ++it) {
 						lines << it.key() + ": " + it.value().toString();
