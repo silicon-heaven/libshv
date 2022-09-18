@@ -1,6 +1,6 @@
 #include "rpcdriver.h"
-#include "metatypes.h"
-#include "chainpack.h"
+//#include "metatypes.h"
+//#include "chainpack.h"
 #include "exception.h"
 #include "cponwriter.h"
 #include "cponreader.h"
@@ -9,11 +9,14 @@
 
 #include <necrolog.h>
 
+#include <cstdlib>
+
 #include <sstream>
 #include <iostream>
 
 #define logRpcRawMsg() nCMessage("RpcRawMsg")
 #define logRpcData() nCMessage("RpcData")
+#define logRpcDataW() nCWarning("RpcData")
 #define logWriteQueue() nCMessage("WriteQueue")
 #define logWriteQueueW() nCWarning("WriteQueue")
 
@@ -281,12 +284,12 @@ void RpcDriver::processReadData()
 				// not enough data
 				return;
 			}
-			logRpcData() << "ERROR - RpcMessage header corrupted:" << e.msg();
+			logRpcDataW() << "ERROR - RpcMessage header corrupted:" << e.msg();
 			if(isSkipCorruptedHeaders()) {
 				// TODO: not very effective implementation
 				// reimplement without need to copy m_readData
 				// string_vew cannot be used, until it can be converted into istream
-				logRpcData() << "Trying to parse on next byte.";
+				logRpcDataW() << "Trying to parse on next byte.";
 				m_readData = m_readData.substr(1);
 				continue;
 			}
@@ -306,6 +309,18 @@ void RpcDriver::processReadData()
 			std::string msg_data = read_data.substr(meta_data_end_pos, message_len - meta_data_end_pos);
 			logRpcData() << message_len << "bytes of" << m_readData.size() << "processed";
 			m_readData = m_readData.substr(message_len);
+			constexpr bool test_rubbish = true;
+			if(test_rubbish) {
+				// append some rubbish before next message
+				std::string rubbish;
+				size_t len = std::rand() % 82 + 1;
+				for(size_t i=0; i<len; ++i) {
+					char c = std::rand() % 256;
+					rubbish.push_back(c);
+				}
+				logRpcData() << "preppending" << len << "bytes of rubbish";
+				m_readData = rubbish + m_readData;
+			}
 			onRpcDataReceived(protocol_type, std::move(meta_data), std::move(msg_data));
 		}
 		catch (const std::exception &e) {
