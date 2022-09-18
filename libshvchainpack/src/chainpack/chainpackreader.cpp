@@ -1,4 +1,3 @@
-#include "chainpack.h"
 #include "chainpackreader.h"
 #include "../../c/cchainpack.h"
 
@@ -18,7 +17,7 @@ namespace chainpack {
 		abort(); \
 	} \
 	else { \
-		throw ChainPackReader::ParseException(std::string("ChainPack ") + msg + std::string(" at pos: ") + std::to_string(m_in.tellg()) + " near to: " + buff, m_in.tellg()); \
+		throw ParseException(m_inCtx.err_no, std::string("ChainPack ") + msg + std::string(" at pos: ") + std::to_string(m_in.tellg()) + " near to: " + buff, m_in.tellg()); \
 	} \
 }
 
@@ -91,15 +90,15 @@ ChainPackReader::ItemType ChainPackReader::peekNext()
 	return CCPCP_ITEM_INVALID;
 }
 
-uint64_t ChainPackReader::readUIntData(bool *ok)
+uint64_t ChainPackReader::readUIntData(int *err_code)
 {
-	return cchainpack_unpack_uint_data(&m_inCtx, ok);
+	return cchainpack_unpack_uint_data2(&m_inCtx, err_code);
 }
 
-uint64_t ChainPackReader::readUIntData(std::istream &in, bool *ok)
+uint64_t ChainPackReader::readUIntData(std::istream &in, int *err_code)
 {
 	ChainPackReader rd(in);
-	return rd.readUIntData(ok);
+	return rd.readUIntData(err_code);
 }
 
 void ChainPackReader::read(RpcValue &val)

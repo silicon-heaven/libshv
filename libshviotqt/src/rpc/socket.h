@@ -11,6 +11,8 @@ class QTcpSocket;
 class QLocalSocket;
 class QSerialPort;
 
+namespace shv::chainpack { class ParseException; }
+
 namespace shv {
 namespace iotqt {
 namespace rpc {
@@ -45,6 +47,8 @@ public:
 	virtual void writeMessageBegin() = 0;
 	virtual void writeMessageEnd() = 0;
 	virtual void ignoreSslErrors() = 0;
+
+	virtual void onParseDataException(const shv::chainpack::ParseException &) { abort(); }
 
 	Q_SIGNAL void connected();
 	Q_SIGNAL void disconnected();
@@ -131,6 +135,7 @@ public:
 	void ignoreSslErrors() override {}
 private:
 	void setState(QAbstractSocket::SocketState state);
+	void onParseDataException(const shv::chainpack::ParseException &e) override;
 private:
 	QSerialPort *m_port = nullptr;
 	QAbstractSocket::SocketState m_state = QAbstractSocket::UnconnectedState;

@@ -63,7 +63,7 @@ protected:
 	void onBytesWritten();
 
 	void onRpcValueReceived(const shv::chainpack::RpcValue &rpc_val) override;
-	void onProcessReadDataException(std::exception &e) override {Q_UNUSED(e) abortSocket();}
+	void onParseDataException(const shv::chainpack::ParseException &e) override;
 protected:
 	Socket *m_socket = nullptr;
 };

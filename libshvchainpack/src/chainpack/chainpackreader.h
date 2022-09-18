@@ -1,7 +1,7 @@
 #pragma once
 
 #include "abstractstreamreader.h"
-#include "chainpack.h"
+//#include "chainpack.h"
 
 namespace shv {
 namespace chainpack {
@@ -20,8 +20,8 @@ public:
 	void read(RpcValue &val) override;
 	//void read(RpcValue &val, std::string &err);
 
-	uint64_t readUIntData(bool *ok);
-	static uint64_t readUIntData(std::istream &in, bool *ok);
+	uint64_t readUIntData(int *err_code);
+	static uint64_t readUIntData(std::istream &in, int *err_code);
 
 	using ItemType = ccpcp_item_types;
 

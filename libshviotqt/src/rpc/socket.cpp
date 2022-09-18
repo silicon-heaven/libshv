@@ -371,6 +371,11 @@ void SerialPortSocket::setState(QAbstractSocket::SocketState state)
 		emit disconnected();
 }
 
+void SerialPortSocket::onParseDataException(const chainpack::ParseException &)
+{
+	// do not what to do
+}
+
 //======================================================
 // SslSocket
 //======================================================

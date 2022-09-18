@@ -131,6 +131,12 @@ void SocketRpcConnection::onRpcValueReceived(const shv::chainpack::RpcValue &rpc
 	emit rpcValueReceived(rpc_val);
 }
 
+void SocketRpcConnection::onParseDataException(const chainpack::ParseException &e)
+{
+	if(m_socket)
+		m_socket->onParseDataException(e);
+}
+
 bool SocketRpcConnection::isOpen()
 {
 	return isSocketConnected();

@@ -228,50 +228,90 @@ void RpcDriver::clearBuffers()
 
 void RpcDriver::processReadData()
 {
-	const std::string &read_data = m_readData;
-	logRpcData() << __FUNCTION__ << "data len:" << read_data.length();
-
 	using namespace shv::chainpack;
 
-	std::istringstream in(read_data);
+	size_t message_len;
+	Rpc::ProtocolType protocol_type;
+	RpcValue::MetaData meta_data;
+	size_t meta_data_end_pos;
+	while (!m_readData.empty()) {
+		logRpcData() << __FUNCTION__ << "data len:" << m_readData.length();
+		const std::string &read_data = m_readData;
+		try {
+			// read header and metadata
+			std::istringstream in(read_data);
+			int err_code;
+			uint64_t chunk_len = ChainPackReader::readUIntData(in, &err_code);
+			if(err_code == CCPCP_RC_BUFFER_UNDERFLOW) {
+				// not enough data
+				return;
+			}
+			if(err_code != CCPCP_RC_OK) {
+				throw ParseException(err_code, "Read RPC message length error.", -1);
+			}
 
-	bool ok;
-	uint64_t chunk_len = ChainPackReader::readUIntData(in, &ok);
-	if(!ok)
+			message_len = (size_t)in.tellg() + chunk_len;
+			protocol_type = (Rpc::ProtocolType)ChainPackReader::readUIntData(in, &err_code);
+			if(err_code == CCPCP_RC_BUFFER_UNDERFLOW) {
+				// not enough data
+				return;
+			}
+			if(err_code != CCPCP_RC_OK) {
+				throw ParseException(err_code, "Read RPC message protocol type error.", -1);
+			}
+
+			if(in.tellg() < 0) {
+				// end of stream
+				return;
+			}
+
+			logRpcData() << "\t expected message data length:" << message_len << "length available:" << read_data.size();
+			if(!isSkipCorruptedHeaders()) {
+				// wait for complete message
+				if(message_len > read_data.length())
+					return;
+			}
+
+			meta_data_end_pos = decodeMetaData(meta_data, protocol_type, read_data, in.tellg());
+			if(meta_data_end_pos > message_len)
+				throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata length mismatch", -1);
+		}
+		catch (const ParseException &e) {
+			if(e.errCode() == CCPCP_RC_BUFFER_UNDERFLOW) {
+				// not enough data
+				return;
+			}
+			logRpcData() << "ERROR - RpcMessage header corrupted:" << e.msg();
+			if(isSkipCorruptedHeaders()) {
+				// TODO: not very effective implementation
+				// reimplement without need to copy m_readData
+				// string_vew cannot be used, until it can be converted into istream
+				logRpcData() << "Trying to parse on next byte.";
+				m_readData = m_readData.substr(1);
+				continue;
+			}
+			else {
+				onParseDataException(e);
+				return;
+			}
+		}
+
+		if(m_protocolType == Rpc::ProtocolType::Invalid && protocol_type != Rpc::ProtocolType::Invalid) {
+			// if protocol version is not explicitly specified,
+			// it is set from first received message
+			m_protocolType = protocol_type;
+		}
+
+		try {
+			std::string msg_data = read_data.substr(meta_data_end_pos, message_len - meta_data_end_pos);
+			logRpcData() << message_len << "bytes of" << m_readData.size() << "processed";
+			m_readData = m_readData.substr(message_len);
+			onRpcDataReceived(protocol_type, std::move(meta_data), std::move(msg_data));
+		}
+		catch (const std::exception &e) {
+			nError() << "process RPC data error:" << e.what();
+		}
 		return;
-
-	size_t read_len = (size_t)in.tellg() + chunk_len;
-
-	Rpc::ProtocolType protocol_type = (Rpc::ProtocolType)ChainPackReader::readUIntData(in, &ok);
-	if(!ok)
-		return;
-
-	logRpcData() << "\t expected message data length:" << read_len << "length available:" << read_data.size();
-	if(read_len > read_data.length())
-		return;
-
-	if(in.tellg() < 0)
-		return;
-
-	if(m_protocolType == Rpc::ProtocolType::Invalid && protocol_type != Rpc::ProtocolType::Invalid) {
-		// if protocol version is not explicitly specified,
-		// it is set from first received message
-		m_protocolType = protocol_type;
-	}
-
-	try {
-		RpcValue::MetaData meta_data;
-		size_t meta_data_end_pos = decodeMetaData(meta_data, protocol_type, read_data, in.tellg());
-		if(meta_data_end_pos > read_len)
-			throw std::runtime_error("Data header corrupted");
-		std::string msg_data = read_data.substr(meta_data_end_pos, read_len - meta_data_end_pos);
-		logRpcData() << read_len << "bytes of" << m_readData.size() << "processed";
-		m_readData = m_readData.substr(read_len);
-		onRpcDataReceived(protocol_type, std::move(meta_data), std::move(msg_data));
-	}
-	catch (std::exception &e) {
-		nError() << "processReadData error:" << e.what();
-		onProcessReadDataException(e);
 	}
 }
 
@@ -287,7 +327,7 @@ size_t RpcDriver::decodeMetaData(RpcValue::MetaData &meta_data, Rpc::ProtocolTyp
 		RpcValue msg;
 		rd.read(msg);
 		if(!msg.isMap()) {
-			nError() << "JSON message cannot be translated to ChainPack";
+			throw ParseException(CCPCP_RC_MALFORMED_INPUT, "JSON message cannot be translated to ChainPack", -1);
 		}
 		else {
 			const RpcValue::Map &map = msg.toMap();
@@ -310,19 +350,20 @@ size_t RpcDriver::decodeMetaData(RpcValue::MetaData &meta_data, Rpc::ProtocolTyp
 		CponReader rd(in);
 		rd.read(meta_data);
 		meta_data_end_pos = (in.tellg() < 0)? data.size(): (size_t)in.tellg();
+		if(meta_data_end_pos == start_pos)
+			throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1);
 		break;
 	}
 	case Rpc::ProtocolType::ChainPack: {
 		ChainPackReader rd(in);
 		rd.read(meta_data);
 		meta_data_end_pos = (in.tellg() < 0)? data.size(): (size_t)in.tellg();
+		if(meta_data_end_pos == start_pos)
+			throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1);
 		break;
 	}
 	default:
-		SHVCHP_EXCEPTION("Unknown protocol type: " + Utils::toString((int)protocol_type));
-		//meta_data_end_pos = data.size();
-		//nError() << "Throwing away message with unknown protocol version:" << (unsigned)protocol_type;
-		//break;
+		throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Unknown protocol type: " + Utils::toString((int)protocol_type), -1);
 	}
 
 	return meta_data_end_pos;
@@ -373,7 +414,7 @@ RpcValue RpcDriver::decodeData(Rpc::ProtocolType protocol_type, const std::strin
 			break;
 		}
 	}
-	catch(AbstractStreamReader::ParseException &e) {
+	catch(ParseException &e) {
 		nError() << Rpc::protocolTypeToString(protocol_type) << "Decode data error:" << e.msg();
 		std::string data_piece = data.substr(e.pos() - 10*16, 20*16);
 		nError().nospace() << "Start offset: " << start_pos << " Data: from pos:" << (e.pos() - 10*16) << "\n" << shv::chainpack::Utils::hexDump(data_piece);

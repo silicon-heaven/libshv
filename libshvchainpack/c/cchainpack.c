@@ -788,9 +788,18 @@ void cchainpack_unpack_next (ccpcp_unpack_context* unpack_context)
 
 uint64_t cchainpack_unpack_uint_data(ccpcp_unpack_context *unpack_context, bool *ok)
 {
+	int err_code;
+	uint64_t n = cchainpack_unpack_uint_data2(unpack_context, &err_code);
+	if(ok)
+		*ok = (err_code == CCPCP_RC_OK);
+	return n;
+}
+
+uint64_t cchainpack_unpack_uint_data2(ccpcp_unpack_context *unpack_context, int *err_code)
+{
 	uint64_t n;
 	unpack_uint(unpack_context, &n, NULL);
-	if(ok)
-		*ok = (unpack_context->err_no == CCPCP_RC_OK);
+	if(err_code)
+		*err_code = unpack_context->err_no;
 	return n;
 }

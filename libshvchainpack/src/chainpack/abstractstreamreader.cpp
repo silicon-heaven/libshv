@@ -18,7 +18,7 @@ size_t unpack_underflow_handler(ccpcp_unpack_context *ctx)
 	return 1;
 }
 
-const char *AbstractStreamReader::ParseException::what() const noexcept
+const char *ParseException::what() const noexcept
 {
 	 return m_msg.data();
 }

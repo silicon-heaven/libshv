@@ -3,6 +3,7 @@
 #include "../shvchainpackglobal.h"
 #include "rpcmessage.h"
 #include "rpc.h"
+//#include "abstractstreamreader.h"
 
 #include <functional>
 #include <string>
@@ -11,6 +12,8 @@
 
 namespace shv {
 namespace chainpack {
+
+class ParseException;
 
 class SHVCHAINPACK_DECL_EXPORT RpcDriver
 {
@@ -29,6 +32,9 @@ public:
 	virtual void sendRawData(const RpcValue::MetaData &meta_data, std::string &&data);
 	using MessageReceivedCallback = std::function< void (const RpcValue &msg)>;
 	void setMessageReceivedCallback(const MessageReceivedCallback &callback) {m_messageReceivedCallback = callback;}
+
+	bool isSkipCorruptedHeaders() const { return m_skipCorruptedHeaders; }
+	void setSkipCorruptedHeaders(bool b) { m_skipCorruptedHeaders = b; }
 
 	static int defaultRpcTimeoutMsec() {return s_defaultRpcTimeoutMsec;}
 	static void setDefaultRpcTimeoutMsec(int msec) {s_defaultRpcTimeoutMsec = msec;}
@@ -78,7 +84,7 @@ protected:
 
 	virtual void onRpcDataReceived(Rpc::ProtocolType protocol_type, RpcValue::MetaData &&md, std::string &&data);
 	virtual void onRpcValueReceived(const RpcValue &msg);
-	virtual void onProcessReadDataException(std::exception &e) = 0;
+	virtual void onParseDataException(const shv::chainpack::ParseException &e) = 0;
 
 	void lockSendQueueGuard();
 	void unlockSendQueueGuard();
@@ -94,6 +100,7 @@ private:
 	std::string m_readData;
 	Rpc::ProtocolType m_protocolType = Rpc::ProtocolType::Invalid;
 	static int s_defaultRpcTimeoutMsec;
+	bool m_skipCorruptedHeaders = false;
 };
 
 } // namespace chainpack

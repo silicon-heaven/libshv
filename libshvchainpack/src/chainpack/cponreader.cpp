@@ -1,5 +1,5 @@
-#include "cpon.h"
 #include "cponreader.h"
+//#include "cpon.h"
 #include "../../c/ccpon.h"
 
 #include <iostream>
@@ -19,7 +19,7 @@ namespace chainpack {
 		abort(); \
 	} \
 	else { \
-		throw CponReader::ParseException(std::string("Cpon ") \
+		throw ParseException(m_inCtx.err_no, std::string("Cpon ") \
 			+ msg \
 			+ std::string(" at pos: ") + std::to_string(m_in.tellg()) \
 			+ std::string(" line: ") + std::to_string(m_inCtx.parser_line_no) \
@@ -201,8 +201,6 @@ RpcValue CponReader::readFile(const std::string &file_name, std::string *error)
 	std::string err_msg = "Cannot open file " + file_name + " for reading";
 	if(error)
 		*error = err_msg;
-	else
-		throw ParseException(err_msg, 0);
 	return {};
 }
 

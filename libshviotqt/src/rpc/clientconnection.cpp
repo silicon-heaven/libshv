@@ -196,6 +196,7 @@ void ClientConnection::open()
 			socket = new LocalSocket(new QLocalSocket());
 		}
 		else if(scheme == Socket::Scheme::SerialPort) {
+			setSkipCorruptedHeaders(true);
 			socket = new SerialPortSocket(new QSerialPort());
 		}
 		else {

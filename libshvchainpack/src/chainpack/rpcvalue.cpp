@@ -768,7 +768,7 @@ RpcValue RpcValue::fromCpon(const std::string &str, std::string *err)
 			if(err)
 				*err = std::string();
 		}
-		catch(CponReader::ParseException &e) {
+		catch(ParseException &e) {
 			if(err)
 				*err = e.what();
 		}
@@ -801,7 +801,7 @@ RpcValue RpcValue::fromChainPack(const std::string &str, std::string *err)
 			if(err)
 				*err = std::string();
 		}
-		catch(ChainPackReader::ParseException &e) {
+		catch(ParseException &e) {
 			if(err)
 				*err = e.what();
 		}
