@@ -9,8 +9,7 @@
 
 #include <necrolog.h>
 
-#include <cstdlib>
-
+//#include <cstdlib>
 #include <sstream>
 #include <iostream>
 
@@ -42,7 +41,7 @@ void RpcDriver::sendRpcValue(const RpcValue &msg)
 	//shvLogFuncFrame() << msg.toStdString();
 	logRpcRawMsg() << SND_LOG_ARROW << msg.toPrettyString();
 	std::string packed_data = codeRpcValue(protocolType(), msg);
-	logRpcData() << "protocol:" << Rpc::protocolTypeToString(protocolType())
+	logRpcData() << "SEND protocol:" << Rpc::protocolTypeToString(protocolType())
 				 << "packed data:"
 				 << ((protocolType() == Rpc::ProtocolType::ChainPack)? Utils::toHex(packed_data, 0, 250): packed_data.substr(0, 250));
 	enqueueDataToSend(MessageData{std::move(packed_data)});
@@ -231,14 +230,17 @@ void RpcDriver::clearBuffers()
 
 void RpcDriver::processReadData()
 {
+	logRpcData() << __PRETTY_FUNCTION__ << "+++++++++++++++++++++++++++++++++";
 	using namespace shv::chainpack;
 
+	static constexpr size_t MSG_LEN_MAX = 32 * 1024;
 	size_t message_len;
 	Rpc::ProtocolType protocol_type;
 	RpcValue::MetaData meta_data;
 	size_t meta_data_end_pos;
 	while (!m_readData.empty()) {
-		logRpcData() << __FUNCTION__ << "data len:" << m_readData.length();
+		//logRpcData() << __FUNCTION__ << "data len:" << m_readData.length();
+		logRpcData().nospace() << "READ DATA " << m_readData.length() << " bytes of data read:\n" << shv::chainpack::Utils::hexDump(m_readData);
 		const std::string &read_data = m_readData;
 		try {
 			// read header and metadata
@@ -247,6 +249,7 @@ void RpcDriver::processReadData()
 			uint64_t chunk_len = ChainPackReader::readUIntData(in, &err_code);
 			if(err_code == CCPCP_RC_BUFFER_UNDERFLOW) {
 				// not enough data
+				logRpcData() << "msg len not complete";
 				return;
 			}
 			if(err_code != CCPCP_RC_OK) {
@@ -257,6 +260,7 @@ void RpcDriver::processReadData()
 			protocol_type = (Rpc::ProtocolType)ChainPackReader::readUIntData(in, &err_code);
 			if(err_code == CCPCP_RC_BUFFER_UNDERFLOW) {
 				// not enough data
+				logRpcData() << "protocol_type not complete";
 				return;
 			}
 			if(err_code != CCPCP_RC_OK) {
@@ -268,14 +272,20 @@ void RpcDriver::processReadData()
 				return;
 			}
 
+			logRpcData() << "\t protocol_type:" << (int)protocol_type << Rpc::protocolTypeToString(protocol_type);
 			logRpcData() << "\t expected message data length:" << message_len << "length available:" << read_data.size();
-			if(!isSkipCorruptedHeaders()) {
+			if(isSkipCorruptedHeaders()) {
+				if(message_len > MSG_LEN_MAX)
+					throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Message too long: " + std::to_string(message_len), -1);
+			}
+			else {
 				// wait for complete message
 				if(message_len > read_data.length())
 					return;
 			}
 
 			meta_data_end_pos = decodeMetaData(meta_data, protocol_type, read_data, in.tellg());
+			logRpcData() << "\t meta_data_end_pos:" << meta_data_end_pos << meta_data.toPrettyString();
 			if(meta_data_end_pos > message_len)
 				throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata length mismatch", -1);
 		}
@@ -309,18 +319,20 @@ void RpcDriver::processReadData()
 			std::string msg_data = read_data.substr(meta_data_end_pos, message_len - meta_data_end_pos);
 			logRpcData() << message_len << "bytes of" << m_readData.size() << "processed";
 			m_readData = m_readData.substr(message_len);
-			constexpr bool test_rubbish = true;
+#ifdef TEST_RUBBISH
+			constexpr bool test_rubbish = false;//true;
 			if(test_rubbish) {
 				// append some rubbish before next message
 				std::string rubbish;
-				size_t len = std::rand() % 82 + 1;
+				size_t len = std::rand() % 4 + 1;
 				for(size_t i=0; i<len; ++i) {
 					char c = std::rand() % 256;
 					rubbish.push_back(c);
 				}
-				logRpcData() << "preppending" << len << "bytes of rubbish";
+				logRpcData() << "preppending" << len << "bytes of rubbish\n" << shv::chainpack::Utils::hexDump(rubbish);
 				m_readData = rubbish + m_readData;
 			}
+#endif
 			onRpcDataReceived(protocol_type, std::move(meta_data), std::move(msg_data));
 		}
 		catch (const std::exception &e) {
