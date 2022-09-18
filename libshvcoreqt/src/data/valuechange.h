@@ -158,7 +158,7 @@ public:
 	ValueType yType() const	{ return m_yType; }
 
 	ValueXInterval range() const;
-	bool addValueChange(const ValueChange &value);
+	bool addValueChange(const ValueChange &value, bool check_changes = true);
 	iterator insertValueChange(const_iterator position, const ValueChange &value);
 	void updateValueChange(const_iterator position, const ValueChange &new_value);
 

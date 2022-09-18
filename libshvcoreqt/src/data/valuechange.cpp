@@ -61,7 +61,7 @@ ValueXInterval SerieData::range() const
 	}
 }
 
-bool SerieData::addValueChange(const ValueChange &value)
+bool SerieData::addValueChange(const ValueChange &value, bool check_changes)
 {
 	int sz = size();
 	if (sz == 0) {
@@ -70,7 +70,7 @@ bool SerieData::addValueChange(const ValueChange &value)
 	}
 	else {
 		const ValueChange &last = at(sz - 1);
-		if (!compareValueX(last, value, xType()) && !compareValueY(last, value, yType())) {
+		if (!check_changes || (!compareValueX(last, value, xType()) && !compareValueY(last, value, yType()))) {
 			push_back(value);
 			return true;
 		}
