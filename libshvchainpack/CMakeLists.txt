@@ -26,9 +26,20 @@ if (NOT WIN32)
     target_sources(libshvchainpack-cpp PRIVATE src/chainpack/socketrpcdriver.cpp)
 endif()
 
-
 target_link_libraries(libshvchainpack-cpp libnecrolog libshvchainpack-c)
 target_include_directories(libshvchainpack-cpp PUBLIC include)
 target_compile_definitions(libshvchainpack-cpp PRIVATE SHVCHAINPACK_BUILD_DLL)
+
+function(add_shv_test test_name)
+    add_executable(test_${test_name}
+        tests/${test_name}.cpp
+        )
+    target_link_libraries(test_${test_name} libshvchainpack-cpp)
+    add_test(NAME test_${test_name} COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_${test_name})
+endfunction(add_shv_test)
+
+if(BUILD_TESTING)
+    add_shv_test(rpcvalue)
+endif()
 
 install(TARGETS libshvchainpack-cpp)
