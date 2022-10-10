@@ -14,6 +14,14 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU
 	set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic ${CMAKE_CXX_FLAGS}")
 endif()
 
+if(BUILD_TESTING)
+	find_package(doctest QUIET)
+	if(NOT doctest_FOUND)
+		message(STATUS "doctest library NOT found, disabling tests")
+		set(BUILD_TESTING OFF)
+	endif()
+endif()
+
 if (NOT TARGET libnecrolog)
 	add_subdirectory(3rdparty/necrolog)
 endif()
