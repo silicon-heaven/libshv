@@ -7,7 +7,6 @@
 #include <QStringView>
 #include <QVariant>
 #include <QDateTime>
-#include <QTimeZone>
 
 namespace shv {
 namespace coreqt {
