@@ -1,4 +1,4 @@
-add_library(libshviotqt SHARED
+qt_add_library(libshviotqt SHARED
     src/acl/aclmountdef.cpp
     src/acl/aclpassword.cpp
     src/acl/aclrole.cpp
@@ -21,7 +21,15 @@ add_library(libshviotqt SHARED
     src/utils.cpp
     src/utils/network.cpp
     )
-target_link_libraries(libshviotqt PUBLIC Qt::Network Qt::SerialPort libshvcoreqt)
+target_link_libraries(libshviotqt PUBLIC Qt::Network libshvcoreqt)
+
+if(NOT EMSCRIPTEN)
+    target_link_libraries(libshviotqt PUBLIC Qt::SerialPort)
+    target_sources(libshviotqt PRIVATE
+        src/rpc/serialportsocket.cpp
+        )
+endif()
+
 target_include_directories(libshviotqt PUBLIC include)
 target_compile_definitions(libshviotqt PRIVATE SHVIOTQT_BUILD_DLL)
 

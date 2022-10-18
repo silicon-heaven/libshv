@@ -1,4 +1,4 @@
-add_library(libshvcoreqt SHARED
+qt_add_library(libshvcoreqt SHARED
     src/data/valuechange.cpp
     src/exception.cpp
     src/log.cpp
