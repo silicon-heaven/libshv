@@ -2,6 +2,8 @@
 #include "graph.h"
 #include "graphmodel.h"
 
+#include <QDateTime>
+
 namespace shv {
 namespace visu {
 namespace timeline {
@@ -33,7 +35,9 @@ timemsec_t ChannelProbe::currentTime() const
 QString ChannelProbe::currentTimeIsoFormat() const
 {
 	QDateTime dt = QDateTime::fromMSecsSinceEpoch(m_currentTime);
+#if SHVVISU_HAS_TIMEZONE
 	dt = dt.toTimeZone(m_graph->timeZone());
+#endif
 	return dt.toString(Qt::ISODateWithMs);
 }
 

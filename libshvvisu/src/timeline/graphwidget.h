@@ -29,7 +29,9 @@ public:
 	Graph *graph();
 	const Graph *graph() const;
 
+#if SHVVISU_HAS_TIMEZONE
 	void setTimeZone(const QTimeZone &tz);
+#endif
 
 	void makeLayout(const QSize &preferred_size);
 	void makeLayout();

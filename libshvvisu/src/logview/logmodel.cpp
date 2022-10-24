@@ -3,6 +3,8 @@
 #include <shv/core/utils/shvfilejournal.h>
 #include <shv/core/log.h>
 
+#include <QDateTime>
+
 namespace cp = shv::chainpack;
 
 namespace shv {
@@ -18,6 +20,7 @@ LogModel::LogModel(QObject *parent)
 
 }
 
+#if SHVVISU_HAS_TIMEZONE
 void LogModel::setTimeZone(const QTimeZone &tz)
 {
 	m_timeZone = tz;
@@ -25,6 +28,7 @@ void LogModel::setTimeZone(const QTimeZone &tz)
 	auto ix2 = index(rowCount() - 1, ColDateTime);
 	emit dataChanged(ix1, ix2);
 }
+#endif
 
 void LogModel::setLog(const shv::chainpack::RpcValue &log)
 {
@@ -69,7 +73,9 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
 				if(msec == 0)
 					return QVariant();
 				QDateTime dt = QDateTime::fromMSecsSinceEpoch(msec);
+#if SHVVISU_HAS_TIMEZONE
 				dt = dt.toTimeZone(m_timeZone);
+#endif
 				return dt.toString(Qt::ISODateWithMs);
 			}
 			else if(index.column() == ColPath) {

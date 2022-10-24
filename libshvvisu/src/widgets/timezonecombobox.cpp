@@ -2,7 +2,9 @@
 
 #include <QKeyEvent>
 #include <QLineEdit>
+#if SHVVISU_HAS_TIMEZONE
 #include <QTimeZone>
+#endif
 #include <QDebug>
 
 namespace shv {
@@ -13,6 +15,7 @@ namespace visu {
 TimeZoneComboBox::TimeZoneComboBox(QWidget *parent)
 	: Super(parent)
 {
+#if SHVVISU_HAS_TIMEZONE
 	setEditable(true);
 	//addItem(LOCAL_TZ_ID);
 	for(auto tzn : QTimeZone::availableTimeZoneIds()) {
@@ -27,8 +30,10 @@ TimeZoneComboBox::TimeZoneComboBox(QWidget *parent)
 		}
 	});
 	*/
+#endif
 }
 
+#if SHVVISU_HAS_TIMEZONE
 QTimeZone TimeZoneComboBox::currentTimeZone() const
 {
 	if(currentIndex() < 0)
@@ -72,5 +77,6 @@ void TimeZoneComboBox::keyPressEvent(QKeyEvent *event)
 		ed->setFocus();
 	}
 }
+#endif
 
 }}

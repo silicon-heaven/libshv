@@ -18,7 +18,9 @@
 #include <QFont>
 #include <QPixmap>
 #include <QRect>
+#if SHVVISU_HAS_TIMEZONE
 #include <QTimeZone>
+#endif
 
 namespace shv {
 namespace visu {
@@ -105,8 +107,10 @@ public:
 	void setModel(GraphModel *model);
 	GraphModel *model() const;
 
+#if SHVVISU_HAS_TIMEZONE
 	void setTimeZone(const QTimeZone &tz);
 	QTimeZone timeZone() const;
+#endif
 
 	void setSettingsUserName(const QString &user);
 
@@ -287,7 +291,9 @@ protected:
 protected:
 	GraphModel *m_model = nullptr;
 
+#if SHVVISU_HAS_TIMEZONE
 	QTimeZone m_timeZone;
+#endif
 
 	Style m_style;
 	GraphChannel::Style m_defaultChannelStyle;

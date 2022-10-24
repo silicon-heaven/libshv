@@ -5,7 +5,10 @@
 #include <shv/core/utils.h>
 
 #include <QDialog>
+
+#if SHVVISU_HAS_TIMEZONE
 #include <QTimeZone>
+#endif
 
 namespace shv { namespace chainpack { class RpcValue; }}
 namespace shv { namespace iotqt { namespace rpc { class ClientConnection; }}}
@@ -46,7 +49,9 @@ private:
 	void showInfo(const QString &msg = QString(), bool is_error = false);
 	void saveData(const std::string &data, QString ext);
 
+#if SHVVISU_HAS_TIMEZONE
 	void setTimeZone(const QTimeZone &tz);
+#endif
 
 	void applyFilters(const QSet<QString> &channel_paths);
 	void onChannelsFilterClicked();
@@ -61,7 +66,9 @@ private:
 private:
 	Ui::DlgLogInspector *ui;
 
+#if SHVVISU_HAS_TIMEZONE
 	QTimeZone m_timeZone;
+#endif
 
 	shv::iotqt::rpc::ClientConnection* m_rpcConnection = nullptr;
 

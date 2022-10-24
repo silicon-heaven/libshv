@@ -78,6 +78,7 @@ void Graph::setSettingsUserName(const QString &user)
 	m_settingsUserName = user;
 }
 
+#if SHVVISU_HAS_TIMEZONE
 void Graph::setTimeZone(const QTimeZone &tz)
 {
 	shvDebug() << "set timezone:" << tz.id();
@@ -89,6 +90,7 @@ QTimeZone Graph::timeZone() const
 {
 	return m_timeZone;
 }
+#endif
 
 bool Graph::isInitialView() const
 {
@@ -939,7 +941,9 @@ QVariantMap Graph::sampleValues(int channel_ix, const shv::visu::timeline::Sampl
 	shvDebug() << channel_info.shvPath << channel_info.typeDescr.toRpcValue().toCpon();
 
 	QDateTime dt = QDateTime::fromMSecsSinceEpoch(s.time);
+#if SHVVISU_HAS_TIMEZONE
 	dt = dt.toTimeZone(timeZone());
+#endif
 	ret["sampleTime"] = dt;
 	ret["sampleValue"] = s.value;
 	auto rv = shv::coreqt::Utils::qVariantToRpcValue(s.value);
@@ -1570,8 +1574,10 @@ void Graph::drawXAxis(QPainter *painter)
 		painter->drawLine(p1, p2);
 		auto date_time_tz = [this](timemsec_t epoch_msec) {
 			QDateTime dt = QDateTime::fromMSecsSinceEpoch(epoch_msec);
+#if SHVVISU_HAS_TIMEZONE
 			if(m_timeZone.isValid())
 				dt = dt.toTimeZone(m_timeZone);
+#endif
 			return dt;
 		};
 		QString text;
@@ -2333,8 +2339,10 @@ void Graph::drawCurrentTimeMarker(QPainter *painter, time_t time)
 QString Graph::timeToStringTZ(timemsec_t time) const
 {
 	QDateTime dt = QDateTime::fromMSecsSinceEpoch(time);
+#if SHVVISU_HAS_TIMEZONE
 	if(m_timeZone.isValid())
 		dt = dt.toTimeZone(m_timeZone);
+#endif
 	QString text = dt.toString(Qt::ISODate);
 	return text;
 }

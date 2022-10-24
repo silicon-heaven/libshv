@@ -6,7 +6,9 @@
 #include <shv/core/utils/shvmemoryjournal.h>
 
 #include <QAbstractTableModel>
+#if SHVVISU_HAS_TIMEZONE
 #include <QTimeZone>
+#endif
 
 namespace shv {
 namespace visu {
@@ -21,8 +23,9 @@ public:
 	enum {ColDateTime = 0, ColPath, ColValue, ColShortTime, ColDomain, ColValueFlags, ColUserId,  ColCnt};
 public:
 	LogModel(QObject *parent = nullptr);
-
+#if SHVVISU_HAS_TIMEZONE
 	void setTimeZone(const QTimeZone &tz);
+#endif
 
 	void setLog(const shv::chainpack::RpcValue &log);
 	shv::chainpack::RpcValue log() const { return m_log; }
@@ -33,7 +36,9 @@ public:
 	QVariant data(const QModelIndex &index, int role) const override;
 protected:
 	shv::chainpack::RpcValue m_log;
+#if SHVVISU_HAS_TIMEZONE
 	QTimeZone m_timeZone;
+#endif
 };
 
 }}}

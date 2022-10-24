@@ -28,7 +28,9 @@
 #include <QSettings>
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
+#if SHVVISU_HAS_TIMEZONE
 #include <QTimeZone>
+#endif
 #include <QMessageBox>
 
 namespace cp = shv::chainpack;
@@ -190,11 +192,15 @@ DlgLogInspector::DlgLogInspector(const QString &shv_path, QWidget *parent) :
 
 	m_channelFilterDialog = new shv::visu::timeline::ChannelFilterDialog(this);
 
+#if SHVVISU_HAS_TIMEZONE
 	connect(ui->cbxTimeZone, &QComboBox::currentTextChanged, [this](const QString &) {
 		auto tz = ui->cbxTimeZone->currentTimeZone();
 		setTimeZone(tz);
 	});
 	setTimeZone(ui->cbxTimeZone->currentTimeZone());
+#else
+	ui->cbxTimeZone->setEnabled(false);
+#endif
 
 	connect(ui->btLoad, &QPushButton::clicked, this, &DlgLogInspector::downloadLog);
 
@@ -320,7 +326,11 @@ shv::chainpack::RpcValue DlgLogInspector::getLogParams()
 		QDateTime dt = ed->dateTime();
 		if(dt == ed->minimumDateTime())
 			return  cp::RpcValue();
+#if SHVVISU_HAS_TIMEZONE
 		dt = QDateTime(dt.date(), dt.time(), m_timeZone);
+#else
+		dt = QDateTime(dt.date(), dt.time());
+#endif
 		return cp::RpcValue(cp::RpcValue::DateTime::fromMSecsSinceEpoch(dt.toMSecsSinceEpoch()));
 	};
 	params.since = get_dt(ui->edSince);
@@ -489,6 +499,7 @@ void DlgLogInspector::saveData(const std::string &data, QString ext)
 	}
 }
 
+#if SHVVISU_HAS_TIMEZONE
 void DlgLogInspector::setTimeZone(const QTimeZone &tz)
 {
 	shvDebug() << "Setting timezone to:" << tz.id();
@@ -496,6 +507,7 @@ void DlgLogInspector::setTimeZone(const QTimeZone &tz)
 	m_logModel->setTimeZone(tz);
 	m_graphWidget->setTimeZone(tz);
 }
+#endif
 
 void DlgLogInspector::applyFilters(const QSet<QString> &channel_paths)
 {

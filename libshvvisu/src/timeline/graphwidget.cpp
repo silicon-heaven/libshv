@@ -72,10 +72,12 @@ const Graph *GraphWidget::graph() const
 	return m_graph;
 }
 
+#if SHVVISU_HAS_TIMEZONE
 void GraphWidget::setTimeZone(const QTimeZone &tz)
 {
 	graph()->setTimeZone(tz);
 }
+#endif
 
 void GraphWidget::makeLayout(const QSize &preferred_size)
 {
