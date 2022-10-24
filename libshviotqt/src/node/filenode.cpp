@@ -114,7 +114,7 @@ std::string FileNode::fileName(const ShvNode::StringViewList &shv_path) const
 
 chainpack::RpcValue FileNode::size(const StringViewList &shv_path) const
 {
-	return readContent(shv_path, 0, std::numeric_limits<int64_t>::max()).asBlob().size();
+	return static_cast<uint64_t>(readContent(shv_path, 0, std::numeric_limits<int64_t>::max()).asBlob().size());
 }
 
 chainpack::RpcValue FileNode::read(const ShvNode::StringViewList &shv_path, const chainpack::RpcValue &params) const
@@ -124,7 +124,7 @@ chainpack::RpcValue FileNode::read(const ShvNode::StringViewList &shv_path, cons
 	cp::RpcValue ret_value = readContent(shv_path, offset, size);
 	ret_value.setMetaValue("fileName", fileName(shv_path));
 	ret_value.setMetaValue("offset", offset);
-	ret_value.setMetaValue("size", ret_value.asBlob().size());
+	ret_value.setMetaValue("size", static_cast<uint64_t>(ret_value.asBlob().size()));
 	return ret_value;
 }
 
@@ -153,7 +153,7 @@ chainpack::RpcValue FileNode::readFileCompressed(const ShvNode::StringViewList &
 		result.setMetaValue("fileName", fileName(shv_path) + ".gz");
 	}
 	result.setMetaValue("offset", offset);
-	result.setMetaValue("size", result.asBlob().size());
+	result.setMetaValue("size", static_cast<uint64_t>(result.asBlob().size()));
 
 	return result;
 }
