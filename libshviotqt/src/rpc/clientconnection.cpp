@@ -21,7 +21,10 @@
 #include <QTimer>
 #include <QCryptographicHash>
 #include <QThread>
+#ifdef QT_SERIALPORT_LIB
+#include "serialportsocket.h"
 #include <QSerialPort>
+#endif
 
 #ifdef WITH_SHV_WEBSOCKETS
 #include <QWebSocket>
@@ -195,10 +198,13 @@ void ClientConnection::open()
 		else if(scheme == Socket::Scheme::LocalSocket) {
 			socket = new LocalSocket(new QLocalSocket());
 		}
+
+#ifdef QT_SERIALPORT_LIB
 		else if(scheme == Socket::Scheme::SerialPort) {
 			setSkipCorruptedHeaders(true);
 			socket = new SerialPortSocket(new QSerialPort());
 		}
+#endif
 		else {
 	#ifndef QT_NO_SSL
 			QSslSocket::PeerVerifyMode peer_verify_mode = isPeerVerify() ? QSslSocket::AutoVerifyPeer : QSslSocket::VerifyNone;
