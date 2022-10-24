@@ -82,6 +82,7 @@ chainpack::RpcValue Utils::qVariantToRpcValue(const QVariant &v, bool *ok)
 	case QMetaType::UInt: return chainpack::RpcValue(v.toUInt());
 	case QMetaType::ULongLong: return chainpack::RpcValue(static_cast<uint64_t>(v.toULongLong()));
 	case QMetaType::Char:
+	case QMetaType::SChar:
 	case QMetaType::Short:
 	case QMetaType::Int: return chainpack::RpcValue(v.toInt());
 	case QMetaType::LongLong: return chainpack::RpcValue(static_cast<int64_t>(v.toLongLong()));
@@ -121,7 +122,7 @@ chainpack::RpcValue Utils::qVariantToRpcValue(const QVariant &v, bool *ok)
 	default:
 		if(ok) {
 			*ok = false;
-			shvWarning() << "Cannot convert QVariant type:" << v.typeName() << "to RpcValue";
+			shvWarning() << "Cannot convert QVariant type:" << v.userType() << v.typeName() << "to RpcValue";
 			return chainpack::RpcValue();
 		}
 		return v.toString().toStdString();
