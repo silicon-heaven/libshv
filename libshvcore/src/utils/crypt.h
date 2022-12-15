@@ -4,6 +4,9 @@
 
 #include <limits>
 #include <functional>
+#include <cstdint>
+#include <cstddef>
+#include <string>
 
 namespace shv {
 namespace core {
