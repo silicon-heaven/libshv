@@ -125,22 +125,32 @@ std::vector<ShvAlarm> ShvAlarm::checkAlarms(const ShvTypeInfo &type_info, const 
 			return alarms;
 		}
 		if (type_descr.type() == ShvTypeDescr::Type::Enum) {
+			bool has_alarm_definition = false;
 			auto flds = type_descr.fields();
 			size_t active_alarm_ix = flds.size();
 			for (size_t i = 0; i < flds.size(); ++i) {
 				const ShvFieldDescr &fld_descr = flds[i];
 				if(string alarm = fld_descr.alarm(); !alarm.empty()) {
+					has_alarm_definition = true;
 					if(value == fld_descr.value())
 						active_alarm_ix = i;
 				}
 			}
-			const ShvFieldDescr &fld_descr = flds[active_alarm_ix];
-			return {ShvAlarm(shv_path,
-					active_alarm_ix < flds.size(),
-					ShvAlarm::severityFromString(fld_descr.alarm()),
-					fld_descr.alarmLevel(),
-					fld_descr.alarmDescription()
-				)};
+
+			if (has_alarm_definition) {
+				if (active_alarm_ix < flds.size()) {
+					const ShvFieldDescr &fld_descr = flds[active_alarm_ix];
+					return {ShvAlarm(shv_path,
+							active_alarm_ix < flds.size(),
+							ShvAlarm::severityFromString(fld_descr.alarm()),
+							fld_descr.alarmLevel(),
+							fld_descr.alarmDescription()
+						)};
+				}
+				else {
+					return {ShvAlarm(shv_path)};
+				}
+			}
 		}
 	}
 	return {};
