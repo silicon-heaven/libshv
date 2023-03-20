@@ -19,8 +19,8 @@ SHVCOREQT_DECL_EXPORT shv::chainpack::RpcValue stringListToRpcValue(const QStrin
 
 }}}
 
-template<> QString shv::chainpack::RpcValue::to<QString>() const;
-template<> QDateTime shv::chainpack::RpcValue::to<QDateTime>() const;
+template<> SHVCOREQT_DECL_EXPORT QString shv::chainpack::RpcValue::to<QString>() const;
+template<> SHVCOREQT_DECL_EXPORT QDateTime shv::chainpack::RpcValue::to<QDateTime>() const;
 
 namespace shv {
 namespace chainpack {
