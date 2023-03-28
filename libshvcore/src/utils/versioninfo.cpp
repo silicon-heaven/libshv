@@ -42,7 +42,7 @@ std::string VersionInfo::toString() const
 
 int VersionInfo::toInt() const
 {
-	return m_majorNumber * 10000 + m_minorNumber * 100 + m_patchNumber;
+	return m_majorNumber * 1000000 + m_minorNumber * 1000 + m_patchNumber;
 }
 
 bool VersionInfo::operator==(const VersionInfo &v) const
