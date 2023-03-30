@@ -703,7 +703,10 @@ chainpack::AccessGrant BrokerApp::accessGrantForRequest(rpc::CommonRpcClientHand
 		flatten_user_roles = aclManager()->flattenRole(cp::Rpc::ROLE_MASTER_BROKER);
 	}
 	else {
-		flatten_user_roles = aclManager()->userFlattenRoles(conn->loggedUserName());
+		if (auto user_def = aclManager()->user(conn->loggedUserName()); user_def.isValid()) {
+			flatten_user_roles = aclManager()->userFlattenRoles(conn->loggedUserName(), user_def.roles);
+		}
+
 	}
 	//logAclResolveM() << "user:" << conn->loggedUserName() << "flatten roles:";
 	//for(const AclManager::FlattenRole &flatten_role : flatten_user_roles) {

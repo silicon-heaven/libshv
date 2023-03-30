@@ -77,7 +77,8 @@ shv::chainpack::RpcValue CurrentClientShvNode::callMethodRq(const shv::chainpack
 			auto *cli = app->clientById(client_id);
 			if(cli) {
 				const string user_name = cli->userName();
-				std::vector<shv::broker::AclManager::FlattenRole> roles = app->aclManager()->userFlattenRoles(user_name);
+				auto user_def = shv::broker::BrokerApp::instance()->aclManager()->user(user_name);
+				std::vector<shv::broker::AclManager::FlattenRole> roles = app->aclManager()->userFlattenRoles(user_name, user_def.roles);
 				cp::RpcValue::List ret;
 				std::transform(roles.begin(), roles.end(), std::back_inserter(ret), [](const shv::broker::AclManager::FlattenRole &r) -> cp::RpcValue {
 					return r.name;
