@@ -39,6 +39,7 @@
 #include <QSocketNotifier>
 #include <QSqlDatabase>
 #include <QTimer>
+#include <QThread>
 #include <QUdpSocket>
 
 #include <ctime>
@@ -517,9 +518,31 @@ bool BrokerApp::checkTunnelSecret(const std::string &s)
 	return m_tunnelSecretList.checkSecret(s);
 }
 
+class AuthThread : public QThread {
+	Q_OBJECT
+public:
+	AuthThread(const chainpack::UserLoginContext& ctx)
+		: m_ctx(ctx)
+	{
+	}
+	void run() override
+	{
+		auto result = BrokerApp::instance()->aclManager()->checkPassword(m_ctx);
+		emit resultReady(result);
+	}
+
+	Q_SIGNAL void resultReady(const chainpack::UserLoginResult& s);
+
+private:
+	chainpack::UserLoginContext m_ctx;
+};
+
 void BrokerApp::checkLogin(const chainpack::UserLoginContext &ctx, const std::function<void(chainpack::UserLoginResult)> cb)
 {
-	cb(aclManager()->checkPassword(ctx));
+	auto auth_thread = new AuthThread(ctx);
+	connect(auth_thread, &AuthThread::resultReady, this, cb);
+	connect(auth_thread, &AuthThread::finished, auth_thread, &QObject::deleteLater);
+	auth_thread->start();
 }
 
 void BrokerApp::sendNewLogEntryNotify(const std::string &msg)
@@ -1425,3 +1448,4 @@ void BrokerApp::setAclManager(AclManager *mng)
 
 
 }
+#include "brokerapp.moc"
