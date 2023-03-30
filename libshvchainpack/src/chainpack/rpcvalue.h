@@ -503,6 +503,8 @@ public:
 			return toDateTime();
 		else if constexpr (std::is_same<T, Decimal>())
 			return toDecimal();
+		else if constexpr (std::is_same<T, RpcValue::List>())
+			return asList();
 	}
 
 	size_t count() const;

@@ -77,6 +77,10 @@ public:
 	rpc::WebSocketServer* webSocketServer();
 #endif
 
+#ifdef WITH_SHV_LDAP
+	void setGroupForLdapUser(const std::string_view& user_name, const std::string_view& group_name);
+#endif
+
 	rpc::CommonRpcClientHandle* commonClientConnectionById(int connection_id);
 
 	QSqlDatabase sqlConfigConnection();
@@ -95,6 +99,20 @@ public:
 
 	const std::string& brokerId() const { return m_brokerId; }
 	iotqt::node::ShvNode * nodeForService(const shv::core::utils::ShvUrl &spp);
+
+#ifdef WITH_SHV_LDAP
+	struct LdapConfig {
+		std::string hostName;
+		std::string searchBaseDN;
+		std::string searchAttr;
+		struct GroupMapping {
+			std::string ldapGroup;
+			std::string shvGroup;
+		};
+		std::vector<GroupMapping> groupMapping;
+	};
+#endif
+
 protected:
 	virtual void initDbConfigSqlConnection();
 	virtual AclManager* createAclManager();
@@ -132,6 +150,7 @@ private:
 	std::string primaryIPAddress(bool &is_public);
 
 	void propagateSubscriptionsToMasterBroker(rpc::MasterBrokerConnection *mbrconn);
+
 protected:
 	AppCliOptions *m_cliOptions;
 	std::string m_brokerId;
@@ -141,6 +160,12 @@ protected:
 	rpc::WebSocketServer *m_webSocketServer = nullptr;
 	rpc::WebSocketServer *m_webSocketSslServer = nullptr;
 #endif
+#ifdef WITH_SHV_LDAP
+	// LDAP username -> group
+	std::map<std::string, std::string> m_ldapUserGroups;
+	std::optional<LdapConfig> m_ldapConfig;
+#endif
+
 	shv::iotqt::node::ShvNodeTree *m_nodesTree = nullptr;
 	TunnelSecretList m_tunnelSecretList;
 #ifdef USE_SHV_PATHS_GRANTS_CACHE

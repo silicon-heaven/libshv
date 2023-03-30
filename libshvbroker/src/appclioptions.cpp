@@ -40,6 +40,13 @@ AppCliOptions::AppCliOptions()
 	addOption("masters.connections").setType(cp::RpcValue::Type::Map).setComment("Can be used from config file only.");
 	addOption("masters.enabled").setType(cp::RpcValue::Type::Bool).setNames("--mce", "--master-connections-enabled").setComment("Enable slave connections to master broker.");
 
+#ifdef WITH_SHV_LDAP
+	addOption("ldap.hostname").setType(cp::RpcValue::Type::String).setNames("--ldap-host").setComment("Set the LDAP server hostname");
+	addOption("ldap.searchBaseDN").setType(cp::RpcValue::Type::String).setNames("--ldap-search-base-dn").setComment("Set the base DN for LDAP searches (the DN where user entries live)");
+	addOption("ldap.searchAttr").setType(cp::RpcValue::Type::String).setNames("--ldap-search-attr").setComment("Set the LDAP attr containing the login name for LDAP user entries");
+	addOption("ldap.groupMapping").setType(cp::RpcValue::Type::List).setComment("Set the mapping of LDAP groups to shv groups as an ordered list of pairs");
+#endif
+
 	//addOption("master.broker.device.id").setType(shv::chainpack::RpcValue::Type::String).setNames("--master-broker-device-id").setComment("Master broker device ID");
 }
 

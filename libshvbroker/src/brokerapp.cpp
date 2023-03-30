@@ -15,6 +15,10 @@
 #include "rpc/websocketserver.h"
 #endif
 
+#ifdef WITH_SHV_LDAP
+#include <shv/broker/ldap/ldap.h>
+#endif
+
 #include <shv/iotqt/utils/network.h>
 #include <shv/iotqt/node/shvnode.h>
 #include <shv/iotqt/node/shvnodetree.h>
@@ -257,6 +261,42 @@ BrokerApp::BrokerApp(int &argc, char **argv, AppCliOptions *cli_opts)
 			}
 		});
 	}
+
+#ifdef WITH_SHV_LDAP
+	if (cli_opts->ldapHostname_isset()) {
+		shvInfo() << "Enabling LDAP authentication";
+
+		if (!cli_opts->ldapSearchBaseDN_isset()) {
+			SHV_EXCEPTION("LDAP searchBaseDN not set");
+		}
+
+		if (!cli_opts->ldapSearchAttr_isset()) {
+			SHV_EXCEPTION("LDAP searchBaseDN not set");
+		}
+
+		if (!cli_opts->ldapGroupMapping_isset()) {
+			SHV_EXCEPTION("LDAP groupMapping not set");
+		}
+
+		auto cli_group_mapping = cli_opts->ldapGroupMapping();
+		std::vector<LdapConfig::GroupMapping> group_mapping;
+		std::transform(cli_group_mapping.begin(),
+					   cli_group_mapping.end(),
+					   std::back_inserter(group_mapping),
+					   [] (const auto& mapping) {
+						   return LdapConfig::GroupMapping {
+							   .ldapGroup = mapping.asList().at(0).asString(),
+							   .shvGroup = mapping.asList().at(1).asString()
+						   };
+					   });
+		m_ldapConfig = LdapConfig {
+			.hostName = cli_opts->ldapHostname(),
+			.searchBaseDN = cli_opts->ldapSearchBaseDN(),
+			.searchAttr = cli_opts->ldapSearchAttr(),
+			.groupMapping = group_mapping
+		};
+	}
+#endif
 
 	QTimer::singleShot(0, this, &BrokerApp::lazyInit);
 }
@@ -521,25 +561,80 @@ bool BrokerApp::checkTunnelSecret(const std::string &s)
 class AuthThread : public QThread {
 	Q_OBJECT
 public:
+#ifdef WITH_SHV_LDAP
+	AuthThread(const chainpack::UserLoginContext& ctx, const std::optional<BrokerApp::LdapConfig>& ldap_config)
+#else
 	AuthThread(const chainpack::UserLoginContext& ctx)
+#endif
 		: m_ctx(ctx)
+#ifdef WITH_SHV_LDAP
+		, m_ldapConfig(ldap_config)
+#endif
 	{
 	}
 	void run() override
 	{
-		auto result = BrokerApp::instance()->aclManager()->checkPassword(m_ctx);
-		emit resultReady(result);
+		if (auto result = BrokerApp::instance()->aclManager()->checkPassword(m_ctx); result.passwordOk) {
+			emit resultReady(result);
+			return;
+		}
+
+#ifdef WITH_SHV_LDAP
+		if (m_ldapConfig) {
+			try {
+				auto ldap = ldap::Ldap::create(m_ldapConfig->hostName);
+				ldap->setVersion(ldap::Version::Version3);
+				ldap->connect();
+				auto login_details = m_ctx.userLogin();
+				ldap->bindSasl(login_details.user, login_details.password);
+				auto ldap_groups = ldap::getGroupsForUser(ldap, m_ldapConfig->searchBaseDN, m_ldapConfig->searchAttr, login_details.user);
+				if (auto it = std::find_if(m_ldapConfig->groupMapping.begin(), m_ldapConfig->groupMapping.end(), [&ldap_groups] (const auto& mapping) {
+					return std::find_if(ldap_groups.begin(), ldap_groups.end(), [&mapping] (const auto& ldap_group) {
+						return mapping.ldapGroup == ldap_group;
+					}) != ldap_groups.end();
+				}); it != m_ldapConfig->groupMapping.end()) {
+					emit shvGroupForLdapUserReady(login_details.user, it->shvGroup);
+				}
+				emit resultReady(chainpack::UserLoginResult{true});
+			} catch(ldap::LdapError& err) {
+				// FIXME: If the LDAP host is set, the user probably depends on ldap, so I can probably just emit
+				// and take what LDAP says for granted.
+				emit resultReady(chainpack::UserLoginResult{false, err.what()});
+			}
+			return;
+		}
+#endif
+
+		emit resultReady(chainpack::UserLoginResult{false});
 	}
 
 	Q_SIGNAL void resultReady(const chainpack::UserLoginResult& s);
+#ifdef WITH_SHV_LDAP
+	Q_SIGNAL void shvGroupForLdapUserReady(const std::string& user_name, const std::string& shv_group);
+#endif
 
 private:
 	chainpack::UserLoginContext m_ctx;
+#ifdef WITH_SHV_LDAP
+	std::optional<BrokerApp::LdapConfig> m_ldapConfig;
+#endif
 };
+
+#ifdef WITH_SHV_LDAP
+void BrokerApp::setGroupForLdapUser(const std::string_view& user_name, const std::string_view& group_name)
+{
+	m_ldapUserGroups.emplace(user_name, group_name);
+}
+#endif
 
 void BrokerApp::checkLogin(const chainpack::UserLoginContext &ctx, const std::function<void(chainpack::UserLoginResult)> cb)
 {
+#ifdef WITH_SHV_LDAP
+	auto auth_thread = new AuthThread(ctx, m_ldapConfig);
+	connect(auth_thread, &AuthThread::shvGroupForLdapUserReady, this, &BrokerApp::setGroupForLdapUser);
+#else
 	auto auth_thread = new AuthThread(ctx);
+#endif
 	connect(auth_thread, &AuthThread::resultReady, this, cb);
 	connect(auth_thread, &AuthThread::finished, auth_thread, &QObject::deleteLater);
 	auth_thread->start();
@@ -706,6 +801,13 @@ chainpack::AccessGrant BrokerApp::accessGrantForRequest(rpc::CommonRpcClientHand
 		if (auto user_def = aclManager()->user(conn->loggedUserName()); user_def.isValid()) {
 			flatten_user_roles = aclManager()->userFlattenRoles(conn->loggedUserName(), user_def.roles);
 		}
+#ifdef WITH_SHV_LDAP
+		else if (BrokerApp::instance()->cliOptions()->ldapHostname_isset()) {
+			if (auto it = m_ldapUserGroups.find(conn->loggedUserName()); it != m_ldapUserGroups.end()) {
+				flatten_user_roles = aclManager()->userFlattenRoles(conn->loggedUserName(), {it->second});
+			}
+		}
+#endif
 
 	}
 	//logAclResolveM() << "user:" << conn->loggedUserName() << "flatten roles:";

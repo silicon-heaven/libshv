@@ -43,6 +43,13 @@ public:
 	CLIOPTION_GETTER_SETTER2(shv::chainpack::RpcValue, "masters.connections", m, setM, asterBrokersConnections)
 	CLIOPTION_GETTER_SETTER2(bool, "masters.enabled", is, set, MasterBrokersEnabled)
 
+#ifdef WITH_SHV_LDAP
+	CLIOPTION_GETTER_SETTER2(std::string, "ldap.hostname", l, setL, dapHostname)
+	CLIOPTION_GETTER_SETTER2(std::string, "ldap.searchBaseDN", l, setL, dapSearchBaseDN)
+	CLIOPTION_GETTER_SETTER2(std::string, "ldap.searchAttr", l, setL, dapSearchAttr)
+	CLIOPTION_GETTER_SETTER2(chainpack::RpcValue::List, "ldap.groupMapping", l, setL, dapGroupMapping)
+#endif
+
 	//CLIOPTION_GETTER_SETTER2(std::string, "master.broker.device.id", m, setM, asterBrokerDeviceId)
 };
 
