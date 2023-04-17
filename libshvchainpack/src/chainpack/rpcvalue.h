@@ -208,6 +208,14 @@ public:
 				return RpcValue();
 			return operator [](ix);
 		}
+		const RpcValue& valref(size_t ix) const
+		{
+			if(ix >= size()) {
+				static RpcValue s;
+				return s;
+			}
+			return operator [](ix);
+		}
 		static List fromStringList(const std::vector<std::string> &sl)
 		{
 			List ret;
