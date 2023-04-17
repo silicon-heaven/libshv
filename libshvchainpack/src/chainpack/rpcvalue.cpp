@@ -1186,6 +1186,26 @@ RpcValue RpcValue::MetaData::value(const String &key, const RpcValue &def_val) c
 	return def_val;
 }
 
+const RpcValue &RpcValue::MetaData::valref(Int key) const
+{
+	const IMap &m = iValues();
+	auto it = m.find(key);
+	if(it != m.end())
+		return it->second;
+	static const RpcValue def_val;
+	return def_val;
+}
+
+const RpcValue &RpcValue::MetaData::valref(const String &key) const
+{
+	const Map &m = sValues();
+	auto it = m.find(key);
+	if(it != m.end())
+		return it->second;
+	static const RpcValue def_val;
+	return def_val;
+}
+
 void RpcValue::MetaData::setValue(RpcValue::Int key, const RpcValue &val)
 {
 	if(val.isValid()) {
