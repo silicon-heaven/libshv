@@ -286,7 +286,7 @@ void ClientConnectionOnBroker::processLoginPhase()
 	auto t = opts.value(cp::Rpc::OPT_IDLE_WD_TIMEOUT, 3 * 60).toInt();
 	setIdleWatchDogTimeOut(t);
 	if(tunnelOptions().isMap()) {
-		const std::string &secret = tunnelOptions().asMap().value(cp::Rpc::KEY_SECRET).asString();
+		const std::string secret = tunnelOptions().asMap().value(cp::Rpc::KEY_SECRET).asString();
 		cp::UserLoginResult result;
 		result.passwordOk = checkTunnelSecret(secret);
 		setLoginResult(result);

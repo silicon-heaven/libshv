@@ -103,11 +103,11 @@ shv::chainpack::RpcValue CurrentClientShvNode::callMethodRq(const shv::chainpack
 			auto *app = shv::broker::BrokerApp::instance();
 			auto *cli = app->clientById(client_id);
 			if(cli) {
-				const shv::chainpack::RpcValue::List &plist = rq.params().asList();
-				const string &shv_path_param = plist.value(0).asString();
+				const shv::chainpack::RpcValue::List plist = rq.params().asList();
+				const string shv_path_param = plist.value(0).asString();
 				if(shv_path_param.empty())
 					SHV_EXCEPTION("Shv path not specified in params.");
-				const string &method_param = plist.value(1).asString();
+				const string method_param = plist.value(1).asString();
 				if(method_param.empty())
 					SHV_EXCEPTION("Method not specified in params.");
 				shv::chainpack::AccessGrant acg = app->accessGrantForRequest(cli, shv::core::utils::ShvUrl(shv_path_param), method_param, rq.accessGrant());
@@ -120,11 +120,11 @@ shv::chainpack::RpcValue CurrentClientShvNode::callMethodRq(const shv::chainpack
 			auto *app = shv::broker::BrokerApp::instance();
 			auto *cli = app->clientById(client_id);
 			if(cli) {
-				const shv::chainpack::RpcValue::List &plist = rq.params().asList();
-				const string &shv_path_param = plist.value(0).asString();
+				const shv::chainpack::RpcValue::List plist = rq.params().asList();
+				const string shv_path_param = plist.value(0).asString();
 				if(shv_path_param.empty())
 					SHV_EXCEPTION("Shv path not specified in params.");
-				const string &method_param = plist.value(1).asString();
+				const string method_param = plist.value(1).asString();
 				if(method_param.empty())
 					SHV_EXCEPTION("Method not specified in params.");
 				shv::chainpack::AccessGrant acg = app->accessGrantForRequest(cli, shv::core::utils::ShvUrl(shv_path_param), method_param, rq.accessGrant());

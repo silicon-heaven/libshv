@@ -26,23 +26,23 @@ void MasterBrokerConnection::setOptions(const shv::chainpack::RpcValue &slave_br
 
 		shv::iotqt::rpc::DeviceAppCliOptions device_opts;
 
-		const cp::RpcValue::Map &server = m.value("server").asMap();
+		const cp::RpcValue::Map server = m.value("server").asMap();
 		device_opts.setServerHost(server.value("host", "localhost").asString());
 		device_opts.setServerPeerVerify(server.value("peerVerify", true).toBool());
 
-		const cp::RpcValue::Map &login = m.value(cp::Rpc::KEY_LOGIN).asMap();
+		const cp::RpcValue::Map login = m.value(cp::Rpc::KEY_LOGIN).asMap();
 		static const std::vector<std::string> keys {"user", "password", "passwordFile", "type"};
 		for(const std::string &key : keys) {
 			if(login.hasKey(key))
 				device_opts.setValue("login." + key, login.value(key).asString());
 		}
-		const cp::RpcValue::Map &rpc = m.value("rpc").asMap();
+		const cp::RpcValue::Map rpc = m.value("rpc").asMap();
 		if(rpc.count("heartbeatInterval") == 1)
 			device_opts.setHeartBeatInterval(rpc.value("heartbeatInterval", 60).toInt());
 		if(rpc.count("reconnectInterval") == 1)
 			device_opts.setReconnectInterval(rpc.value("reconnectInterval").toInt());
 
-		const cp::RpcValue::Map &device = m.value(cp::Rpc::KEY_DEVICE).asMap();
+		const cp::RpcValue::Map device = m.value(cp::Rpc::KEY_DEVICE).asMap();
 		if(device.count("id") == 1)
 			device_opts.setDeviceId(device.value("id").asString());
 		if(device.count("idFile") == 1)

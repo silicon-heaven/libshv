@@ -163,7 +163,7 @@ std::pair<unsigned, unsigned> ShvFieldDescr::bitRange() const
 	unsigned bit_no1 = 0;
 	unsigned bit_no2 = 0;
 	if(value().isList()) {
-		const auto &lst = value().asList();
+		const auto lst = value().asList();
 		bit_no1 = lst.value(0).toUInt();
 		bit_no2 = lst.value(1).toUInt();
 		if(bit_no2 < bit_no1) {
@@ -632,7 +632,8 @@ ShvDeviceDescription ShvDeviceDescription::fromRpcValue(const chainpack::RpcValu
 	const auto &map = v.asMap();
 	ret.superDeviceType = map.value("superDeviceType").asString();
 	ret.siteSpecific = map.value("siteSpecific").toBool();
-	for(const auto &rv : map.value("properties").asList()) {
+	const auto prop_list = map.value("properties").asList();
+	for(const auto &rv : prop_list) {
 		ret.properties.push_back(ShvPropertyDescr::fromRpcValue(rv));
 	}
 	return ret;
@@ -995,19 +996,19 @@ ShvTypeInfo ShvTypeInfo::fromRpcValue(const RpcValue &v)
 	ShvTypeInfo ret;
 	if(version == 3 || version == 4) {
 		{
-			const RpcValue::Map &m = map.value(TYPES).asMap();
+			const RpcValue::Map m = map.value(TYPES).asMap();
 			for(const auto &kv : m) {
 				ret.m_types[kv.first] = ShvTypeDescr::fromRpcValue(kv.second);
 			}
 		}
 		{
-			const RpcValue::Map &m = map.value(DEVICE_PATHS).asMap();
+			const RpcValue::Map m = map.value(DEVICE_PATHS).asMap();
 			for(const auto &kv : m) {
 				ret.m_devicePaths[kv.first] = kv.second.asString();
 			}
 		}
 		if(version == 3) {
-			const RpcValue::Map &m = map.value(DEVICE_PROPERTIES).asMap();
+			const RpcValue::Map m = map.value(DEVICE_PROPERTIES).asMap();
 			for(const auto &[device_type, prop_map] : m) {
 				const RpcValue::Map &pm = prop_map.asMap();
 				auto &dev_descr = ret.m_deviceDescriptions[device_type];
@@ -1019,7 +1020,7 @@ ShvTypeInfo ShvTypeInfo::fromRpcValue(const RpcValue &v)
 			}
 		}
 		else {
-			const RpcValue::Map &m = map.value(DEVICE_DESCRIPTIONS).asMap();
+			const RpcValue::Map m = map.value(DEVICE_DESCRIPTIONS).asMap();
 			for(const auto &[device_type, rv] : m) {
 				auto &dev_descr = ret.m_deviceDescriptions[device_type];
 				dev_descr = ShvDeviceDescription::fromRpcValue(rv);
@@ -1027,14 +1028,14 @@ ShvTypeInfo ShvTypeInfo::fromRpcValue(const RpcValue &v)
 		}
 		ret.m_extraTags = map.value(EXTRA_TAGS).asMap();
 		{
-			const RpcValue::Map &m = map.value(SYSTEM_PATHS_ROOTS).asMap();
+			const RpcValue::Map m = map.value(SYSTEM_PATHS_ROOTS).asMap();
 			for(const auto &[key, val] : m) {
 				ret.m_systemPathsRoots[key] = val.asString();
 			}
 		}
 		ret.m_blacklistedPaths = map.value(BLACKLISTED_PATHS).asMap();
 		{
-			const RpcValue::Map &m = map.value(PROPERTY_DEVIATIONS).asMap();
+			const RpcValue::Map m = map.value(PROPERTY_DEVIATIONS).asMap();
 			for(const auto &[shv_path, node_descr] : m) {
 				ret.m_propertyDeviations[shv_path] = ShvPropertyDescr::fromRpcValue(node_descr);
 			}
@@ -1043,14 +1044,14 @@ ShvTypeInfo ShvTypeInfo::fromRpcValue(const RpcValue &v)
 	else if(map.hasKey(PATHS) && map.hasKey(TYPES)) {
 		// version 2
 		{
-			const RpcValue::Map &m = map.value(TYPES).asMap();
+			const RpcValue::Map m = map.value(TYPES).asMap();
 			for(const auto &kv : m) {
 				ret.m_types[kv.first] = ShvTypeDescr::fromRpcValue(kv.second);
 			}
 		}
 		{
 			auto &dev_descr = ret.m_deviceDescriptions[""];
-			const RpcValue::Map &m = map.value(PATHS).asMap();
+			const RpcValue::Map m = map.value(PATHS).asMap();
 			for(const auto &[path, val] : m) {
 				auto nd = ShvPropertyDescr::fromRpcValue(val);
 				nd.setTypeName(val.asMap().value("type").asString());
@@ -1187,7 +1188,8 @@ void ShvTypeInfo::fromNodesTree_helper(const RpcValue::Map &node_types,
 	bool new_device_type_entered = device_description == nullptr;
 	static const string CREATE_FROM_TYPE_NAME = "createFromTypeName";
 	static const string SYSTEM_PATH = "systemPath";
-	for(const RpcValue &rv : node.metaValue("methods").asList()) {
+	const auto method_list = node.metaValue("methods").asList();
+	for(const RpcValue &rv : method_list) {
 		const auto mm = MetaMethod::fromRpcValue(rv);
 		const string &method_name = mm.name();
 		if(method_name == Rpc::METH_LS || method_name == Rpc::METH_DIR)
@@ -1199,10 +1201,10 @@ void ShvTypeInfo::fromNodesTree_helper(const RpcValue::Map &node_types,
 			setExtraTags(key, mm.tags());
 		}
 	}
-	const RpcValue::Map &node_tags = node.metaValue(KEY_TAGS).asMap();
+	const RpcValue::Map node_tags = node.metaValue(KEY_TAGS).asMap();
 	if(!node_tags.empty()) {
 		RpcValue::Map tags_map = node_tags;
-		const string &dtype = tags_map.value(KEY_DEVICE_TYPE).asString();
+		const string dtype = tags_map.value(KEY_DEVICE_TYPE).asString();
 		if(!dtype.empty()) {
 			current_device_type = dtype;
 			current_device_path = utils::joinPath(device_path, property_path);

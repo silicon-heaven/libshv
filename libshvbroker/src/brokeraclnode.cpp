@@ -174,7 +174,7 @@ chainpack::RpcValue MountsAclNode::callMethod(const iotqt::node::ShvNode::String
 		if(method == M_SET_VALUE) {
 			if(params.isList()) {
 				const auto &lst = params.asList();
-				const std::string &dev_id = lst.value(0).asString();
+				const std::string dev_id = lst.value(0).asString();
 				chainpack::RpcValue rv = lst.value(1);
 				auto v = acl::AclMountDef::fromRpcValue(rv);
 				if(rv.isValid() && !rv.isNull() && !v.isValid())
@@ -266,7 +266,7 @@ chainpack::RpcValue RolesAclNode::callMethod(const iotqt::node::ShvNode::StringV
 		if(method == M_SET_VALUE) {
 			if(params.isList()) {
 				const auto &lst = params.asList();
-				const std::string &role_name = lst.value(0).asString();
+				const std::string role_name = lst.value(0).asString();
 
 				chainpack::RpcValue rv = lst.value(1);
 				auto v = acl::AclRole::fromRpcValue(rv);
@@ -361,7 +361,7 @@ chainpack::RpcValue UsersAclNode::callMethod(const iotqt::node::ShvNode::StringV
 		if(method == M_SET_VALUE) {
 			if(params.isList()) {
 				const auto &lst = params.asList();
-				const std::string &name = lst.value(0).asString();
+				const std::string name = lst.value(0).asString();
 				chainpack::RpcValue rv = lst.value(1);
 				auto user = acl::AclUser::fromRpcValue(rv);
 				if(rv.isValid() && !rv.isNull() && !user.isValid())
@@ -495,7 +495,7 @@ chainpack::RpcValue AccessAclNode::callMethod(const iotqt::node::ShvNode::String
 		if(method == M_SET_VALUE) {
 			if(params.isList()) {
 				const auto &lst = params.asList();
-				const std::string &role_name = lst.value(0).asString();
+				const std::string role_name = lst.value(0).asString();
 				chainpack::RpcValue rv = lst.value(1);
 				auto v = acl::AclRoleAccessRules::fromRpcValue(rv);
 				AclManager *mng = BrokerApp::instance()->aclManager();
