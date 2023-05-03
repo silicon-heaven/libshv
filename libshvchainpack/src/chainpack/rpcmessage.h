@@ -172,6 +172,7 @@ public:
 public:
 	RpcRequest& setRequestId(const RpcValue::Int requestId) = delete;
 
+	using RpcRequest::write;
 	static void write(AbstractStreamWriter &wr, const std::string &method, std::function<void (AbstractStreamWriter &)> write_params_callback);
 };
 

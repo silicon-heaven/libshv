@@ -196,7 +196,7 @@ ShvLogTypeDescr ShvLogTypeDescr::fromRpcValue(const RpcValue &v)
 		ret.sampleType = sampleTypeFromString(m.value("sampleType").asString());
 		ret.description = m.value("description").toString();
 		int current_value = 0;
-		for(const auto &rv : m.value("fields").toList()) {
+		for(const auto &rv : m.valref("fields").toList()) {
 			auto fld = ShvLogTypeDescrField::fromRpcValue(rv);
 			if(ret.type == Type::Enum) {
 				if(fld.value.isInt())
@@ -242,10 +242,10 @@ ShvLogPathDescr ShvLogPathDescr::fromRpcValue(const RpcValue &v)
 	if(v.isMap()) {
 		const RpcValue::Map &m = v.toMap();
 		ShvLogPathDescr ret = ShvLogPathDescr::fromTags(m.value("tags").asMap());
-		const string &type_name = m.value("type").asString();
+		const string &type_name = m.valref("type").asString();
 		if(!type_name.empty())
 			ret.typeName = type_name;
-		const string &description = m.value("description").asString();
+		const string &description = m.valref("description").asString();
 		if(!description.empty())
 			ret.description = description;
 		return ret;
@@ -297,11 +297,11 @@ ShvLogTypeInfo ShvLogTypeInfo::fromRpcValue(const RpcValue &v)
 {
 	ShvLogTypeInfo ret;
 	const RpcValue::Map &m = v.toMap();
-	const RpcValue::Map &mt = m.value("types").toMap();
+	const RpcValue::Map &mt = m.valref("types").toMap();
 	for(const auto &kv : mt) {
 		ret.types[kv.first] = ShvLogTypeDescr::fromRpcValue(kv.second);
 	}
-	const RpcValue::Map &mp = m.value("paths").toMap();
+	const RpcValue::Map &mp = m.valref("paths").toMap();
 	for(const auto &kv : mp) {
 		ret.paths[kv.first] = ShvLogPathDescr::fromRpcValue(kv.second);
 	}

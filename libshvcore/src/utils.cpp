@@ -279,7 +279,7 @@ static RpcValue decompress_nodes_tree_helper(const RpcValue::Map &node_types, co
 
 RpcValue Utils::decompressNodesTree(const chainpack::RpcValue &compressed_nodes_tree)
 {
-	const RpcValue::Map &node_types = compressed_nodes_tree.metaData().value("nodeTypes").asMap();
+	const RpcValue::Map &node_types = compressed_nodes_tree.metaData().valref("nodeTypes").asMap();
 
 	if (node_types.empty()) {
 		shvDebug() << "nodesTree is not compressed";
