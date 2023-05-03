@@ -27,10 +27,10 @@ AclRole AclRole::fromRpcValue(const shv::chainpack::RpcValue &v)
 		//ret.name = m.value("name").toString();
 		ret.weight = m.value("weight").toInt();
 		std::vector<std::string> roles;
-		for(auto v : m.value("roles").toList())
+		for(auto v : m.valref("roles").toList())
 			roles.push_back(v.toString());
 		// legacy key for 'roles' was 'grants'
-		for(auto v : m.value("grants").toList())
+		for(auto v : m.valref("grants").toList())
 			roles.push_back(v.toString());
 		ret.roles = roles;
 		ret.profile = m.value("profile");

@@ -208,6 +208,14 @@ public:
 				return RpcValue();
 			return operator [](ix);
 		}
+		const RpcValue& valref(size_t ix) const
+		{
+			if(ix >= size()) {
+				static RpcValue s;
+				return s;
+			}
+			return operator [](ix);
+		}
 		static List fromStringList(const std::vector<std::string> &sl)
 		{
 			List ret;
@@ -226,6 +234,15 @@ public:
 			auto it = find(key);
 			if(it == end())
 				return default_val;
+			return it->second;
+		}
+		const RpcValue& valref(const String &key) const
+		{
+			auto it = find(key);
+			if(it == end()) {
+				static const auto s = RpcValue();
+				return s;
+			}
 			return it->second;
 		}
 		void setValue(const String &key, const RpcValue &val)
@@ -258,6 +275,15 @@ public:
 			auto it = find(key);
 			if(it == end())
 				return default_val;
+			return it->second;
+		}
+		const RpcValue& valref(Int key) const
+		{
+			auto it = find(key);
+			if(it == end()) {
+				static const auto s = RpcValue();
+				return s;
+			}
 			return it->second;
 		}
 		void setValue(Int key, const RpcValue &val)
@@ -304,6 +330,8 @@ public:
 		bool hasKey(const RpcValue::String &key) const;
 		RpcValue value(RpcValue::Int key, const RpcValue &def_val = RpcValue()) const;
 		RpcValue value(const RpcValue::String &key, const RpcValue &def_val = RpcValue()) const;
+		const RpcValue& valref(RpcValue::Int key) const;
+		const RpcValue& valref(const String &key) const;
 		void setValue(RpcValue::Int key, const RpcValue &val);
 		void setValue(const RpcValue::String &key, const RpcValue &val);
 		size_t size() const;

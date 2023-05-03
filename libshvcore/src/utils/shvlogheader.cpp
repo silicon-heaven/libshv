@@ -1,6 +1,5 @@
 #include "shvlogheader.h"
 
-#include "../stringview.h"
 #include "../exception.h"
 
 #include <algorithm>
@@ -29,7 +28,7 @@ const char *ShvLogHeader::Column::name(ShvLogHeader::Column::Enum e)
 ShvLogHeader ShvLogHeader::fromMetaData(const chainpack::RpcValue::MetaData &md)
 {
 	ShvLogHeader ret;
-	const chainpack::RpcValue::Map &device = md.value("device").toMap();
+	const chainpack::RpcValue::Map &device = md.valref("device").toMap();
 	ret.setDeviceId(device.value("id").asString());
 	ret.setDeviceType(device.value("type").asString());
 	ret.setLogVersion(md.value("logVersion").toInt());
@@ -43,7 +42,7 @@ ShvLogHeader ShvLogHeader::fromMetaData(const chainpack::RpcValue::MetaData &md)
 	ret.setFields(md.value("fields").toList());
 	ret.setPathDict(md.value("pathsDict").toIMap());
 	{
-		const chainpack::RpcValue::Map &m = md.value("typeInfos").toMap();
+		const chainpack::RpcValue::Map &m = md.valref("typeInfos").toMap();
 		for(const auto &kv : m) {
 			ret.m_typeInfos[kv.first] = ShvLogTypeInfo::fromRpcValue(kv.second);
 		}
