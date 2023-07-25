@@ -86,6 +86,10 @@ protected:
 		std::map<std::string, std::vector<std::string>> userFlattenRoles;
 	} m_cache;
 
+	std::map<std::string, std::vector<std::string>> m_azureUserGroups;
+public:
+	void setGroupForAzureUser(const std::string_view& user_name, const std::vector<std::string>& group_name);
+
 #ifdef WITH_SHV_LDAP
 	std::map<std::string, std::vector<std::string>> m_ldapUserGroups;
 public:

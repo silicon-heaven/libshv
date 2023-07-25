@@ -6,6 +6,8 @@
 #include "rpcmessage.h"
 #include "rpcvalue.h"
 
+#include <optional>
+
 namespace shv {
 namespace chainpack {
 
@@ -28,6 +30,7 @@ struct SHVCHAINPACK_DECL_EXPORT UserLoginResult
 	std::string loginError;
 	int clientId = 0;
 	std::string brokerId;
+	std::optional<std::string> userNameOverride;
 
 	UserLoginResult() = default;
 	UserLoginResult(bool password_ok) : UserLoginResult(password_ok, std::string()) {}
@@ -41,7 +44,7 @@ struct SHVCHAINPACK_DECL_EXPORT UserLoginResult
 struct SHVCHAINPACK_DECL_EXPORT UserLogin
 {
 public:
-	enum class LoginType {Invalid = 0, Plain, Sha1, RsaOaep, None};
+	enum class LoginType {Invalid = 0, Plain, Sha1, RsaOaep, None, AzureAccessToken};
 
 	std::string user;
 	std::string password;

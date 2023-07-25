@@ -28,6 +28,7 @@ inline unsigned qHash(const std::string &s) noexcept //Q_DECL_NOEXCEPT_EXPR(noex
 #include <optional>
 #include "ldapconfig.h"
 #endif
+#include "azureconfig.h"
 #include <set>
 
 class QSocketNotifier;
@@ -91,6 +92,7 @@ public:
 #ifdef WITH_SHV_LDAP
 	std::optional<LdapConfig> ldapConfig();
 #endif
+	std::optional<AzureConfig> azureConfig();
 	void setAclManager(AclManager *mng);
 	void reloadConfig();
 	void reloadConfigRemountDevices();
@@ -155,6 +157,7 @@ protected:
 	// LDAP username -> group
 	std::optional<LdapConfig> m_ldapConfig;
 #endif
+	std::optional<AzureConfig> m_azureConfig;
 
 	shv::iotqt::node::ShvNodeTree *m_nodesTree = nullptr;
 	TunnelSecretList m_tunnelSecretList;

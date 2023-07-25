@@ -416,6 +416,7 @@ void ClientConnection::onSocketConnectedChanged(bool is_connected)
 chainpack::RpcValue ClientConnection::createLoginParams(const chainpack::RpcValue &server_hello) const
 {
 	shvDebug() << server_hello.toCpon() << "login type:" << static_cast<int>(loginType());
+	std::string user_name = user();
 	std::string pass;
 	if(loginType() == chainpack::IRpcConnection::LoginType::Sha1) {
 		std::string server_nonce = server_hello.asMap().value("nonce").toString();
@@ -438,12 +439,17 @@ chainpack::RpcValue ClientConnection::createLoginParams(const chainpack::RpcValu
 		pass = password();
 		shvDebug() << "plain password:" << pass;
 	}
+	else if(loginType() == chainpack::IRpcConnection::LoginType::AzureAccessToken) {
+		user_name = "";
+		pass = password();
+		shvDebug() << "AzureAccessToken:" << pass;
+	}
 	else {
 		shvError() << "Login type:" << chainpack::UserLogin::loginTypeToString(loginType()) << "not supported";
 	}
 	return cp::RpcValue::Map {
 		{"login", cp::RpcValue::Map {
-			{"user", user()},
+			{"user", user_name},
 			{"password", pass},
 			{"type", chainpack::UserLogin::loginTypeToString(loginType())},
 		 },
