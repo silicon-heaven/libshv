@@ -240,6 +240,29 @@ void do_open_function(const auto& ldap_lib, auto fn_name, auto& fn_field)
 }
 #endif
 
+namespace {
+auto transform_cli_group_mapping(const chainpack::RpcValue::List& cli_group_mapping)
+{
+	std::vector<GroupMapping> group_mapping;
+	std::transform(cli_group_mapping.begin(),
+				   cli_group_mapping.end(),
+				   std::back_inserter(group_mapping),
+				   [] (const auto& mapping) {
+					   auto mapping_list = mapping.asList();
+					   if (mapping_list.size() != 2) {
+						   SHV_EXCEPTION(__PRETTY_FUNCTION__ + std::string{": group mapping isn't a pair."});
+					   }
+					   return GroupMapping {
+						   .nativeGroup = mapping.asList().at(0).asString(),
+						   .shvGroup = mapping.asList().at(1).asString()
+					   };
+				   });
+
+	return group_mapping;
+}
+
+}
+
 static const auto SQL_CONFIG_CONN_NAME = QStringLiteral("ShvBrokerDbConfigSqlConnection");
 BrokerApp::BrokerApp(int &argc, char **argv, AppCliOptions *cli_opts)
 	: Super(argc, argv)
@@ -342,24 +365,13 @@ BrokerApp::BrokerApp(int &argc, char **argv, AppCliOptions *cli_opts)
 						   return attr.asString();
 					   });
 
-		auto cli_group_mapping = cli_opts->ldapGroupMapping();
-		std::vector<LdapConfig::GroupMapping> group_mapping;
-		std::transform(cli_group_mapping.begin(),
-					   cli_group_mapping.end(),
-					   std::back_inserter(group_mapping),
-					   [] (const auto& mapping) {
-						   return LdapConfig::GroupMapping {
-							   .ldapGroup = mapping.asList().at(0).asString(),
-							   .shvGroup = mapping.asList().at(1).asString()
-						   };
-					   });
 		m_ldapConfig = LdapConfig {
 			.brokerUsername = cli_opts->ldapUsername_isset() ? std::optional(cli_opts->ldapUsername()) : std::nullopt,
 			.brokerPassword = cli_opts->ldapPassword_isset() ? std::optional(cli_opts->ldapPassword()) : std::nullopt,
 			.hostName = cli_opts->ldapHostname(),
 			.searchBaseDN = cli_opts->ldapSearchBaseDN(),
 			.searchAttrs = search_attrs,
-			.groupMapping = group_mapping
+			.groupMapping = transform_cli_group_mapping(cli_opts->ldapGroupMapping())
 		};
 		new LdapAclNode(*m_ldapConfig, etc_acl_root_node);
 	}
@@ -642,7 +654,7 @@ public:
 			std::vector<std::string> res_shv_groups{login_details.user};
 			if (auto it = std::find_if(m_ldapConfig.groupMapping.begin(), m_ldapConfig.groupMapping.end(), [&ldap_groups] (const auto& mapping) {
 				return std::find_if(ldap_groups.begin(), ldap_groups.end(), [&mapping] (const auto& ldap_group) {
-					return mapping.ldapGroup == ldap_group;
+					return mapping.nativeGroup == ldap_group;
 				}) != ldap_groups.end();
 			}); it != m_ldapConfig.groupMapping.end()) {
 				res_shv_groups.push_back(it->shvGroup);
