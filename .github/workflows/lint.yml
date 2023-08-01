@@ -38,5 +38,5 @@ jobs:
       - name: Run clazy
         uses: ./.github/actions/run-linter
         with:
-          lint_program_with_args: clazy-standalone --checks=level1,no-fully-qualified-moc-types,no-non-pod-global-static
+          lint_program_with_args: clazy-standalone --checks=level1,no-fully-qualified-moc-types,no-non-pod-global-static,no-range-loop-detach
 

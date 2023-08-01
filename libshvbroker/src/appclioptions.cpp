@@ -47,5 +47,6 @@ AppCliOptions::AppCliOptions()
 	addOption("ldap.searchAttrs").setType(cp::RpcValue::Type::List).setNames("--ldap-search-attrs").setComment("Set the LDAP attributes containing the login name for LDAP user entries");
 	addOption("ldap.groupMapping").setType(cp::RpcValue::Type::List).setComment("Set the mapping of LDAP groups to shv groups as an ordered list of pairs");
 #endif
+	addOption("azure.groupMapping").setType(cp::RpcValue::Type::List).setComment("Set the mapping of Azure groups to shv groups as an ordered list of pairs");
 }
 }

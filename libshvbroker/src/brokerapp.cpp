@@ -48,6 +48,12 @@
 #include <QTimer>
 #include <QUdpSocket>
 
+#include <QNetworkReply>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QFuture>
+
 #include <ctime>
 #include <fstream>
 
@@ -240,6 +246,34 @@ void do_open_function(const auto& ldap_lib, auto fn_name, auto& fn_field)
 }
 #endif
 
+std::optional<AzureConfig> BrokerApp::azureConfig()
+{
+	return m_azureConfig;
+}
+
+namespace {
+auto transform_cli_group_mapping(const chainpack::RpcValue::List& cli_group_mapping)
+{
+	std::vector<GroupMapping> group_mapping;
+	std::transform(cli_group_mapping.begin(),
+				   cli_group_mapping.end(),
+				   std::back_inserter(group_mapping),
+				   [] (const auto& mapping) {
+					   auto mapping_list = mapping.asList();
+					   if (mapping_list.size() != 2) {
+						   SHV_EXCEPTION(__PRETTY_FUNCTION__ + std::string{": group mapping isn't a pair."});
+					   }
+					   return GroupMapping {
+						   .nativeGroup = mapping.asList().at(0).asString(),
+						   .shvGroup = mapping.asList().at(1).asString()
+					   };
+				   });
+
+	return group_mapping;
+}
+
+}
+
 static const auto SQL_CONFIG_CONN_NAME = QStringLiteral("ShvBrokerDbConfigSqlConnection");
 BrokerApp::BrokerApp(int &argc, char **argv, AppCliOptions *cli_opts)
 	: Super(argc, argv)
@@ -342,28 +376,22 @@ BrokerApp::BrokerApp(int &argc, char **argv, AppCliOptions *cli_opts)
 						   return attr.asString();
 					   });
 
-		auto cli_group_mapping = cli_opts->ldapGroupMapping();
-		std::vector<LdapConfig::GroupMapping> group_mapping;
-		std::transform(cli_group_mapping.begin(),
-					   cli_group_mapping.end(),
-					   std::back_inserter(group_mapping),
-					   [] (const auto& mapping) {
-						   return LdapConfig::GroupMapping {
-							   .ldapGroup = mapping.asList().at(0).asString(),
-							   .shvGroup = mapping.asList().at(1).asString()
-						   };
-					   });
 		m_ldapConfig = LdapConfig {
 			.brokerUsername = cli_opts->ldapUsername_isset() ? std::optional(cli_opts->ldapUsername()) : std::nullopt,
 			.brokerPassword = cli_opts->ldapPassword_isset() ? std::optional(cli_opts->ldapPassword()) : std::nullopt,
 			.hostName = cli_opts->ldapHostname(),
 			.searchBaseDN = cli_opts->ldapSearchBaseDN(),
 			.searchAttrs = search_attrs,
-			.groupMapping = group_mapping
+			.groupMapping = transform_cli_group_mapping(cli_opts->ldapGroupMapping())
 		};
 		new LdapAclNode(*m_ldapConfig, etc_acl_root_node);
 	}
 #endif
+	if (cli_opts->azureGroupMapping_isset()) {
+		m_azureConfig = AzureConfig {
+			.groupMapping = transform_cli_group_mapping(cli_opts->azureGroupMapping())
+		};
+	}
 
 	QTimer::singleShot(0, this, &BrokerApp::lazyInit);
 }
@@ -642,7 +670,7 @@ public:
 			std::vector<std::string> res_shv_groups{login_details.user};
 			if (auto it = std::find_if(m_ldapConfig.groupMapping.begin(), m_ldapConfig.groupMapping.end(), [&ldap_groups] (const auto& mapping) {
 				return std::find_if(ldap_groups.begin(), ldap_groups.end(), [&mapping] (const auto& ldap_group) {
-					return mapping.ldapGroup == ldap_group;
+					return mapping.nativeGroup == ldap_group;
 				}) != ldap_groups.end();
 			}); it != m_ldapConfig.groupMapping.end()) {
 				res_shv_groups.push_back(it->shvGroup);
@@ -663,8 +691,100 @@ private:
 };
 #endif
 
+#if QT_VERSION_MAJOR >= 6
+namespace azure {
+namespace {
+[[noreturn]] void throw_with_msg(const std::string& msg)
+{
+	throw std::runtime_error{"Azure authorization failed: " + msg};
+}
+}
+}
+
+class AzureAuth : public QObject {
+	Q_OBJECT
+public:
+	AzureAuth(const chainpack::UserLoginContext& ctx, const AzureConfig& azure_config)
+		: m_azureConfig(azure_config)
+		, m_ctx(ctx)
+		, m_manager(new QNetworkAccessManager(this))
+	{
+		do_request(QUrl{"https://graph.microsoft.com/v1.0/me"}).then(this, [this] (const QJsonDocument& json) {
+			if (!json.object().contains("id")) {
+				azure::throw_with_msg("Couldn't fetch user ID");
+			}
+
+			m_username = json.object()["id"].toString().toStdString();
+			return do_request(QUrl{"https://graph.microsoft.com/v1.0/me/transitiveMemberOf"});
+		}).unwrap().then(this, [this] (const QJsonDocument& json) {
+			std::vector<std::string> res_shv_groups;
+			if (!json.object().contains("value")) {
+				azure::throw_with_msg("Couldn't fetch user groups");
+			}
+			for (const auto& group : json.object()["value"].toArray()) {
+				if (group.toObject()["@odata.type"].toString() == "#microsoft.graph.group") {
+					auto group_id = group.toObject()["id"].toString().toStdString();
+					if (auto it = std::find_if(m_azureConfig.groupMapping.begin(), m_azureConfig.groupMapping.end(), [group_id] (const auto& mapping) {
+						return mapping.nativeGroup == group_id;
+					}); it != m_azureConfig.groupMapping.end()) {
+						res_shv_groups.emplace_back(it->shvGroup);
+					}
+				}
+			}
+
+			auto result = chainpack::UserLoginResult{true};
+			result.userNameOverride = m_username;
+			emit resultReady(result, m_username, res_shv_groups);
+		}).onFailed([this] (const std::runtime_error& ex) {
+			auto result = chainpack::UserLoginResult{false, ex.what()};
+			result.userNameOverride = m_username;
+			emit resultReady(result, m_username, {});
+		});
+
+	}
+
+	Q_SIGNAL void resultReady(const chainpack::UserLoginResult& s, std::string user_name, const std::vector<std::string>& shv_groups);
+
+private:
+	QFuture<QJsonDocument> do_request(auto url)
+	{
+		QNetworkRequest request;
+		request.setRawHeader("Authorization", QByteArray("Bearer ") + QByteArray::fromStdString(m_ctx.userLogin().password));
+		request.setUrl(url);
+		auto reply = m_manager->get(request);
+		return QtFuture::connect(reply, &QNetworkReply::finished).then([reply]() {
+			reply->deleteLater();
+			if (reply->error() != QNetworkReply::NoError) {
+				azure::throw_with_msg(reply->errorString().toStdString());
+			}
+
+			const auto json = reply->readAll();
+			return QJsonDocument::fromJson(json);
+		});
+	}
+
+	AzureConfig m_azureConfig;
+	chainpack::UserLoginContext m_ctx;
+	std::string m_username;
+	QNetworkAccessManager* m_manager;
+};
+#endif
+
 void BrokerApp::checkLogin(const chainpack::UserLoginContext &ctx, const QObject* connection_ctx, const std::function<void(chainpack::UserLoginResult)> cb)
 {
+	if (ctx.userLogin().loginType == chainpack::UserLogin::LoginType::AzureAccessToken && m_azureConfig) {
+#if QT_VERSION_MAJOR >= 6
+		auto azure_auth = new AzureAuth(ctx, *m_azureConfig);
+		connect(azure_auth, &AzureAuth::resultReady, connection_ctx, [cb, azure_auth] (const auto& azure_result, const auto& user_name, const auto& shv_groups) {
+			BrokerApp::instance()->aclManager()->setGroupForAzureUser(user_name, shv_groups);
+			cb(azure_result);
+			azure_auth->deleteLater();
+		});
+#else
+		shvError() << "Client tried to connect via Azure, but Azure is not supported in this Qt5 build.";
+#endif
+		return;
+	}
 	auto result = BrokerApp::instance()->aclManager()->checkPassword(ctx);
 	// If the user exists in the ACL manager, we'll take the result as decisive.
 	if (aclManager()->user(ctx.userLogin().user).isValid()) {

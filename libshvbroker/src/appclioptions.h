@@ -46,6 +46,7 @@ public:
 	CLIOPTION_GETTER_SETTER2(chainpack::RpcValue::List, "ldap.searchAttrs", l, setL, dapSearchAttrs)
 	CLIOPTION_GETTER_SETTER2(chainpack::RpcValue::List, "ldap.groupMapping", l, setL, dapGroupMapping)
 #endif
+	CLIOPTION_GETTER_SETTER2(chainpack::RpcValue::List, "azure.groupMapping", a, setA, zureGroupMapping)
 };
 
 }}

@@ -281,6 +281,11 @@ chainpack::RpcValue AclManager::userProfile(const std::string &user_name)
 	return ret;
 }
 
+void AclManager::setGroupForAzureUser(const std::string_view& user_name, const std::vector<std::string>& group_name)
+{
+	m_azureUserGroups.emplace(user_name, group_name);
+}
+
 #ifdef WITH_SHV_LDAP
 void AclManager::setGroupForLdapUser(const std::string_view& user_name, const std::vector<std::string>& group_name)
 {
@@ -335,11 +340,13 @@ cp::AccessGrant AclManager::accessGrantForShvPath(const std::string& user_name, 
 		}
 #ifdef WITH_SHV_LDAP
 		// I don't have to check if ldap is enabled - if m_ldapUserGroups is non-empty, it must've been enabled.
-		else if (auto it = m_ldapUserGroups.find(user_name); it != m_ldapUserGroups.end()) {
-			flatten_user_roles = userFlattenRoles(user_name, it->second);
+		else if (auto ldap_it = m_ldapUserGroups.find(user_name); ldap_it != m_ldapUserGroups.end()) {
+			flatten_user_roles = userFlattenRoles(user_name, ldap_it->second);
 		}
 #endif
-
+		else if (auto azure_it = m_azureUserGroups.find(user_name); azure_it != m_azureUserGroups.end()) {
+			flatten_user_roles = userFlattenRoles(user_name, azure_it->second);
+		}
 	}
 	logAclResolveM() << "searched rules:" << [this, &flatten_user_roles]()
 	{

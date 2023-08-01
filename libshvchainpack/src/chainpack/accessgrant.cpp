@@ -40,6 +40,7 @@ const char* UserLogin::loginTypeToString(UserLogin::LoginType t)
 	case LoginType::Plain: return "PLAIN";
 	case LoginType::Sha1: return "SHA1";
 	case LoginType::RsaOaep: return "RSAOAEP";
+	case LoginType::AzureAccessToken: return "AZURE";
 	default: return "INVALID";
 	}
 }
@@ -54,6 +55,8 @@ UserLogin::LoginType UserLogin::loginTypeFromString(const std::string &s)
 		return LoginType::Sha1;
 	if(str_eq(s, loginTypeToString(LoginType::RsaOaep)))
 		return LoginType::RsaOaep;
+	if(str_eq(s, loginTypeToString(LoginType::AzureAccessToken)))
+		return LoginType::AzureAccessToken;
 	return LoginType::Invalid;
 }
 

@@ -298,6 +298,9 @@ void ClientConnectionOnBroker::processLoginPhase()
 	}
 	Super::processLoginPhase();
 	BrokerApp::instance()->checkLogin(m_userLoginContext, this, [this] (auto result) {
+		if (result.userNameOverride) {
+			m_userLogin.user = result.userNameOverride.value();
+		}
 		setLoginResult(result);
 	});
 }
