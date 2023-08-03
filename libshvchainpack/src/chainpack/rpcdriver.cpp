@@ -406,8 +406,8 @@ RpcValue RpcDriver::decodeData(Rpc::ProtocolType protocol_type, const std::strin
 		logRpcDataW() << Rpc::protocolTypeToString(protocol_type) << "Decode data error:" << e.msg();
 		auto err_pos = std::min(static_cast<size_t>(e.pos()), data.size());
 		auto hexdump_start_pos = err_pos - std::min(err_pos, static_cast<size_t>(10*16));
-		std::string data_piece = data.substr(hexdump_start_pos, 20*16);
-		logRpcDataW().nospace() << "Start offset: " << start_pos << " Data: from pos:" << hexdump_start_pos << "\n" << shv::chainpack::Utils::hexDump(data_piece);
+		logRpcDataW().nospace() << "Start offset: " << start_pos << " Data: from pos:"
+								<< hexdump_start_pos << "\n" << shv::chainpack::utils::hexDump(data.data() + hexdump_start_pos, 10*16);
 	}
 	return ret;
 }
