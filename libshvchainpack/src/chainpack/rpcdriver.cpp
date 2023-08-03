@@ -9,6 +9,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <cassert>
 
 #define logRpcRawMsg() nCMessage("RpcRawMsg")
 #define logRpcData() nCMessage("RpcData")
@@ -220,7 +221,7 @@ void RpcDriver::processReadData()
 	size_t message_len;
 	Rpc::ProtocolType protocol_type;
 	RpcValue::MetaData meta_data;
-	size_t meta_data_end_pos;
+	size_t meta_data_end_pos = 0;
 	while (!m_readData.empty()) {
 		logRpcData().nospace() << "READ DATA " << m_readData.length() << " bytes of data read:\n" << shv::chainpack::Utils::hexDump(m_readData);
 		const std::string &read_data = m_readData;
@@ -271,7 +272,7 @@ void RpcDriver::processReadData()
 				return;
 			}
 			logRpcDataW() << "ERROR - RpcMessage header corrupted:" << e.msg();
-			logRpcDataW() << "The error occured in data:\n" << shv::chainpack::Utils::hexDump(m_readData);
+			logRpcDataW() << "The error occured in data:\n" << shv::chainpack::utils::hexDump(m_readData.data(), 1024);
 			onParseDataException(e);
 			return;
 		}
@@ -282,6 +283,7 @@ void RpcDriver::processReadData()
 			m_protocolType = protocol_type;
 		}
 
+		assert(meta_data_end_pos > 0);
 		std::string msg_data;
 		try {
 			msg_data = read_data.substr(meta_data_end_pos, message_len - meta_data_end_pos);
