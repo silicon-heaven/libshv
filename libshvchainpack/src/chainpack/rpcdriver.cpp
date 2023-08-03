@@ -10,6 +10,7 @@
 #include <sstream>
 #include <iostream>
 #include <cassert>
+#include <algorithm>
 
 #define logRpcRawMsg() nCMessage("RpcRawMsg")
 #define logRpcData() nCMessage("RpcData")
@@ -397,14 +398,16 @@ RpcValue RpcDriver::decodeData(Rpc::ProtocolType protocol_type, const std::strin
 			break;
 		}
 		default:
-			nError() << "Don't know how to decode message with unknown protocol version:" << static_cast<unsigned>(protocol_type);
+			logRpcDataW() << "Don't know how to decode message with unknown protocol version:" << static_cast<unsigned>(protocol_type);
 			break;
 		}
 	}
 	catch(ParseException &e) {
-		nError() << Rpc::protocolTypeToString(protocol_type) << "Decode data error:" << e.msg();
-		std::string data_piece = data.substr(static_cast<size_t>(e.pos() - 10*16), 20*16);
-		nError().nospace() << "Start offset: " << start_pos << " Data: from pos:" << (e.pos() - 10*16) << "\n" << shv::chainpack::Utils::hexDump(data_piece);
+		logRpcDataW() << Rpc::protocolTypeToString(protocol_type) << "Decode data error:" << e.msg();
+		auto err_pos = std::min(static_cast<size_t>(e.pos()), data.size());
+		auto hexdump_start_pos = err_pos - std::min(err_pos, static_cast<size_t>(10*16));
+		std::string data_piece = data.substr(hexdump_start_pos, 20*16);
+		logRpcDataW().nospace() << "Start offset: " << start_pos << " Data: from pos:" << hexdump_start_pos << "\n" << shv::chainpack::Utils::hexDump(data_piece);
 	}
 	return ret;
 }
