@@ -271,6 +271,7 @@ void RpcDriver::processReadData()
 				return;
 			}
 			logRpcDataW() << "ERROR - RpcMessage header corrupted:" << e.msg();
+			logRpcDataW() << "The error occured in data:\n" << shv::chainpack::Utils::hexDump(m_readData);
 			onParseDataException(e);
 			return;
 		}
