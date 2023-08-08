@@ -710,11 +710,11 @@ public:
 		, m_manager(new QNetworkAccessManager(this))
 	{
 		do_request(QUrl{"https://graph.microsoft.com/v1.0/me"}).then(this, [this] (const QJsonDocument& json) {
-			if (!json.object().contains("id")) {
-				azure::throw_with_msg("Couldn't fetch user ID");
+			if (!json.object().contains("mail")) {
+				azure::throw_with_msg("Couldn't fetch user e-mail");
 			}
 
-			m_username = json.object()["id"].toString().toStdString();
+			m_username = json.object()["mail"].toString().toStdString();
 			return do_request(QUrl{"https://graph.microsoft.com/v1.0/me/transitiveMemberOf"});
 		}).unwrap().then(this, [this] (const QJsonDocument& json) {
 			std::vector<std::string> res_shv_groups;
