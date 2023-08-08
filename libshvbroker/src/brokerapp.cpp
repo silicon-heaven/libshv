@@ -717,7 +717,7 @@ public:
 			m_username = json.object()["mail"].toString().toStdString();
 			return do_request(QUrl{"https://graph.microsoft.com/v1.0/me/transitiveMemberOf"});
 		}).unwrap().then(this, [this] (const QJsonDocument& json) {
-			std::vector<std::string> res_shv_groups;
+			std::vector<std::string> res_shv_groups{m_username};
 			if (!json.object().contains("value")) {
 				azure::throw_with_msg("Couldn't fetch user groups");
 			}
