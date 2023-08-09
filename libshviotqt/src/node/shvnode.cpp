@@ -158,7 +158,7 @@ void ShvNode::handleRawRpcRequest(RpcValue::MetaData &&meta, std::string &&data)
 	}
 	catch (const chainpack::RpcException &e) {
 		shvDebug() << "method:"  << method << "path:" << shv_path_str << "err code:" << e.errorCode() << "msg:" << e.message();
-		RpcResponse::Error err = RpcResponse::Error::create(e.errorCode(), e.message());
+		RpcResponse::Error err(e.message(), e.errorCode(), e.data());
 		resp.setError(err);
 	}
 	catch (const std::exception &e) {
@@ -200,6 +200,11 @@ void ShvNode::handleRpcRequest(const chainpack::RpcRequest &rq)
 	catch (const chainpack::RpcException &e) {
 		shvDebug() << "method:"  << method << "path:" << shv_path_str << "err code:" << e.errorCode() << "msg:" << e.message();
 		RpcResponse::Error err = RpcResponse::Error::create(e.errorCode(), e.message());
+		resp.setError(err);
+	}
+	catch (const chainpack::Exception &e) {
+		shvDebug() << "method:"  << method << "path:" << shv_path_str << "error:" << e.what();
+		RpcResponse::Error err(e.message(), RpcResponse::Error::MethodCallException, e.data());
 		resp.setError(err);
 	}
 	catch (const std::exception &e) {

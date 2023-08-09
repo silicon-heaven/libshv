@@ -185,7 +185,7 @@ protected:
 class SHVCHAINPACK_DECL_EXPORT RpcError
 {
 private:
-	enum {KeyCode = 1, KeyMessage };
+	enum { KeyCode = 1, KeyMessage, KeyData };
 public:
 	enum ErrorCode {
 		NoError = 0,
@@ -202,16 +202,16 @@ public:
 	};
 public:
 	RpcError() {}
-	RpcError(const std::string &msg, int code = ErrorCode::Unknown);
+	RpcError(const std::string &msg, int code = ErrorCode::Unknown, const RpcValue &data = {});
 	//RpcError(const RpcValue &v);
 	RpcError& setCode(int c) { return setValue(KeyCode, c); }
 	int code() const { return value(KeyCode).toInt(); }
-	RpcValue::String messageAsString() const;
-	//RpcError& setMessage(const RpcValue::String &m);
-	RpcValue message() const;
-	RpcError& setMessage(const RpcValue &mv);
+	RpcValue::String message() const;
+	RpcError& setMessage(const RpcValue::String &m);
+	RpcValue data() const;
+	RpcError& setData(const RpcValue &mv);
 	static std::string errorCodeToString(int code);
-	RpcValue::String toString() const {return std::string("RPC ERROR ") + errorCodeToString(code()) + ": " + messageAsString();}
+	RpcValue::String toString() const;
 
 	RpcValue::Map toJson() const;
 	static RpcError fromJson(const RpcValue::Map &json);
@@ -219,7 +219,7 @@ public:
 	RpcValue toRpcValue() const { return m_value; }
 	static RpcError fromRpcValue(const RpcValue &rv);
 public:
-	static RpcError create(int c, RpcValue::String msg);
+	static RpcError create(int c, const RpcValue::String &msg, const RpcValue &data = {});
 	static RpcError createMethodCallExceptionError(const RpcValue::String &msg = RpcValue::String()) {
 		return create(MethodCallException, (msg.empty())? "Method call exception": msg);
 	}

@@ -530,33 +530,37 @@ RpcException::~RpcException() = default;
 //==================================================================
 // RpcError
 //==================================================================
-RpcError::RpcError(const std::string &msg, int code)
+namespace {
+static constexpr auto JSONRPC_ERROR_CODE = "code";
+static constexpr auto JSONRPC_ERROR_MESSAGE = "message";
+static constexpr auto JSONRPC_ERROR_DATA = "data";
+}
+
+RpcError::RpcError(const std::string &msg, int code, const RpcValue &data)
 {
 	setMessage(msg);
 	setCode(code);
+	setData(data);
 }
-/*
+
 RpcError& RpcError::setMessage(const RpcValue::String &mess)
 {
-	return setMessageValue(RpcValue{mess});
-}
-*/
-RpcValue::String RpcError::messageAsString() const
-{
-	auto v = message();
-	if(v.isString())
-		return v.asString();
-	return v.toCpon();
+	return setValue(KeyMessage, mess);
 }
 
-RpcValue RpcError::message() const
+RpcValue::String RpcError::message() const
 {
-	return value(KeyMessage);
+	return value(KeyMessage).asString();
 }
 
-RpcError &RpcError::setMessage(const RpcValue &mv)
+RpcValue RpcError::data() const
 {
-	return setValue(KeyMessage, mv);
+	return value(KeyData);
+}
+
+RpcError &RpcError::setData(const RpcValue &mv)
+{
+	return setValue(KeyData, mv);
 }
 
 std:: string RpcError::errorCodeToString(int code)
@@ -576,19 +580,30 @@ std:: string RpcError::errorCodeToString(int code)
 	return Utils::toString(code);
 }
 
+RpcValue::String RpcError::toString() const
+{
+	auto ret = errorCodeToString(code()) + ": " + message();
+	if(auto d = data(); d.isValid()) {
+		ret += " data: " + d.toCpon();
+	}
+	return ret;
+}
+
 RpcValue::Map RpcError::toJson() const
 {
 	return RpcValue::Map {
-		{Rpc::JSONRPC_ERROR_CODE, code()},
-		{Rpc::JSONRPC_ERROR_MESSAGE, message()},
+		{JSONRPC_ERROR_CODE, code()},
+		{JSONRPC_ERROR_MESSAGE, message()},
+		{JSONRPC_ERROR_DATA, data()},
 	};
 }
 
 RpcError RpcError::fromJson(const RpcValue::Map &json)
 {
 	return fromRpcValue(RpcValue::IMap {
-		{KeyCode, json.value(Rpc::JSONRPC_ERROR_CODE).toInt()},
-		{KeyMessage, json.value(Rpc::JSONRPC_ERROR_MESSAGE).asString()},
+		{KeyCode, json.value(JSONRPC_ERROR_CODE).toInt()},
+		{KeyMessage, json.value(JSONRPC_ERROR_MESSAGE).asString()},
+		{KeyData, json.value(JSONRPC_ERROR_DATA)},
 	});
 }
 
@@ -600,10 +615,10 @@ RpcError RpcError::fromRpcValue(const RpcValue &rv)
 	return ret;
 }
 
-RpcError RpcError::create(int c, RpcValue::String msg)
+RpcError RpcError::create(int c, const RpcValue::String &msg, const RpcValue &data)
 {
 	RpcError ret;
-	ret.setCode(c).setMessage(std::move(msg));
+	ret.setCode(c).setMessage(msg).setData(data);
 	return ret;
 }
 

@@ -17,19 +17,22 @@ public:
 	static constexpr bool Throw = true;
 public:
 	Exception(const std::string& _msg, const std::string& _where = std::string());
-	Exception(const shv::chainpack::RpcValue& _msg, const std::string& _where, const char *_log_topic);
+	//Exception(const shv::chainpack::RpcValue& _msg, const std::string& _where, const char *_log_topic);
+	Exception(const std::string& _msg, const shv::chainpack::RpcValue& _data, const std::string& _where, const char *_log_topic);
 	~Exception() override = default;
 public:
-	virtual std::string message() const;
-	virtual std::string where() const {return m_where;}
+	std::string message() const {return m_msg;}
+	std::string where() const {return m_where;}
+	shv::chainpack::RpcValue data() const {return m_data;}
 	const char* what() const noexcept override;
 	static void setAbortOnException(bool on);
 	static bool isAbortOnException();
 protected:
-	std::string makeWhat() const;
+	void makeWhat();
 protected:
 	static bool s_abortOnException;
-	shv::chainpack::RpcValue m_msg;
+	std::string m_msg;
+	shv::chainpack::RpcValue m_data;
 	std::string m_what;
 	std::string m_where;
 };
