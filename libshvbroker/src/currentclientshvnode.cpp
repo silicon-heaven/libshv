@@ -81,6 +81,12 @@ shv::chainpack::RpcValue CurrentClientShvNode::callMethodRq(const shv::chainpack
 				auto roles = app->aclManager()->userFlattenRoles(user_name, user_def.roles);
 				cp::RpcValue::List ret;
 				std::copy(roles.begin(), roles.end(), std::back_inserter(ret));
+#if WITH_SHV_LDAP
+				auto ldap_roles = app->aclManager()->ldapUserFlattenRoles(user_name, user_def.roles);
+				std::copy(ldap_roles.begin(), ldap_roles.end(), std::back_inserter(ret));
+#endif
+				auto azure_roles = app->aclManager()->azureUserFlattenRoles(user_name, user_def.roles);
+				std::copy(azure_roles.begin(), azure_roles.end(), std::back_inserter(ret));
 				return ret;
 			}
 			return nullptr;

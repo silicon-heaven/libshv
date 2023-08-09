@@ -660,14 +660,15 @@ public:
 	}
 	void run() override
 	{
+		auto login_details = m_ctx.userLogin();
+		auto user_name = "ldap:" + login_details.user;
 		try {
 			auto ldap = ldap::Ldap::create(m_ldapConfig.hostName);
 			ldap->setVersion(ldap::Version::Version3);
 			ldap->connect();
-			auto login_details = m_ctx.userLogin();
 			ldap->bindSasl(login_details.user, login_details.password);
 			auto ldap_groups = ldap::getGroupsForUser(ldap, m_ldapConfig.searchBaseDN, m_ldapConfig.searchAttrs, login_details.user);
-			std::vector<std::string> res_shv_groups{login_details.user};
+			std::vector<std::string> res_shv_groups{user_name};
 			if (auto it = std::find_if(m_ldapConfig.groupMapping.begin(), m_ldapConfig.groupMapping.end(), [&ldap_groups] (const auto& mapping) {
 				return std::find_if(ldap_groups.begin(), ldap_groups.end(), [&mapping] (const auto& ldap_group) {
 					return mapping.nativeGroup == ldap_group;
@@ -675,15 +676,18 @@ public:
 			}); it != m_ldapConfig.groupMapping.end()) {
 				res_shv_groups.push_back(it->shvGroup);
 			}
-			emit resultReady(chainpack::UserLoginResult{true}, res_shv_groups);
+
+			auto result = chainpack::UserLoginResult{true};
+			result.userNameOverride = user_name;
+			emit resultReady(result, user_name, res_shv_groups);
 		} catch(ldap::LdapError& err) {
 			// FIXME: If the LDAP host is set, the user probably depends on ldap, so I can probably just emit
 			// and take what LDAP says for granted.
-			emit resultReady(chainpack::UserLoginResult{false, err.what()}, {});
+			emit resultReady(chainpack::UserLoginResult{false, err.what()}, user_name, {});
 		}
 	}
 
-	Q_SIGNAL void resultReady(const chainpack::UserLoginResult& s, const std::vector<std::string>& shv_groups);
+	Q_SIGNAL void resultReady(const chainpack::UserLoginResult& s, std::string user_name, const std::vector<std::string>& shv_groups);
 
 private:
 	chainpack::UserLoginContext m_ctx;
@@ -714,7 +718,7 @@ public:
 				azure::throw_with_msg("Couldn't fetch user e-mail");
 			}
 
-			m_username = json.object()["mail"].toString().toStdString();
+			m_username = "azure:" + json.object()["mail"].toString().toStdString();
 			return do_request(QUrl{"https://graph.microsoft.com/v1.0/me/transitiveMemberOf"});
 		}).unwrap().then(this, [this] (const QJsonDocument& json) {
 			std::vector<std::string> res_shv_groups{m_username};
@@ -796,7 +800,7 @@ void BrokerApp::checkLogin(const chainpack::UserLoginContext &ctx, const QObject
 	if (m_ldapConfig) {
 		if (ctx.userLogin().loginType == chainpack::IRpcConnection::LoginType::Plain) {
 				auto auth_thread = new LdapAuthThread(ctx, *m_ldapConfig);
-				connect(auth_thread, &LdapAuthThread::resultReady, connection_ctx, [cb, user_name = ctx.userLogin().user] (const auto& ldap_result, const auto& shv_groups) {
+				connect(auth_thread, &LdapAuthThread::resultReady, connection_ctx, [cb] (const auto& ldap_result, const auto& user_name, const auto& shv_groups) {
 					BrokerApp::instance()->aclManager()->setGroupForLdapUser(user_name, shv_groups);
 					cb(ldap_result);
 				});
