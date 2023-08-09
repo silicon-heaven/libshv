@@ -8,6 +8,7 @@
 #include <shv/core/string.h>
 
 #include <shv/chainpack/rpcmessage.h>
+#include <shv/chainpack/utils.h>
 
 #include <QTcpSocket>
 #include <QTimer>

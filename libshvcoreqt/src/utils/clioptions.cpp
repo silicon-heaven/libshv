@@ -3,6 +3,7 @@
 #include "../log.h"
 
 #include <shv/chainpack/rpcvalue.h>
+#include <shv/chainpack/utils.h>
 
 #include <shv/core/log.h>
 #include <shv/core/utils.h>

@@ -1,7 +1,8 @@
 #include "aclmanager.h"
 #include "brokerapp.h"
-#include "currentclientshvnode.h"
+//#include "currentclientshvnode.h"
 
+#include <shv/chainpack/utils.h>
 #include <shv/chainpack/cponreader.h>
 #include <shv/core/utils/shvurl.h>
 #include <shv/coreqt/log.h>

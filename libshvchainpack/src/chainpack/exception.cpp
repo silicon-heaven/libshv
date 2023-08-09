@@ -14,6 +14,11 @@ Exception::Exception(const std::string &_msg, const std::string &_where)
 {
 }
 
+Exception::Exception(const std::string& _msg, const std::string& _where, const char *_log_topic)
+	: Exception(_msg, {}, _where, _log_topic)
+{
+}
+
 Exception::Exception(const std::string &_msg, const RpcValue &_data, const std::string &_where, const char *_log_topic)
 	: m_msg(_msg)
 	, m_data(_data)

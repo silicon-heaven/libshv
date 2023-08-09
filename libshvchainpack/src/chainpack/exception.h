@@ -3,7 +3,6 @@
 #include "../shvchainpackglobal.h"
 
 #include "rpcvalue.h"
-#include "utils.h"
 
 #include <stdexcept>
 #include <string>
@@ -17,7 +16,7 @@ public:
 	static constexpr bool Throw = true;
 public:
 	Exception(const std::string& _msg, const std::string& _where = std::string());
-	//Exception(const shv::chainpack::RpcValue& _msg, const std::string& _where, const char *_log_topic);
+	Exception(const std::string& _msg, const std::string& _where, const char *_log_topic);
 	Exception(const std::string& _msg, const shv::chainpack::RpcValue& _data, const std::string& _where, const char *_log_topic);
 	~Exception() override = default;
 public:
@@ -39,5 +38,5 @@ protected:
 
 }}
 
-#define SHVCHP_EXCEPTION(e) throw shv::chainpack::Exception(e, std::string(__FILE__) + ":" + shv::chainpack::Utils::toString(__LINE__))
-#define SHVCHP_EXCEPTION_V(msg, topic) throw shv::core::Exception(msg, std::string(__FILE__) + ":" + shv::core::Utils::toString(__LINE__), topic)
+#define SHVCHP_EXCEPTION(e) throw shv::chainpack::Exception(e, std::string(__FILE__) + ":" + std::to_string(__LINE__))
+#define SHVCHP_EXCEPTION_V(msg, topic) throw shv::core::Exception(msg, std::string(__FILE__) + ":" + std::to_string(__LINE__), topic)

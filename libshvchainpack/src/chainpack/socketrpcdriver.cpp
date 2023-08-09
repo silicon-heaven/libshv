@@ -1,4 +1,5 @@
 #include "socketrpcdriver.h"
+#include "utils.h"
 
 #include <necrolog.h>
 

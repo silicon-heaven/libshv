@@ -4,6 +4,7 @@
 #include "cponreader.h"
 #include "chainpackwriter.h"
 #include "chainpackreader.h"
+#include "utils.h"
 
 #include <necrolog.h>
 
