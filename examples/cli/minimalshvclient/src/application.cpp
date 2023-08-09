@@ -75,24 +75,26 @@ void Application::unsubscribeChanges(const string &shv_path)
 	callShvMethod(Rpc::DIR_BROKER_APP, Rpc::METH_UNSUBSCRIBE, params);
 }
 
-void Application::callShvMethod(const std::string &shv_path, const std::string &method, const shv::chainpack::RpcValue &params, const QObject *context, std::function<void (const shv::chainpack::RpcValue &)> success_callback, std::function<void (const QString &)> error_callback)
+void Application::callShvMethod(const std::string &shv_path, const std::string &method, const shv::chainpack::RpcValue &params, const QObject *context
+								, std::function<void (const shv::chainpack::RpcValue &)> success_callback
+								, std::function<void (const shv::chainpack::RpcError &)> error_callback)
 {
 	auto *rpcc = RpcCall::create(m_rpcConnection)
 			->setShvPath(shv_path)
 			->setMethod(method)
 			->setParams(params);
-	connect(rpcc, &shv::iotqt::rpc::RpcCall::maybeResult, context? context: this, [success_callback, error_callback, shv_path, method](const ::shv::chainpack::RpcValue &result, const QString &error) {
-		if(error.isEmpty()) {
+	connect(rpcc, &shv::iotqt::rpc::RpcCall::maybeResult, context? context: this, [success_callback, error_callback, shv_path, method](const ::shv::chainpack::RpcValue &result, const shv::chainpack::RpcError &error) {
+		if(error.isValid()) {
+			if(error_callback)
+				error_callback(error);
+			else
+				shvError() << "method:" << method << "on path:" << shv_path << "call error:" << error.toString();
+		}
+		else {
 			if(success_callback)
 				success_callback(result);
 			else
 				shvInfo() << "method:" << method << "on path:" << shv_path << "call success, resut:" << result.toCpon();
-		}
-		else {
-			if(error_callback)
-				error_callback(error);
-			else
-				shvError() << "method:" << method << "on path:" << shv_path << "call error:" << error;
 		}
 	});
 	// rpccc delete itself later, after maybeResult is emited

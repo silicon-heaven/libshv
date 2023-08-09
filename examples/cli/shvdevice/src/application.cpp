@@ -59,9 +59,8 @@ shv::chainpack::RpcValue AppRootNode::processRpcRequest(const shv::chainpack::Rp
 	if(rq.shvPath().asString().empty()) {
 		if(rq.method() == cp::Rpc::METH_DEVICE_ID) {
 			Application *app = Application::instance();
-			const cp::RpcValue::Map& opts = app->rpcConnection()->connectionOptions().asMap();
-			const cp::RpcValue::Map& dev = opts.value(cp::Rpc::KEY_DEVICE).asMap();
-			//shvInfo() << dev[cp::Rpc::KEY_DEVICE_ID].toString();
+			const auto opts = app->rpcConnection()->connectionOptions();
+			const cp::RpcValue::Map& dev = opts.asMap().valref(cp::Rpc::KEY_DEVICE).asMap();
 			return dev.value(cp::Rpc::KEY_DEVICE_ID).toString();
 		}
 		if(rq.method() == cp::Rpc::METH_DEVICE_TYPE) {
@@ -139,11 +138,11 @@ void Application::testRpcCall() const
 			->setShvPath("test")
 			->setMethod("ls")
 			->setTimeout(RPC_CALLBACK_TIMEOUT);
-	connect(rpc_call, &RpcCall::maybeResult, [](const ::shv::chainpack::RpcValue &result, const QString &error) {
-		if(error.isEmpty())
-			shvInfo() << "Got RPC response, result:" << result.toCpon();
+	connect(rpc_call, &RpcCall::maybeResult, [](const ::shv::chainpack::RpcValue &result, const shv::chainpack::RpcError &error) {
+		if(error.isValid())
+			shvError() << "RPC call error:" << error.toString();
 		else
-			shvError() << "RPC call error:" << error;
+			shvInfo() << "Got RPC response, result:" << result.toCpon();
 	});
 	rpc_call->start();
 }
@@ -154,17 +153,17 @@ void Application::subscribeChanges()
 	QString shv_path = "test";
 	QString signal_name = shv::chainpack::Rpc::SIG_VAL_CHANGED;
 	auto *rpc_call = RpcCall::createSubscriptionRequest(rpcConnection(), shv_path, signal_name);
-	connect(rpc_call, &RpcCall::maybeResult, this, [this, shv_path, signal_name](const ::shv::chainpack::RpcValue &result, const QString &error) {
-		if(error.isEmpty()) {
+	connect(rpc_call, &RpcCall::maybeResult, this, [this, shv_path, signal_name](const ::shv::chainpack::RpcValue &result, const shv::chainpack::RpcError &error) {
+		if(error.isValid()) {
+			shvError() << "Signal:" << signal_name << "on SHV path:" << shv_path << "subscribe error:" << error.toString();
+		}
+		else {
 			shvInfo() << "Signal:" << signal_name << "on SHV path:" << shv_path << "subscribed successfully" << result.toCpon();
 			// generate data change without ret value check
 			rpcConnection()->callShvMethod((shv_path + "/someInt").toStdString(), "set", 123);
 			QTimer::singleShot(500, this, [this, shv_path]() {
 				rpcConnection()->callShvMethod((shv_path + "/someInt").toStdString(), "set", 321);
 			});
-		}
-		else {
-			shvError() << "Signal:" << signal_name << "on SHV path:" << shv_path << "subscribe error:" << error;
 		}
 	});
 	rpc_call->start();
