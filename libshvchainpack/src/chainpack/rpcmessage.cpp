@@ -526,6 +526,87 @@ RpcException::RpcException(int err_code, const std::string &_msg, const std::str
 
 RpcException::~RpcException() = default;
 
+
+//==================================================================
+// RpcError
+//==================================================================
+RpcError::RpcError(const std::string &msg, int code)
+{
+	setMessage(msg);
+	setCode(code);
+}
+/*
+RpcError& RpcError::setMessage(const RpcValue::String &mess)
+{
+	return setMessageValue(RpcValue{mess});
+}
+*/
+RpcValue::String RpcError::messageAsString() const
+{
+	auto v = message();
+	if(v.isString())
+		return v.asString();
+	return v.toCpon();
+}
+
+RpcValue RpcError::message() const
+{
+	return value(KeyMessage);
+}
+
+RpcError &RpcError::setMessage(const RpcValue &mv)
+{
+	return setValue(KeyMessage, mv);
+}
+
+std:: string RpcError::errorCodeToString(int code)
+{
+	switch(code) {
+	case ErrorCode::NoError: return "NoError";
+	case ErrorCode::InvalidRequest: return "InvalidRequest";
+	case ErrorCode::MethodNotFound: return "MethodNotFound";
+	case ErrorCode::InvalidParams: return "InvalidParams";
+	case ErrorCode::InternalError: return "InternalError";
+	case ErrorCode::ParseError: return "ParseError";
+	case ErrorCode::MethodCallTimeout: return "SyncMethodCallTimeout";
+	case ErrorCode::MethodCallCancelled: return "SyncMethodCallCancelled";
+	case ErrorCode::MethodCallException: return "MethodCallException";
+	case ErrorCode::Unknown:  return "Unknown";
+	};
+	return Utils::toString(code);
+}
+
+RpcValue::Map RpcError::toJson() const
+{
+	return RpcValue::Map {
+		{Rpc::JSONRPC_ERROR_CODE, code()},
+		{Rpc::JSONRPC_ERROR_MESSAGE, message()},
+	};
+}
+
+RpcError RpcError::fromJson(const RpcValue::Map &json)
+{
+	return fromRpcValue(RpcValue::IMap {
+		{KeyCode, json.value(Rpc::JSONRPC_ERROR_CODE).toInt()},
+		{KeyMessage, json.value(Rpc::JSONRPC_ERROR_MESSAGE).asString()},
+	});
+}
+
+RpcError RpcError::fromRpcValue(const RpcValue &rv)
+{
+	RpcError ret;
+	if(rv.isIMap())
+		ret.m_value = rv;
+	return ret;
+}
+
+RpcError RpcError::create(int c, RpcValue::String msg)
+{
+	RpcError ret;
+	ret.setCode(c).setMessage(std::move(msg));
+	return ret;
+}
+
 //==================================================================
 // RpcResponse
 //==================================================================
@@ -554,14 +635,28 @@ std::string RpcResponse::errorString() const
 	return "Invalid RPC message";
 }
 
-RpcResponse::Error RpcResponse::error() const
+RpcValue RpcError::value(int key) const
 {
-	return Error{value(RpcMessage::MetaType::Key::Error).asIMap()};
+	return m_value.asIMap().value(key);
 }
 
-RpcResponse &RpcResponse::setError(RpcResponse::Error err)
+RpcError &RpcError::setValue(int key, const RpcValue &v)
 {
-	setValue(RpcMessage::MetaType::Key::Error, std::move(err));
+	if(!m_value.isIMap()) {
+		m_value = RpcValue(RpcValue::IMap());
+	}
+	m_value.set(key, v);
+	return *this;
+}
+
+RpcError RpcResponse::error() const
+{
+	return RpcError::fromRpcValue(value(RpcMessage::MetaType::Key::Error));
+}
+
+RpcResponse& RpcResponse::setError(const RpcError &err)
+{
+	setValue(RpcMessage::MetaType::Key::Error, err.toRpcValue());
 	return *this;
 }
 
@@ -574,66 +669,6 @@ RpcResponse& RpcResponse::setResult(const RpcValue& res)
 {
 	setValue(RpcMessage::MetaType::Key::Result, res);
 	return *this;
-}
-
-int RpcResponse::Error::code() const
-{
-	auto iter = find(KeyCode);
-	return (iter == end()) ? NoError : static_cast<ErrorCode>(iter->second.toInt());
-}
-
-RpcResponse::Error& RpcResponse::Error::setCode(int c)
-{
-	(*this)[KeyCode] = c;
-	return *this;
-}
-
-RpcResponse::Error& RpcResponse::Error::setMessage(RpcValue::String &&mess)
-{
-	(*this)[KeyMessage] = RpcValue{std::move(mess)};
-	return *this;
-}
-
-RpcValue::String RpcResponse::Error::message() const
-{
-	auto iter = find(KeyMessage);
-	return (iter == end()) ? RpcValue::String{} : iter->second.toString();
-}
-
-RpcResponse::Error& RpcResponse::Error::setMsgData(const RpcValue &data)
-{
-	(*this)[KeyMsgData] = data;
-	return *this;
-}
-
-RpcValue RpcResponse::Error::msgData() const
-{
-	auto iter = find(KeyMsgData);
-	return (iter == end()) ? RpcValue{} : iter->second;
-}
-
-std:: string RpcResponse::Error::errorCodeToString(int code)
-{
-	switch(code) {
-	case ErrorCode::NoError: return "NoError";
-	case ErrorCode::InvalidRequest: return "InvalidRequest";
-	case ErrorCode::MethodNotFound: return "MethodNotFound";
-	case ErrorCode::InvalidParams: return "InvalidParams";
-	case ErrorCode::InternalError: return "InternalError";
-	case ErrorCode::ParseError: return "ParseError";
-	case ErrorCode::MethodCallTimeout: return "SyncMethodCallTimeout";
-	case ErrorCode::MethodCallCancelled: return "SyncMethodCallCancelled";
-	case ErrorCode::MethodCallException: return "MethodCallException";
-	case ErrorCode::Unknown:  return "Unknown";
-	};
-	return Utils::toString(code);
-}
-
-RpcResponse::Error RpcResponse::Error::create(int c, RpcValue::String msg)
-{
-	Error ret;
-	ret.setCode(c).setMessage(std::move(msg));
-	return ret;
 }
 
 } // namespace shv

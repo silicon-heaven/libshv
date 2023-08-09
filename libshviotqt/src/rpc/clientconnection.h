@@ -60,7 +60,7 @@ public:
 
 	bool isBrokerConnected() const {return state() == State::BrokerConnected;}
 	Q_SIGNAL void brokerConnectedChanged(bool is_connected);
-	Q_SIGNAL void brokerLoginError(const QString &err);
+	Q_SIGNAL void brokerLoginError(const shv::chainpack::RpcError &err);
 
 	State state() const { return m_connectionState.state; }
 	Q_SIGNAL void stateChanged(State state);
@@ -86,7 +86,6 @@ protected:
 
 	void checkBrokerConnected();
 	void whenBrokerConnectedChanged(bool b);
-	void emitInitPhaseError(const std::string &err);
 
 	void onSocketConnectedChanged(bool is_connected);
 

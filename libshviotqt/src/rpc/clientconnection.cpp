@@ -387,11 +387,6 @@ void ClientConnection::whenBrokerConnectedChanged(bool b)
 	emit brokerConnectedChanged(b);
 }
 
-void ClientConnection::emitInitPhaseError(const std::string &err)
-{
-	Q_EMIT brokerLoginError(QString::fromStdString(err));
-}
-
 void ClientConnection::onSocketConnectedChanged(bool is_connected)
 {
 	if(is_connected) {
@@ -506,7 +501,7 @@ void ClientConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 		cp::RpcResponse resp(msg);
 		if(resp.isError()) {
 			setState(State::ConnectionError);
-			emitInitPhaseError(resp.error().message());
+			emit brokerLoginError(resp.error());
 			break;
 		}
 		int id = resp.requestId().toInt();

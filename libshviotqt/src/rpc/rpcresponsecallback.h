@@ -6,7 +6,7 @@
 
 #include <shv/core/utils.h>
 #include <shv/chainpack/rpc.h>
-#include <shv/chainpack/rpcvalue.h>
+#include <shv/chainpack/rpcmessage.h>
 
 #include <QObject>
 #include <QPointer>
@@ -17,7 +17,7 @@ class QTimer;
 
 namespace shv {
 
-namespace chainpack { class RpcMessage; class RpcResponse; }
+namespace chainpack { class RpcMessage; class RpcResponse; class RpcError; }
 
 namespace iotqt {
 namespace rpc {
@@ -54,7 +54,6 @@ private:
 	bool m_isFinished = false;
 };
 
-
 class SHVIOTQT_DECL_EXPORT RpcCall : public QObject
 {
 	Q_OBJECT
@@ -74,9 +73,9 @@ public:
 
 	void start();
 
-	Q_SIGNAL void maybeResult(const ::shv::chainpack::RpcValue &result, const QString &error);
+	Q_SIGNAL void maybeResult(const ::shv::chainpack::RpcValue &result, const ::shv::chainpack::RpcError &error);
 	Q_SIGNAL void result(const ::shv::chainpack::RpcValue &result);
-	Q_SIGNAL void error(const QString &error);
+	Q_SIGNAL void error(const ::shv::chainpack::RpcError &error);
 private:
 	RpcCall(::shv::iotqt::rpc::ClientConnection *connection);
 private:

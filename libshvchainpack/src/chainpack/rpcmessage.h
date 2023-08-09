@@ -182,68 +182,68 @@ protected:
 	int m_errorCode;
 };
 
+class SHVCHAINPACK_DECL_EXPORT RpcError
+{
+private:
+	enum {KeyCode = 1, KeyMessage };
+public:
+	enum ErrorCode {
+		NoError = 0,
+		InvalidRequest,	// The JSON sent is not a valid Request object.
+		MethodNotFound,	// The method does not exist / is not available.
+		InvalidParams,		// Invalid method parameter(s).
+		InternalError,		// Internal JSON-RPC error.
+		ParseError,		// Invalid JSON was received by the server. An error occurred on the server while parsing the JSON text.
+		MethodCallTimeout,
+		MethodCallCancelled,
+		MethodCallException,
+		Unknown,
+		UserCode = 32
+	};
+public:
+	RpcError() {}
+	RpcError(const std::string &msg, int code = ErrorCode::Unknown);
+	//RpcError(const RpcValue &v);
+	RpcError& setCode(int c) { return setValue(KeyCode, c); }
+	int code() const { return value(KeyCode).toInt(); }
+	RpcValue::String messageAsString() const;
+	//RpcError& setMessage(const RpcValue::String &m);
+	RpcValue message() const;
+	RpcError& setMessage(const RpcValue &mv);
+	static std::string errorCodeToString(int code);
+	RpcValue::String toString() const {return std::string("RPC ERROR ") + errorCodeToString(code()) + ": " + messageAsString();}
+
+	RpcValue::Map toJson() const;
+	static RpcError fromJson(const RpcValue::Map &json);
+
+	RpcValue toRpcValue() const { return m_value; }
+	static RpcError fromRpcValue(const RpcValue &rv);
+public:
+	static RpcError create(int c, RpcValue::String msg);
+	static RpcError createMethodCallExceptionError(const RpcValue::String &msg = RpcValue::String()) {
+		return create(MethodCallException, (msg.empty())? "Method call exception": msg);
+	}
+	static RpcError createInternalError(const RpcValue::String &msg = RpcValue::String()) {
+		return create(InternalError, (msg.empty())? "Internal error": msg);
+	}
+	static RpcError createSyncMethodCallTimeout(const RpcValue::String &msg = RpcValue::String()) {
+		return create(MethodCallTimeout, (msg.empty())? "Sync method call timeout": msg);
+	}
+	bool isValid() const { return !m_value.asIMap().empty(); }
+	bool operator==(const RpcError &) const = default;
+private:
+	RpcValue value(int key) const;
+	RpcError& setValue(int key, const RpcValue &v);
+private:
+	RpcValue m_value;
+};
+
 class SHVCHAINPACK_DECL_EXPORT RpcResponse : public RpcMessage
 {
 private:
 	using Super = RpcMessage;
 public:
-	class SHVCHAINPACK_DECL_EXPORT Error : public RpcValue::IMap
-	{
-	private:
-		using Super = RpcValue::IMap;
-		enum {KeyCode = 1, KeyMessage, KeyMsgData };
-	public:
-		enum ErrorCode {
-			NoError = 0,
-			InvalidRequest,	// The JSON sent is not a valid Request object.
-			MethodNotFound,	// The method does not exist / is not available.
-			InvalidParams,		// Invalid method parameter(s).
-			InternalError,		// Internal JSON-RPC error.
-			ParseError,		// Invalid JSON was received by the server. An error occurred on the server while parsing the JSON text.
-			MethodCallTimeout,
-			MethodCallCancelled,
-			MethodCallException,
-			Unknown,
-			UserCode = 32
-		};
-	public:
-		Error(const Super &m = Super()) : Super(m) {}
-		Error& setCode(int c);
-		int code() const;
-		Error& setMessage(RpcValue::String &&m);
-		RpcValue::String message() const;
-		Error& setMsgData(const RpcValue &d);
-		RpcValue msgData() const;
-		static std::string errorCodeToString(int code);
-		RpcValue::String toString() const {return std::string("RPC ERROR ") + errorCodeToString(code()) + ": " + message();}
-		RpcValue::Map toJson() const
-		{
-			return RpcValue::Map {
-				{Rpc::JSONRPC_ERROR_CODE, code()},
-				{Rpc::JSONRPC_ERROR_MESSAGE, message()},
-				{Rpc::JSONRPC_ERROR_MSGDATA, msgData()},
-			};
-		}
-		static Error fromJson(const RpcValue::Map &json)
-		{
-			return RpcValue::IMap {
-				{KeyCode, json.value(Rpc::JSONRPC_ERROR_CODE).toInt()},
-				{KeyMessage, json.value(Rpc::JSONRPC_ERROR_MESSAGE).asString()},
-				{KeyMessage, json.value(Rpc::JSONRPC_ERROR_MSGDATA)},
-			};
-		}
-	public:
-		static Error create(int c, RpcValue::String msg);
-		static Error createMethodCallExceptionError(const RpcValue::String &msg = RpcValue::String()) {
-			return create(MethodCallException, (msg.empty())? "Method call exception": msg);
-		}
-		static Error createInternalError(const RpcValue::String &msg = RpcValue::String()) {
-			return create(InternalError, (msg.empty())? "Internal error": msg);
-		}
-		static Error createSyncMethodCallTimeout(const RpcValue::String &msg = RpcValue::String()) {
-			return create(MethodCallTimeout, (msg.empty())? "Sync method call timeout": msg);
-		}
-	};
+	using Error = RpcError;
 public:
 	RpcResponse() : Super() {}
 	RpcResponse(const RpcMessage &msg) : Super(msg) {}
@@ -254,18 +254,18 @@ public:
 	static RpcResponse forRequest(const RpcRequest &rq) {return forRequest(rq.metaData());}
 public:
 	/// hasRetVal() is deprecated, use hasResult() instead
-	bool hasRetVal() const {return !error().empty() || result().isValid();}
+	bool hasRetVal() const {return error().isValid() || result().isValid();}
 
-	bool hasResult() const {return !error().empty() || result().isValid();}
+	bool hasResult() const {return error().isValid() || result().isValid();}
 	bool isSuccess() const {return result().isValid() && !isError();}
-	bool isError() const {return !error().empty();}
+	bool isError() const {return error().isValid();}
 	std::string errorString() const;
-	RpcResponse& setError(Error err);
+	RpcResponse& setError(const Error &err);
 	Error error() const;
 	RpcResponse& setResult(const RpcValue &res);
 	RpcValue result() const;
 	RpcResponse& setRequestId(const RpcValue &id) {Super::setRequestId(id); return *this;}
 };
 
-} // namespace chainpackrpc
+} // namespace chainpack
 } // namespace shv

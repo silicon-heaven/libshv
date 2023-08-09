@@ -88,7 +88,6 @@ public:
 	static constexpr auto JSONRPC_ERROR = "error";
 	static constexpr auto JSONRPC_ERROR_CODE = "code";
 	static constexpr auto JSONRPC_ERROR_MESSAGE = "message";
-	static constexpr auto JSONRPC_ERROR_MSGDATA = "msgData";
 	static constexpr auto JSONRPC_SHV_PATH = PAR_PATH;
 	static constexpr auto JSONRPC_CALLER_ID = "cid";
 	static constexpr auto JSONRPC_REV_CALLER_ID = "rcid";
