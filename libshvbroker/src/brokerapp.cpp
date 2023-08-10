@@ -677,7 +677,16 @@ public:
 				res_shv_groups.push_back(it->shvGroup);
 			}
 
-			auto result = chainpack::UserLoginResult{true};
+			auto result = chainpack::UserLoginResult{};
+			if (res_shv_groups.size() == 1) {
+				// If the user doesn't have any group other than the
+				// implicit (their username) one, than we'll reject the
+				// login.
+				result.passwordOk = false;
+				result.loginError = "No relevant LDAP groups found.";
+			} else {
+				result.passwordOk = true;
+			}
 			result.userNameOverride = user_name;
 			emit resultReady(result, user_name, res_shv_groups);
 		} catch(ldap::LdapError& err) {
@@ -736,7 +745,16 @@ public:
 				}
 			}
 
-			auto result = chainpack::UserLoginResult{true};
+			auto result = chainpack::UserLoginResult{};
+			if (res_shv_groups.size() == 1) {
+				// If the user doesn't have any group other than the
+				// implicit (their username) one, than we'll reject the
+				// login.
+				result.passwordOk = false;
+				result.loginError = "No relevant Azure groups found.";
+			} else {
+				result.passwordOk = true;
+			}
 			result.userNameOverride = m_username;
 			emit resultReady(result, m_username, res_shv_groups);
 		}).onFailed([this] (const std::runtime_error& ex) {
