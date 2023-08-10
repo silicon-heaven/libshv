@@ -134,7 +134,7 @@ RpcCall::RpcCall(ClientConnection *connection)
 			emit result(_result);
 	});
 
-	connect(this, &RpcCall::maybeResult, this, &QObject::deleteLater, Qt::QueuedConnection);
+//	connect(this, &RpcCall::maybeResult, this, &QObject::deleteLater, Qt::QueuedConnection);
 }
 
 RpcCall *RpcCall::createSubscriptionRequest(ClientConnection *connection, const QString &shv_path, const QString &method)
@@ -208,10 +208,12 @@ void RpcCall::start()
 {
 	if(m_rpcConnection.isNull()) {
 		emit maybeResult({}, RpcError("RPC connection is NULL"));
+		deleteLater();
 		return;
 	}
 	if(!m_rpcConnection->isBrokerConnected()) {
 		emit maybeResult({}, RpcError("RPC connection is not open"));
+		deleteLater();
 		return;
 	}
 	int rq_id = m_rpcConnection->nextRequestId();
@@ -226,6 +228,7 @@ void RpcCall::start()
 		else {
 			emit maybeResult(RpcValue(), resp.error());
 		}
+		deleteLater();
 	});
 	m_rpcConnection->callShvMethod(rq_id, m_shvPath, m_method, m_params, m_userId);
 }
