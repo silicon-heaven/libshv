@@ -22,7 +22,7 @@ public:
 	static Generator createGenerator(uint32_t a, uint32_t b, uint32_t max_rand);
 
 	/// any of function, functor or lambda can be set as a random number generator
-	void setGenerator(Generator gen) {m_generator = gen;}
+	void setGenerator(Generator gen);
 
 	/// @a min_length minimal length of digest
 	/// @return string crypted by 0-9, A-Z, a-z characters

@@ -32,6 +32,42 @@ ShvUrl::ShvUrl(const std::string &shv_path)
 	}
 }
 
+bool ShvUrl::isServicePath() const
+{
+	return type() != Type::Plain;
+}
+
+bool ShvUrl::isUpTreeMountPointRelative() const
+{
+	return type() == Type::MountPointRelativeService;
+}
+
+bool ShvUrl::isUpTreeAbsolute() const
+{
+	return type() == Type::AbsoluteService;
+}
+
+bool ShvUrl::isPlain() const
+{
+	return type() == Type::Plain;
+}
+
+bool ShvUrl::isDownTree() const
+{
+	return type() == Type::DownTreeService;
+}
+
+bool ShvUrl::isUpTree() const
+{
+	return isUpTreeAbsolute() || isUpTreeMountPointRelative();
+}
+
+ShvUrl::Type ShvUrl::type() const
+{
+	return m_type;
+}
+
+
 const char *ShvUrl::typeString() const
 {
 	switch (type()) {
@@ -41,6 +77,11 @@ const char *ShvUrl::typeString() const
 	case Type::DownTreeService: return "DownTree";
 	}
 	return "???";
+}
+
+StringView ShvUrl::service() const
+{
+	return m_service;
 }
 
 std::string ShvUrl::typeMark(Type t)
@@ -72,6 +113,11 @@ StringView ShvUrl::brokerId() const
 	return m_fullBrokerId->substr(1);
 }
 
+StringView ShvUrl::pathPart() const
+{
+	return m_pathPart;
+}
+
 std::string ShvUrl::toPlainPath(const StringView &path_part_prefix) const
 {
 	std::string ret = std::string{service()};
@@ -90,6 +136,11 @@ std::string ShvUrl::toString(const StringView &path_part_prefix) const
 {
 	string rest = shv::core::utils::joinPath(path_part_prefix, pathPart());
 	return makeShvUrlString(type(), service(), fullBrokerId(), rest);
+}
+
+const std::string& ShvUrl::shvPath() const
+{
+	return m_shvPath;
 }
 
 std::string ShvUrl::makeShvUrlString(ShvUrl::Type type, const StringView &service, const StringView &full_broker_id, const StringView &path_rest)
@@ -117,6 +168,11 @@ size_t ShvUrl::serviceProviderMarkIndex(const std::string &path)
 		}
 	}
 	return 0;
+}
+
+std::string ShvUrl::typeMark() const
+{
+	return typeMark(type());
 }
 
 } // namespace shv

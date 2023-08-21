@@ -21,6 +21,16 @@ ClientShvNode::~ClientShvNode()
 	shvInfo() << "Destroying client node:" << this << nodeId();// << "connections:" << [this]() { std::string s; for(auto c : m_connections) s += std::to_string(c->connectionId()) + " "; return s;}();
 }
 
+rpc::ClientConnectionOnBroker * ClientShvNode::connection() const
+{
+	return m_connections.value(0);
+}
+
+QList<rpc::ClientConnectionOnBroker *> ClientShvNode::connections() const
+{
+	return m_connections;
+}
+
 void ClientShvNode::addConnection(rpc::ClientConnectionOnBroker *conn)
 {
 	// prefere new connections, old one might not work

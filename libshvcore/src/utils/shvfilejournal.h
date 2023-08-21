@@ -28,18 +28,18 @@ public:
 	void setJournalDir(std::string s);
 	const std::string& journalDir();
 	void setFileSizeLimit(const std::string &n);
-	void setFileSizeLimit(int64_t n) {m_fileSizeLimit = n;}
-	int64_t fileSizeLimit() const { return m_fileSizeLimit;}
+	void setFileSizeLimit(int64_t n);
+	int64_t fileSizeLimit() const;
 	void setJournalSizeLimit(const std::string &n);
-	void setJournalSizeLimit(int64_t n) {m_journalSizeLimit = n;}
-	int64_t journalSizeLimit() const { return m_journalSizeLimit;}
-	void setTypeInfo(const ShvTypeInfo &i) { m_journalContext.typeInfo = i; }
-	const ShvTypeInfo& typeInfo() const { return m_journalContext.typeInfo; }
-	std::string deviceId() const { return m_journalContext.deviceId; }
-	void setDeviceId(std::string id) { m_journalContext.deviceId = std::move(id); }
-	std::string deviceType() const { return m_journalContext.deviceType; }
-	void setDeviceType(std::string type) { m_journalContext.deviceType = std::move(type); }
-	int64_t recentlyWrittenEntryDateTime() const { return m_journalContext.recentTimeStamp; }
+	void setJournalSizeLimit(int64_t n);
+	int64_t journalSizeLimit() const;
+	void setTypeInfo(const ShvTypeInfo &i);
+	const ShvTypeInfo& typeInfo() const;
+	std::string deviceId() const;
+	void setDeviceId(std::string id);
+	std::string deviceType() const;
+	void setDeviceType(std::string type);
+	int64_t recentlyWrittenEntryDateTime() const;
 
 	static int64_t findLastEntryDateTime(const std::string &fn, int64_t journal_start_msec, std::ifstream::pos_type *p_date_time_fpos = nullptr);
 	void append(const ShvJournalEntry &entry) override;
@@ -77,7 +77,7 @@ public:
 		std::string deviceType;
 		ShvTypeInfo typeInfo;
 
-		bool isConsistent() const {return journalDirExists && journalSize >= 0;}
+		bool isConsistent() const;
 		static int64_t fileNameToFileMsec(const std::string &fn);
 		static std::string msecToBaseFileName(int64_t msec);
 		static std::string fileMsecToFileName(int64_t msec);

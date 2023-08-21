@@ -28,4 +28,9 @@ AclMountDef AclMountDef::fromRpcValue(const shv::chainpack::RpcValue &v)
 	return ret;
 }
 
+bool AclMountDef::isValid() const
+{
+	return !mountPoint.empty();
+}
+
 } // namespace shv

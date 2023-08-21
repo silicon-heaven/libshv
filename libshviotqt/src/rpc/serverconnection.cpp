@@ -45,11 +45,47 @@ ServerConnection::~ServerConnection()
 	abortSocket();
 }
 
+const std::string& ServerConnection::connectionName()
+{
+	return m_connectionName;
+}
+
+void ServerConnection::setConnectionName(const std::string &n)
+{
+	m_connectionName = n;
+	setObjectName(QString::fromStdString(n));
+}
+
+void ServerConnection::close()
+{
+	closeSocket();
+}
+
+void ServerConnection::abort()
+{
+	abortSocket();
+}
+
 void ServerConnection::unregisterAndDeleteLater()
 {
 	emit aboutToBeDeleted(connectionId());
 	abort();
 	deleteLater();
+}
+
+const shv::chainpack::RpcValue::Map& ServerConnection::connectionOptions() const
+{
+	return m_connectionOptions.asMap();
+}
+
+const std::string& ServerConnection::userName() const
+{
+	return m_userLogin.user;
+}
+
+bool ServerConnection::isConnectedAndLoggedIn() const
+{
+	return isSocketConnected() && m_loginOk;
 }
 
 bool ServerConnection::isSlaveBrokerConnection() const
@@ -77,6 +113,11 @@ void ServerConnection::onRpcDataReceived(shv::chainpack::Rpc::ProtocolType proto
 void ServerConnection::onRpcMessageReceived(const chainpack::RpcMessage &msg)
 {
 	emit rpcMessageReceived(msg);
+}
+
+bool ServerConnection::isLoginPhase() const
+{
+	return !m_loginOk;
 }
 
 void ServerConnection::processLoginPhase(const chainpack::RpcMessage &msg)

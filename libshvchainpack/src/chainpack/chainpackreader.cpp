@@ -28,6 +28,11 @@ namespace {
 enum {exception_aborts = 0};
 }
 
+ChainPackReader::ChainPackReader(std::istream &in)
+	: Super(in)
+{
+}
+
 ChainPackReader &ChainPackReader::operator >>(RpcValue &value)
 {
 	read(value);

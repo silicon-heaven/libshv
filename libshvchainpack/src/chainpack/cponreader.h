@@ -14,7 +14,7 @@ class SHVCHAINPACK_DECL_EXPORT CponReader : public AbstractStreamReader
 {
 	using Super = AbstractStreamReader;
 public:
-	CponReader(std::istream &in) : Super(in) {}
+	CponReader(std::istream &in);
 
 	CponReader& operator >>(RpcValue &value);
 	CponReader& operator >>(RpcValue::MetaData &meta_data);

@@ -22,6 +22,18 @@ const char *ShvLogHeader::Column::name(ShvLogHeader::Column::Enum e)
 	return "invalid";
 }
 
+ShvLogHeader::ShvLogHeader() = default;
+
+int64_t ShvLogHeader::sinceMsec() const
+{
+	return since().toDateTime().msecsSinceEpoch();
+}
+
+int64_t ShvLogHeader::untilMsec() const
+{
+	return until().toDateTime().msecsSinceEpoch();
+}
+
 ShvLogHeader ShvLogHeader::fromMetaData(const chainpack::RpcValue::MetaData &md)
 {
 	ShvLogHeader ret;
@@ -89,6 +101,11 @@ chainpack::RpcValue::MetaData ShvLogHeader::toMetaData() const
 	md.setValue("since", since());
 	md.setValue("until", until());
 	return md;
+}
+
+void ShvLogHeader::copyTypeInfo(const ShvLogHeader &source)
+{
+	m_typeInfos = source.m_typeInfos;
 }
 
 const ShvTypeInfo &ShvLogHeader::typeInfo(const std::string &path_prefix) const

@@ -36,17 +36,17 @@ public:
 	void close() override;
 	void abort() override;
 	void reset();
-	QAbstractSocket::SocketState state() const override { return m_state; }
+	QAbstractSocket::SocketState state() const override;
 	QString errorString() const override;
 	QString readMessageErrorString() const;
-	ReadMessageError readMessageError() const {return m_readMessageError;}
+	ReadMessageError readMessageError() const;
 	QHostAddress peerAddress() const override;
 	quint16 peerPort() const override;
 	QByteArray readAll() override;
 	qint64 write(const char *data, qint64 max_size) override;
 	void writeMessageBegin() override;
 	void writeMessageEnd() override;
-	void ignoreSslErrors() override {}
+	void ignoreSslErrors() override;
 protected:
 	void restartReceiveTimeoutTimer();
 private:
@@ -55,10 +55,7 @@ private:
 	{
 	public:
 		ReadMessageError append(uint8_t b);
-		void clear() {
-			data.clear();
-			inEscape = false;
-		}
+		void clear();
 
 		QByteArray data;
 		bool inEscape = false;

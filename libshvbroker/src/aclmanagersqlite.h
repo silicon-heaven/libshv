@@ -16,7 +16,7 @@ public:
 	AclManagerSqlite(BrokerApp *broker_app);
 	~AclManagerSqlite() override;
 
-	void init() { checkAclTables(); }
+	void init();
 
 	// AclManager interface
 protected:

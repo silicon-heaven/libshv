@@ -73,6 +73,16 @@ void SocketRpcConnection::setSocket(Socket *socket)
 	connect(socket, &Socket::socketReset, this, &SocketRpcConnection::clearSendBuffers);
 }
 
+bool SocketRpcConnection::hasSocket() const
+{
+	return m_socket != nullptr;
+}
+
+void SocketRpcConnection::setProtocolTypeAsInt(int v)
+{
+	shv::chainpack::RpcDriver::setProtocolType(static_cast<shv::chainpack::Rpc::ProtocolType>(v));
+}
+
 Socket *SocketRpcConnection::socket()
 {
 	if(!m_socket)
@@ -140,6 +150,16 @@ void SocketRpcConnection::writeMessageEnd()
 {
 	if(m_socket)
 		m_socket->writeMessageEnd();
+}
+
+Q_SLOT void SocketRpcConnection::sendRpcValue(const shv::chainpack::RpcValue &rpc_val)
+{
+	shv::chainpack::RpcDriver::sendRpcValue(rpc_val);
+}
+
+void SocketRpcConnection::clearSendBuffers()
+{
+	shv::chainpack::RpcDriver::clearSendBuffers();
 }
 
 void SocketRpcConnection::closeSocket()

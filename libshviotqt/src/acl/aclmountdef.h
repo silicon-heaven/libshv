@@ -15,7 +15,7 @@ struct SHVIOTQT_DECL_EXPORT AclMountDef
 	std::string mountPoint;
 	std::string description;
 
-	bool isValid() const {return !mountPoint.empty();}
+	bool isValid() const;
 	shv::chainpack::RpcValue toRpcValue() const;
 	static AclMountDef fromRpcValue(const shv::chainpack::RpcValue &v);
 };

@@ -16,8 +16,8 @@ public:
 	ClientShvNode(const std::string &node_id, rpc::ClientConnectionOnBroker *conn, shv::iotqt::node::ShvNode *parent = nullptr);
 	~ClientShvNode() override;
 
-	rpc::ClientConnectionOnBroker * connection() const {return m_connections.value(0);}
-	QList<rpc::ClientConnectionOnBroker *> connections() const {return m_connections;}
+	rpc::ClientConnectionOnBroker * connection() const;
+	QList<rpc::ClientConnectionOnBroker *> connections() const;
 
 	void addConnection(rpc::ClientConnectionOnBroker *conn);
 	void removeConnection(rpc::ClientConnectionOnBroker *conn);

@@ -53,41 +53,20 @@ public:
 	unsigned valueFlags = 0;
 	std::string userId;
 
-	ShvJournalEntry() = default;
-	ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_, std::string domain_, int short_time, ValueFlags flags, int64_t epoch_msec = 0)
-		: epochMsec(epoch_msec)
-		, path(std::move(path_))
-		, value{value_}
-		, shortTime(short_time)
-		, domain(std::move(domain_))
-		, valueFlags(flags)
-	{
-	}
-	ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_)
-		: ShvJournalEntry(path_, value_, DOMAIN_VAL_CHANGE, NO_SHORT_TIME, NO_VALUE_FLAGS) {}
-	ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_, int short_time)
-		: ShvJournalEntry(path_, value_, DOMAIN_VAL_FASTCHANGE, short_time, NO_VALUE_FLAGS) {}
-	ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_, std::string domain_)
-		: ShvJournalEntry(path_, value_, std::move(domain_), NO_SHORT_TIME, NO_VALUE_FLAGS) {}
+	ShvJournalEntry();
+	ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_, std::string domain_, int short_time, ValueFlags flags, int64_t epoch_msec = 0);
+	ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_);
+	ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_, int short_time);
+	ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_, std::string domain_);
 
-	bool isValid() const {return !path.empty() && epochMsec > 0;}
-	bool isSpontaneous() const { return shv::chainpack::DataChange::testBit(valueFlags, ValueFlag::Spontaneous); }
-	void setSpontaneous(bool b) { shv::chainpack::DataChange::setBit(valueFlags, ValueFlag::Spontaneous, b); }
-	bool isSnapshotValue() const { return shv::chainpack::DataChange::testBit(valueFlags, ValueFlag::Snapshot); }
-	void setSnapshotValue(bool b) { shv::chainpack::DataChange::setBit(valueFlags, ValueFlag::Snapshot, b); }
-	bool operator==(const ShvJournalEntry &o) const
-	{
-		return epochMsec == o.epochMsec
-				&& path == o.path
-				&& value == o.value
-				&& shortTime == o.shortTime
-				&& domain == o.domain
-				&& valueFlags == o.valueFlags
-				&& userId == o.userId
-				;
-	}
-	void setShortTime(int short_time) {shortTime = short_time;}
-	shv::chainpack::RpcValue::DateTime dateTime() const { return shv::chainpack::RpcValue::DateTime::fromMSecsSinceEpoch(epochMsec); }
+	bool isValid() const;
+	bool isSpontaneous() const;
+	void setSpontaneous(bool b);
+	bool isSnapshotValue() const;
+	void setSnapshotValue(bool b);
+	bool operator==(const ShvJournalEntry &o) const;
+	void setShortTime(int short_time);
+	shv::chainpack::RpcValue::DateTime dateTime() const;
 	shv::chainpack::RpcValue toRpcValueMap() const;
 	shv::chainpack::RpcValue toRpcValueList(std::function< chainpack::RpcValue (const std::string &)> map_path = nullptr) const;
 

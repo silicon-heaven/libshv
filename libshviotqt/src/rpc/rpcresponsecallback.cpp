@@ -198,6 +198,12 @@ RpcCall *RpcCall::setParams(const RpcValue &params)
 	return this;
 }
 
+RpcCall* RpcCall::setTimeout(int timeout)
+{
+	m_timeout = timeout;
+	return this;
+}
+
 RpcCall *RpcCall::setUserId(const chainpack::RpcValue &user_id)
 {
 	m_userId = user_id;

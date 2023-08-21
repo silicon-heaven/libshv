@@ -6,6 +6,21 @@
 
 namespace shv::core {
 
+String::String()
+	: Super()
+{
+}
+
+String::String(const std::string &o)
+	: Super(o)
+{
+}
+
+String::String(std::string &&o)
+	: Super(o)
+{
+}
+
 std::string::size_type String::indexOf(const std::string & str_haystack, const std::string &str_needle, String::CaseSensitivity case_sensitivity)
 {
 	auto it = std::search(
@@ -26,6 +41,16 @@ std::string::size_type String::indexOf(const std::string &haystack, char needle)
 	return std::string::npos;
 }
 
+std::string::size_type String::indexOf(const std::string &needle, String::CaseSensitivity case_sensitivity) const
+{
+	return indexOf(*this, needle, case_sensitivity);
+}
+
+std::string::size_type String::indexOf(char needle) const
+{
+	return indexOf(*this, needle);
+}
+
 size_t String::lastIndexOf(char c) const
 {
 	if(empty())
@@ -39,6 +64,36 @@ size_t String::lastIndexOf(char c) const
 	return std::string::npos;
 }
 
+bool String::startsWith(const std::string &with) const
+{
+	return startsWith(*this, with);
+}
+
+bool String::startsWith(const char c) const
+{
+	return startsWith(*this, c);
+}
+
+bool String::startsWith(const std::string & str, const std::string &with)
+{
+	return str.rfind(with, 0) == 0;
+}
+
+bool String::startsWith(const std::string & str, const char c)
+{
+	return str.size() > 0 && str[0] == c;
+}
+
+bool String::endsWith(const std::string &with) const
+{
+	return endsWith(*this, with);
+}
+
+bool String::endsWith(const char c) const
+{
+	return endsWith(*this, c);
+}
+
 bool String::endsWith(const std::string &str, const std::string &with)
 {
 	if(str.size() < with.size())
@@ -47,11 +102,33 @@ bool String::endsWith(const std::string &str, const std::string &with)
 	return ix == (str.size() - with.size());
 }
 
+bool String::endsWith(const std::string & str, const char c)
+{
+	return str.size() > 0 && str[str.size() - 1] == c;
+}
+
 std::string String::mid(size_t pos, size_t cnt) const
 {
 	if(pos < size())
 		return substr(pos, cnt);
 	return {};
+}
+
+std::string& String::rtrim(std::string& s, const char* t)
+{
+	s.erase(s.find_last_not_of(t) + 1);
+	return s;
+}
+
+std::string& String::ltrim(std::string& s, const char* t)
+{
+	s.erase(0, s.find_first_not_of(t));
+	return s;
+}
+
+std::string& String::trim(std::string& s, const char* t)
+{
+	return ltrim(rtrim(s, t), t);
 }
 
 bool String::equal(std::string const& a, std::string const& b, String::CaseSensitivity case_sensitivity)
@@ -152,11 +229,63 @@ std::string &String::upper(std::string &s)
 	return s;
 }
 
+std::string String::toUpper(const std::string& s)
+{
+	std::string ret(s);
+	return upper(ret);
+}
+
 std::string &String::lower(std::string &s)
 {
 	for (char& i : s)
 		i = static_cast<char>(std::tolower(i));
 	return s;
+}
+
+std::string String::toLower(const std::string& s)
+{
+	std::string ret(s);
+	return lower(ret);
+}
+
+int String::toInt(const std::string &str, bool *ok)
+{
+	int ret = 0;
+	bool is_ok = false;
+	try {
+		size_t pos;
+		ret = std::stoi(str, &pos);
+		if(pos == str.length())
+			is_ok = true;
+		else
+			ret = 0;
+	}
+	catch (...) {
+		ret = 0;
+	}
+	if(ok)
+		*ok = is_ok;
+	return ret;
+}
+
+double String::toDouble(const std::string &str, bool *ok)
+{
+	double ret = 0;
+	bool is_ok = false;
+	try {
+		size_t pos;
+		ret = std::stod(str, &pos);
+		if(pos == str.length())
+			is_ok = true;
+		else
+			ret = 0;
+	}
+	catch (...) {
+		ret = 0;
+	}
+	if(ok)
+		*ok = is_ok;
+	return ret;
 }
 
 static size_t find_str(const std::string &haystack, size_t begin_pos, size_t end_pos, const std::string &needle)

@@ -65,6 +65,11 @@ void ShvNode::setParentNode(ShvNode *parent)
 	setParent(parent);
 }
 
+ShvNode::String ShvNode::nodeId() const
+{
+	return m_nodeId;
+}
+
 void ShvNode::setNodeId(ShvNode::String &&n)
 {
 	setObjectName(QString::fromStdString(n));
@@ -97,6 +102,11 @@ shv::core::utils::ShvPath ShvNode::shvPath() const
 	return ret;
 }
 
+void ShvNode::setSortedChildren(bool b)
+{
+	m_isSortedChildren = b;
+}
+
 void ShvNode::deleteIfEmptyWithParents()
 {
 	ShvNode *nd = this;
@@ -109,6 +119,11 @@ void ShvNode::deleteIfEmptyWithParents()
 		}
 		delete lowest_empty_parent_nd;
 	}
+}
+
+bool ShvNode::isRootNode() const
+{
+	return m_isRootNode;
 }
 
 void ShvNode::handleRawRpcRequest(RpcValue::MetaData &&meta, std::string &&data)
@@ -289,6 +304,11 @@ QList<ShvNode *> ShvNode::ownChildren() const
 	return lst;
 }
 
+ShvNode::StringList ShvNode::childNames()
+{
+	return childNames(StringViewList());
+}
+
 ShvNode::StringList ShvNode::childNames(const StringViewList &shv_path)
 {
 	shvLogFuncFrame() << "node:" << nodeId() << "shv_path:" << shv_path.join('/');
@@ -356,6 +376,11 @@ int ShvNode::basicGrantToAccessLevel(const shv::chainpack::AccessGrant &acces_gr
 int ShvNode::grantToAccessLevel(const shv::chainpack::AccessGrant &acces_grant) const
 {
 	return basicGrantToAccessLevel(acces_grant);
+}
+
+void ShvNode::treeWalk(std::function<void (ShvNode *parent_nd, const StringViewList &shv_path)> callback)
+{
+	treeWalk_helper(callback, this, {});
 }
 
 void ShvNode::treeWalk_helper(std::function<void (ShvNode *, const ShvNode::StringViewList &)> callback, ShvNode *parent_nd, const ShvNode::StringViewList &shv_path)
@@ -546,6 +571,12 @@ ShvRootNode::~ShvRootNode() = default;
 //===========================================================
 // MethodsTableNode
 //===========================================================
+MethodsTableNode::MethodsTableNode(const std::string &node_id, const std::vector<shv::chainpack::MetaMethod> *methods, shv::iotqt::node::ShvNode *parent)
+	: Super(node_id, parent)
+	, m_methods(methods)
+{
+}
+
 size_t MethodsTableNode::methodCount(const shv::iotqt::node::ShvNode::StringViewList &shv_path)
 {
 	if(m_methods == nullptr)
@@ -732,6 +763,16 @@ void RpcValueMapNode::setValueOnPath(const shv::iotqt::node::ShvNode::StringView
 			SHV_EXCEPTION("Invalid path: " + shv_path.join('/'));
 	}
 	v.set(std::string{shv_path.at(shv_path.size() - 1)}, val);
+}
+
+void RpcValueMapNode::commitChanges()
+{
+	saveValues();
+}
+
+void RpcValueMapNode::clearValuesCache()
+{
+	m_valuesLoaded = false;
 }
 
 bool RpcValueMapNode::isDir(const shv::iotqt::node::ShvNode::StringViewList &shv_path)
@@ -1040,7 +1081,14 @@ shv::chainpack::RpcValue ObjectPropertyProxyShvNode::callMethod(const shv::iotqt
 //===========================================================
 // PropertyShvNode
 //===========================================================
+ValueProxyShvNode::Handle::Handle() = default;
+
 ValueProxyShvNode::Handle::~Handle() = default;
+
+const shv::chainpack::RpcRequest& ValueProxyShvNode::Handle::servedRpcRequest() const
+{
+	return m_servedRpcRequest;
+}
 
 ValueProxyShvNode::ValueProxyShvNode(const std::string &node_id, int value_id, ValueProxyShvNode::Type type, ValueProxyShvNode::Handle *handled_obj, ShvNode *parent)
 	: Super(node_id, parent)
@@ -1143,6 +1191,21 @@ chainpack::RpcValue ValueProxyShvNode::callMethod(const ShvNode::StringViewList 
 		}
 	}
 	return  Super::callMethod(shv_path, method, params, user_id);
+}
+
+bool ValueProxyShvNode::isWriteable()
+{
+	return static_cast<int>(m_type) & static_cast<int>(Type::Write);
+}
+
+bool ValueProxyShvNode::isReadable()
+{
+	return static_cast<int>(m_type) & static_cast<int>(Type::Read);
+}
+
+bool ValueProxyShvNode::isSignal()
+{
+	return static_cast<int>(m_type) & static_cast<int>(Type::Signal);
 }
 
 }

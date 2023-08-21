@@ -28,6 +28,16 @@ RpcDriver::RpcDriver() = default;
 
 RpcDriver::~RpcDriver() = default;
 
+Rpc::ProtocolType RpcDriver::protocolType() const
+{
+	return m_protocolType;
+}
+
+void RpcDriver::setProtocolType(Rpc::ProtocolType v)
+{
+	m_protocolType = v;
+}
+
 void RpcDriver::sendRpcValue(const RpcValue &msg)
 {
 	using namespace std;
@@ -213,6 +223,16 @@ void RpcDriver::clearSendBuffers()
 	m_topMessageDataHeaderWritten = false;
 	m_topMessageDataBytesWrittenSoFar = 0;
 	m_readData.clear();
+}
+
+int RpcDriver::defaultRpcTimeoutMsec()
+{
+	return s_defaultRpcTimeoutMsec;
+}
+
+void RpcDriver::setDefaultRpcTimeoutMsec(int msec)
+{
+	s_defaultRpcTimeoutMsec = msec;
 }
 
 void RpcDriver::processReadData()
@@ -525,5 +545,30 @@ std::string RpcDriver::dataToPrettyCpon(Rpc::ProtocolType protocol_type, const R
 	rpc_val.setMetaData(shv::chainpack::RpcValue::MetaData(md));
 	return rpc_val.toPrettyString();
 }
+
+RpcDriver::MessageData::MessageData() = default;
+
+RpcDriver::MessageData::MessageData(std::string &&meta_data_, std::string &&data_)
+	: metaData(std::move(meta_data_)), data(std::move(data_))
+{
+}
+
+RpcDriver::MessageData::MessageData(std::string &&data_)
+	: data(std::move(data_))
+{
+}
+
+RpcDriver::MessageData::MessageData(MessageData &&) noexcept = default;
+
+bool RpcDriver::MessageData::empty() const
+{
+	return metaData.empty() && data.empty();
+}
+
+size_t RpcDriver::MessageData::size() const
+{
+	return metaData.size() + data.size();
+}
+
 
 } // namespace shv

@@ -9,10 +9,10 @@ class SHVCHAINPACK_DECL_EXPORT ChainPackWriter : public shv::chainpack::Abstract
 {
 	using Super = AbstractStreamWriter;
 public:
-	ChainPackWriter(std::ostream &out) : Super(out) {}
+	ChainPackWriter(std::ostream &out);
 
-	ChainPackWriter& operator <<(const RpcValue &value) {write(value); return *this;}
-	ChainPackWriter& operator <<(const RpcValue::MetaData &meta_data) {write(meta_data); return *this;}
+	ChainPackWriter& operator <<(const RpcValue &value);
+	ChainPackWriter& operator <<(const RpcValue::MetaData &meta_data);
 
 	void write(const RpcValue &val) override;
 	void write(const RpcValue::MetaData &meta_data) override;

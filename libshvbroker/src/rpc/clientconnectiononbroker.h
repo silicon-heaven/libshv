@@ -26,18 +26,18 @@ public:
 	~ClientConnectionOnBroker() override;
 
 	int connectionId() const override;
-	bool isConnectedAndLoggedIn() const override {return Super::isConnectedAndLoggedIn();}
-	bool isSlaveBrokerConnection() const override {return Super::isSlaveBrokerConnection();}
-	bool isMasterBrokerConnection() const override {return false;}
+	bool isConnectedAndLoggedIn() const override;
+	bool isSlaveBrokerConnection() const override;
+	bool isMasterBrokerConnection() const override;
 
-	std::string loggedUserName() override {return Super::userName();}
+	std::string loggedUserName() override;
 
 	shv::chainpack::RpcValue tunnelOptions() const;
 	shv::chainpack::RpcValue deviceOptions() const;
 	shv::chainpack::RpcValue deviceId() const;
 
 	void setMountPoint(const std::string &mp);
-	const std::string& mountPoint() const {return m_mountPoint;}
+	const std::string& mountPoint() const;
 
 	int idleTime() const;
 	int idleTimeMax() const;

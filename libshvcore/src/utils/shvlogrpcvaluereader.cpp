@@ -51,4 +51,19 @@ bool ShvLogRpcValueReader::next()
 	}
 }
 
+bool ShvLogRpcValueReader::isInSnapshot() const
+{
+	return m_snapshotMsec == m_currentEntry.epochMsec || m_currentEntry.isSnapshotValue();
+}
+
+const ShvJournalEntry& ShvLogRpcValueReader::entry()
+{
+	return m_currentEntry;
+}
+
+const ShvLogHeader &ShvLogRpcValueReader::logHeader() const
+{
+	return m_logHeader;
+}
+
 } // namespace shv

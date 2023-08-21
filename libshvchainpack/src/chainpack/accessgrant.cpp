@@ -33,6 +33,11 @@ UserLogin UserLoginContext::userLogin() const
 //================================================================
 // UserLogin
 //================================================================
+bool UserLogin::isValid() const
+{
+	return !user.empty();
+}
+
 const char* UserLogin::loginTypeToString(UserLogin::LoginType t)
 {
 	switch(t) {
@@ -88,6 +93,16 @@ UserLogin UserLogin::fromRpcValue(const RpcValue &val)
 //================================================================
 // UserLoginResult
 //================================================================
+UserLoginResult::UserLoginResult() = default;
+
+UserLoginResult::UserLoginResult(bool password_ok) : UserLoginResult(password_ok, std::string()) {}
+
+UserLoginResult::UserLoginResult(bool password_ok, std::string login_error)
+	: passwordOk(password_ok)
+	, loginError(std::move(login_error))
+{
+}
+
 RpcValue UserLoginResult::toRpcValue() const
 {
 	RpcValue::Map m;
@@ -123,6 +138,14 @@ void AccessGrant::MetaType::registerMetaType()
 		static MetaType s;
 		shv::chainpack::meta::registerType(shv::chainpack::meta::GlobalNS::ID, MetaType::ID, &s);
 	}
+}
+
+AccessGrant::AccessGrant() = default;
+
+AccessGrant::AccessGrant(const std::string &role_)
+	: type(Type::Role)
+	, role(role_)
+{
 }
 
 bool AccessGrant::isValid() const

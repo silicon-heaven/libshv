@@ -60,10 +60,10 @@ public:
 	BrokerApp(int &argc, char **argv, AppCliOptions* cli_opts);
 	~BrokerApp() Q_DECL_OVERRIDE;
 
-	AppCliOptions* cliOptions() {return m_cliOptions;}
+	AppCliOptions* cliOptions();
 	static void registerLogTopics();
 
-	static BrokerApp* instance() {return qobject_cast<BrokerApp*>(Super::instance());}
+	static BrokerApp* instance();
 
 	void onClientLogin(int connection_id);
 	void onConnectedToMasterBrokerChanged(int connection_id, bool is_connected);
@@ -102,7 +102,7 @@ public:
 
 	void sendNewLogEntryNotify(const std::string &msg);
 
-	const std::string& brokerId() const { return m_brokerId; }
+	const std::string& brokerId() const;
 	iotqt::node::ShvNode * nodeForService(const shv::core::utils::ShvUrl &spp);
 
 protected:

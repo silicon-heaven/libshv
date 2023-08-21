@@ -20,42 +20,31 @@ public:
 	enum SplitBehavior {KeepEmptyParts, SkipEmptyParts};
 
 	using Super::Super;
-	String() : Super() {}
-	String(const std::string &o) : Super(o) {}
-	String(std::string &&o) : Super(o) {}
+	String();
+	String(const std::string &o);
+	String(std::string &&o);
 
 	static bool equal(const std::string &a, const std::string &b, String::CaseSensitivity case_sensitivity);
 	static std::string::size_type indexOf(const std::string & str_haystack, const std::string &str_needle, String::CaseSensitivity case_sensitivity = CaseSensitive);
 	static std::string::size_type indexOf(const std::string &haystack, char needle);
-	std::string::size_type indexOf(const std::string &needle, String::CaseSensitivity case_sensitivity = CaseSensitive) const { return indexOf(*this, needle, case_sensitivity); }
-	std::string::size_type indexOf(char needle) const { return indexOf(*this, needle); }
+	std::string::size_type indexOf(const std::string &needle, String::CaseSensitivity case_sensitivity = CaseSensitive) const;
+	std::string::size_type indexOf(char needle) const;
 	size_t lastIndexOf(char c) const;
 
-	bool startsWith(const std::string &with) const {return startsWith(*this, with);}
-	bool startsWith(const char c) const {return startsWith(*this, c);}
-	static bool startsWith(const std::string & str, const std::string &with) {return str.rfind(with, 0) == 0;}
-	static bool startsWith(const std::string & str, const char c) { return str.size() > 0 && str[0] == c; }
+	bool startsWith(const std::string &with) const;
+	bool startsWith(const char c) const;
+	static bool startsWith(const std::string & str, const std::string &with);
+	static bool startsWith(const std::string & str, const char c);
 
-	bool endsWith(const std::string &with) const {return endsWith(*this, with);}
-	bool endsWith(const char c) const {return endsWith(*this, c);}
+	bool endsWith(const std::string &with) const;
+	bool endsWith(const char c) const;
 	static bool endsWith(const std::string & str, const std::string &with);
-	static bool endsWith(const std::string & str, const char c) { return str.size() > 0 && str[str.size() - 1] == c; }
+	static bool endsWith(const std::string & str, const char c);
 
 	static constexpr auto WhiteSpaceChars = " \t\n\r\f\v";
-	static std::string& rtrim(std::string& s, const char* t = WhiteSpaceChars)
-	{
-		s.erase(s.find_last_not_of(t) + 1);
-		return s;
-	}
-	static std::string& ltrim(std::string& s, const char* t = WhiteSpaceChars)
-	{
-		s.erase(0, s.find_first_not_of(t));
-		return s;
-	}
-	static std::string& trim(std::string& s, const char* t = WhiteSpaceChars)
-	{
-		return ltrim(rtrim(s, t), t);
-	}
+	static std::string& rtrim(std::string& s, const char* t = WhiteSpaceChars);
+	static std::string& ltrim(std::string& s, const char* t = WhiteSpaceChars);
+	static std::string& trim(std::string& s, const char* t = WhiteSpaceChars);
 
 	std::string mid(size_t pos, size_t cnt = std::string::npos) const;
 
@@ -68,9 +57,9 @@ public:
 	static int replace(std::string &str, const char from, const char to);
 
 	static std::string& upper(std::string& s);
-	static std::string toUpper(const std::string& s) {std::string ret(s); return upper(ret);}
+	static std::string toUpper(const std::string& s);
 	static std::string& lower(std::string& s);
-	static std::string toLower(const std::string& s) {std::string ret(s); return lower(ret);}
+	static std::string toLower(const std::string& s);
 
 	template<typename T>
 	static std::string toString(T i, size_t width = 0, char fill_char = ' ')
@@ -82,44 +71,8 @@ public:
 			ret = fill_char + ret;
 		return ret;
 	}
-	inline static int toInt(const std::string &str, bool *ok = nullptr)
-	{
-		int ret = 0;
-		bool is_ok = false;
-		try {
-			size_t pos;
-			ret = std::stoi(str, &pos);
-			if(pos == str.length())
-				is_ok = true;
-			else
-				ret = 0;
-		}
-		catch (...) {
-			ret = 0;
-		}
-		if(ok)
-			*ok = is_ok;
-		return ret;
-	}
-	inline static double toDouble(const std::string &str, bool *ok)
-	{
-		double ret = 0;
-		bool is_ok = false;
-		try {
-			size_t pos;
-			ret = std::stod(str, &pos);
-			if(pos == str.length())
-				is_ok = true;
-			else
-				ret = 0;
-		}
-		catch (...) {
-			ret = 0;
-		}
-		if(ok)
-			*ok = is_ok;
-		return ret;
-	}
+	static int toInt(const std::string &str, bool *ok = nullptr);
+	static double toDouble(const std::string &str, bool *ok);
 
 };
 

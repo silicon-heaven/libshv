@@ -27,20 +27,20 @@ public:
 	explicit ServerConnection(Socket *socket, QObject *parent = nullptr);
 	~ServerConnection() Q_DECL_OVERRIDE;
 
-	const std::string& connectionName() {return m_connectionName;}
-	void setConnectionName(const std::string &n) {m_connectionName = n; setObjectName(QString::fromStdString(n));}
+	const std::string& connectionName();
+	void setConnectionName(const std::string &n);
 
-	void close() Q_DECL_OVERRIDE {closeSocket();}
-	void abort() Q_DECL_OVERRIDE {abortSocket();}
+	void close() Q_DECL_OVERRIDE;
+	void abort() Q_DECL_OVERRIDE;
 
 	void unregisterAndDeleteLater();
 	Q_SIGNAL void aboutToBeDeleted(int connection_id);
 
-	const shv::chainpack::RpcValue::Map& connectionOptions() const {return m_connectionOptions.asMap();}
+	const shv::chainpack::RpcValue::Map& connectionOptions() const;
 
-	const std::string& userName() const { return m_userLogin.user; }
+	const std::string& userName() const;
 
-	virtual bool isConnectedAndLoggedIn() const {return isSocketConnected() && m_loginOk;}
+	virtual bool isConnectedAndLoggedIn() const;
 
 	virtual bool isSlaveBrokerConnection() const;
 
@@ -51,7 +51,7 @@ public:
 protected:
 	void onRpcDataReceived(shv::chainpack::Rpc::ProtocolType protocol_type, shv::chainpack::RpcValue::MetaData &&md, std::string &&msg_data) override;
 
-	bool isLoginPhase() const {return !m_loginOk;}
+	bool isLoginPhase() const;
 	void processLoginPhase(const chainpack::RpcMessage &msg);
 
 	virtual void processLoginPhase();

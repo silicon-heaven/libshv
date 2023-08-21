@@ -18,6 +18,11 @@ MasterBrokerConnection::MasterBrokerConnection(QObject *parent)
 
 }
 
+shv::chainpack::RpcValue MasterBrokerConnection::options()
+{
+	return m_options;
+}
+
 void MasterBrokerConnection::setOptions(const shv::chainpack::RpcValue &slave_broker_options)
 {
 	m_options = slave_broker_options;
@@ -58,6 +63,26 @@ void MasterBrokerConnection::setOptions(const shv::chainpack::RpcValue &slave_br
 		}
 	}
 	m_exportedShvPath = slave_broker_options.asMap().value("exportedShvPath").asString();
+}
+
+std::string MasterBrokerConnection::loggedUserName()
+{
+	return std::string();
+}
+
+bool MasterBrokerConnection::isConnectedAndLoggedIn() const
+{
+	return isSocketConnected() && !isLoginPhase();
+}
+
+bool MasterBrokerConnection::isSlaveBrokerConnection() const
+{
+	return false;
+}
+
+bool MasterBrokerConnection::isMasterBrokerConnection() const
+{
+	return true;
 }
 
 void MasterBrokerConnection::sendRawData(const shv::chainpack::RpcValue::MetaData &meta_data, std::string &&data)
@@ -113,6 +138,11 @@ std::string MasterBrokerConnection::localPathToMasterExported(const std::string 
 	if(shv::core::utils::ShvPath::startsWithPath(local_path, m_exportedShvPath, &pos))
 		return local_path.substr(pos);
 	return local_path;
+}
+
+const std::string& MasterBrokerConnection::exportedShvPath() const
+{
+	return m_exportedShvPath;
 }
 
 void MasterBrokerConnection::onRpcDataReceived(shv::chainpack::Rpc::ProtocolType protocol_type, shv::chainpack::RpcValue::MetaData &&md, std::string &&msg_data)

@@ -28,6 +28,11 @@ ShvNodeTree::ShvNodeTree(ShvNode *root, QObject *parent)
 
 ShvNodeTree::~ShvNodeTree() = default;
 
+ShvNode* ShvNodeTree::root() const
+{
+	return m_root;
+}
+
 ShvNode *ShvNodeTree::mkdir(const ShvNode::String &path)
 {
 	ShvNode::StringViewList lst = core::utils::ShvPath::split(path);

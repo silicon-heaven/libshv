@@ -8,6 +8,34 @@ ShvJournalEntry::MetaType::MetaType()
 {
 }
 
+//==============================================================
+// ShvJournalEntry
+//==============================================================
+ShvJournalEntry::ShvJournalEntry() = default;
+
+ShvJournalEntry::ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_, std::string domain_, int short_time, ValueFlags flags, int64_t epoch_msec)
+	: epochMsec(epoch_msec)
+	, path(std::move(path_))
+	, value{value_}
+	, shortTime(short_time)
+	, domain(std::move(domain_))
+	, valueFlags(flags)
+{
+}
+
+ShvJournalEntry::ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_)
+	: ShvJournalEntry(path_, value_, DOMAIN_VAL_CHANGE, NO_SHORT_TIME, NO_VALUE_FLAGS)
+{
+}
+ShvJournalEntry::ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_, int short_time)
+	: ShvJournalEntry(path_, value_, DOMAIN_VAL_FASTCHANGE, short_time, NO_VALUE_FLAGS)
+{
+}
+ShvJournalEntry::ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_, std::string domain_)
+	: ShvJournalEntry(path_, value_, std::move(domain_), NO_SHORT_TIME, NO_VALUE_FLAGS)
+{
+}
+
 void ShvJournalEntry::MetaType::registerMetaType()
 {
 	static bool is_init = false;
@@ -18,9 +46,6 @@ void ShvJournalEntry::MetaType::registerMetaType()
 	}
 }
 
-//==============================================================
-// ShvJournalEntry
-//==============================================================
 chainpack::RpcValue ShvJournalEntry::toRpcValueMap() const
 {
 	chainpack::RpcValue::Map m;
@@ -138,4 +163,50 @@ chainpack::DataChange ShvJournalEntry::toDataChange() const
 	return {};
 }
 
+bool ShvJournalEntry::isValid() const
+{
+	return !path.empty() && epochMsec > 0;
+}
+
+bool ShvJournalEntry::isSpontaneous() const
+{
+	return shv::chainpack::DataChange::testBit(valueFlags, ValueFlag::Spontaneous);
+}
+
+void ShvJournalEntry::setSpontaneous(bool b)
+{
+	shv::chainpack::DataChange::setBit(valueFlags, ValueFlag::Spontaneous, b);
+}
+
+bool ShvJournalEntry::isSnapshotValue() const
+{
+	return shv::chainpack::DataChange::testBit(valueFlags, ValueFlag::Snapshot);
+}
+
+void ShvJournalEntry::setSnapshotValue(bool b)
+{
+	shv::chainpack::DataChange::setBit(valueFlags, ValueFlag::Snapshot, b);
+}
+
+bool ShvJournalEntry::operator==(const ShvJournalEntry &o) const
+{
+	return epochMsec == o.epochMsec
+			&& path == o.path
+			&& value == o.value
+			&& shortTime == o.shortTime
+			&& domain == o.domain
+			&& valueFlags == o.valueFlags
+			&& userId == o.userId
+			;
+}
+
+void ShvJournalEntry::setShortTime(int short_time)
+{
+	shortTime = short_time;
+}
+
+shv::chainpack::RpcValue::DateTime ShvJournalEntry::dateTime() const
+{
+	return shv::chainpack::RpcValue::DateTime::fromMSecsSinceEpoch(epochMsec);
+}
 } // namespace shv

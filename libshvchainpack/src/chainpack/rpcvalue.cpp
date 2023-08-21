@@ -496,6 +496,27 @@ void RpcValue::setMetaValue(const RpcValue::String &key, const RpcValue &val)
 		m_ptr->setMetaValue(key, val);
 }
 
+int RpcValue::metaTypeId() const
+{
+	return metaValue(meta::Tag::MetaTypeId).toInt();
+}
+
+int RpcValue::metaTypeNameSpaceId() const
+{
+	return metaValue(meta::Tag::MetaTypeNameSpaceId).toInt();
+}
+
+void RpcValue::setMetaTypeId(int id)
+{
+	setMetaValue(meta::Tag::MetaTypeId, id);
+}
+
+void RpcValue::setMetaTypeId(int ns, int id)
+{
+	setMetaValue(meta::Tag::MetaTypeNameSpaceId, ns); setMetaValue(meta::Tag::MetaTypeId, id);
+}
+
+
 bool RpcValue::isDefaultValue() const
 {
 	switch (type()) {
@@ -526,6 +547,67 @@ bool RpcValue::isValid() const
 {
 	return !m_ptr.isNull();
 }
+
+bool RpcValue::isNull() const
+{
+	return type() == Type::Null;
+}
+
+bool RpcValue::isInt() const
+{
+	return type() == Type::Int;
+}
+
+bool RpcValue::isUInt() const
+{
+	return type() == Type::UInt;
+}
+
+bool RpcValue::isDouble() const
+{
+	return type() == Type::Double;
+}
+
+bool RpcValue::isBool() const
+{
+	return type() == Type::Bool;
+}
+
+bool RpcValue::isString() const
+{
+	return type() == Type::String;
+}
+
+bool RpcValue::isBlob() const
+{
+	return type() == Type::Blob;
+}
+
+bool RpcValue::isDecimal() const
+{
+	return type() == Type::Decimal;
+}
+
+bool RpcValue::isDateTime() const
+{
+	return type() == Type::DateTime;
+}
+
+bool RpcValue::isList() const
+{
+	return type() == Type::List;
+}
+
+bool RpcValue::isMap() const
+{
+	return type() == Type::Map;
+}
+
+bool RpcValue::isIMap() const
+{
+	return type() == Type::IMap;
+}
+
 
 bool RpcValue::isValueNotAvailable() const
 {
@@ -577,9 +659,26 @@ const RpcValue::List & RpcValue::asList() const { return !m_ptr.isNull()? m_ptr-
 const RpcValue::Map & RpcValue::asMap() const { return !m_ptr.isNull()? m_ptr->asMap(): static_empty_map(); }
 const RpcValue::IMap &RpcValue::asIMap() const { return !m_ptr.isNull()? m_ptr->asIMap(): static_empty_imap(); }
 
+[[deprecated("Use asList instead")]] const RpcValue::List &RpcValue::toList() const
+{
+	return asList();
+}
+
+[[deprecated("Use asMap instead")]] const RpcValue::Map &RpcValue::toMap() const
+{
+	return asMap();
+}
+
+[[deprecated("Use asIMap instead")]] const RpcValue::IMap &RpcValue::toIMap() const
+{
+	return asIMap();
+}
+
 size_t RpcValue::count() const { return !m_ptr.isNull()? m_ptr->count(): 0; }
 RpcValue RpcValue::at(RpcValue::Int i) const { return !m_ptr.isNull()? m_ptr->atI(i): RpcValue(); }
+RpcValue RpcValue::at(Int i, const RpcValue &def_val) const  { return has(i)? at(i): def_val; }
 RpcValue RpcValue::at(const RpcValue::String &key) const { return !m_ptr.isNull()? m_ptr->atS(key): RpcValue(); }
+RpcValue RpcValue::at(const RpcValue::String &key, const RpcValue &def_val) const { return has(key)? at(key): def_val; }
 bool RpcValue::has(RpcValue::Int i) const { return !m_ptr.isNull()? m_ptr->hasI(i): false; }
 bool RpcValue::has(const RpcValue::String &key) const { return !m_ptr.isNull()? m_ptr->hasS(key): false; }
 
@@ -707,9 +806,24 @@ RpcValue RpcValue::fromCpon(const std::string &str, std::string *err)
 	return ret;
 }
 
+long RpcValue::refCnt() const
+{
+	return m_ptr.refCnt();
+}
+
 RpcValue string_literals::operator""_cpon(const char* data, size_t size)
 {
 	return RpcValue::fromCpon(std::string{data, size});
+}
+
+RpcValue::Decimal::Num::Num()
+	: mantisa(0), exponent(-1)
+{
+}
+
+RpcValue::Decimal::Num::Num(int64_t m, int e)
+	: mantisa(m), exponent(e)
+{
 }
 
 std::string RpcValue::toChainPack() const
@@ -763,6 +877,11 @@ const char *RpcValue::typeToName(RpcValue::Type t)
 	case Type::Decimal: return "Decimal";
 	}
 	return "UNKNOWN"; // just to remove mingw warning
+}
+
+const char* RpcValue::typeName() const
+{
+	return typeToName(type());
 }
 
 RpcValue::Type RpcValue::typeForName(const std::string &type_name, int len)
@@ -843,6 +962,31 @@ static long long parse_ISO_DateTime(const std::string &s, std::tm &tm, int &msec
 	return 0;
 }
 
+RpcValue::DateTime::DateTime()
+	: m_dtm{0, 0}
+{
+}
+
+int64_t RpcValue::DateTime::msecsSinceEpoch() const
+{
+	return m_dtm.msec;
+}
+
+int RpcValue::DateTime::utcOffsetMin() const
+{
+	return m_dtm.tz * 15;
+}
+
+int RpcValue::DateTime::minutesFromUtc() const
+{
+	return utcOffsetMin();
+}
+
+bool RpcValue::DateTime::isZero() const
+{
+	return msecsSinceEpoch() == 0;
+}
+
 RpcValue::DateTime RpcValue::DateTime::now()
 {
 	std::chrono::time_point<std::chrono::system_clock> p1 = std::chrono::system_clock::now();
@@ -911,6 +1055,22 @@ RpcValue::DateTime RpcValue::DateTime::fromMSecsSinceEpoch(int64_t msecs, int ut
 	ret.setUtcOffsetMin(utc_offset_min);
 	return ret;
 }
+
+void RpcValue::DateTime::setMsecsSinceEpoch(int64_t msecs)
+{
+	m_dtm.msec = msecs;
+}
+
+void RpcValue::DateTime::setUtcOffsetMin(int utc_offset_min)
+{
+	m_dtm.tz = (utc_offset_min / 15) & 0x7F;
+}
+void RpcValue::DateTime::setTimeZone(int utc_offset_min)
+{
+	setUtcOffsetMin(utc_offset_min);
+}
+
+
 std::string RpcValue::DateTime::toLocalString() const
 {
 	std::time_t tim = m_dtm.msec / 1000 + m_dtm.tz * 15 * 60;
@@ -928,6 +1088,11 @@ std::string RpcValue::DateTime::toLocalString() const
 	return ret;
 }
 
+std::string RpcValue::DateTime::toIsoString() const
+{
+	return toIsoString(MsecPolicy::Auto, IncludeTimeZone);
+}
+
 std::string RpcValue::DateTime::toIsoString(RpcValue::DateTime::MsecPolicy msec_policy, bool include_tz) const
 {
 	ccpcp_pack_context ctx;
@@ -935,6 +1100,37 @@ std::string RpcValue::DateTime::toIsoString(RpcValue::DateTime::MsecPolicy msec_
 	ccpcp_pack_context_init(&ctx, buff.data(), buff.size(), nullptr);
 	ccpon_pack_date_time_str(&ctx, msecsSinceEpoch(), minutesFromUtc(), static_cast<ccpon_msec_policy>(msec_policy), include_tz);
 	return std::string(buff.data(), ctx.current);
+}
+
+RpcValue::DateTime::Parts::Parts() = default;
+
+RpcValue::DateTime::Parts::Parts(int y, int m, int d, int h, int mn, int s, int ms)
+	: year(y), month(m), day(d), hour(h), min(mn), sec(s), msec(ms)
+{
+}
+
+bool RpcValue::DateTime::Parts::isValid() const
+{
+	return
+	year >= 1970
+	&& month >= 1 && month <= 12
+	&& day >= 1 && day <= 31
+	&& hour >= 0 && hour <= 59
+	&& min >= 0 && min <= 59
+	&& sec >= 0 && sec <= 59
+	&& msec >= 0 && msec <= 999;
+}
+
+bool RpcValue::DateTime::Parts::operator==(const Parts &o) const
+{
+	return
+	year == o.year
+	&& month == o.month
+	&& day == o.day
+	&& hour == o.hour
+	&& min == o.min
+	&& sec == o.sec
+	&& msec == o.msec;
 }
 
 RpcValue::DateTime::Parts RpcValue::DateTime::toParts() const
@@ -959,6 +1155,32 @@ RpcValue::DateTime RpcValue::DateTime::fromParts(const Parts &parts)
 	}
 	return {};
 }
+
+bool RpcValue::DateTime::operator==(const DateTime &o) const
+{
+	return (m_dtm.msec == o.m_dtm.msec);
+}
+
+bool RpcValue::DateTime::operator<(const DateTime &o) const
+{
+	return m_dtm.msec < o.m_dtm.msec;
+}
+
+bool RpcValue::DateTime::operator>=(const DateTime &o) const
+{
+	return !(*this < o);
+}
+
+bool RpcValue::DateTime::operator>(const DateTime &o) const
+{
+	return m_dtm.msec > o.m_dtm.msec;
+}
+
+bool RpcValue::DateTime::operator<=(const DateTime &o) const
+{
+	return !(*this > o);
+}
+
 
 #ifdef DEBUG_RPCVAL
 static int cnt = 0;
@@ -1054,6 +1276,27 @@ RpcValue::MetaData &RpcValue::MetaData::operator=(const RpcValue::MetaData &o)
 		m_smap = new RpcValue::Map(*o.m_smap);
 	return *this;
 }
+
+int RpcValue::MetaData::metaTypeId() const
+{
+	return value(meta::Tag::MetaTypeId).toInt();
+}
+
+void RpcValue::MetaData::setMetaTypeId(RpcValue::Int id)
+{
+	setValue(meta::Tag::MetaTypeId, id);
+}
+
+int RpcValue::MetaData::metaTypeNameSpaceId() const
+{
+	return value(meta::Tag::MetaTypeNameSpaceId).toInt();
+}
+
+void RpcValue::MetaData::setMetaTypeNameSpaceId(RpcValue::Int id)
+{
+	setValue(meta::Tag::MetaTypeNameSpaceId, id);
+}
+
 
 std::vector<RpcValue::Int> RpcValue::MetaData::iKeys() const
 {
@@ -1213,6 +1456,57 @@ void RpcValue::MetaData::swap(RpcValue::MetaData &o)
 	std::swap(m_smap, o.m_smap);
 }
 
+RpcValue::Decimal::Decimal() = default;
+
+RpcValue::Decimal::Decimal(int64_t mantisa, int exponent)
+	: m_num{mantisa, exponent}
+{
+}
+
+RpcValue::Decimal::Decimal(int dec_places)
+	: Decimal(0, -dec_places)
+{
+}
+
+int64_t RpcValue::Decimal::mantisa() const
+{
+	return m_num.mantisa;
+}
+
+int RpcValue::Decimal::exponent() const
+{
+	return m_num.exponent;
+}
+
+RpcValue::Decimal RpcValue::Decimal::fromDouble(double d, int round_to_dec_places)
+{
+	int exponent = -round_to_dec_places;
+	if(round_to_dec_places > 0) {
+		for(; round_to_dec_places > 0; round_to_dec_places--) d *= Base;
+	}
+	else if(round_to_dec_places < 0) {
+		for(; round_to_dec_places < 0; round_to_dec_places++) d /= Base;
+	}
+	return Decimal(static_cast<int64_t>(d + 0.5), exponent);
+}
+
+void RpcValue::Decimal::setDouble(double d)
+{
+	Decimal dc = fromDouble(d, -m_num.exponent);
+	m_num.mantisa = dc.mantisa();
+}
+
+double RpcValue::Decimal::toDouble() const
+{
+	double ret = static_cast<double>(mantisa());
+		int exp = exponent();
+		if(exp > 0)
+			for(; exp > 0; exp--) ret *= Base;
+		else
+			for(; exp < 0; exp++) ret /= Base;
+		return ret;;
+}
+
 std::string RpcValue::Decimal::toString() const
 {
 	std::string ret = RpcValue(*this).toCpon();
@@ -1230,6 +1524,151 @@ RpcValue::Blob RpcValue::stringToBlob(const RpcValue::String &s)
 	return Blob(s.begin(), s.end());
 }
 
+RpcValue RpcValue::List::value(size_t ix) const
+{
+	if(ix >= size())
+		return RpcValue();
+	return operator [](ix);
+}
+
+const RpcValue& RpcValue::List::valref(size_t ix) const
+{
+	if(ix >= size()) {
+		static RpcValue s;
+		return s;
+	}
+	return operator [](ix);
+}
+
+RpcValue::List RpcValue::List::fromStringList(const std::vector<std::string> &sl)
+{
+	List ret;
+	for(const std::string &s : sl)
+		ret.push_back(s);
+	return ret;
+}
+
+RpcValue RpcValue::Map::take(const String &key, const RpcValue &default_val)
+{
+	auto it = find(key);
+	if(it == end())
+		return default_val;
+	auto ret = it->second;
+	erase(it);
+	return ret;
+}
+
+RpcValue RpcValue::Map::value(const String &key, const RpcValue &default_val) const
+{
+	auto it = find(key);
+	if(it == end())
+		return default_val;
+	return it->second;
+}
+
+const RpcValue& RpcValue::Map::valref(const String &key) const
+{
+	auto it = find(key);
+	if(it == end()) {
+		static const auto s = RpcValue();
+		return s;
+	}
+	return it->second;
+}
+
+void RpcValue::Map::setValue(const String &key, const RpcValue &val)
+{
+	if(val.isValid())
+		(*this)[key] = val;
+	else
+		this->erase(key);
+}
+
+bool RpcValue::Map::hasKey(const String &key) const
+{
+	auto it = find(key);
+	return !(it == end());
+}
+
+std::vector<RpcValue::String> RpcValue::Map::keys() const
+{
+	std::vector<String> ret;
+	for(const auto &kv : *this)
+		ret.push_back(kv.first);
+	return ret;
+}
+
+RpcValue RpcValue::IMap::value(Int key, const RpcValue &default_val) const
+{
+	auto it = find(key);
+	if(it == end())
+		return default_val;
+	return it->second;
+}
+
+const RpcValue& RpcValue::IMap::valref(Int key) const
+{
+	auto it = find(key);
+	if(it == end()) {
+		static const auto s = RpcValue();
+		return s;
+	}
+	return it->second;
+}
+
+void RpcValue::IMap::setValue(Int key, const RpcValue &val)
+{
+	if(val.isValid())
+		(*this)[key] = val;
+	else
+		this->erase(key);
+}
+
+bool RpcValue::IMap::hasKey(Int key) const
+{
+	auto it = find(key);
+	return !(it == end());
+}
+
+std::vector<RpcValue::Int> RpcValue::IMap::keys() const
+{
+	std::vector<Int> ret;
+	for(const auto &kv : *this)
+		ret.push_back(kv.first);
+	return ret;
+}
+
+RpcValueGenList::RpcValueGenList(const RpcValue &v)
+	: m_val(v)
+{
+}
+
+RpcValue RpcValueGenList::value(size_t ix) const
+{
+	if(m_val.isList())
+		return m_val.asList().value(ix);
+	else if(ix == 0)
+		return m_val;
+	return RpcValue();
+}
+bool RpcValueGenList::size() const
+{
+	if(m_val.isList())
+		return m_val.asList().size();
+	return m_val.isValid()? 1: 0;
+}
+
+bool RpcValueGenList::empty() const
+{
+	return size() == 0;
+}
+
+RpcValue::List RpcValueGenList::toList() const
+{
+	if(m_val.isList())
+		return m_val.asList();
+	return m_val.isValid()? RpcValue::List{m_val}: RpcValue::List{};
+}
 }
 
 

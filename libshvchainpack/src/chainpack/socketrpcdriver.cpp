@@ -42,6 +42,24 @@ bool SocketRpcDriver::isOpenImpl() const
 	return m_socket >= 0;
 }
 
+bool SocketRpcDriver::isOpen()
+{
+	return isOpenImpl();
+}
+
+void SocketRpcDriver::writeMessageBegin()
+{
+}
+
+void SocketRpcDriver::writeMessageEnd()
+{
+	flush();
+}
+
+void SocketRpcDriver::idleTaskOnSelectTimeout()
+{
+}
+
 int64_t SocketRpcDriver::writeBytes(const char *bytes, size_t length)
 {
 	if(!isOpen()) {

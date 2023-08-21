@@ -40,9 +40,29 @@ TunnelCtl::TunnelCtl(const RpcValue &o)
 {
 }
 
+FindTunnelReqCtl::FindTunnelReqCtl()
+	: Super(State::FindTunnelRequest)
+{
+}
+
+FindTunnelReqCtl::FindTunnelReqCtl(const TunnelCtl &o)
+	: Super(o)
+{
+}
+
 //================================================================
 // FindTunnelResponse
 //================================================================
+FindTunnelRespCtl::FindTunnelRespCtl()
+	: Super(State::FindTunnelResponse)
+{
+}
+
+FindTunnelRespCtl::FindTunnelRespCtl(const TunnelCtl &o)
+	: Super(o)
+{
+}
+
 FindTunnelRespCtl FindTunnelRespCtl::fromFindTunnelRequest(const FindTunnelReqCtl &rq)
 {
 	FindTunnelRespCtl ret;
@@ -56,6 +76,16 @@ FindTunnelRespCtl FindTunnelRespCtl::fromFindTunnelRequest(const FindTunnelReqCt
 //================================================================
 // CreateTunnelRequest
 //================================================================
+CreateTunnelReqCtl::CreateTunnelReqCtl()
+	: Super(State::CreateTunnelRequest)
+{
+}
+
+CreateTunnelReqCtl::CreateTunnelReqCtl(const TunnelCtl &o)
+	: Super(o)
+{
+}
+
 CreateTunnelReqCtl CreateTunnelReqCtl::fromFindTunnelResponse(const FindTunnelRespCtl &resp)
 {
 	CreateTunnelReqCtl ret;
@@ -64,6 +94,26 @@ CreateTunnelReqCtl CreateTunnelReqCtl::fromFindTunnelResponse(const FindTunnelRe
 	ret.setSecret(resp.secret());
 	ret.setCallerIds(resp.callerIds());
 	return ret;
+}
+
+CreateTunnelRespCtl::CreateTunnelRespCtl()
+	: Super(State::CreateTunnelResponse)
+{
+}
+
+CreateTunnelRespCtl::CreateTunnelRespCtl(const TunnelCtl &o)
+	: Super(o)
+{
+}
+
+CloseTunnelCtl::CloseTunnelCtl()
+	: Super(State::CreateTunnelResponse)
+{
+}
+
+CloseTunnelCtl::CloseTunnelCtl(const TunnelCtl &o)
+	: Super(o)
+{
 }
 
 } // namespace shv

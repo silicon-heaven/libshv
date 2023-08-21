@@ -58,7 +58,14 @@ RpcMessage::RpcMessage(const RpcValue &val)
 	m_value = val;
 }
 
+RpcMessage::RpcMessage(const RpcMessage &val) = default;
+
 RpcMessage::~RpcMessage() = default;
+
+const RpcValue& RpcMessage::value() const
+{
+	return m_value;
+}
 
 bool RpcMessage::hasKey(RpcValue::Int key) const
 {
@@ -75,6 +82,11 @@ void RpcMessage::setValue(RpcValue::Int key, const RpcValue &val)
 	assert(key >= RpcMessage::MetaType::Key::Params && key < RpcMessage::MetaType::Key::MAX);
 	checkMetaValues();
 	m_value.set(key, val);
+}
+
+const RpcValue::MetaData& RpcMessage::metaData() const
+{
+	return m_value.metaData();
 }
 
 RpcValue RpcMessage::metaValue(RpcValue::Int key) const
@@ -472,6 +484,16 @@ std::string RpcMessage::toCpon() const
 //==================================================================
 RpcRequest::~RpcRequest() = default;
 
+RpcRequest::RpcRequest()
+	: Super()
+{
+}
+
+RpcRequest::RpcRequest(const RpcMessage &msg)
+	: Super(msg)
+{
+}
+
 RpcRequest &RpcRequest::setMethod(const RpcValue::String &met)
 {
 	return setMethod(RpcValue::String(met));
@@ -499,9 +521,24 @@ RpcRequest& RpcRequest::setParams(const RpcValue& p)
 	return *this;
 }
 
+RpcRequest& RpcRequest::setRequestId(const RpcValue::Int id)
+{
+	Super::setRequestId(id); return *this;
+}
+
 //==================================================================
 // RpcNotify
 //==================================================================
+RpcSignal::RpcSignal()
+	: Super()
+{
+}
+
+RpcSignal::RpcSignal(const RpcMessage &msg)
+	: Super(msg)
+{
+}
+
 RpcSignal::~RpcSignal() = default;
 
 void RpcSignal::write(AbstractStreamWriter &wr, const std::string &method, std::function<void (AbstractStreamWriter &)> write_params_callback)
@@ -526,6 +563,10 @@ RpcException::RpcException(int err_code, const std::string &_msg, const std::str
 
 RpcException::~RpcException() = default;
 
+int RpcException::errorCode() const
+{
+	return m_errorCode;
+}
 
 //==================================================================
 // RpcError
@@ -535,6 +576,8 @@ static constexpr auto JSONRPC_ERROR_CODE = "code";
 static constexpr auto JSONRPC_ERROR_MESSAGE = "message";
 static constexpr auto JSONRPC_ERROR_DATA = "data";
 }
+
+RpcError::RpcError() = default;
 
 RpcError::RpcError(const std::string &msg, int code, const RpcValue &data)
 {
@@ -546,6 +589,16 @@ RpcError::RpcError(const std::string &msg, int code, const RpcValue &data)
 RpcError& RpcError::setMessage(const RpcValue::String &mess)
 {
 	return setValue(KeyMessage, mess);
+}
+
+RpcError& RpcError::setCode(int c)
+{
+	return setValue(KeyCode, c);
+}
+
+int RpcError::code() const
+{
+	return value(KeyCode).toInt();
 }
 
 RpcValue::String RpcError::message() const
@@ -607,6 +660,11 @@ RpcError RpcError::fromJson(const RpcValue::Map &json)
 	});
 }
 
+RpcValue RpcError::toRpcValue() const
+{
+	return m_value;
+}
+
 RpcError RpcError::fromRpcValue(const RpcValue &rv)
 {
 	RpcError ret;
@@ -622,10 +680,42 @@ RpcError RpcError::create(int c, const RpcValue::String &msg, const RpcValue &da
 	return ret;
 }
 
+RpcError RpcError::createMethodCallExceptionError(const RpcValue::String &msg)
+{
+	return create(MethodCallException, (msg.empty())? "Method call exception": msg);
+}
+
+RpcError RpcError::createInternalError(const RpcValue::String &msg)
+{
+	return create(InternalError, (msg.empty())? "Internal error": msg);
+}
+
+RpcError RpcError::createSyncMethodCallTimeout(const RpcValue::String &msg)
+{
+	return create(MethodCallTimeout, (msg.empty())? "Sync method call timeout": msg);
+}
+
+bool RpcError::isValid() const
+{
+	return !m_value.asIMap().empty();
+}
+
 //==================================================================
 // RpcResponse
 //==================================================================
 RpcResponse::~RpcResponse() = default;
+
+RpcResponse::RpcResponse()
+	: Super()
+{
+}
+
+RpcResponse::RpcResponse(const RpcMessage &msg)
+	: Super(msg)
+{
+}
+
+RpcResponse::RpcResponse(const RpcResponse &msg) = default;
 
 RpcResponse RpcResponse::forRequest(const RpcValue::MetaData &meta)
 {
@@ -638,6 +728,32 @@ RpcResponse RpcResponse::forRequest(const RpcValue::MetaData &meta)
 		ret.setCallerIds(caller_id);
 	return ret;
 }
+
+RpcResponse RpcResponse::forRequest(const RpcRequest &rq)
+{
+	return forRequest(rq.metaData());
+}
+
+bool RpcResponse::hasRetVal() const
+{
+	return error().isValid() || result().isValid();
+}
+
+bool RpcResponse::hasResult() const
+{
+	return error().isValid() || result().isValid();
+}
+
+bool RpcResponse::isSuccess() const
+{
+	return result().isValid() && !isError();
+}
+
+bool RpcResponse::isError() const
+{
+	return error().isValid();
+}
+
 
 std::string RpcResponse::errorString() const
 {
@@ -683,6 +799,12 @@ RpcValue RpcResponse::result() const
 RpcResponse& RpcResponse::setResult(const RpcValue& res)
 {
 	setValue(RpcMessage::MetaType::Key::Result, res);
+	return *this;
+}
+
+RpcResponse& RpcResponse::setRequestId(const RpcValue &id)
+{
+	Super::setRequestId(id);
 	return *this;
 }
 

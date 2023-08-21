@@ -45,6 +45,11 @@ Socket::Scheme Socket::schemeFromString(const std::string &schema)
 	return Scheme::Tcp;
 }
 
+void Socket::onParseDataException(const shv::chainpack::ParseException &)
+{
+	abort();
+}
+
 //======================================================
 // TcpSocket
 //======================================================
@@ -110,6 +115,18 @@ QByteArray TcpSocket::readAll()
 qint64 TcpSocket::write(const char *data, qint64 max_size)
 {
 	return m_socket->write(data, max_size);
+}
+
+void TcpSocket::writeMessageBegin()
+{
+}
+
+void TcpSocket::writeMessageEnd()
+{
+}
+
+void TcpSocket::ignoreSslErrors()
+{
 }
 
 //======================================================
@@ -225,6 +242,18 @@ QByteArray LocalSocket::readAll()
 qint64 LocalSocket::write(const char *data, qint64 max_size)
 {
 	return m_socket->write(data, max_size);
+}
+
+void LocalSocket::writeMessageBegin()
+{
+}
+
+void LocalSocket::writeMessageEnd()
+{
+}
+
+void LocalSocket::ignoreSslErrors()
+{
 }
 
 //======================================================

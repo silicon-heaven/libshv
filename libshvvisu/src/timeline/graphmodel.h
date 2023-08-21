@@ -36,14 +36,14 @@ public:
 	XRange xRange(qsizetype channel_ix) const;
 	YRange yRange(qsizetype channel_ix) const;
 	void clear();
-	void appendChannel() {appendChannel({}, {}, {});}
+	void appendChannel();
 	void appendChannel(const std::string &shv_path, const std::string &name, const shv::core::utils::ShvTypeDescr &type_descr);
 public:
-	virtual qsizetype channelCount() const { return qMin(m_channelsInfo.count(), m_samples.count()); }
-	const ChannelInfo& channelInfo(qsizetype channel_ix) const { return m_channelsInfo.at(channel_ix); }
+	virtual qsizetype channelCount() const;
+	const ChannelInfo& channelInfo(qsizetype channel_ix) const;
 	QString typeDescrFieldName( const shv::core::utils::ShvTypeDescr &type_descr, int field_index);
-	const shv::core::utils::ShvTypeInfo &typeInfo() const { return m_typeInfo; }
-	void setTypeInfo(const shv::core::utils::ShvTypeInfo &type_info) { m_typeInfo = type_info; }
+	const shv::core::utils::ShvTypeInfo &typeInfo() const;
+	void setTypeInfo(const shv::core::utils::ShvTypeInfo &type_info);
 
 	virtual qsizetype count(qsizetype channel) const;
 	/// without bounds check
@@ -52,7 +52,7 @@ public:
 	Sample sampleValue(qsizetype channel, qsizetype ix) const;
 	/// sometimes is needed to show samples in transformed time scale (hide empty areas without samples)
 	/// displaySampleValue() returns original time and value
-	virtual Sample displaySampleValue(qsizetype channel, qsizetype ix) const { return sampleValue(channel, ix); }
+	virtual Sample displaySampleValue(qsizetype channel, qsizetype ix) const;
 
 	qsizetype lessTimeIndex(qsizetype channel, timemsec_t time) const;
 	qsizetype lessOrEqualTimeIndex(qsizetype channel, timemsec_t time) const;
@@ -66,7 +66,7 @@ public:
 	void forgetValuesBefore(timemsec_t time, int min_samples_count = 100);
 
 	qsizetype pathToChannelIndex(const std::string &path) const;
-	QString channelShvPath(qsizetype channel) const { return channelInfo(channel).shvPath; }
+	QString channelShvPath(qsizetype channel) const;
 
 	Q_SIGNAL void xRangeChanged(XRange range);
 	Q_SIGNAL void channelCountChanged(qsizetype cnt);

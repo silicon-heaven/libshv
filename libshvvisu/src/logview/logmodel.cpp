@@ -35,10 +35,20 @@ void LogModel::setLog(const shv::chainpack::RpcValue &log)
 	endResetModel();
 }
 
+shv::chainpack::RpcValue LogModel::log() const
+{
+	return m_log;
+}
+
 int LogModel::rowCount(const QModelIndex &) const
 {
 	const shv::chainpack::RpcValue::List &lst = m_log.asList();
 	return static_cast<int>(lst.size());
+}
+
+int LogModel::columnCount(const QModelIndex&) const
+{
+	return ColCnt;
 }
 
 QVariant LogModel::headerData(int section, Qt::Orientation orientation, int role) const

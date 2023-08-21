@@ -23,8 +23,8 @@ public:
 	explicit RpcDriver();
 	virtual ~RpcDriver();
 
-	Rpc::ProtocolType protocolType() const {return m_protocolType;}
-	void setProtocolType(Rpc::ProtocolType v) {m_protocolType = v;}
+	Rpc::ProtocolType protocolType() const;
+	void setProtocolType(Rpc::ProtocolType v);
 
 	void sendRpcValue(const RpcValue &msg);
 	void sendRawData(std::string &&data);
@@ -32,8 +32,8 @@ public:
 
 	virtual void clearSendBuffers();
 
-	static int defaultRpcTimeoutMsec() {return s_defaultRpcTimeoutMsec;}
-	static void setDefaultRpcTimeoutMsec(int msec) {s_defaultRpcTimeoutMsec = msec;}
+	static int defaultRpcTimeoutMsec();
+	static void setDefaultRpcTimeoutMsec(int msec);
 
 	static RpcMessage composeRpcMessage(RpcValue::MetaData &&meta_data, const std::string &data, std::string *errmsg = nullptr);
 
@@ -43,18 +43,18 @@ public:
 
 	static std::string dataToPrettyCpon(shv::chainpack::Rpc::ProtocolType protocol_type, const shv::chainpack::RpcValue::MetaData &md, const std::string &data, size_t start_pos = 0, size_t data_len = 0);
 protected:
-	struct MessageData
+	struct SHVCHAINPACK_DECL_EXPORT MessageData
 	{
 		std::string metaData;
 		std::string data;
 
-		MessageData() = default;
-		MessageData(std::string &&meta_data_, std::string &&data_) : metaData(std::move(meta_data_)), data(std::move(data_)) {}
-		MessageData(std::string &&data_) : data(std::move(data_)) {}
-		MessageData(MessageData &&) = default;
+		MessageData();
+		MessageData(std::string &&meta_data_, std::string &&data_);
+		MessageData(std::string &&data_);
+		MessageData(MessageData &&) noexcept;
 
-		bool empty() const {return metaData.empty() && data.empty();}
-		size_t size() const {return metaData.size() + data.size();}
+		bool empty() const;
+		size_t size() const;
 	};
 protected:
 	virtual bool isOpen() = 0;

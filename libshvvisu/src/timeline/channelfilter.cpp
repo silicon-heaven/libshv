@@ -43,4 +43,8 @@ bool ChannelFilter::isPathMatch(const QString &path) const
 	return m_matchingPaths.contains(path);
 }
 
+bool ChannelFilter::isValid() const
+{
+	return m_isValid;
+}
 }

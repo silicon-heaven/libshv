@@ -27,6 +27,11 @@ static const std::vector<cp::MetaMethod> meta_methods {
 	{cp::Rpc::METH_DEVICE_TYPE, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_BROWSE},
 };
 
+AppRootNode::AppRootNode(QObject *parent)
+	: Super(parent)
+{
+}
+
 size_t AppRootNode::methodCount(const StringViewList &shv_path)
 {
 	if(shv_path.empty())
@@ -96,6 +101,16 @@ Application::~Application()
 Application *Application::instance()
 {
 	return qobject_cast<Application *>(QCoreApplication::instance());
+}
+
+shv::iotqt::rpc::ClientConnection *Application::rpcConnection() const
+{
+	return m_rpcConnection;
+}
+
+AppCliOptions* Application::cliOptions()
+{
+	return m_cliOptions;
 }
 
 void Application::onBrokerConnectedChanged(bool is_connected)

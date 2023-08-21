@@ -68,7 +68,7 @@ public:
 	RpcCall* setMethod(const char *method);
 	RpcCall* setMethod(const QString &method);
 	RpcCall* setParams(const ::shv::chainpack::RpcValue &params);
-	RpcCall* setTimeout(int timeout) { m_timeout = timeout; return this; }
+	RpcCall* setTimeout(int timeout);
 	RpcCall* setUserId(const ::shv::chainpack::RpcValue &user_id);
 
 	void start();

@@ -4,6 +4,13 @@
 
 namespace shv::iotqt::acl {
 
+AclRole::AclRole() = default;
+
+AclRole::AclRole(std::vector<std::string> roles_)
+	: roles(std::move(roles_))
+{
+}
+
 shv::chainpack::RpcValue AclRole::toRpcValue() const
 {
 	shv::chainpack::RpcValue::Map m;

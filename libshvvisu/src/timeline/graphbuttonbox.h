@@ -38,7 +38,7 @@ public:
 	int buttonSpace() const;
 	QRect buttonRect(ButtonId id) const;
 protected:
-	qsizetype buttonCount() const { return m_buttonIds.count(); }
+	qsizetype buttonCount() const;
 	QRect buttonRect(int ix) const;
 
 	void drawButton(QPainter *painter, const QRect &rect, int button_index);

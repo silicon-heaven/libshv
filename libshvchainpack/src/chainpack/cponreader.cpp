@@ -32,6 +32,11 @@ namespace {
 enum {exception_aborts = 0};
 }
 
+CponReader::CponReader(std::istream &in)
+	: Super(in)
+{
+}
+
 CponReader &CponReader::operator >>(RpcValue &value)
 {
 	read(value);

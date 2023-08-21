@@ -41,6 +41,11 @@ Sample GraphModel::sampleValue(qsizetype channel, qsizetype ix) const
 	return sampleAt(channel, ix);
 }
 
+Sample GraphModel::displaySampleValue(qsizetype channel, qsizetype ix) const
+{
+	return sampleValue(channel, ix);
+}
+
 XRange GraphModel::xRange() const
 {
 	XRange ret;
@@ -283,6 +288,16 @@ qsizetype GraphModel::pathToChannelIndex(const std::string &path) const
 	return it->second;
 }
 
+QString GraphModel::channelShvPath(qsizetype channel) const
+{
+	return channelInfo(channel).shvPath;
+}
+
+void GraphModel::appendChannel()
+{
+	appendChannel({}, {}, {});
+}
+
 void GraphModel::appendChannel(const std::string &shv_path, const std::string &name, const core::utils::ShvTypeDescr &type_descr)
 {
 	m_pathToChannelCache.clear();
@@ -297,6 +312,16 @@ void GraphModel::appendChannel(const std::string &shv_path, const std::string &n
 	emit channelCountChanged(channelCount());
 }
 
+qsizetype GraphModel::channelCount() const
+{
+	return qMin(m_channelsInfo.count(), m_samples.count());
+}
+
+const GraphModel::ChannelInfo& GraphModel::channelInfo(qsizetype channel_ix) const
+{
+	return m_channelsInfo.at(channel_ix);
+}
+
 QString GraphModel::typeDescrFieldName(const shv::core::utils::ShvTypeDescr &type_descr, int field_index)
 {
 	for (const auto &field : type_descr.fields()) {
@@ -305,6 +330,16 @@ QString GraphModel::typeDescrFieldName(const shv::core::utils::ShvTypeDescr &typ
 		}
 	}
 	return QString();
+}
+
+const shv::core::utils::ShvTypeInfo &GraphModel::typeInfo() const
+{
+	return m_typeInfo;
+}
+
+void GraphModel::setTypeInfo(const shv::core::utils::ShvTypeInfo &type_info)
+{
+	m_typeInfo = type_info;
 }
 
 QString GraphModel::guessTypeName(qsizetype channel_ix) const

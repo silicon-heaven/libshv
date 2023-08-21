@@ -1,6 +1,7 @@
 qt_add_library(libshvcoreqt
 	src/data/valuechange.cpp
 	src/exception.cpp
+	src/log.cpp
 	src/utils.cpp
 	src/rpc.cpp
 	src/utils/clioptions.cpp

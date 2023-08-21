@@ -10,6 +10,12 @@ namespace shv::chainpack {
 
 namespace utils {
 
+char hexNibble(char i)
+{
+	if(i < 10)
+		return '0' + i;
+	return static_cast<char>('A' + (i - 10));
+}
 
 void byteToHex(std::array<char, 2> &arr, uint8_t i)
 {
@@ -131,6 +137,11 @@ std::string Utils::fromHex(const std::string &bytes)
 		ret.push_back(static_cast<char>(u));
 	}
 	return ret;
+}
+
+std::string Utils::hexDump(const std::string &bytes)
+{
+	return utils::hexDump(bytes.data(), bytes.size());
 }
 
 RpcValue Utils::mergeMaps(const RpcValue &value_base, const RpcValue &value_over)

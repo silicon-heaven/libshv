@@ -66,5 +66,5 @@ shvDebug() << ">>>> ENTER FN" << __FUNCTION__
 
 #define logRpcMsg() shvCMessage("RpcMsg")
 
-inline NecroLog operator<<(NecroLog log, const shv::core::StringView &v) { return log.operator<<(v); }
+NecroLog SHVCORE_DECL_EXPORT operator<<(NecroLog log, const shv::core::StringView &v);
 

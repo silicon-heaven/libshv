@@ -20,9 +20,9 @@ public:
 	Exception(const std::string& _msg, const shv::chainpack::RpcValue& _data, const std::string& _where, const char *_log_topic);
 	~Exception() override = default;
 public:
-	std::string message() const {return m_msg;}
-	std::string where() const {return m_where;}
-	shv::chainpack::RpcValue data() const {return m_data;}
+	std::string message() const;
+	std::string where() const;
+	shv::chainpack::RpcValue data() const;
 	const char* what() const noexcept override;
 	static void setAbortOnException(bool on);
 	static bool isAbortOnException();

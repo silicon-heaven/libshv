@@ -25,12 +25,12 @@ public:
 	static constexpr auto SHV_PATH_DELIM = '/';
 	static constexpr auto SHV_PATH_METHOD_DELIM = ':';
 public:
-	ShvPath() : Super() {}
-	ShvPath(shv::core::String &&o) : Super(std::move(o)) {}
-	ShvPath(const shv::core::String &o) : Super(o) {}
+	ShvPath();
+	ShvPath(shv::core::String &&o);
+	ShvPath(const shv::core::String &o);
 	using Super::Super;
 
-	const std::string &asString() const { return *this; }
+	const std::string &asString() const;
 
 	bool startsWithPath(const StringView &path, size_t *pos = nullptr) const;
 	static bool startsWithPath(const StringView &str, const StringView &path, size_t *pos = nullptr);

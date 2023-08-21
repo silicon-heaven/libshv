@@ -49,6 +49,73 @@ bool ShvAlarm::operator==(const ShvAlarm &a) const
 			&& m_path == a.m_path;
 }
 
+ShvAlarm::Severity ShvAlarm::severity() const
+{
+	return m_severity;
+}
+
+void ShvAlarm::setSeverity(Severity severity)
+{
+	m_severity = severity;
+}
+
+const std::string& ShvAlarm::path() const
+{
+	return m_path;
+}
+
+void ShvAlarm::setPath(const std::string &path)
+{
+	m_path = path;
+}
+
+const std::string& ShvAlarm::description() const
+{
+	return m_description;
+}
+
+void ShvAlarm::setDescription(const std::string &description)
+{
+	m_description = description;
+}
+
+const std::string& ShvAlarm::label() const
+{
+	return m_label;
+}
+
+void ShvAlarm::setLabel(const std::string &label)
+{
+	m_label = label;
+}
+
+
+int ShvAlarm::level() const
+{
+	return m_level;
+}
+
+void ShvAlarm::setLevel(int level)
+{
+	m_level = level;
+}
+
+bool ShvAlarm::isActive() const
+{
+	return m_isActive;
+}
+
+void ShvAlarm::setIsActive(bool is_active)
+{
+	m_isActive = is_active;
+}
+
+bool ShvAlarm::isValid() const
+{
+	return !path().empty();
+}
+
+
 shv::chainpack::RpcValue ShvAlarm::toRpcValue(bool all_fields_if_not_active) const
 {
 	shv::chainpack::RpcValue::Map ret;

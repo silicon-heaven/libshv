@@ -19,6 +19,92 @@ using namespace std;
 
 namespace shv::core::utils {
 
+CLIOptions::Option::Data::Data(chainpack::RpcValue::Type type_)
+	: type(type_)
+	, mandatory(false)
+{
+}
+
+bool CLIOptions::Option::isValid() const
+{
+	return m_data.type != chainpack::RpcValue::Type::Invalid;
+}
+
+CLIOptions::Option& CLIOptions::Option::setNames(const StringList &names)
+{
+	m_data.names = names; return *this;
+}
+
+CLIOptions::Option& CLIOptions::Option::setNames(const std::string &name)
+{
+	m_data.names = StringList{name}; return *this;
+}
+
+CLIOptions::Option& CLIOptions::Option::setNames(const std::string &name1, const std::string &name2)
+{
+	m_data.names = StringList{name1, name2}; return *this;
+}
+
+const CLIOptions::StringList& CLIOptions::Option::names() const
+{
+	return m_data.names;
+}
+
+CLIOptions::Option& CLIOptions::Option::setType(chainpack::RpcValue::Type type)
+{
+	m_data.type = type; return *this;
+}
+
+chainpack::RpcValue::Type CLIOptions::Option::type() const
+{
+	return m_data.type;
+}
+
+CLIOptions::Option& CLIOptions::Option::setValue(const chainpack::RpcValue &val)
+{
+	m_data.value = val; return *this;
+}
+
+chainpack::RpcValue CLIOptions::Option::value() const
+{
+	return m_data.value;
+}
+
+CLIOptions::Option& CLIOptions::Option::setDefaultValue(const chainpack::RpcValue &val)
+{
+	m_data.defaultValue = val; return *this;
+}
+
+chainpack::RpcValue CLIOptions::Option::defaultValue() const
+{
+	return m_data.defaultValue;
+}
+
+CLIOptions::Option& CLIOptions::Option::setComment(const std::string &s)
+{
+	m_data.comment = s; return *this;
+}
+
+const std::string& CLIOptions::Option::comment() const
+{
+	return m_data.comment;
+}
+
+CLIOptions::Option& CLIOptions::Option::setMandatory(bool b)
+{
+	m_data.mandatory = b; return *this;
+}
+
+bool CLIOptions::Option::isMandatory() const
+{
+	return m_data.mandatory;
+}
+
+bool CLIOptions::Option::isSet() const
+{
+	return value().isValid();
+}
+
 CLIOptions::Option& CLIOptions::Option::setValueString(const std::string &val_str)
 {
 	RpcValue::Type t = type();
@@ -116,6 +202,11 @@ CLIOptions::Option& CLIOptions::optionRef(const std::string& name)
 		SHV_EXCEPTION(msg);
 	}
 	return m_options[name];
+}
+
+const std::map<std::string, CLIOptions::Option>& CLIOptions::options() const
+{
+	return m_options;
 }
 
 RpcValue::Map CLIOptions::values() const
@@ -263,6 +354,26 @@ void CLIOptions::parse(const StringList& cmd_line_args)
 		}
 	}
 	shv::core::Exception::setAbortOnException(isAbortOnException());
+}
+
+bool CLIOptions::isParseError() const
+{
+	return !m_parseErrors.empty();
+}
+
+bool CLIOptions::isAppBreak() const
+{
+	return m_isAppBreak;
+}
+
+CLIOptions::StringList CLIOptions::parseErrors() const
+{
+	return m_parseErrors;
+}
+
+CLIOptions::StringList CLIOptions::unusedArguments()
+{
+	return m_unusedArguments;
 }
 
 std::tuple<std::string, std::string> CLIOptions::applicationDirAndName() const

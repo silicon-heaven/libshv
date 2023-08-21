@@ -17,6 +17,26 @@ size_t unpack_underflow_handler(ccpcp_unpack_context *ctx)
 	return 1;
 }
 
+ParseException::ParseException(int err_code, const std::string msg, long long pos)
+	: m_errCode(err_code), m_msg(msg), m_pos(pos)
+{
+}
+
+int ParseException::errCode() const
+{
+	return m_errCode;
+}
+
+long long ParseException::pos() const
+{
+	return m_pos;
+}
+
+const std::string& ParseException::msg() const
+{
+	return m_msg;
+}
+
 const char *ParseException::what() const noexcept
 {
 	 return m_msg.data();

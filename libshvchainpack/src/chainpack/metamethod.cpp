@@ -1,6 +1,7 @@
 #include "metamethod.h"
 
 namespace shv::chainpack {
+MetaMethod::MetaMethod() = default;
 
 MetaMethod::MetaMethod(std::string name, Signature ms, unsigned flags, const RpcValue &access_grant
 					   , const std::string &description, const RpcValue::Map &tags)
@@ -21,6 +22,82 @@ MetaMethod::MetaMethod(std::string name, Signature ms, unsigned flags, const Rpc
 	if(!m_accessGrant.isValid())
 		m_accessGrant = access;
 }
+
+bool MetaMethod::isValid() const
+{
+	return !name().empty();
+}
+
+const std::string& MetaMethod::name() const
+{
+	return m_name;
+}
+
+const std::string& MetaMethod::label() const
+{
+	return m_label;
+}
+
+MetaMethod& MetaMethod::setLabel(const std::string &label)
+{
+	m_label = label;
+	return *this;
+}
+
+const std::string& MetaMethod::description() const
+{
+	return m_description;
+}
+
+MetaMethod::Signature MetaMethod::signature() const
+{
+	return m_signature;
+}
+
+unsigned MetaMethod::flags() const
+{
+	return m_flags;
+}
+
+const RpcValue& MetaMethod::accessGrant() const
+{
+	return m_accessGrant;
+}
+
+RpcValue MetaMethod::attributes(unsigned mask) const
+{
+	RpcValue::List lst;
+	if(mask & static_cast<unsigned>(DirAttribute::Signature))
+		lst.push_back(static_cast<unsigned>(m_signature));
+	if(mask & DirAttribute::Flags)
+		lst.push_back(m_flags);
+	if(mask & DirAttribute::AccessGrant)
+		lst.push_back(m_accessGrant);
+	if(mask & DirAttribute::Description)
+		lst.push_back(m_description);
+	if(mask & DirAttribute::Tags)
+		lst.push_back(m_tags);
+	if(lst.empty())
+		return name();
+	lst.insert(lst.begin(), name());
+	return RpcValue{lst};
+}
+
+const RpcValue::Map& MetaMethod::tags() const
+{
+	return m_tags;
+}
+
+RpcValue MetaMethod::tag(const std::string &key, const RpcValue& default_value) const
+{
+	return m_tags.value(key, default_value);
+}
+
+MetaMethod& MetaMethod::setTag(const std::string &key, const RpcValue& value)
+{
+	m_tags.setValue(key, value); return *this;
+}
+
 
 RpcValue MetaMethod::toRpcValue() const
 {

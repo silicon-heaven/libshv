@@ -9,7 +9,7 @@ class SHVCHAINPACK_DECL_EXPORT ChainPackReader : public AbstractStreamReader
 {
 	using Super = AbstractStreamReader;
 public:
-	ChainPackReader(std::istream &in) : Super(in) {}
+	ChainPackReader(std::istream &in);
 
 	ChainPackReader& operator >>(RpcValue &value);
 	ChainPackReader& operator >>(RpcValue::MetaData &meta_data);

@@ -28,25 +28,25 @@ public:
 	bool isLessSevere(const ShvAlarm &a) const;
 	bool operator==(const ShvAlarm &a) const;
 
-	Severity severity() const { return m_severity; }
-	void setSeverity(Severity severity) { m_severity = severity; }
+	Severity severity() const;
+	void setSeverity(Severity severity);
 
-	const std::string& path() const { return m_path; }
-	void setPath(const std::string &path) { m_path = path; }
+	const std::string& path() const;
+	void setPath(const std::string &path);
 
-	const std::string& description() const { return m_description; }
-	void setDescription(const std::string &description) { m_description = description; }
+	const std::string& description() const;
+	void setDescription(const std::string &description);
 
-	const std::string& label() const { return m_label; }
-	void setLabel(const std::string &label) { m_label = label; }
+	const std::string& label() const;
+	void setLabel(const std::string &label);
 
-	int level() const { return m_level; }
-	void setLevel(int level) { m_level = level; }
+	int level() const;
+	void setLevel(int level);
 
-	bool isActive() const { return m_isActive; }
-	void setIsActive(bool is_active) { m_isActive = is_active; }
+	bool isActive() const;
+	void setIsActive(bool is_active);
 
-	bool isValid() const { return !path().empty(); }
+	bool isValid() const;
 
 	shv::chainpack::RpcValue toRpcValue(bool all_fields_if_not_active = false) const;
 	static ShvAlarm fromRpcValue(const shv::chainpack::RpcValue &rv);

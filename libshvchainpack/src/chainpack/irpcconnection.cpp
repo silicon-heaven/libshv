@@ -28,6 +28,16 @@ void IRpcConnection::sendShvSignal(const std::string &shv_path, std::string meth
 	sendMessage(rq);
 }
 
+[[deprecated("Use sendSignal instead")]] void IRpcConnection::sendNotify(std::string method, const shv::chainpack::RpcValue &params)
+{
+	sendSignal(method, params);
+}
+
+[[deprecated("Use sendShvSignal instead")]] void IRpcConnection::sendShvNotify(const std::string &shv_path, std::string method, const shv::chainpack::RpcValue &params)
+{
+	sendShvSignal(shv_path, method, params);
+}
+
 void IRpcConnection::sendResponse(const RpcValue &request_id, const RpcValue &result)
 {
 	RpcResponse resp;
@@ -48,6 +58,11 @@ int IRpcConnection::nextRequestId()
 {
 	static int n = 0;
 	return ++n;
+}
+
+int IRpcConnection::connectionId() const
+{
+	return m_connectionId;
 }
 
 int IRpcConnection::nextConnectionId()

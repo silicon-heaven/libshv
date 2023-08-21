@@ -4,6 +4,13 @@
 
 namespace shv::iotqt::acl {
 
+AclUser::AclUser() = default;
+
+AclUser::AclUser(AclPassword p, std::vector<std::string> roles_)
+	: password(std::move(p))
+	, roles(std::move(roles_))
+{}
+
 shv::chainpack::RpcValue AclUser::toRpcValue() const
 {
 	return shv::chainpack::RpcValue::Map {
@@ -27,6 +34,11 @@ AclUser AclUser::fromRpcValue(const shv::chainpack::RpcValue &v)
 		ret.roles = roles;
 	}
 	return ret;
+}
+
+bool AclUser::isValid() const
+{
+	return password.isValid();
 }
 
 } // namespace shv

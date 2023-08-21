@@ -39,34 +39,34 @@ public:
 	DataChange(const RpcValue &val, const RpcValue::DateTime &date_time, int short_time = NO_SHORT_TIME);
 	DataChange(const RpcValue &val, unsigned short_time);
 
-	bool isValid() const { return m_value.isValid(); }
+	bool isValid() const;
 	static bool isDataChange(const RpcValue &rv);
 
-	RpcValue value() const { return m_value; }
+	RpcValue value() const;
 	void setValue(const RpcValue &val);
 
-	bool hasDateTime() const { return m_dateTime.msecsSinceEpoch() > 0; }
-	RpcValue dateTime() const { return hasDateTime()? RpcValue(m_dateTime): RpcValue(); }
-	void setDateTime(const RpcValue &dt) { m_dateTime = dt.isDateTime()? dt.toDateTime(): RpcValue::DateTime(); }
+	bool hasDateTime() const;
+	RpcValue dateTime() const;
+	void setDateTime(const RpcValue &dt);
 
-	int64_t epochMSec() const { return m_dateTime.msecsSinceEpoch(); }
+	int64_t epochMSec() const;
 
-	bool hasShortTime() const { return m_shortTime > NO_SHORT_TIME; }
-	RpcValue shortTime() const { return hasShortTime()? RpcValue(static_cast<unsigned>(m_shortTime)): RpcValue(); }
-	void setShortTime(const RpcValue &st) { m_shortTime = (st.isUInt() || (st.isInt() && st.toInt() >= 0))? st.toInt(): NO_SHORT_TIME; }
+	bool hasShortTime() const;
+	RpcValue shortTime() const;
+	void setShortTime(const RpcValue &st);
 
-	bool hasValueflags() const { return m_valueFlags != NO_VALUE_FLAGS; }
-	void setValueFlags(ValueFlags st) { m_valueFlags = st; }
-	ValueFlags valueFlags() const { return m_valueFlags; }
+	bool hasValueflags() const;
+	void setValueFlags(ValueFlags st);
+	ValueFlags valueFlags() const;
 
-	bool isDirtyValue() const { return testBit(m_valueFlags, ValueFlag::DirtyValue); }
-	void setDirtyValue(bool b) { setBit(m_valueFlags, ValueFlag::DirtyValue, b); }
+	bool isDirtyValue() const;
+	void setDirtyValue(bool b);
 
-	bool isSpontaneous() const { return testBit(m_valueFlags, ValueFlag::Spontaneous); }
-	void setSpontaneous(bool b) { setBit(m_valueFlags, ValueFlag::Spontaneous, b); }
+	bool isSpontaneous() const;
+	void setSpontaneous(bool b);
 
-	bool isSnapshotValue() const { return testBit(m_valueFlags, ValueFlag::Snapshot); }
-	void setIsSnaptshotValue(bool b) { setBit(m_valueFlags, ValueFlag::Snapshot, b); }
+	bool isSnapshotValue() const;
+	void setIsSnaptshotValue(bool b);
 
 	static bool testBit(const unsigned &n, int pos);
 	static void setBit(unsigned &n, int pos, bool b);

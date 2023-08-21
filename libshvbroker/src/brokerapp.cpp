@@ -401,6 +401,16 @@ BrokerApp::~BrokerApp()
 	shvInfo() << "Destroying SHV BROKER application object";
 }
 
+AppCliOptions* BrokerApp::cliOptions()
+{
+	return m_cliOptions;
+}
+
+BrokerApp* BrokerApp::instance()
+{
+	return qobject_cast<BrokerApp*>(Super::instance());
+}
+
 void BrokerApp::registerLogTopics()
 {
 	NecroLog::registerTopic("Access", "users access log");
@@ -872,6 +882,11 @@ AclManager *BrokerApp::createAclManager()
 		return ret;
 	}
 	return new AclManagerConfigFiles(this);
+}
+
+const std::string& BrokerApp::brokerId() const
+{
+	return m_brokerId;
 }
 
 iotqt::node::ShvNode *BrokerApp::nodeForService(const core::utils::ShvUrl &spp)

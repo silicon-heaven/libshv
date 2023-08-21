@@ -9,6 +9,45 @@
 #include <cstring>
 
 namespace shv::chainpack {
+bool CponWriterOptions::isTranslateIds() const
+{
+	return m_translateIds;
+}
+
+CponWriterOptions& CponWriterOptions::setTranslateIds(bool b)
+{
+	m_translateIds = b; return *this;
+}
+
+bool CponWriterOptions::isHexBlob() const
+{
+	return m_hexBlob;
+}
+
+CponWriterOptions& CponWriterOptions::setHexBlob(bool b)
+{
+	m_hexBlob = b; return *this;
+}
+
+const std::string& CponWriterOptions::indent() const
+{
+	return m_indent;
+}
+
+CponWriterOptions& CponWriterOptions::setIndent(const std::string& i)
+{
+	m_indent = i; return *this;
+}
+
+bool CponWriterOptions::isJsonFormat() const
+{
+	return m_jsonFormat;
+}
+
+CponWriterOptions& CponWriterOptions::setJsonFormat(bool b)
+{
+	m_jsonFormat = b; return *this;
+}
 
 static bool is_oneline_list(const RpcValue::List &lst)
 {
@@ -72,6 +111,11 @@ static bool is_oneline_meta(const RpcValue::MetaData &meta)
 	return true;
 }
 
+CponWriter::CponWriter(std::ostream &out)
+	: Super(out)
+{
+}
+
 CponWriter::CponWriter(std::ostream &out, const CponWriterOptions &opts)
 	: Super(out)
 	, m_opts(opts)
@@ -100,6 +144,18 @@ bool CponWriter::writeFile(const std::string &file_name, const RpcValue &rv, std
 	if(err)
 		*err = "Cannot open file '" + file_name + "' for writing.";
 	return false;
+}
+
+CponWriter& CponWriter::operator <<(const RpcValue &value)
+{
+	write(value);
+	return *this;
+}
+
+CponWriter& CponWriter::operator <<(const RpcValue::MetaData &meta_data)
+{
+	write(meta_data);
+	return *this;
 }
 
 void CponWriter::write(const RpcValue &value)
@@ -386,6 +442,14 @@ CponWriter &CponWriter::write_p(const RpcValue::List &values)
 	}
 	writeContainerEnd();
 	return *this;
+}
+
+CponWriter::ContainerState::ContainerState() = default;
+
+CponWriter::ContainerState::ContainerState(RpcValue::Type t, bool one_liner)
+	: containerType(t)
+	, isOneLiner(one_liner)
+{
 }
 
 } // namespace shv
