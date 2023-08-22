@@ -457,7 +457,7 @@ public:
 	RpcValueGenList(const RpcValue &v);
 
 	RpcValue value(size_t ix) const;
-	bool size() const;
+	size_t size() const;
 	bool empty() const;
 	RpcValue::List toList() const;
 private:

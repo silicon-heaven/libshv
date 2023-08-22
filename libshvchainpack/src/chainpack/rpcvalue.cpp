@@ -1652,7 +1652,7 @@ RpcValue RpcValueGenList::value(size_t ix) const
 		return m_val;
 	return RpcValue();
 }
-bool RpcValueGenList::size() const
+size_t RpcValueGenList::size() const
 {
 	if(m_val.isList())
 		return m_val.asList().size();
