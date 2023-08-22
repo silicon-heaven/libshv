@@ -188,7 +188,7 @@ public:
 
 	const std::map<std::string, std::string>& devicePaths() const;
 	const std::map<std::string, ShvTypeDescr>& types() const;
-	const std::map<std::string, ShvDeviceDescription> deviceDescriptions() const;
+	const std::map<std::string, ShvDeviceDescription>& deviceDescriptions() const;
 	const ShvDeviceDescription& deviceDescription(const std::string &device_type) const;
 	const std::map<std::string, std::string>& systemPathsRoots() const;
 	const std::map<std::string, shv::chainpack::RpcValue>& extraTags() const;

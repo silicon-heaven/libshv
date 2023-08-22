@@ -807,7 +807,7 @@ const std::map<std::string, ShvTypeDescr>& ShvTypeInfo::types() const
 	return m_types;
 }
 
-const std::map<std::string, ShvDeviceDescription> ShvTypeInfo::deviceDescriptions() const
+const std::map<std::string, ShvDeviceDescription>& ShvTypeInfo::deviceDescriptions() const
 {
 	return m_deviceDescriptions;
 }
