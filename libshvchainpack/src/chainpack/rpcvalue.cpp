@@ -1648,7 +1648,7 @@ RpcValue RpcValueGenList::value(size_t ix) const
 {
 	if(m_val.isList())
 		return m_val.asList().value(ix);
-	else if(ix == 0)
+	if(ix == 0)
 		return m_val;
 	return RpcValue();
 }
