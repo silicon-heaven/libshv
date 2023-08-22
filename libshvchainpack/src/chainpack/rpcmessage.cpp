@@ -566,9 +566,9 @@ int RpcException::errorCode() const
 // RpcError
 //==================================================================
 namespace {
-static constexpr auto JSONRPC_ERROR_CODE = "code";
-static constexpr auto JSONRPC_ERROR_MESSAGE = "message";
-static constexpr auto JSONRPC_ERROR_DATA = "data";
+constexpr auto JSONRPC_ERROR_CODE = "code";
+constexpr auto JSONRPC_ERROR_MESSAGE = "message";
+constexpr auto JSONRPC_ERROR_DATA = "data";
 }
 
 RpcError::RpcError() = default;
