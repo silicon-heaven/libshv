@@ -937,8 +937,11 @@ std::string BrokerApp::resolveMountPoint(const shv::chainpack::RpcValue::Map &de
 
 std::string BrokerApp::primaryIPAddress(bool &is_public)
 {
-	if(cliOptions()->publicIP_isset())
+	if(cliOptions()->publicIP_isset()) {
+		is_public = true;
 		return cliOptions()->publicIP();
+	}
+
 	QHostAddress ha = shv::iotqt::utils::Network::primaryPublicIPv4Address();
 	if(!ha.isNull()) {
 		is_public = true;
