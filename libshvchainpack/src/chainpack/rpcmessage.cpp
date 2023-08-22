@@ -58,8 +58,6 @@ RpcMessage::RpcMessage(const RpcValue &val)
 	m_value = val;
 }
 
-RpcMessage::RpcMessage(const RpcMessage &val) = default;
-
 RpcMessage::~RpcMessage() = default;
 
 const RpcValue& RpcMessage::value() const

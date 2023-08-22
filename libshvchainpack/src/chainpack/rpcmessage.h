@@ -41,7 +41,6 @@ public:
 public:
 	RpcMessage();
 	RpcMessage(const RpcValue &val);
-	RpcMessage(const RpcMessage &val);
 	virtual ~RpcMessage();
 
 	const RpcValue& value() const;
