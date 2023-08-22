@@ -484,10 +484,7 @@ std::string RpcMessage::toCpon() const
 //==================================================================
 RpcRequest::~RpcRequest() = default;
 
-RpcRequest::RpcRequest()
-	: Super()
-{
-}
+RpcRequest::RpcRequest() = default;
 
 RpcRequest::RpcRequest(const RpcMessage &msg)
 	: Super(msg)
@@ -529,10 +526,7 @@ RpcRequest& RpcRequest::setRequestId(const RpcValue::Int id)
 //==================================================================
 // RpcNotify
 //==================================================================
-RpcSignal::RpcSignal()
-	: Super()
-{
-}
+RpcSignal::RpcSignal() = default;
 
 RpcSignal::RpcSignal(const RpcMessage &msg)
 	: Super(msg)
@@ -705,10 +699,7 @@ bool RpcError::isValid() const
 //==================================================================
 RpcResponse::~RpcResponse() = default;
 
-RpcResponse::RpcResponse()
-	: Super()
-{
-}
+RpcResponse::RpcResponse() = default;
 
 RpcResponse::RpcResponse(const RpcMessage &msg)
 	: Super(msg)

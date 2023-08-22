@@ -6,10 +6,7 @@
 
 namespace shv::core {
 
-String::String()
-	: Super()
-{
-}
+String::String() = default;
 
 String::String(const std::string &o)
 	: Super(o)

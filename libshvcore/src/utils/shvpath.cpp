@@ -25,10 +25,7 @@ bool shvpath::startsWithPath(const std::string_view &str, const std::string_view
 	return set_pos(std::string::npos, false);
 }
 
-ShvPath::ShvPath()
-	: Super()
-{
-}
+ShvPath::ShvPath() = default;
 
 ShvPath::ShvPath(shv::core::String &&o)
 	: Super(std::move(o))
