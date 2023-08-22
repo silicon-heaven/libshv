@@ -1059,12 +1059,18 @@ RpcValue::DateTime RpcValue::DateTime::fromMSecsSinceEpoch(int64_t msecs, int ut
 
 void RpcValue::DateTime::setMsecsSinceEpoch(int64_t msecs)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 	m_dtm.msec = msecs;
+#pragma GCC diagnostic pop
 }
 
 void RpcValue::DateTime::setUtcOffsetMin(int utc_offset_min)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 	m_dtm.tz = (utc_offset_min / 15) & 0x7F;
+#pragma GCC diagnostic pop
 }
 void RpcValue::DateTime::setTimeZone(int utc_offset_min)
 {
