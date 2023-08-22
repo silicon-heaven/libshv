@@ -1499,7 +1499,7 @@ void RpcValue::Decimal::setDouble(double d)
 
 double RpcValue::Decimal::toDouble() const
 {
-	double ret = static_cast<double>(mantisa());
+	auto ret = static_cast<double>(mantisa());
 		int exp = exponent();
 		if(exp > 0)
 			for(; exp > 0; exp--) ret *= Base;
