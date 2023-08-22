@@ -12,6 +12,7 @@
 #include <necrolog.h>
 
 #include <cassert>
+#include <cmath>
 #include <cstdlib>
 #include <cstdio>
 #include <ctime>
@@ -1487,7 +1488,7 @@ RpcValue::Decimal RpcValue::Decimal::fromDouble(double d, int round_to_dec_place
 	else if(round_to_dec_places < 0) {
 		for(; round_to_dec_places < 0; round_to_dec_places++) d /= Base;
 	}
-	return Decimal(static_cast<int64_t>(d + 0.5), exponent);
+	return Decimal(std::lround(d), exponent);
 }
 
 void RpcValue::Decimal::setDouble(double d)
