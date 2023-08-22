@@ -78,7 +78,7 @@ bool String::startsWith(const std::string & str, const std::string &with)
 
 bool String::startsWith(const std::string & str, const char c)
 {
-	return str.size() > 0 && str[0] == c;
+	return !str.empty() && str[0] == c;
 }
 
 bool String::endsWith(const std::string &with) const
@@ -101,7 +101,7 @@ bool String::endsWith(const std::string &str, const std::string &with)
 
 bool String::endsWith(const std::string & str, const char c)
 {
-	return str.size() > 0 && str[str.size() - 1] == c;
+	return !str.empty() && str[str.size() - 1] == c;
 }
 
 std::string String::mid(size_t pos, size_t cnt) const

@@ -355,7 +355,7 @@ const std::vector<ShvJournalEntry>& ShvMemoryJournal::entries() const
 
 bool ShvMemoryJournal::isEmpty() const
 {
-	return  m_entries.size() == 0;
+	return  m_entries.empty();
 }
 
 size_t ShvMemoryJournal::size() const
@@ -375,7 +375,7 @@ void ShvMemoryJournal::clear()
 
 void ShvMemoryJournal::removeLastEntry()
 {
-	if (m_entries.size()) m_entries.pop_back();
+	if (!m_entries.empty()) m_entries.pop_back();
 }
 
 uint16_t ShvMemoryJournal::ShortTime::shortTimeDiff(uint16_t msec) const
