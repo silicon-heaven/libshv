@@ -3,6 +3,131 @@
 #include "../exception.h"
 
 namespace shv::coreqt::data {
+ValueChange::ValueX::ValueX(TimeStamp value)
+	: timeStamp(value)
+{
+}
+
+ValueChange::ValueX::ValueX(int value)
+	: intValue(value)
+{
+}
+
+ValueChange::ValueX::ValueX(double value)
+	: doubleValue(value)
+{
+}
+
+ValueChange::ValueX::ValueX()
+	: intValue(0)
+{
+}
+
+double ValueChange::ValueX::toDouble(ValueType stored_type) const
+{
+	switch (stored_type) {
+		case ValueType::Int: return intValue;
+		case ValueType::Double: return doubleValue;
+		case ValueType::TimeStamp: return static_cast<double>(timeStamp);
+		default: Q_ASSERT_X(false,"valueX", "Unsupported conversion"); return 0;
+	}
+}
+
+int ValueChange::ValueX::toInt(ValueType stored_type) const{
+	switch (stored_type) {
+		case ValueType::Int: return intValue;
+		case ValueType::Double: return qRound(doubleValue);
+		case ValueType::TimeStamp: return static_cast<int>(timeStamp);
+		default: Q_ASSERT_X(false,"valueX", "Unsupported conversion"); return 0;
+	}
+}
+
+ValueChange::ValueY::ValueY(bool value)
+	: boolValue(value)
+{
+}
+
+ValueChange::ValueY::ValueY(int value)
+	: intValue(value)
+{
+}
+
+ValueChange::ValueY::ValueY(double value)
+	: doubleValue(value)
+{
+}
+
+ValueChange::ValueY::ValueY(CustomData *value)
+	: pointerValue(value)
+{
+}
+
+ValueChange::ValueY::ValueY()
+	: intValue(0)
+{
+}
+
+double ValueChange::ValueY::toDouble(ValueType stored_type) const
+{
+	switch (stored_type) {
+		case ValueType::Int: return intValue;
+		case ValueType::Double: return doubleValue;
+		case ValueType::Bool: return boolValue;
+		default: Q_ASSERT_X(false,"valueY", "Unsupported conversion"); return 0;
+	}
+}
+
+int ValueChange::ValueY::toInt(ValueType stored_type) const
+{
+	switch (stored_type) {
+		case ValueType::Int: return intValue;
+		case ValueType::Double: return qRound(doubleValue);
+		case ValueType::Bool: return boolValue;
+		default: Q_ASSERT_X(false,"valueY", "Unsupported conversion"); return 0;
+	}
+}
+
+bool ValueChange::ValueY::toBool(ValueType stored_type) const
+{
+	switch (stored_type) {
+		case ValueType::Int: return (intValue > 0);
+		case ValueType::Double: return (doubleValue > 0.0);
+		case ValueType::Bool: return boolValue;
+		default: Q_ASSERT_X(false,"valueY", "Unsupported conversion"); return false;
+	}
+}
+
+ValueChange::ValueChange(ValueX value_x, ValueY value_y)
+	: valueX(value_x), valueY(value_y)
+{
+}
+
+ValueChange::ValueChange(TimeStamp value_x, ValueY value_y)
+	: ValueChange(ValueX(value_x), value_y)
+{
+}
+
+ValueChange::ValueChange(TimeStamp value_x, bool value_y)
+	: ValueChange(value_x, ValueY(value_y))
+{
+}
+
+ValueChange::ValueChange(TimeStamp value_x, int value_y)
+	: ValueChange(value_x, ValueY(value_y))
+{
+}
+
+ValueChange::ValueChange(TimeStamp value_x, double value_y)
+	: ValueChange(value_x, ValueY(value_y))
+{
+}
+
+ValueChange::ValueChange(TimeStamp value_x, CustomData *value_y)
+	: ValueChange(value_x, ValueY(value_y))
+{
+}
+
+ValueChange::ValueChange() = default;
 
 SerieData::const_iterator SerieData::lessOrEqualIterator(ValueChange::ValueX value_x) const
 {
@@ -38,6 +163,16 @@ QPair<SerieData::const_iterator, SerieData::const_iterator> SerieData::intersect
 
 	valid = (result.second != cend());
 	return result;
+}
+
+ValueType SerieData::xType() const
+{
+	return m_xType;
+}
+
+ValueType SerieData::yType() const
+{
+	return m_yType;
 }
 
 ValueXInterval SerieData::range() const
@@ -170,6 +305,16 @@ bool compareValueY(const ValueChange::ValueY &value1, const ValueChange::ValueY 
 	}
 }
 
+SerieData::SerieData()
+	: m_xType(ValueType::Int), m_yType(ValueType::Int)
+{
+}
+
+SerieData::SerieData(ValueType x_type, ValueType y_type)
+	: m_xType(x_type), m_yType(y_type)
+{
+}
+
 SerieData::const_iterator SerieData::upper_bound(ValueChange::ValueX value_x) const
 {
 	return upper_bound(cbegin(), cend(), value_x);
@@ -234,6 +379,33 @@ SerieData::const_iterator SerieData::findMinYValue(const_iterator begin, const_i
 SerieData::const_iterator SerieData::findMinYValue(const ValueChange::ValueX x_value) const
 {
 	return findMinYValue(cbegin(), cend(), x_value);
+}
+
+ValueXInterval::ValueXInterval() = default;
+
+ValueXInterval::ValueXInterval(ValueChange min_, ValueChange max_, ValueType type_)
+	: min(min_.valueX), max(max_.valueX), type(type_)
+{
+}
+
+ValueXInterval::ValueXInterval(ValueChange::ValueX min_, ValueChange::ValueX max_, ValueType type_)
+	: min(min_), max(max_), type(type_)
+{
+}
+
+ValueXInterval::ValueXInterval(int min_, int max_)
+	: min(min_), max(max_), type(ValueType::Int)
+{
+}
+
+ValueXInterval::ValueXInterval(ValueChange::TimeStamp min_, ValueChange::TimeStamp max_)
+	: min(min_), max(max_), type(ValueType::TimeStamp)
+{
+}
+
+ValueXInterval::ValueXInterval(double min_, double max_)
+	: min(min_), max(max_), type(ValueType::Double)
+{
 }
 
 bool ValueXInterval::operator==(const ValueXInterval &interval) const

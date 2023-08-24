@@ -48,42 +48,25 @@ public:
 		};
 	};
 public:
-	MetaMethod() = default;
+	MetaMethod();
 	MetaMethod(std::string name, Signature ms, unsigned flags = 0
 				, const RpcValue &access_grant = Rpc::ROLE_BROWSE
 				, const std::string &description = {}
 				, const RpcValue::Map &tags = {});
 
 
-	bool isValid() const { return !name().empty(); }
-	const std::string& name() const {return m_name;}
-	const std::string& label() const {return m_label;}
-	MetaMethod& setLabel(const std::string &label) { m_label = label; return *this; }
-	const std::string& description() const {return m_description;}
-	Signature signature() const {return m_signature;}
-	unsigned flags() const {return m_flags;}
-	const RpcValue& accessGrant() const {return m_accessGrant;}
-	RpcValue attributes(unsigned mask) const
-	{
-		RpcValue::List lst;
-		if(mask & static_cast<unsigned>(DirAttribute::Signature))
-			lst.push_back(static_cast<unsigned>(m_signature));
-		if(mask & DirAttribute::Flags)
-			lst.push_back(m_flags);
-		if(mask & DirAttribute::AccessGrant)
-			lst.push_back(m_accessGrant);
-		if(mask & DirAttribute::Description)
-			lst.push_back(m_description);
-		if(mask & DirAttribute::Tags)
-			lst.push_back(m_tags);
-		if(lst.empty())
-			return name();
-		lst.insert(lst.begin(), name());
-		return RpcValue{lst};
-	}
-	const RpcValue::Map& tags() const { return m_tags; }
-	RpcValue tag(const std::string &key, const RpcValue& default_value = {}) const { return m_tags.value(key, default_value); }
-	MetaMethod& setTag(const std::string &key, const RpcValue& value) { m_tags.setValue(key, value); return *this; }
+	bool isValid() const;
+	const std::string& name() const;
+	const std::string& label() const;
+	MetaMethod& setLabel(const std::string &label);
+	const std::string& description() const;
+	Signature signature() const;
+	unsigned flags() const;
+	const RpcValue& accessGrant() const;
+	RpcValue attributes(unsigned mask) const;
+	const RpcValue::Map& tags() const;
+	RpcValue tag(const std::string &key, const RpcValue& default_value = {}) const;
+	MetaMethod& setTag(const std::string &key, const RpcValue& value);
 
 	RpcValue toRpcValue() const;
 	static MetaMethod fromRpcValue(const RpcValue &rv);

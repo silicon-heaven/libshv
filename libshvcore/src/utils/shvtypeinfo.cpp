@@ -39,6 +39,13 @@ constexpr auto KEY_ALARM_LEVEL = "alarmLevel";
 //=====================================================================
 // ShvTypeDescrBase
 //=====================================================================
+ShvDescriptionBase::ShvDescriptionBase() = default;
+
+ShvDescriptionBase::ShvDescriptionBase(const chainpack::RpcValue &v)
+	: m_data(v)
+{
+}
+
 string ShvDescriptionBase::name() const
 {
 	return m_data.asMap().value(KEY_NAME).asString();
@@ -57,6 +64,11 @@ RpcValue ShvDescriptionBase::dataValue(const std::string &key, const chainpack::
 	return m.value(key, default_val);
 }
 
+bool ShvDescriptionBase::operator==(const ShvDescriptionBase &o) const
+{
+	return m_data == o.m_data;
+}
+
 bool ShvDescriptionBase::hasName() const
 {
 	const auto &m = m_data.asMap();
@@ -66,6 +78,11 @@ bool ShvDescriptionBase::hasName() const
 void ShvDescriptionBase::setName(const std::string &n)
 {
 	setDataValue(KEY_NAME, n);
+}
+
+bool ShvDescriptionBase::isEmpty() const
+{
+	return m_data.asMap().empty();
 }
 
 void ShvDescriptionBase::setDataValue(const std::string &key, const chainpack::RpcValue &val)
@@ -96,6 +113,8 @@ void ShvDescriptionBase::mergeTags(chainpack::RpcValue::Map &map)
 //=====================================================================
 // ShvTypeDescrField
 //=====================================================================
+ShvFieldDescr::ShvFieldDescr() = default;
+
 ShvFieldDescr::ShvFieldDescr(const std::string &name, const std::string &type_name, const chainpack::RpcValue &value, chainpack::RpcValue::Map &&tags)
 {
 	setData(std::move(tags));
@@ -249,6 +268,18 @@ uint64_t ShvFieldDescr::setBitfieldValue(uint64_t bitfield, uint64_t uval) const
 //=====================================================================
 // ShvTypeDescr
 //=====================================================================
+ShvTypeDescr::ShvTypeDescr() = default;
+
+ShvTypeDescr::ShvTypeDescr(const std::string &type_name)
+	: ShvTypeDescr(typeFromString(type_name))
+{
+}
+
+ShvTypeDescr::ShvTypeDescr(Type t, SampleType st, chainpack::RpcValue::Map &&tags)
+	: ShvTypeDescr(t, std::vector<ShvFieldDescr>(), st, std::move(tags))
+{
+}
+
 ShvTypeDescr::ShvTypeDescr(Type t, std::vector<ShvFieldDescr> &&flds, SampleType st, chainpack::RpcValue::Map &&tags)
 {
 	m_data = RpcValue(std::move(tags));
@@ -268,6 +299,11 @@ ShvTypeDescr &ShvTypeDescr::setType(Type t)
 	setDataValue(KEY_TYPE, static_cast<int>(t));
 	setName(type_name);
 	return *this;
+}
+
+std::string ShvTypeDescr::typeName() const
+{
+	return name();
 }
 
 ShvTypeDescr &ShvTypeDescr::setTypeName(const std::string &type_name)
@@ -318,6 +354,11 @@ string ShvTypeDescr::restrictionOfType() const
 bool ShvTypeDescr::isSiteSpecificLocalization() const
 {
 	return dataValue(KEY_SITE_SPECIFIC_LOCALIZATION).toBool();
+}
+
+bool ShvTypeDescr::isValid() const
+{
+	return type() != Type::Invalid;
 }
 
 ShvFieldDescr ShvTypeDescr::field(const std::string &field_name) const
@@ -503,6 +544,17 @@ ShvTypeDescr ShvTypeDescr::fromRpcValue(const RpcValue &v)
 //=====================================================================
 // ShvPropertyDescr
 //=====================================================================
+ShvPropertyDescr::ShvPropertyDescr() = default;
+
+ShvPropertyDescr::ShvPropertyDescr(const std::string &name, const std::string &type_name) : Super(name, type_name)
+{
+}
+
+[[deprecated]] ShvPropertyDescr::ShvPropertyDescr(const std::string &type_name)
+{
+	setTypeName(type_name);
+}
+
 std::vector<ShvMethodDescr> ShvPropertyDescr::methods() const
 {
 	std::vector<ShvMethodDescr> ret;
@@ -740,6 +792,26 @@ ShvTypeInfo ShvTypeInfo::fromVersion2(std::map<std::string, ShvTypeDescr> &&type
 	return ret;
 }
 
+bool ShvTypeInfo::isValid() const
+{
+	return !(m_types.empty() && m_devicePaths.empty() && m_deviceDescriptions.empty());
+}
+
+const std::map<std::string, std::string>& ShvTypeInfo::devicePaths() const
+{
+	return m_devicePaths;
+}
+
+const std::map<std::string, ShvTypeDescr>& ShvTypeInfo::types() const
+{
+	return m_types;
+}
+
+const std::map<std::string, ShvDeviceDescription>& ShvTypeInfo::deviceDescriptions() const
+{
+	return m_deviceDescriptions;
+}
+
 const ShvDeviceDescription &ShvTypeInfo::deviceDescription(const std::string &device_type) const
 {
 	auto it = m_deviceDescriptions.find(device_type);
@@ -749,6 +821,16 @@ const ShvDeviceDescription &ShvTypeInfo::deviceDescription(const std::string &de
 	}
 
 	return it->second;
+}
+
+const std::map<std::string, std::string>& ShvTypeInfo::systemPathsRoots() const
+{
+	return m_systemPathsRoots;
+}
+
+const std::map<std::string, shv::chainpack::RpcValue>& ShvTypeInfo::extraTags() const
+{
+	return m_extraTags;
 }
 
 ShvTypeInfo &ShvTypeInfo::setDevicePath(const std::string &device_path, const std::string &device_type)

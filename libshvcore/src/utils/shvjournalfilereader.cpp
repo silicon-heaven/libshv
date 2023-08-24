@@ -167,6 +167,11 @@ bool ShvJournalFileReader::inSnapshot()
 	return m_inSnapshot;
 }
 
+int64_t ShvJournalFileReader::snapshotMsec() const
+{
+	return m_snapshotMsec;
+}
+
 static constexpr size_t MIN_SEP_POS = 13;
 static constexpr size_t SEC_SEP_POS = MIN_SEP_POS + 3;
 static constexpr size_t MSEC_SEP_POS = SEC_SEP_POS + 3;

@@ -28,10 +28,10 @@ public:
 #endif
 
 	void setLog(const shv::chainpack::RpcValue &log);
-	shv::chainpack::RpcValue log() const { return m_log; }
+	shv::chainpack::RpcValue log() const;
 
 	int rowCount(const QModelIndex & = QModelIndex()) const override;
-	int columnCount(const QModelIndex & = QModelIndex()) const override {return ColCnt;}
+	int columnCount(const QModelIndex & = QModelIndex()) const override;
 	QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 	QVariant data(const QModelIndex &index, int role) const override;
 protected:

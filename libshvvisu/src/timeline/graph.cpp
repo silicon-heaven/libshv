@@ -42,6 +42,17 @@ void Graph::Style::init(QWidget *widget)
 //==========================================
 // Graph
 //==========================================
+Graph::DataRect::DataRect() = default;
+Graph::DataRect::DataRect(const XRange &xr, const YRange &yr)
+	: xRange(xr), yRange(yr)
+{
+}
+
+bool Graph::DataRect::isValid() const
+{
+	return xRange.isValid() && yRange.isValid();
+}
+
 Graph::Graph(QObject *parent)
 	: QObject(parent)
 	, m_cornerCellButtonBox(new GraphButtonBox({GraphButtonBox::ButtonId::Menu}, this))
@@ -54,6 +65,11 @@ Graph::Graph(QObject *parent)
 Graph::~Graph()
 {
 	clearChannels();
+}
+
+const Graph::Style& Graph::effectiveStyle() const
+{
+	return  m_style;
 }
 
 void Graph::setModel(GraphModel *model)
@@ -184,6 +200,11 @@ void Graph::resetChannelsRanges()
 	setXRange(x_range);
 }
 
+qsizetype Graph::channelCount() const
+{
+	return  m_channels.count();
+}
+
 void Graph::clearChannels()
 {
 	qDeleteAll(m_channels);
@@ -289,6 +310,11 @@ void Graph::setChannelFilter(const ChannelFilter &filter)
 	m_channelFilter = filter;
 	emit layoutChanged();
 	emit channelFilterChanged();
+}
+
+const ChannelFilter& Graph::channelFilter() const
+{
+	return m_channelFilter;
 }
 
 void Graph::setChannelVisible(qsizetype channel_ix, bool is_visible)
@@ -451,6 +477,11 @@ QPoint Graph::dataToPos(qsizetype ch_ix, const Sample &s) const
 	return data2point? data2point(s, channelTypeId(ch_ix)): QPoint();
 }
 
+Graph::CrossHairPos Graph::crossHairPos() const
+{
+	return m_state.crossHairPos;
+}
+
 void Graph::setCrossHairPos(const Graph::CrossHairPos &pos)
 {
 	m_state.crossHairPos = pos;
@@ -465,6 +496,11 @@ void Graph::setCrossHairPos(const Graph::CrossHairPos &pos)
 	}
 	dirty_rect = dirty_rect.united(m_layout.xAxisRect);
 	emit presentationDirty(dirty_rect);
+}
+
+timemsec_t Graph::currentTime() const
+{
+	return m_state.currentTime;
 }
 
 void Graph::setCurrentTime(timemsec_t new_time)
@@ -517,6 +553,15 @@ qsizetype Graph::posToChannelHeader(const QPoint &pos) const
 	}
 
 	return -1;
+}
+
+XRange Graph::xRange() const
+{
+	return m_state.xRange;
+}
+XRange Graph::xRangeZoom() const
+{
+	return m_state.xRangeZoom;
 }
 
 void Graph::setXRange(const XRange &r, bool keep_zoom)
@@ -635,6 +680,11 @@ void Graph::clearMiniMapCache()
 	m_miniMapCache = QPixmap();
 }
 
+const Graph::Style& Graph::style() const
+{
+	return m_style;
+}
+
 void Graph::setStyle(const Graph::Style &st)
 {
 	m_style = st;
@@ -643,6 +693,11 @@ void Graph::setStyle(const Graph::Style &st)
 void Graph::setDefaultChannelStyle(const GraphChannel::Style &st)
 {
 	m_defaultChannelStyle = st;
+}
+
+GraphChannel::Style Graph::defaultChannelStyle() const
+{
+	return m_defaultChannelStyle;
 }
 
 QVariantMap Graph::mergeMaps(const QVariantMap &base, const QVariantMap &overlay) const
@@ -842,6 +897,21 @@ QVariantMap Graph::sampleValues(qsizetype channel_ix, const shv::visu::timeline:
 	return ret;
 }
 
+const QRect& Graph::rect() const
+{
+	return  m_layout.rect;
+}
+
+const QRect& Graph::miniMapRect() const
+{
+	return  m_layout.miniMapRect;
+}
+
+const QRect& Graph::cornerCellRect() const
+{
+	return  m_layout.cornerCellRect;
+}
+
 QVariantMap Graph::toolTipValues(const QPoint &pos) const
 {
 	const auto[sample, channel_ix] = posToSample(pos);
@@ -853,6 +923,18 @@ QRect Graph::southFloatingBarRect() const
 	QRect ret = m_layout.miniMapRect.united(m_layout.xAxisRect);
 	ret.setX(0);
 	return ret;
+}
+
+Graph::CrossHairPos::CrossHairPos() = default;
+
+Graph::CrossHairPos::CrossHairPos(qsizetype ch_ix, const QPoint &pos)
+	: channelIndex(ch_ix), possition(pos)
+{
+}
+
+bool Graph::CrossHairPos::isValid() const
+{
+	return channelIndex >= 0 && !possition.isNull();
 }
 
 int Graph::u2px(double u) const
@@ -1734,6 +1816,16 @@ void Graph::processEvent(QEvent *ev)
 	}
 }
 
+void Graph::emitPresentationDirty(const QRect &rect)
+{
+	emit presentationDirty(rect);
+}
+
+void Graph::emitChannelContextMenuRequest(int channel_index, const QPoint &mouse_pos)
+{
+	emit channelContextMenuRequest(channel_index, mouse_pos);
+}
+
 QString Graph::rectToString(const QRect &r)
 {
 	QString s = "%1,%2 %3x%4";
@@ -2279,5 +2371,21 @@ Graph::VisualSettings Graph::VisualSettings::fromJson(const QString &json)
 	return settings;
 }
 
+bool Graph::VisualSettings::isValid() const
+{
+	return channels.count();
+}
 
+Graph::XAxis::XAxis() = default;
+Graph::XAxis::XAxis(timemsec_t t, int se, LabelScale f)
+	: tickInterval(t)
+	, subtickEvery(se)
+	  , labelScale(f)
+{
+}
+
+bool Graph::XAxis::isValid() const
+{
+	return tickInterval > 0;
+}
 }

@@ -41,6 +41,16 @@ std::ofstream::pos_type ShvJournalFileWriter::fileSize()
 	return m_out->tellp();
 }
 
+const std::string& ShvJournalFileWriter::fileName() const
+{
+	return m_fileName;
+}
+
+int64_t ShvJournalFileWriter::recentTimeStamp() const
+{
+	return m_recentTimeStamp;
+}
+
 void ShvJournalFileWriter::append(const ShvJournalEntry &entry)
 {
 	int64_t msec = entry.epochMsec;

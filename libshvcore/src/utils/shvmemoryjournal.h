@@ -16,17 +16,17 @@ class SHVCORE_DECL_EXPORT ShvMemoryJournal : public AbstractShvJournal
 public:
 	ShvMemoryJournal();
 
-	void setSince(const shv::chainpack::RpcValue &since) { m_logHeader.setSince(since); }
-	void setUntil(const shv::chainpack::RpcValue &until) { m_logHeader.setUntil(until); }
-	void setTypeInfo(const ShvTypeInfo &ti, const std::string &path_prefix = ShvLogHeader::EMPTY_PREFIX_KEY) {setTypeInfo(ShvTypeInfo(ti), path_prefix);}
-	void setTypeInfo(ShvTypeInfo &&ti, const std::string &path_prefix = ShvLogHeader::EMPTY_PREFIX_KEY) {m_logHeader.setTypeInfo(std::move(ti), path_prefix);}
-	void setDeviceId(std::string id) { m_logHeader.setDeviceId(std::move(id)); }
-	void setDeviceType(std::string type) { m_logHeader.setDeviceType(std::move(type)); }
+	void setSince(const shv::chainpack::RpcValue &since);
+	void setUntil(const shv::chainpack::RpcValue &until);
+	void setTypeInfo(const ShvTypeInfo &ti, const std::string &path_prefix = ShvLogHeader::EMPTY_PREFIX_KEY);
+	void setTypeInfo(ShvTypeInfo &&ti, const std::string &path_prefix = ShvLogHeader::EMPTY_PREFIX_KEY);
+	void setDeviceId(std::string id);
+	void setDeviceType(std::string type);
 
-	const ShvTypeInfo &typeInfo(const std::string &path_prefix = ShvLogHeader::EMPTY_PREFIX_KEY) const { return m_logHeader.typeInfo(path_prefix); }
+	const ShvTypeInfo &typeInfo(const std::string &path_prefix = ShvLogHeader::EMPTY_PREFIX_KEY) const;
 
-	bool isShortTimeCorrection() const { return m_isShortTimeCorrection; }
-	void setShortTimeCorrection(bool b) { m_isShortTimeCorrection = b; }
+	bool isShortTimeCorrection() const;
+	void setShortTimeCorrection(bool b);
 
 	void append(const ShvJournalEntry &entry) override;
 
@@ -34,14 +34,14 @@ public:
 	void loadLog(const shv::chainpack::RpcValue &log, const shv::chainpack::RpcValue::Map &default_snapshot_values);
 	shv::chainpack::RpcValue getLog(const ShvGetLogParams &params) override;
 
-	bool hasSnapshot() const { return m_logHeader.withSnapShot(); }
+	bool hasSnapshot() const;
 
-	const std::vector<ShvJournalEntry>& entries() const {return  m_entries;}
-	bool isEmpty() const { return  m_entries.size() == 0; }
-	size_t size() const { return  m_entries.size(); }
-	const ShvJournalEntry& at(size_t ix) const { return  m_entries.at(ix); }
-	void clear() { m_entries.clear(); }
-	void removeLastEntry() { if (m_entries.size()) m_entries.pop_back(); }
+	const std::vector<ShvJournalEntry>& entries() const;
+	bool isEmpty() const;
+	size_t size() const;
+	const ShvJournalEntry& at(size_t ix) const;
+	void clear();
+	void removeLastEntry();
 private:
 	using Entry = ShvJournalEntry;
 
@@ -54,20 +54,9 @@ private:
 		int64_t epochTime = 0;
 		uint16_t recentShortTime = 0;
 
-		uint16_t shortTimeDiff(uint16_t msec) const
-		{
-			return static_cast<uint16_t>(msec - recentShortTime);
-		}
-		int64_t toEpochTime(uint16_t msec) const
-		{
-			return epochTime + shortTimeDiff(msec);
-		}
-		int64_t addShortTime(uint16_t msec)
-		{
-			epochTime = toEpochTime(msec);
-			recentShortTime = msec;
-			return epochTime;
-		}
+		uint16_t shortTimeDiff(uint16_t msec) const;
+		int64_t toEpochTime(uint16_t msec) const;
+		int64_t addShortTime(uint16_t msec);
 	};
 
 	bool m_isShortTimeCorrection = false;

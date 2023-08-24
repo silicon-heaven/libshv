@@ -6,6 +6,13 @@
 
 namespace shv::iotqt::acl {
 
+AclPassword::AclPassword() = default;
+AclPassword::AclPassword(std::string password_, Format format_)
+	: password(std::move(password_))
+	, format(format_)
+{
+}
+
 static bool str_eq(const std::string &s1, const char *s2)
 {
 	size_t i;
@@ -61,6 +68,11 @@ AclPassword::Format AclPassword::formatFromString(const std::string &s)
 	if(str_eq(s, formatToString(Format::Sha1)))
 		return Format::Sha1;
 	return Format::Invalid;
+}
+
+bool AclPassword::isValid() const
+{
+	return format != Format::Invalid;
 }
 
 } // namespace shv

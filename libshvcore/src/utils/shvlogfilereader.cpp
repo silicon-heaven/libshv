@@ -81,4 +81,9 @@ const ShvJournalEntry &ShvLogFileReader::entry()
 	return m_currentEntry;
 }
 
+const ShvLogHeader &ShvLogFileReader::logHeader() const
+{
+	return m_logHeader;
+}
+
 } // namespace shv

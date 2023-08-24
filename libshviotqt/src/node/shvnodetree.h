@@ -16,7 +16,7 @@ public:
 	explicit ShvNodeTree(ShvNode *root, QObject *parent = nullptr);
 	~ShvNodeTree() override;
 
-	ShvNode* root() const {return m_root;}
+	ShvNode* root() const;
 
 	ShvNode* mkdir(const ShvNode::String &path);
 	ShvNode* mkdir(const ShvNode::StringViewList &path);

@@ -56,6 +56,11 @@ ClientConnection::~ClientConnection()
 	shvDebug() << __FUNCTION__;
 }
 
+QUrl ClientConnection::connectionUrl() const
+{
+	return m_connectionUrl;
+}
+
 void ClientConnection::setConnectionUrl(const QUrl &url)
 {
 	m_connectionUrl = url;
@@ -71,6 +76,11 @@ void ClientConnection::setConnectionUrl(const QUrl &url)
 void ClientConnection::setConnectionString(const QString &connection_string)
 {
 	setConnectionUrl(connectionUrlFromString(connection_string));
+}
+
+void ClientConnection::setHost(const std::string &host)
+{
+	setConnectionString(QString::fromStdString(host));
 }
 
 QUrl ClientConnection::connectionUrlFromString(const QString &url_str)
@@ -125,6 +135,16 @@ void ClientConnection::tst_connectionUrlFromString()
 			shvError() << "FAIL";
 		}
 	}
+}
+
+void ClientConnection::close()
+{
+	closeOrAbort(false);
+}
+
+void ClientConnection::abort()
+{
+	closeOrAbort(true);
 }
 
 void ClientConnection::setCliOptions(const ClientAppCliOptions *cli_opts)
@@ -245,6 +265,16 @@ void ClientConnection::setCheckBrokerConnectedInterval(int ms)
 		m_checkBrokerConnectedTimer->stop();
 	else
 		m_checkBrokerConnectedTimer->setInterval(ms);
+}
+
+int ClientConnection::checkBrokerConnectedInterval() const
+{
+	return m_checkBrokerConnectedInterval;
+}
+
+bool ClientConnection::isBrokerConnected() const
+{
+	return state() == State::BrokerConnected;
 }
 
 static constexpr std::string_view::size_type MAX_LOG_LEN = 1024;
@@ -474,12 +504,27 @@ bool ClientConnection::isShvPathMutedInLog(const std::string &shv_path, const st
 	return false;
 }
 
+bool ClientConnection::isAutoConnect() const
+{
+	return m_checkBrokerConnectedInterval > 0;
+}
+
 void ClientConnection::restartIfAutoConnect()
 {
 	if(isAutoConnect())
 		setState(State::ConnectionError);
 	else
 		close();
+}
+
+ClientConnection::State ClientConnection::state() const
+{
+	return m_connectionState.state;
+}
+
+const shv::chainpack::RpcValue::Map &ClientConnection::loginResult() const
+{
+	return m_connectionState.loginResult.asMap();
 }
 
 int ClientConnection::brokerClientId() const
@@ -491,6 +536,16 @@ void ClientConnection::muteShvPathInLog(const std::string &shv_path, const std::
 {
 	shvInfo() << "RpcMsg log, mutting shv_path:" << shv_path << "method:" << method;
 	m_mutedShvPathsInLog.emplace_back(MutedPath{.pathPattern = shv_path, .methodPattern = method});
+}
+
+void ClientConnection::setRawRpcMessageLog(bool b)
+{
+	m_rawRpcMessageLog = b;
+}
+
+bool ClientConnection::isLoginPhase() const
+{
+	return state() == State::SocketConnected;
 }
 
 void ClientConnection::processLoginPhase(const chainpack::RpcMessage &msg)

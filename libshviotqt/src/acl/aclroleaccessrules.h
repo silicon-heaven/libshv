@@ -22,16 +22,14 @@ public:
 
 	static constexpr auto ALL_SERVICES = "*";
 
-	AclAccessRule() = default;
-	AclAccessRule(const std::string &path_pattern_, const std::string &method_ = std::string())
-		: pathPattern(path_pattern_), method(method_) {}
-	AclAccessRule(const std::string &path_pattern_, const std::string &method_, const shv::chainpack::AccessGrant &grant_)
-		: pathPattern(path_pattern_), method(method_), grant(grant_) {}
+	AclAccessRule();
+	AclAccessRule(const std::string &path_pattern_, const std::string &method_ = std::string());
+	AclAccessRule(const std::string &path_pattern_, const std::string &method_, const shv::chainpack::AccessGrant &grant_);
 
 	chainpack::RpcValue toRpcValue() const;
 	static AclAccessRule fromRpcValue(const chainpack::RpcValue &rpcval);
 
-	bool isValid() const { return !pathPattern.empty() && grant.isValid(); }
+	bool isValid() const;
 	bool isMoreSpecificThan(const AclAccessRule &other) const;
 	bool isPathMethodMatch(const shv::core::utils::ShvUrl &shv_url, const std::string &method) const;
 };

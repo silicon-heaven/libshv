@@ -14,7 +14,7 @@ public:
 	void close() override;
 
 	void clearWrittenData();
-	QByteArray writtenData() const { return m_writtenData; }
+	QByteArray writtenData() const;
 	void setDataToReceive(const QByteArray &d);
 protected:
 	qint64 writeData(const char *data, qint64 len) override;

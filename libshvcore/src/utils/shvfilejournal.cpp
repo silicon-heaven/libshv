@@ -136,6 +136,62 @@ void ShvFileJournal::setFileSizeLimit(const std::string &n)
 	setFileSizeLimit(str_to_size(n));
 }
 
+void ShvFileJournal::setFileSizeLimit(int64_t n)
+{
+	m_fileSizeLimit = n;
+}
+
+int64_t ShvFileJournal::fileSizeLimit() const
+{
+	return m_fileSizeLimit;
+}
+
+void ShvFileJournal::setJournalSizeLimit(int64_t n)
+{
+	m_journalSizeLimit = n;
+}
+
+int64_t ShvFileJournal::journalSizeLimit() const
+{
+	return m_journalSizeLimit;
+}
+
+void ShvFileJournal::setTypeInfo(const ShvTypeInfo &i)
+{
+	m_journalContext.typeInfo = i;
+}
+
+const ShvTypeInfo& ShvFileJournal::typeInfo() const
+{
+	return m_journalContext.typeInfo;
+}
+
+std::string ShvFileJournal::deviceId() const
+{
+	return m_journalContext.deviceId;
+}
+
+void ShvFileJournal::setDeviceId(std::string id)
+{
+	m_journalContext.deviceId = std::move(id);
+}
+
+std::string ShvFileJournal::deviceType() const
+{
+	return m_journalContext.deviceType;
+}
+
+void ShvFileJournal::setDeviceType(std::string type)
+{
+	m_journalContext.deviceType = std::move(type);
+}
+
+int64_t ShvFileJournal::recentlyWrittenEntryDateTime() const
+{
+	return m_journalContext.recentTimeStamp;
+}
+
+
 void ShvFileJournal::setJournalSizeLimit(const std::string &n)
 {
 	setJournalSizeLimit(str_to_size(n));
@@ -214,6 +270,11 @@ void ShvFileJournal::createNewLogFile(int64_t journal_file_start_msec)
 	wr.appendSnapshot(journal_file_start_msec, m_snapshot.keyvals);
 	m_journalContext.files.push_back(journal_file_start_msec);
 	m_journalContext.recentTimeStamp = journal_file_start_msec;
+}
+
+bool ShvFileJournal::JournalContext::isConsistent() const
+{
+	return journalDirExists && journalSize >= 0;
 }
 
 int64_t ShvFileJournal::JournalContext::fileNameToFileMsec(const std::string &fn)

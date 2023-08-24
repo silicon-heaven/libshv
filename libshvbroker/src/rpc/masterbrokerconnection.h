@@ -20,11 +20,11 @@ public:
 
 	/// master broker connection cannot have userName
 	/// because it is connected in oposite direction than client connections
-	std::string loggedUserName() override {return std::string();}
+	std::string loggedUserName() override;
 
-	bool isConnectedAndLoggedIn() const override {return isSocketConnected() && !isLoginPhase();}
-	bool isSlaveBrokerConnection() const override {return false;}
-	bool isMasterBrokerConnection() const override {return true;}
+	bool isConnectedAndLoggedIn() const override;
+	bool isSlaveBrokerConnection() const override;
+	bool isMasterBrokerConnection() const override;
 
 	void sendRawData(const shv::chainpack::RpcValue::MetaData &meta_data, std::string &&data) override;
 	void sendMessage(const shv::chainpack::RpcMessage &rpc_msg) override;
@@ -34,10 +34,10 @@ public:
 
 	std::string masterExportedToLocalPath(const std::string &master_path) const;
 	std::string localPathToMasterExported(const std::string &local_path) const;
-	const std::string& exportedShvPath() const {return m_exportedShvPath;}
+	const std::string& exportedShvPath() const;
 
 	void setOptions(const shv::chainpack::RpcValue &slave_broker_options);
-	shv::chainpack::RpcValue options() {return m_options;}
+	shv::chainpack::RpcValue options();
 protected:
 	void onRpcDataReceived(shv::chainpack::Rpc::ProtocolType protocol_type, shv::chainpack::RpcValue::MetaData &&md, std::string &&msg_data) override;
 protected:

@@ -7,6 +7,30 @@
 
 namespace shv::chainpack::meta {
 
+MetaInfo::MetaInfo()
+	: id(0), name(nullptr)
+{
+}
+
+MetaInfo::MetaInfo(int id_, const char *name_) : id(id_), name(name_)
+{
+}
+
+bool MetaInfo::isValid() const
+{
+	return (name && name[0]);
+}
+
+MetaType::MetaType(const char *name)
+	: m_name(name)
+{
+}
+
+const char *MetaType::name() const
+{
+	return m_name;
+}
+
 const MetaInfo &MetaType::tagById(int id) const
 {
 	static std::map<int, MetaInfo> embeded_mi = {
@@ -30,6 +54,38 @@ const MetaInfo &MetaType::keyById(int id) const
 		return invalid;
 	return m_keys.at(id);
 }
+
+bool MetaType::isValid() const
+{
+	return (m_name && m_name[0]);
+}
+
+MetaNameSpace::MetaNameSpace(const char *name)
+	: m_name(name)
+{
+}
+
+const char *MetaNameSpace::name() const
+{
+	return m_name;
+}
+
+bool MetaNameSpace::isValid() const
+{
+	return (m_name && m_name[0]);
+}
+
+
+std::map<int, MetaType*>& MetaNameSpace::types()
+{
+	return m_types;
+}
+
+const std::map<int, MetaType*>& MetaNameSpace::types() const
+{
+	return m_types;
+}
+
 
 GlobalNS::GlobalNS()
 	: Super("global")

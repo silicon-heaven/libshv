@@ -26,16 +26,16 @@ public:
 	~SocketRpcConnection() Q_DECL_OVERRIDE;
 
 	void setSocket(Socket *socket);
-	bool hasSocket() const {return m_socket != nullptr;}
-	void setProtocolTypeAsInt(int v) {shv::chainpack::RpcDriver::setProtocolType(static_cast<shv::chainpack::Rpc::ProtocolType>(v));}
+	bool hasSocket() const;
+	void setProtocolTypeAsInt(int v);
 
 	void connectToHost(const QUrl &url);
 
-	Q_SLOT void sendRpcValue(const shv::chainpack::RpcValue &rpc_val) {shv::chainpack::RpcDriver::sendRpcValue(rpc_val);}
+	Q_SLOT void sendRpcValue(const shv::chainpack::RpcValue &rpc_val);
 
 	void closeSocket();
 	void abortSocket();
-	void clearSendBuffers() override { shv::chainpack::RpcDriver::clearSendBuffers(); }
+	void clearSendBuffers() override;
 
 	bool isSocketConnected() const;
 	Q_SIGNAL void socketConnectedChanged(bool is_connected);

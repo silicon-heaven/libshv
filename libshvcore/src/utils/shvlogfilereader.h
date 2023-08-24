@@ -28,7 +28,7 @@ public:
 	bool next();
 	const ShvJournalEntry& entry();
 
-	const ShvLogHeader &logHeader() const {return m_logHeader;}
+	const ShvLogHeader &logHeader() const;
 private:
 	void init();
 private:

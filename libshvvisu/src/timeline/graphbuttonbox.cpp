@@ -133,6 +133,11 @@ QRect GraphButtonBox::buttonRect(GraphButtonBox::ButtonId id) const
 	return QRect();
 }
 
+qsizetype GraphButtonBox::buttonCount() const
+{
+	return m_buttonIds.count();
+}
+
 QRect GraphButtonBox::buttonRect(int ix) const
 {
 	if(ix >= 0) {

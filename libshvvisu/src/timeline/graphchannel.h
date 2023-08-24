@@ -45,8 +45,8 @@ public:
 		SHV_VARIANTMAP_FIELD2(double, l, setL, ineWidth, 0.2)
 
 	public:
-		Style() = default;
-		Style(const QVariantMap &o) : QVariantMap(o) {}
+		Style();
+		Style(const QVariantMap &o);
 
 		static constexpr double HEIGHT_HUGE = 10e3;
 
@@ -62,22 +62,22 @@ public:
 	GraphChannel(Graph *graph);
 	~GraphChannel() = default;
 
-	inline qsizetype modelIndex() const {return m_modelIndex;}
-	void setModelIndex(qsizetype ix) {m_modelIndex = ix;}
+	qsizetype modelIndex() const;
+	void setModelIndex(qsizetype ix);
 
 	QString shvPath() const;
 
-	YRange yRange() const { return m_state.yRange; }
-	YRange yRangeZoom() const { return m_state.yRangeZoom; }
+	YRange yRange() const;
+	YRange yRangeZoom() const;
 
-	const Style& style() const {return m_style;}
-	void setStyle(const Style& st) { m_style = st; }
-	Style effectiveStyle() const { return m_effectiveStyle; }
+	const Style& style() const;
+	void setStyle(const Style& st);
+	Style effectiveStyle() const;
 
-	const QRect& graphAreaRect() const { return  m_layout.graphAreaRect; }
-	const QRect& graphDataGridRect() const { return  m_layout.graphDataGridRect; }
-	const QRect& verticalHeaderRect() const { return  m_layout.verticalHeaderRect; }
-	const QRect& yAxisRect() const { return  m_layout.yAxisRect; }
+	const QRect& graphAreaRect() const;
+	const QRect& graphDataGridRect() const;
+	const QRect& verticalHeaderRect() const;
+	const QRect& yAxisRect() const;
 
 	int valueToPos(double val) const;
 	double posToValue(int y) const;
@@ -87,11 +87,11 @@ public:
 		int subtickEvery = 1;
 	};
 
-	const GraphButtonBox *buttonBox() const { return m_buttonBox; }
-	GraphButtonBox *buttonBox() { return m_buttonBox; }
+	const GraphButtonBox *buttonBox() const;
+	GraphButtonBox *buttonBox();
 
-	bool isMaximized() const { return m_state.isMaximized; }
-	void setMaximized(bool b) { m_state.isMaximized = b; }
+	bool isMaximized() const;
+	void setMaximized(bool b);
 
 	Graph *graph() const;
 protected:

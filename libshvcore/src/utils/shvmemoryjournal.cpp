@@ -15,6 +15,50 @@ namespace cp = shv::chainpack;
 namespace shv::core::utils {
 
 ShvMemoryJournal::ShvMemoryJournal() = default;
+void ShvMemoryJournal::setSince(const shv::chainpack::RpcValue &since)
+{
+	m_logHeader.setSince(since);
+}
+
+void ShvMemoryJournal::setUntil(const shv::chainpack::RpcValue &until)
+{
+	m_logHeader.setUntil(until);
+}
+
+void ShvMemoryJournal::setTypeInfo(const ShvTypeInfo &ti, const std::string &path_prefix)
+{
+	setTypeInfo(ShvTypeInfo(ti), path_prefix);
+}
+
+void ShvMemoryJournal::setTypeInfo(ShvTypeInfo &&ti, const std::string &path_prefix)
+{
+	m_logHeader.setTypeInfo(std::move(ti), path_prefix);
+}
+
+void ShvMemoryJournal::setDeviceId(std::string id)
+{
+	m_logHeader.setDeviceId(std::move(id));
+}
+
+void ShvMemoryJournal::setDeviceType(std::string type)
+{
+	m_logHeader.setDeviceType(std::move(type));
+}
+
+const ShvTypeInfo &ShvMemoryJournal::typeInfo(const std::string &path_prefix) const
+{
+	return m_logHeader.typeInfo(path_prefix);
+}
+
+bool ShvMemoryJournal::isShortTimeCorrection() const
+{
+	return m_isShortTimeCorrection;
+}
+
+void ShvMemoryJournal::setShortTimeCorrection(bool b)
+{
+	m_isShortTimeCorrection = b;
+}
 
 void ShvMemoryJournal::loadLog(const chainpack::RpcValue &log, bool append_records)
 {
@@ -298,4 +342,57 @@ log_finish:
 	ret.setMetaData(hdr.toMetaData());
 	return ret;
 }
+
+bool ShvMemoryJournal::hasSnapshot() const
+{
+	return m_logHeader.withSnapShot();
+}
+
+const std::vector<ShvJournalEntry>& ShvMemoryJournal::entries() const
+{
+	return m_entries;
+}
+
+bool ShvMemoryJournal::isEmpty() const
+{
+	return  m_entries.empty();
+}
+
+size_t ShvMemoryJournal::size() const
+{
+	return  m_entries.size();
+}
+
+const ShvJournalEntry& ShvMemoryJournal::at(size_t ix) const
+{
+	return  m_entries.at(ix);
+}
+
+void ShvMemoryJournal::clear()
+{
+	m_entries.clear();
+}
+
+void ShvMemoryJournal::removeLastEntry()
+{
+	if (!m_entries.empty()) m_entries.pop_back();
+}
+
+uint16_t ShvMemoryJournal::ShortTime::shortTimeDiff(uint16_t msec) const
+{
+	return static_cast<uint16_t>(msec - recentShortTime);
+}
+
+int64_t ShvMemoryJournal::ShortTime::toEpochTime(uint16_t msec) const
+{
+	return epochTime + shortTimeDiff(msec);
+}
+
+int64_t ShvMemoryJournal::ShortTime::addShortTime(uint16_t msec)
+{
+	epochTime = toEpochTime(msec);
+	recentShortTime = msec;
+	return epochTime;
+}
+
 } // namespace shv

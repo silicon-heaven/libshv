@@ -18,11 +18,11 @@ struct SHVVISU_DECL_EXPORT Sample
 	timemsec_t time = 0;
 	QVariant value;
 
-	Sample() = default;
-	Sample(timemsec_t t, const QVariant &v) : time(t), value(v) {}
-	Sample(timemsec_t t, QVariant &&v) : time(t), value(std::move(v)) {}
+	Sample();
+	Sample(timemsec_t t, const QVariant &v);
+	Sample(timemsec_t t, QVariant &&v);
 
-	bool isValid() const {return value.isValid() && time > 0;}
+	bool isValid() const;
 };
 
 template<typename T>

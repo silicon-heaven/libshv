@@ -44,6 +44,11 @@ void MockSerialPort::clearWrittenData()
 	m_writtenData.clear();
 }
 
+QByteArray MockSerialPort::writtenData() const
+{
+	return m_writtenData;
+}
+
 void MockSerialPort::setDataToReceive(const QByteArray &d)
 {
 	m_dataToReceive.append(d);

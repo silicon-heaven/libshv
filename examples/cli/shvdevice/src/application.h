@@ -15,7 +15,7 @@ class AppRootNode : public shv::iotqt::node::ShvRootNode
 {
 	using Super = shv::iotqt::node::ShvRootNode;
 public:
-	explicit AppRootNode(QObject *parent = nullptr) : Super(parent) {}
+	explicit AppRootNode(QObject *parent = nullptr);
 
 	size_t methodCount(const StringViewList &shv_path) override;
 	const shv::chainpack::MetaMethod* metaMethod(const StringViewList &shv_path, size_t ix) override;
@@ -35,9 +35,9 @@ public:
 	~Application() Q_DECL_OVERRIDE;
 
 	static Application *instance();
-	shv::iotqt::rpc::ClientConnection *rpcConnection() const {return m_rpcConnection;}
+	shv::iotqt::rpc::ClientConnection *rpcConnection() const;
 
-	AppCliOptions* cliOptions() {return m_cliOptions;}
+	AppCliOptions* cliOptions();
 
 private:
 	void onBrokerConnectedChanged(bool is_connected);

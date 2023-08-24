@@ -20,7 +20,7 @@ public:
 
 		bool cmpSubscribed(const CommonRpcClientHandle::Subscription &o) const;
 		bool match(const std::string_view &shv_path, const std::string_view &shv_method) const;
-		std::string toString() const {return localPath + ':' + method;}
+		std::string toString() const;
 	};
 public:
 	CommonRpcClientHandle();
@@ -34,8 +34,8 @@ public:
 	bool removeSubscription(const Subscription &subs);
 	int isSubscribed(const std::string &shv_path, const std::string &method) const;
 	virtual std::string toSubscribedPath(const Subscription &subs, const std::string &abs_path) const = 0;
-	size_t subscriptionCount() const {return m_subscriptions.size();}
-	const Subscription& subscriptionAt(size_t ix) const {return m_subscriptions.at(ix);}
+	size_t subscriptionCount() const;
+	const Subscription& subscriptionAt(size_t ix) const;
 	bool rejectNotSubscribedSignal(const std::string &path, const std::string &method);
 
 	virtual std::string loggedUserName() = 0;

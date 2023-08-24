@@ -38,38 +38,38 @@ public:
 	explicit ClientConnection(QObject *parent = nullptr);
 	~ClientConnection() Q_DECL_OVERRIDE;
 
-	QUrl connectionUrl() const { return m_connectionUrl; }
+	QUrl connectionUrl() const;
 	void setConnectionUrl(const QUrl &url);
 	void setConnectionString(const QString &connection_string);
-	void setHost(const std::string &host) { setConnectionString(QString::fromStdString(host)); }
+	void setHost(const std::string &host);
 
 	static const char* stateToString(State state);
 
 	virtual void open();
-	void close() override { closeOrAbort(false); }
-	void abort() override { closeOrAbort(true); }
+	void close() override;
+	void abort() override;
 
 	void setCliOptions(const ClientAppCliOptions *cli_opts);
 
 	void setTunnelOptions(const shv::chainpack::RpcValue &opts);
 
 	void setCheckBrokerConnectedInterval(int ms);
-	int checkBrokerConnectedInterval() const { return m_checkBrokerConnectedInterval; }
+	int checkBrokerConnectedInterval() const;
 
 	Q_SIGNAL void rpcMessageReceived(const shv::chainpack::RpcMessage &msg);
 
-	bool isBrokerConnected() const {return state() == State::BrokerConnected;}
+	bool isBrokerConnected() const;
 	Q_SIGNAL void brokerConnectedChanged(bool is_connected);
 	Q_SIGNAL void brokerLoginError(const shv::chainpack::RpcError &err);
 
-	State state() const { return m_connectionState.state; }
+	State state() const;
 	Q_SIGNAL void stateChanged(State state);
 
-	const shv::chainpack::RpcValue::Map &loginResult() const { return m_connectionState.loginResult.asMap(); }
+	const shv::chainpack::RpcValue::Map &loginResult() const;
 
 	int brokerClientId() const;
 	void muteShvPathInLog(const std::string &shv_path, const std::string &method);
-	void setRawRpcMessageLog(bool b) { m_rawRpcMessageLog = b; }
+	void setRawRpcMessageLog(bool b);
 protected:
 	bool isShvPathMutedInLog(const std::string &shv_path, const std::string &method) const;
 public:
@@ -89,7 +89,7 @@ protected:
 
 	void onSocketConnectedChanged(bool is_connected);
 
-	bool isLoginPhase() const {return state() == State::SocketConnected;}
+	bool isLoginPhase() const;
 	void processLoginPhase(const chainpack::RpcMessage &msg);
 	shv::chainpack::RpcValue createLoginParams(const shv::chainpack::RpcValue &server_hello) const;
 
@@ -103,7 +103,7 @@ protected:
 	};
 	ConnectionState m_connectionState;
 private:
-	bool isAutoConnect() const { return m_checkBrokerConnectedInterval > 0; }
+	bool isAutoConnect() const;
 	void restartIfAutoConnect();
 
 	static void tst_connectionUrlFromString();

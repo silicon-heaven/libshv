@@ -41,10 +41,9 @@ public:
 public:
 	RpcMessage();
 	RpcMessage(const RpcValue &val);
-	RpcMessage(const RpcMessage &val) = default;
 	virtual ~RpcMessage();
 
-	const RpcValue& value() const {return m_value;}
+	const RpcValue& value() const;
 protected:
 	bool hasKey(RpcValue::Int key) const;
 	RpcValue value(RpcValue::Int key) const;
@@ -120,7 +119,7 @@ public:
 	std::string toPrettyString() const;
 	std::string toCpon() const;
 
-	const RpcValue::MetaData& metaData() const {return m_value.metaData();}
+	const RpcValue::MetaData& metaData() const;
 	RpcValue metaValue(RpcValue::Int key) const;
 	void setMetaValue(RpcValue::Int key, const RpcValue &val);
 	RpcValue metaValue(const RpcValue::String &key) const;
@@ -143,15 +142,15 @@ class SHVCHAINPACK_DECL_EXPORT RpcRequest : public RpcMessage
 private:
 	using Super = RpcMessage;
 public:
-	RpcRequest() : Super() {}
-	RpcRequest(const RpcMessage &msg) : Super(msg) {}
+	RpcRequest();
+	RpcRequest(const RpcMessage &msg);
 	~RpcRequest() override;
 public:
 	RpcRequest& setMethod(const RpcValue::String &met);
 	RpcRequest& setMethod(RpcValue::String &&met);
 	RpcRequest& setParams(const RpcValue &p);
 	RpcValue params() const;
-	RpcRequest& setRequestId(const RpcValue::Int id) {Super::setRequestId(id); return *this;}
+	RpcRequest& setRequestId(const RpcValue::Int id);
 
 	RpcResponse makeResponse() const;
 };
@@ -161,8 +160,8 @@ class SHVCHAINPACK_DECL_EXPORT RpcSignal : public RpcRequest
 private:
 	using Super = RpcRequest;
 public:
-	RpcSignal() : Super() {}
-	RpcSignal(const RpcMessage &msg) : Super(msg) {}
+	RpcSignal();
+	RpcSignal(const RpcMessage &msg);
 	~RpcSignal() override;
 public:
 	RpcRequest& setRequestId(const RpcValue::Int requestId) = delete;
@@ -177,7 +176,7 @@ public:
 	RpcException(int err_code, const std::string& _msg, const std::string& _where = std::string());
 	~RpcException() override;
 
-	int errorCode() const { return m_errorCode; }
+	int errorCode() const;
 protected:
 	int m_errorCode;
 };
@@ -201,11 +200,11 @@ public:
 		UserCode = 32
 	};
 public:
-	RpcError() {}
+	RpcError();
 	RpcError(const std::string &msg, int code = ErrorCode::Unknown, const RpcValue &data = {});
 	//RpcError(const RpcValue &v);
-	RpcError& setCode(int c) { return setValue(KeyCode, c); }
-	int code() const { return value(KeyCode).toInt(); }
+	RpcError& setCode(int c);
+	int code() const;
 	RpcValue::String message() const;
 	RpcError& setMessage(const RpcValue::String &m);
 	RpcValue data() const;
@@ -216,20 +215,14 @@ public:
 	RpcValue::Map toJson() const;
 	static RpcError fromJson(const RpcValue::Map &json);
 
-	RpcValue toRpcValue() const { return m_value; }
+	RpcValue toRpcValue() const;
 	static RpcError fromRpcValue(const RpcValue &rv);
 public:
 	static RpcError create(int c, const RpcValue::String &msg, const RpcValue &data = {});
-	static RpcError createMethodCallExceptionError(const RpcValue::String &msg = RpcValue::String()) {
-		return create(MethodCallException, (msg.empty())? "Method call exception": msg);
-	}
-	static RpcError createInternalError(const RpcValue::String &msg = RpcValue::String()) {
-		return create(InternalError, (msg.empty())? "Internal error": msg);
-	}
-	static RpcError createSyncMethodCallTimeout(const RpcValue::String &msg = RpcValue::String()) {
-		return create(MethodCallTimeout, (msg.empty())? "Sync method call timeout": msg);
-	}
-	bool isValid() const { return !m_value.asIMap().empty(); }
+	static RpcError createMethodCallExceptionError(const RpcValue::String &msg = RpcValue::String());
+	static RpcError createInternalError(const RpcValue::String &msg = RpcValue::String());
+	static RpcError createSyncMethodCallTimeout(const RpcValue::String &msg = RpcValue::String());
+	bool isValid() const;
 	bool operator==(const RpcError &) const = default;
 private:
 	RpcValue value(int key) const;
@@ -245,26 +238,26 @@ private:
 public:
 	using Error = RpcError;
 public:
-	RpcResponse() : Super() {}
-	RpcResponse(const RpcMessage &msg) : Super(msg) {}
-	RpcResponse(const RpcResponse &msg) = default;
+	RpcResponse();
+	RpcResponse(const RpcMessage &msg);
+	RpcResponse(const RpcResponse &msg);
 	~RpcResponse() override;
 
 	static RpcResponse forRequest(const RpcValue::MetaData &meta);
-	static RpcResponse forRequest(const RpcRequest &rq) {return forRequest(rq.metaData());}
+	static RpcResponse forRequest(const RpcRequest &rq);
 public:
 	/// hasRetVal() is deprecated, use hasResult() instead
-	bool hasRetVal() const {return error().isValid() || result().isValid();}
+	bool hasRetVal() const;
 
-	bool hasResult() const {return error().isValid() || result().isValid();}
-	bool isSuccess() const {return result().isValid() && !isError();}
-	bool isError() const {return error().isValid();}
+	bool hasResult() const;
+	bool isSuccess() const;
+	bool isError() const;
 	std::string errorString() const;
 	RpcResponse& setError(const Error &err);
 	Error error() const;
 	RpcResponse& setResult(const RpcValue &res);
 	RpcValue result() const;
-	RpcResponse& setRequestId(const RpcValue &id) {Super::setRequestId(id); return *this;}
+	RpcResponse& setRequestId(const RpcValue &id);
 };
 
 } // namespace chainpack

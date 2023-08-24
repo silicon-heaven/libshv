@@ -44,6 +44,16 @@ PatternMatcher::PatternMatcher(const ShvGetLogParams &filter)
 	}
 }
 
+bool PatternMatcher::isEmpty() const
+{
+	return !isRegexError() && !m_usePathPatternRegEx && m_pathPatternWildCard.empty() && !m_useDomainPatternregEx;
+}
+
+bool PatternMatcher::isRegexError() const
+{
+	return  m_regexError;
+}
+
 bool PatternMatcher::match(const ShvJournalEntry &entry) const
 {
 	return match(entry.path, entry.domain);

@@ -16,10 +16,10 @@ public:
 	ShvLogRpcValueReader(const shv::chainpack::RpcValue &log, bool throw_exceptions = false);
 
 	bool next();
-	bool isInSnapshot() const { return m_snapshotMsec == m_currentEntry.epochMsec || m_currentEntry.isSnapshotValue(); }
-	const ShvJournalEntry& entry() { return m_currentEntry; }
+	bool isInSnapshot() const;
+	const ShvJournalEntry& entry();
 
-	const ShvLogHeader &logHeader() const {return m_logHeader;}
+	const ShvLogHeader &logHeader() const;
 private:
 	ShvLogHeader m_logHeader;
 	ShvJournalEntry m_currentEntry;

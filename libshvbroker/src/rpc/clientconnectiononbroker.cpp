@@ -70,6 +70,11 @@ void ClientConnectionOnBroker::setMountPoint(const std::string &mp)
 	m_mountPoint = mp;
 }
 
+const std::string& ClientConnectionOnBroker::mountPoint() const
+{
+	return m_mountPoint;
+}
+
 int ClientConnectionOnBroker::idleTime() const
 {
 	if(!m_idleWatchDogTimer || !m_idleWatchDogTimer->isActive())
@@ -367,5 +372,25 @@ void ClientConnectionOnBroker::propagateSubscriptionToSlaveBroker(const CommonRp
 int ClientConnectionOnBroker::connectionId() const
 {
 	return Super::connectionId();
+}
+
+bool ClientConnectionOnBroker::isConnectedAndLoggedIn() const
+{
+	return Super::isConnectedAndLoggedIn();
+}
+
+bool ClientConnectionOnBroker::isSlaveBrokerConnection() const
+{
+	return Super::isSlaveBrokerConnection();
+}
+
+bool ClientConnectionOnBroker::isMasterBrokerConnection() const
+{
+	return false;
+}
+
+std::string ClientConnectionOnBroker::loggedUserName()
+{
+	return Super::userName();
 }
 }

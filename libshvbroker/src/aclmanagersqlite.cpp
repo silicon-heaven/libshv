@@ -33,6 +33,11 @@ AclManagerSqlite::AclManagerSqlite(BrokerApp *broker_app)
 
 AclManagerSqlite::~AclManagerSqlite() = default;
 
+void AclManagerSqlite::init()
+{
+	checkAclTables();
+}
+
 QSqlQuery AclManagerSqlite::execSql(const QString &query_str, bool throw_exc)
 {
 	QSqlDatabase db = m_brokerApp->sqlConfigConnection();

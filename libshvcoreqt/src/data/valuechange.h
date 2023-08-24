@@ -23,67 +23,30 @@ struct SHVCOREQT_DECL_EXPORT ValueChange
 {
 	using TimeStamp = qint64;
 	union ValueX {
-		ValueX(TimeStamp value) : timeStamp(value) {}
-		ValueX(int value) : intValue(value) {}
-		ValueX(double value) : doubleValue(value) {}
-		ValueX() : intValue(0) {}
+		ValueX(TimeStamp value);
+		ValueX(int value);
+		ValueX(double value);
+		ValueX();
 
-		double toDouble(ValueType stored_type) const{
-			switch (stored_type) {
-				case ValueType::Int: return intValue;
-				case ValueType::Double: return doubleValue;
-				case ValueType::TimeStamp: return static_cast<double>(timeStamp);
-				default: Q_ASSERT_X(false,"valueX", "Unsupported conversion"); return 0;
-			}
-		}
-
-		int toInt(ValueType stored_type) const{
-			switch (stored_type) {
-				case ValueType::Int: return intValue;
-				case ValueType::Double: return qRound(doubleValue);
-				case ValueType::TimeStamp: return static_cast<int>(timeStamp);
-				default: Q_ASSERT_X(false,"valueX", "Unsupported conversion"); return 0;
-			}
-		}
+		double toDouble(ValueType stored_type) const;
+		int toInt(ValueType stored_type) const;
 
 		TimeStamp timeStamp;
 		int intValue;
 		double doubleValue;
-	} valueX;
+	};
+	ValueX valueX;
 
 	union ValueY {
-		ValueY(bool value) : boolValue(value) {}
-		ValueY(int value) : intValue(value) {}
-		ValueY(double value) : doubleValue(value) {}
-		ValueY(CustomData *value) : pointerValue(value) {}
-		ValueY() : intValue(0) {}
+		ValueY(bool value);
+		ValueY(int value);
+		ValueY(double value);
+		ValueY(CustomData *value);
+		ValueY();
 
-		double toDouble(ValueType stored_type) const{
-			switch (stored_type) {
-				case ValueType::Int: return intValue;
-				case ValueType::Double: return doubleValue;
-				case ValueType::Bool: return boolValue;
-				default: Q_ASSERT_X(false,"valueY", "Unsupported conversion"); return 0;
-			}
-		}
-
-		int toInt(ValueType stored_type) const{
-			switch (stored_type) {
-				case ValueType::Int: return intValue;
-				case ValueType::Double: return qRound(doubleValue);
-				case ValueType::Bool: return boolValue;
-				default: Q_ASSERT_X(false,"valueY", "Unsupported conversion"); return 0;
-			}
-		}
-
-		bool toBool(ValueType stored_type) const{
-			switch (stored_type) {
-				case ValueType::Int: return (intValue > 0);
-				case ValueType::Double: return (doubleValue > 0.0);
-				case ValueType::Bool: return boolValue;
-				default: Q_ASSERT_X(false,"valueY", "Unsupported conversion"); return false;
-			}
-		}
+		double toDouble(ValueType stored_type) const;
+		int toInt(ValueType stored_type) const;
+		bool toBool(ValueType stored_type) const;
 
 		bool boolValue;
 		int intValue;
@@ -91,23 +54,23 @@ struct SHVCOREQT_DECL_EXPORT ValueChange
 		CustomData *pointerValue;
 	} valueY;
 
-	ValueChange(ValueX value_x, ValueY value_y) : valueX(value_x), valueY(value_y) {}
-	ValueChange(TimeStamp value_x, ValueY value_y) : ValueChange(ValueX(value_x), value_y) {}
-	ValueChange(TimeStamp value_x, bool value_y) : ValueChange(value_x, ValueY(value_y)) {}
-	ValueChange(TimeStamp value_x, int value_y) : ValueChange(value_x, ValueY(value_y)) {}
-	ValueChange(TimeStamp value_x, double value_y) : ValueChange(value_x, ValueY(value_y)) {}
-	ValueChange(TimeStamp value_x, CustomData *value_y) : ValueChange(value_x, ValueY(value_y)) {}
-	ValueChange() = default;
+	ValueChange(ValueX value_x, ValueY value_y);
+	ValueChange(TimeStamp value_x, ValueY value_y);
+	ValueChange(TimeStamp value_x, bool value_y);
+	ValueChange(TimeStamp value_x, int value_y);
+	ValueChange(TimeStamp value_x, double value_y);
+	ValueChange(TimeStamp value_x, CustomData *value_y);
+	ValueChange();
 };
 
 struct SHVCOREQT_DECL_EXPORT ValueXInterval
 {
-	ValueXInterval() = default;
-	inline ValueXInterval(ValueChange min_, ValueChange max_, ValueType type_) : min(min_.valueX), max(max_.valueX), type(type_) {}
-	inline ValueXInterval(ValueChange::ValueX min_, ValueChange::ValueX max_, ValueType type_) : min(min_), max(max_), type(type_) {}
-	inline ValueXInterval(int min_, int max_) : min(min_), max(max_), type(ValueType::Int) {}
-	inline ValueXInterval(ValueChange::TimeStamp min_, ValueChange::TimeStamp max_) : min(min_), max(max_), type(ValueType::TimeStamp) {}
-	inline ValueXInterval(double min_, double max_) : min(min_), max(max_), type(ValueType::Double) {}
+	ValueXInterval();
+	ValueXInterval(ValueChange min_, ValueChange max_, ValueType type_);
+	ValueXInterval(ValueChange::ValueX min_, ValueChange::ValueX max_, ValueType type_);
+	ValueXInterval(int min_, int max_);
+	ValueXInterval(ValueChange::TimeStamp min_, ValueChange::TimeStamp max_);
+	ValueXInterval(double min_, double max_);
 
 	bool operator==(const ValueXInterval &interval) const;
 
@@ -141,8 +104,8 @@ public:
 		const_iterator end;
 	};
 
-	SerieData() : m_xType(ValueType::Int), m_yType(ValueType::Int)	{}
-	SerieData(ValueType x_type, ValueType y_type) : m_xType(x_type), m_yType(y_type) {}
+	SerieData();
+	SerieData(ValueType x_type, ValueType y_type);
 
 	const_iterator upper_bound(ValueChange::ValueX value_x) const;
 	const_iterator upper_bound(const_iterator begin, const_iterator end, ValueChange::ValueX value_x) const;
@@ -154,8 +117,8 @@ public:
 	const_iterator lessOrEqualIterator(ValueChange::ValueX value_x) const;
 	QPair<const_iterator, const_iterator> intersection(const ValueChange::ValueX &start, const ValueChange::ValueX &end, bool &valid) const;
 
-	ValueType xType() const	{ return m_xType; }
-	ValueType yType() const	{ return m_yType; }
+	ValueType xType() const;
+	ValueType yType() const;
 
 	ValueXInterval range() const;
 	bool addValueChange(const ValueChange &value);

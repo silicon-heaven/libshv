@@ -10,6 +10,23 @@
 
 namespace shv::chainpack {
 
+ChainPackWriter::ChainPackWriter(std::ostream &out)
+	: Super(out)
+{
+}
+
+ChainPackWriter& ChainPackWriter::operator<<(const RpcValue &value)
+{
+	write(value);
+	return *this;
+}
+
+ChainPackWriter& ChainPackWriter::operator<<(const RpcValue::MetaData &meta_data)
+{
+	write(meta_data);
+	return *this;
+}
+
 void ChainPackWriter::writeUIntData(uint64_t n)
 {
 	cchainpack_pack_uint_data(&m_outCtx, n);

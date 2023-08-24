@@ -22,7 +22,7 @@ public:
 	void setMatchingPaths(const QStringList &paths);
 
 	bool isPathMatch(const QString &path) const;
-	bool isValid() const { return m_isValid; }
+	bool isValid() const;
 private:
 	QStringList m_matchingPaths;
 	bool m_isValid;

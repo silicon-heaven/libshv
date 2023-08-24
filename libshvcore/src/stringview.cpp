@@ -2,6 +2,13 @@
 
 namespace shv::core {
 
+StringViewList::StringViewList() = default;
+
+StringViewList::StringViewList(const std::vector<StringView> &o)
+	: Super(o)
+{
+}
+
 StringView StringViewList::value(ssize_t ix) const
 {
 	if(ix < 0)
@@ -75,4 +82,13 @@ std::string StringViewList::join(const std::string &delim) const
 	return ::shv::core::join(begin(), end(), delim);
 }
 
+StringViewList StringViewList::mid(size_t start) const
+{
+	return mid(start, size());
+}
+
+ssize_t StringViewList::length() const
+{
+	return static_cast<ssize_t>(size());
+}
 } // namespace shv::core

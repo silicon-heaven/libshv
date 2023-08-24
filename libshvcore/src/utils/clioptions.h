@@ -34,7 +34,7 @@ public:
 	class SHVCORE_DECL_EXPORT Option
 	{
 	private:
-		struct Data
+		struct SHVCORE_DECL_EXPORT Data
 		{
 			chainpack::RpcValue::Type type = chainpack::RpcValue::Type::Invalid;
 			StringList names;
@@ -43,28 +43,28 @@ public:
 			std::string comment;
 			bool mandatory = false;
 
-			Data(chainpack::RpcValue::Type type_ = chainpack::RpcValue::Type::Invalid) : type(type_), mandatory(false) {}
+			Data(chainpack::RpcValue::Type type_ = chainpack::RpcValue::Type::Invalid);
 		};
 		Data m_data;
 	public:
-		bool isValid() const {return m_data.type != chainpack::RpcValue::Type::Invalid;}
+		bool isValid() const;
 
-		Option& setNames(const StringList &names) {m_data.names = names; return *this;}
-		Option& setNames(const std::string &name) {m_data.names = StringList{name}; return *this;}
-		Option& setNames(const std::string &name1, const std::string &name2) {m_data.names = StringList{name1, name2}; return *this;}
-		const StringList& names() const {return m_data.names;}
-		Option& setType(chainpack::RpcValue::Type type) {m_data.type = type; return *this;}
-		chainpack::RpcValue::Type type() const {return m_data.type;}
+		Option& setNames(const StringList &names);
+		Option& setNames(const std::string &name);
+		Option& setNames(const std::string &name1, const std::string &name2);
+		const StringList& names() const;
+		Option& setType(chainpack::RpcValue::Type type);
+		chainpack::RpcValue::Type type() const;
 		Option& setValueString(const std::string &val_str);
-		Option& setValue(const chainpack::RpcValue &val) {m_data.value = val; return *this;}
-		chainpack::RpcValue value() const {return m_data.value;}
-		Option& setDefaultValue(const chainpack::RpcValue &val) {m_data.defaultValue = val; return *this;}
-		chainpack::RpcValue defaultValue() const {return m_data.defaultValue;}
-		Option& setComment(const std::string &s) {m_data.comment = s; return *this;}
-		const std::string& comment() const {return m_data.comment;}
-		Option& setMandatory(bool b) {m_data.mandatory = b; return *this;}
-		bool isMandatory() const {return m_data.mandatory;}
-		bool isSet() const {return value().isValid();}
+		Option& setValue(const chainpack::RpcValue &val);
+		chainpack::RpcValue value() const;
+		Option& setDefaultValue(const chainpack::RpcValue &val);
+		chainpack::RpcValue defaultValue() const;
+		Option& setComment(const std::string &s);
+		const std::string& comment() const;
+		Option& setMandatory(bool b);
+		bool isMandatory() const;
+		bool isSet() const;
 	public:
 		Option() = default;
 	};
@@ -76,14 +76,14 @@ public:
 	bool removeOption(const std::string &key);
 	const Option& option(const std::string &name, bool throw_exc = true) const;
 	Option& optionRef(const std::string &name);
-	const std::map<std::string, Option>& options() const {return m_options;}
+	const std::map<std::string, Option>& options() const;
 
 	void parse(int argc, char *argv[]);
 	virtual void parse(const StringList &cmd_line_args);
-	bool isParseError() const {return !m_parseErrors.empty();}
-	bool isAppBreak() const {return m_isAppBreak;}
-	StringList parseErrors() const {return m_parseErrors;}
-	StringList unusedArguments() {return m_unusedArguments;}
+	bool isParseError() const;
+	bool isAppBreak() const;
+	StringList parseErrors() const;
+	StringList unusedArguments();
 
 	std::string applicationDir() const;
 	std::string applicationName() const;

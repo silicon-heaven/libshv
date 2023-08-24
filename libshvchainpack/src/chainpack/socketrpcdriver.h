@@ -20,12 +20,12 @@ public:
 	void sendResponse(int request_id, const RpcValue &result);
 	void sendNotify(std::string &&method, const RpcValue &result);
 protected:
-	bool isOpen() override { return isOpenImpl(); }
-	void writeMessageBegin() override {}
-	void writeMessageEnd() override {flush();}
+	bool isOpen() override;
+	void writeMessageBegin() override;
+	void writeMessageEnd() override;
 	int64_t writeBytes(const char *bytes, size_t length) override;
 
-	virtual void idleTaskOnSelectTimeout() {}
+	virtual void idleTaskOnSelectTimeout();
 private:
 	bool isOpenImpl() const;
 	bool flush();

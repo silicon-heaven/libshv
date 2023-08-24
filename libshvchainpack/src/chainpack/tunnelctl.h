@@ -50,8 +50,8 @@ class SHVCHAINPACK_DECL_EXPORT FindTunnelReqCtl : public TunnelCtl
 	SHV_IMAP_FIELD_IMPL(shv::chainpack::RpcValue, MetaType::Key::CallerIds, c, setC, allerIds)
 
 public:
-	FindTunnelReqCtl() : Super(State::FindTunnelRequest) {}
-	FindTunnelReqCtl(const TunnelCtl &o) : Super(o) {}
+	FindTunnelReqCtl();
+	FindTunnelReqCtl(const TunnelCtl &o);
 };
 
 class SHVCHAINPACK_DECL_EXPORT FindTunnelRespCtl : public TunnelCtl
@@ -65,8 +65,8 @@ class SHVCHAINPACK_DECL_EXPORT FindTunnelRespCtl : public TunnelCtl
 	SHV_IMAP_FIELD_IMPL(shv::chainpack::RpcValue, MetaType::Key::CallerIds, c, setC, allerIds)
 
 public:
-	FindTunnelRespCtl() : Super(State::FindTunnelResponse) {}
-	FindTunnelRespCtl(const TunnelCtl &o) : Super(o) {}
+	FindTunnelRespCtl();
+	FindTunnelRespCtl(const TunnelCtl &o);
 
 	static FindTunnelRespCtl fromFindTunnelRequest(const FindTunnelReqCtl &rq);
 
@@ -83,8 +83,8 @@ class SHVCHAINPACK_DECL_EXPORT CreateTunnelReqCtl : public TunnelCtl
 	SHV_IMAP_FIELD_IMPL(shv::chainpack::RpcValue, MetaType::Key::CallerIds, c, setC, allerIds)
 
 public:
-	CreateTunnelReqCtl() : Super(State::CreateTunnelRequest) {}
-	CreateTunnelReqCtl(const TunnelCtl &o) : Super(o) {}
+	CreateTunnelReqCtl();
+	CreateTunnelReqCtl(const TunnelCtl &o);
 
 	static CreateTunnelReqCtl fromFindTunnelResponse(const FindTunnelRespCtl &resp);
 };
@@ -94,8 +94,8 @@ class SHVCHAINPACK_DECL_EXPORT CreateTunnelRespCtl : public TunnelCtl
 	using Super = TunnelCtl;
 
 public:
-	CreateTunnelRespCtl() : Super(State::CreateTunnelResponse) {}
-	CreateTunnelRespCtl(const TunnelCtl &o) : Super(o) {}
+	CreateTunnelRespCtl();
+	CreateTunnelRespCtl(const TunnelCtl &o);
 };
 
 class SHVCHAINPACK_DECL_EXPORT CloseTunnelCtl : public TunnelCtl
@@ -103,8 +103,8 @@ class SHVCHAINPACK_DECL_EXPORT CloseTunnelCtl : public TunnelCtl
 	using Super = TunnelCtl;
 
 public:
-	CloseTunnelCtl() : Super(State::CreateTunnelResponse) {}
-	CloseTunnelCtl(const TunnelCtl &o) : Super(o) {}
+	CloseTunnelCtl();
+	CloseTunnelCtl(const TunnelCtl &o);
 };
 
 }}

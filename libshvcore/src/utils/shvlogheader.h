@@ -49,15 +49,15 @@ public:
 		static const char* name(Enum e);
 	};
 public:
-	ShvLogHeader() = default;
+	ShvLogHeader();
 
-	int64_t sinceMsec() const { return since().toDateTime().msecsSinceEpoch(); }
-	int64_t untilMsec() const { return until().toDateTime().msecsSinceEpoch(); }
+	int64_t sinceMsec() const;
+	int64_t untilMsec() const;
 
 	static ShvLogHeader fromMetaData(const chainpack::RpcValue::MetaData &md);
 	chainpack::RpcValue::MetaData toMetaData() const;
 
-	void copyTypeInfo(const ShvLogHeader &source) { m_typeInfos = source.m_typeInfos; }
+	void copyTypeInfo(const ShvLogHeader &source);
 
 	const ShvTypeInfo& typeInfo(const std::string &path_prefix = EMPTY_PREFIX_KEY) const;
 

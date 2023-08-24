@@ -14,17 +14,17 @@ class SHVCHAINPACK_DECL_EXPORT CponWriterOptions
 	std::string m_indent;
 	bool m_jsonFormat = false;
 public:
-	bool isTranslateIds() const {return m_translateIds;}
-	CponWriterOptions& setTranslateIds(bool b) {m_translateIds = b; return *this;}
+	bool isTranslateIds() const;
+	CponWriterOptions& setTranslateIds(bool b);
 
-	bool isHexBlob() const {return m_hexBlob;}
-	CponWriterOptions& setHexBlob(bool b) {m_hexBlob = b; return *this;}
+	bool isHexBlob() const;
+	CponWriterOptions& setHexBlob(bool b);
 
-	const std::string& indent() const {return m_indent;}
-	CponWriterOptions& setIndent(const std::string& i) {m_indent = i; return *this;}
+	const std::string& indent() const;
+	CponWriterOptions& setIndent(const std::string& i);
 
-	bool isJsonFormat() const {return m_jsonFormat;}
-	CponWriterOptions& setJsonFormat(bool b) {m_jsonFormat = b; return *this;}
+	bool isJsonFormat() const;
+	CponWriterOptions& setJsonFormat(bool b);
 };
 
 class SHVCHAINPACK_DECL_EXPORT CponWriter : public AbstractStreamWriter
@@ -32,13 +32,13 @@ class SHVCHAINPACK_DECL_EXPORT CponWriter : public AbstractStreamWriter
 	using Super = AbstractStreamWriter;
 
 public:
-	CponWriter(std::ostream &out) : Super(out) {}
+	CponWriter(std::ostream &out);
 	CponWriter(std::ostream &out, const CponWriterOptions &opts);
 
 	static bool writeFile(const std::string &file_name, const shv::chainpack::RpcValue &rv, std::string *err = nullptr);
 
-	CponWriter& operator <<(const RpcValue &value) {write(value); return *this;}
-	CponWriter& operator <<(const RpcValue::MetaData &meta_data) {write(meta_data); return *this;}
+	CponWriter& operator <<(const RpcValue &value);
+	CponWriter& operator <<(const RpcValue::MetaData &meta_data);
 
 	void write(const RpcValue &val) override;
 	void write(const RpcValue::MetaData &meta_data) override;
@@ -78,8 +78,8 @@ private:
 		RpcValue::Type containerType = RpcValue::Type::Invalid;
 		int elementCount = 0;
 		bool isOneLiner = false;
-		ContainerState() = default;
-		ContainerState(RpcValue::Type t, bool one_liner) : containerType(t), isOneLiner(one_liner) {}
+		ContainerState();
+		ContainerState(RpcValue::Type t, bool one_liner);
 	};
 	std::vector<ContainerState> m_containerStates;
 };

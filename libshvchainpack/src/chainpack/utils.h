@@ -50,7 +50,7 @@ public:
 	static std::string toHex(const std::basic_string<uint8_t> &bytes);
 	static char fromHex(char c);
 	static std::string fromHex(const std::string &bytes);
-	static std::string hexDump(const std::string &bytes) { return utils::hexDump(bytes.data(), bytes.size()); }
+	static std::string hexDump(const std::string &bytes);
 
 	template <typename I>
 	static std::string toString(I n)
@@ -80,12 +80,7 @@ public:
 };
 
 namespace utils {
-inline char hexNibble(char i)
-{
-	if(i < 10)
-		return '0' + i;
-	return static_cast<char>('A' + (i - 10));
-}
+char SHVCHAINPACK_DECL_EXPORT hexNibble(char i);
 }
 
 } // namespace chainpack

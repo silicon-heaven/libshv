@@ -23,7 +23,7 @@ public:
 	bool last();
 	const ShvJournalEntry& entry();
 	bool inSnapshot();
-	int64_t snapshotMsec() const { return m_snapshotMsec; }
+	int64_t snapshotMsec() const;
 
 	static int64_t fileNameToFileMsec(const std::string &fn, bool throw_exc = shv::core::Exception::Throw);
 	static std::string msecToBaseFileName(int64_t msec);

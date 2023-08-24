@@ -98,7 +98,7 @@ public:
 		Decimal,
 	};
 	static const char* typeToName(Type t);
-	const char* typeName() const { return typeToName(type()); }
+	const char* typeName() const;
 	static Type typeForName(const std::string &type_name, int len = -1);
 
 	using Int = int; //int64_t;
@@ -110,44 +110,21 @@ public:
 			int64_t mantisa = 0;
 			int exponent = 0;
 
-			Num() : mantisa(0), exponent(-1) {}
-			Num(int64_t m, int e) : mantisa(m), exponent(e) {}
+			Num();
+			Num(int64_t m, int e);
 		};
 		Num m_num;
 	public:
-		Decimal() = default;
-		Decimal(int64_t mantisa, int exponent) : m_num{mantisa, exponent} {}
-		Decimal(int dec_places) : Decimal(0, -dec_places) {}
+		Decimal();
+		Decimal(int64_t mantisa, int exponent);
+		Decimal(int dec_places);
 
-		int64_t mantisa() const {return m_num.mantisa;}
-		int exponent() const {return m_num.exponent;}
+		int64_t mantisa() const;
+		int exponent() const;
 
-		static Decimal fromDouble(double d, int round_to_dec_places)
-		{
-			int exponent = -round_to_dec_places;
-			if(round_to_dec_places > 0) {
-				for(; round_to_dec_places > 0; round_to_dec_places--) d *= Base;
-			}
-			else if(round_to_dec_places < 0) {
-				for(; round_to_dec_places < 0; round_to_dec_places++) d /= Base;
-			}
-			return Decimal(static_cast<int64_t>(d + 0.5), exponent);
-		}
-		void setDouble(double d)
-		{
-			Decimal dc = fromDouble(d, -m_num.exponent);
-			m_num.mantisa = dc.mantisa();
-		}
-		double toDouble() const
-		{
-			double ret = static_cast<double>(mantisa());
-				int exp = exponent();
-				if(exp > 0)
-					for(; exp > 0; exp--) ret *= Base;
-				else
-					for(; exp < 0; exp++) ret /= Base;
-				return ret;;
-		}
+		static Decimal fromDouble(double d, int round_to_dec_places);
+		void setDouble(double d);
+		double toDouble() const;
 		std::string toString() const;
 	};
 	class SHVCHAINPACK_DECL_EXPORT DateTime
@@ -156,12 +133,12 @@ public:
 		enum class MsecPolicy {Auto = 0, Always, Never};
 		static constexpr bool IncludeTimeZone = true;
 	public:
-		DateTime() : m_dtm{0, 0} {}
-		int64_t msecsSinceEpoch() const { return m_dtm.msec; }
-		int utcOffsetMin() const { return m_dtm.tz * 15; }
+		DateTime();
+		int64_t msecsSinceEpoch() const;
+		int utcOffsetMin() const;
 		/// @deprecated
-		int minutesFromUtc() const { return utcOffsetMin(); }
-		bool isZero() const {return msecsSinceEpoch() == 0;}
+		int minutesFromUtc() const;
+		bool isZero() const;
 
 		static DateTime now();
 		static DateTime fromLocalString(const std::string &local_date_time_str);
@@ -170,14 +147,14 @@ public:
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-		void setMsecsSinceEpoch(int64_t msecs) { m_dtm.msec = msecs; }
-		void setUtcOffsetMin(int utc_offset_min) { m_dtm.tz = (utc_offset_min / 15) & 0x7F; }
+		void setMsecsSinceEpoch(int64_t msecs);
+		void setUtcOffsetMin(int utc_offset_min);
 #pragma GCC diagnostic pop
 		/// @deprecated
-		void setTimeZone(int utc_offset_min) {setUtcOffsetMin(utc_offset_min);}
+		void setTimeZone(int utc_offset_min);
 
 		std::string toLocalString() const;
-		std::string toIsoString() const {return toIsoString(MsecPolicy::Auto, IncludeTimeZone);}
+		std::string toIsoString() const;
 		std::string toIsoString(MsecPolicy msec_policy, bool include_tz) const;
 
 		struct SHVCHAINPACK_DECL_EXPORT Parts
@@ -190,38 +167,20 @@ public:
 			int sec = 0; // 0-59
 			int msec = 0; // 0-999
 
-			Parts() {}
-			Parts(int y, int m, int d, int h = 0, int mn = 0, int s = 0, int ms = 0) : year(y), month(m), day(d), hour(h), min(mn), sec(s), msec(ms) {}
+			Parts();
+			Parts(int y, int m, int d, int h = 0, int mn = 0, int s = 0, int ms = 0);
 
-			bool isValid() const {
-				return
-				year >= 1970
-				&& month >= 1 && month <= 12
-				&& day >= 1 && day <= 31
-				&& hour >= 0 && hour <= 59
-				&& min >= 0 && min <= 59
-				&& sec >= 0 && sec <= 59
-				&& msec >= 0 && msec <= 999;
-			}
-			bool operator==(const Parts &o) const {
-				return
-				year == o.year
-				&& month == o.month
-				&& day == o.day
-				&& hour == o.hour
-				&& min == o.min
-				&& sec == o.sec
-				&& msec == o.msec;
-			}
+			bool isValid() const;
+			bool operator==(const Parts &o) const;
 		};
 		Parts toParts() const;
 		static DateTime fromParts(const Parts &parts);
 
-		bool operator ==(const DateTime &o) const { return (m_dtm.msec == o.m_dtm.msec); }
-		bool operator <(const DateTime &o) const { return m_dtm.msec < o.m_dtm.msec; }
-		bool operator >=(const DateTime &o) const { return !(*this < o); }
-		bool operator >(const DateTime &o) const { return m_dtm.msec > o.m_dtm.msec; }
-		bool operator <=(const DateTime &o) const { return !(*this > o); }
+		bool operator ==(const DateTime &o) const;
+		bool operator <(const DateTime &o) const;
+		bool operator >=(const DateTime &o) const;
+		bool operator >(const DateTime &o) const;
+		bool operator <=(const DateTime &o) const;
 	private:
 		struct MsTz {
 			int64_t tz: 7, msec: 57;
@@ -235,123 +194,37 @@ public:
 	static String blobToString(const Blob &s, bool *check_utf8 = nullptr);
 	static Blob stringToBlob(const String &s);
 
-	class List : public std::vector<RpcValue>
+	class SHVCHAINPACK_DECL_EXPORT List : public std::vector<RpcValue>
 	{
 		using Super = std::vector<RpcValue>;
 		using Super::Super; // expose base class constructors
 	public:
-		RpcValue value(size_t ix) const
-		{
-			if(ix >= size())
-				return RpcValue();
-			return operator [](ix);
-		}
-		const RpcValue& valref(size_t ix) const
-		{
-			if(ix >= size()) {
-				static RpcValue s;
-				return s;
-			}
-			return operator [](ix);
-		}
-		static List fromStringList(const std::vector<std::string> &sl)
-		{
-			List ret;
-			for(const std::string &s : sl)
-				ret.push_back(s);
-			return ret;
-		}
+		RpcValue value(size_t ix) const;
+		const RpcValue& valref(size_t ix) const;
+		static List fromStringList(const std::vector<std::string> &sl);
 	};
-	class Map : public std::map<String, RpcValue>
+	class SHVCHAINPACK_DECL_EXPORT Map : public std::map<String, RpcValue>
 	{
 		using Super = std::map<String, RpcValue>;
 		using Super::Super; // expose base class constructors
 	public:
-		RpcValue take(const String &key, const RpcValue &default_val = RpcValue())
-		{
-			auto it = find(key);
-			if(it == end())
-				return default_val;
-			auto ret = it->second;
-			erase(it);
-			return ret;
-		}
-		RpcValue value(const String &key, const RpcValue &default_val = RpcValue()) const
-		{
-			auto it = find(key);
-			if(it == end())
-				return default_val;
-			return it->second;
-		}
-		const RpcValue& valref(const String &key) const
-		{
-			auto it = find(key);
-			if(it == end()) {
-				static const auto s = RpcValue();
-				return s;
-			}
-			return it->second;
-		}
-		void setValue(const String &key, const RpcValue &val)
-		{
-			if(val.isValid())
-				(*this)[key] = val;
-			else
-				this->erase(key);
-		}
-		bool hasKey(const String &key) const
-		{
-			auto it = find(key);
-			return !(it == end());
-		}
-		std::vector<String> keys() const
-		{
-			std::vector<String> ret;
-			for(const auto &kv : *this)
-				ret.push_back(kv.first);
-			return ret;
-		}
+		RpcValue take(const String &key, const RpcValue &default_val = RpcValue());
+		RpcValue value(const String &key, const RpcValue &default_val = RpcValue()) const;
+		const RpcValue& valref(const String &key) const;
+		void setValue(const String &key, const RpcValue &val);
+		bool hasKey(const String &key) const;
+		std::vector<String> keys() const;
 	};
-	class IMap : public std::map<Int, RpcValue>
+	class SHVCHAINPACK_DECL_EXPORT IMap : public std::map<Int, RpcValue>
 	{
 		using Super = std::map<Int, RpcValue>;
 		using Super::Super; // expose base class constructors
 	public:
-		RpcValue value(Int key, const RpcValue &default_val = RpcValue()) const
-		{
-			auto it = find(key);
-			if(it == end())
-				return default_val;
-			return it->second;
-		}
-		const RpcValue& valref(Int key) const
-		{
-			auto it = find(key);
-			if(it == end()) {
-				static const auto s = RpcValue();
-				return s;
-			}
-			return it->second;
-		}
-		void setValue(Int key, const RpcValue &val)
-		{
-			if(val.isValid())
-				(*this)[key] = val;
-			else
-				this->erase(key);
-		}
-		bool hasKey(Int key) const
-		{
-			auto it = find(key);
-			return !(it == end());
-		}
-		std::vector<Int> keys() const
-		{
-			std::vector<Int> ret;
-			for(const auto &kv : *this)
-				ret.push_back(kv.first);
-			return ret;
-		}
+		RpcValue value(Int key, const RpcValue &default_val = RpcValue()) const;
+		const RpcValue& valref(Int key) const;
+		void setValue(Int key, const RpcValue &val);
+		bool hasKey(Int key) const;
+		std::vector<Int> keys() const;
 	};
 
 	class SHVCHAINPACK_DECL_EXPORT MetaData
@@ -367,10 +240,10 @@ public:
 
 		MetaData& operator =(MetaData &&o) noexcept;
 
-		int metaTypeId() const {return value(meta::Tag::MetaTypeId).toInt();}
-		void setMetaTypeId(RpcValue::Int id) {setValue(meta::Tag::MetaTypeId, id);}
-		int metaTypeNameSpaceId() const {return value(meta::Tag::MetaTypeNameSpaceId).toInt();}
-		void setMetaTypeNameSpaceId(RpcValue::Int id) {setValue(meta::Tag::MetaTypeNameSpaceId, id);}
+		int metaTypeId() const;
+		void setMetaTypeId(RpcValue::Int id);
+		int metaTypeNameSpaceId() const;
+		void setMetaTypeNameSpaceId(RpcValue::Int id);
 		std::vector<RpcValue::Int> iKeys() const;
 		std::vector<RpcValue::String> sKeys() const;
 		bool hasKey(RpcValue::Int key) const;
@@ -459,27 +332,27 @@ public:
 	void setMetaData(MetaData &&meta_data);
 	void setMetaValue(Int key, const RpcValue &val);
 	void setMetaValue(const String &key, const RpcValue &val);
-	int metaTypeId() const {return metaValue(meta::Tag::MetaTypeId).toInt();}
-	int metaTypeNameSpaceId() const {return metaValue(meta::Tag::MetaTypeNameSpaceId).toInt();}
-	void setMetaTypeId(int id) {setMetaValue(meta::Tag::MetaTypeId, id);}
-	void setMetaTypeId(int ns, int id) {setMetaValue(meta::Tag::MetaTypeNameSpaceId, ns); setMetaValue(meta::Tag::MetaTypeId, id);}
+	int metaTypeId() const;
+	int metaTypeNameSpaceId() const;
+	void setMetaTypeId(int id);
+	void setMetaTypeId(int ns, int id);
 
 	bool isDefaultValue() const;
 	void setDefaultValue();
 
 	bool isValid() const;
-	bool isNull() const { return type() == Type::Null; }
-	bool isInt() const { return type() == Type::Int; }
-	bool isUInt() const { return type() == Type::UInt; }
-	bool isDouble() const { return type() == Type::Double; }
-	bool isBool() const { return type() == Type::Bool; }
-	bool isString() const { return type() == Type::String; }
-	bool isBlob() const { return type() == Type::Blob; }
-	bool isDecimal() const { return type() == Type::Decimal; }
-	bool isDateTime() const { return type() == Type::DateTime; }
-	bool isList() const { return type() == Type::List; }
-	bool isMap() const { return type() == Type::Map; }
-	bool isIMap() const { return type() == Type::IMap; }
+	bool isNull() const;
+	bool isInt() const;
+	bool isUInt() const;
+	bool isDouble() const;
+	bool isBool() const;
+	bool isString() const;
+	bool isBlob() const;
+	bool isDecimal() const;
+	bool isDateTime() const;
+	bool isList() const;
+	bool isMap() const;
+	bool isIMap() const;
 	bool isValueNotAvailable() const;
 
 	double toDouble() const;
@@ -502,9 +375,9 @@ public:
 	const IMap &asIMap() const;
 
 	/// deprecated, new applications should us asString, asInt, ...
-	[[deprecated("Use asList instead")]] const List &toList() const { return asList(); }
-	[[deprecated("Use asMap instead")]] const Map &toMap() const { return asMap(); }
-	[[deprecated("Use asIMap instead")]] const IMap &toIMap() const { return asIMap(); }
+	[[deprecated("Use asList instead")]] const List &toList() const;
+	[[deprecated("Use asMap instead")]] const Map &toMap() const;
+	[[deprecated("Use asIMap instead")]] const IMap &toIMap() const;
 
 	template<typename T> T to() const
 	{
@@ -530,9 +403,9 @@ public:
 	bool has(Int i) const;
 	bool has(const RpcValue::String &key) const;
 	RpcValue at(Int i) const;
-	RpcValue at(Int i, const RpcValue &def_val) const  { return has(i)? at(i): def_val; }
+	RpcValue at(Int i, const RpcValue &def_val) const;
 	RpcValue at(const RpcValue::String &key) const;
-	RpcValue at(const RpcValue::String &key, const RpcValue &def_val) const  { return has(key)? at(key): def_val; }
+	RpcValue at(const RpcValue::String &key, const RpcValue &def_val) const;
 	void set(Int ix, const RpcValue &val);
 	void set(const RpcValue::String &key, const RpcValue &val);
 	void append(const RpcValue &val);
@@ -548,7 +421,6 @@ public:
 	static RpcValue fromChainPack(const std::string & str, std::string *err = nullptr);
 
 	bool operator== (const RpcValue &rhs) const;
-	bool operator!= (const RpcValue &rhs) const {return !operator==(rhs);}
 #ifdef RPCVALUE_COPY_AND_SWAP
 	RpcValue& operator= (RpcValue rhs) noexcept
 	{
@@ -560,7 +432,7 @@ public:
 	template<typename T> static inline Type guessType();
 	template<typename T> static inline RpcValue fromValue(const T &t);
 
-	long refCnt() const { return m_ptr.refCnt();}
+	long refCnt() const;
 private:
 	CowPtr<AbstractValueData> m_ptr;
 };
@@ -579,32 +451,15 @@ template<> inline RpcValue::Type RpcValue::guessType<RpcValue::Decimal>() { retu
 
 template<typename T> inline RpcValue RpcValue::fromValue(const T &t) { return RpcValue{t}; }
 
-class RpcValueGenList
+class SHVCHAINPACK_DECL_EXPORT RpcValueGenList
 {
 public:
-	RpcValueGenList(const RpcValue &v) : m_val(v) {}
+	RpcValueGenList(const RpcValue &v);
 
-	RpcValue value(size_t ix) const
-	{
-		if(m_val.isList())
-			return m_val.asList().value(ix);
-		else if(ix == 0)
-			return m_val;
-		return RpcValue();
-	}
-	bool size() const
-	{
-		if(m_val.isList())
-			return m_val.asList().size();
-		return m_val.isValid()? 1: 0;
-	}
-	bool empty() const {return size() == 0;}
-	RpcValue::List toList() const
-	{
-		if(m_val.isList())
-			return m_val.asList();
-		return m_val.isValid()? RpcValue::List{m_val}: RpcValue::List{};
-	}
+	RpcValue value(size_t ix) const;
+	size_t size() const;
+	bool empty() const;
+	RpcValue::List toList() const;
 private:
 	RpcValue m_val;
 };

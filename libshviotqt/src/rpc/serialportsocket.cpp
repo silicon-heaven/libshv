@@ -129,6 +129,11 @@ void SerialPortSocket::reset()
 	writeMessageEnd();
 }
 
+QAbstractSocket::SocketState SerialPortSocket::state() const
+{
+	return m_state;
+}
+
 QString SerialPortSocket::errorString() const
 {
 	return m_port->errorString();
@@ -145,6 +150,11 @@ QString SerialPortSocket::readMessageErrorString() const
 	case ReadMessageError::ErrorUnexpectedEtx: return QStringLiteral("Unexpected ETX");
 	}
 	return {};
+}
+
+SerialPortSocket::ReadMessageError SerialPortSocket::readMessageError() const
+{
+	return m_readMessageError;
 }
 
 QHostAddress SerialPortSocket::peerAddress() const
@@ -381,6 +391,10 @@ void SerialPortSocket::writeMessageEnd()
 	m_port->flush();
 }
 
+void SerialPortSocket::ignoreSslErrors()
+{
+}
+
 void SerialPortSocket::restartReceiveTimeoutTimer()
 {
 	// m_readDataTimeout is set to nullptr during unit tests
@@ -435,6 +449,12 @@ SerialPortSocket::ReadMessageError SerialPortSocket::UnescapeBuffer::append(uint
 	}
 	data.append(static_cast<char>(b));
 	return ReadMessageError::Ok;
+}
+
+void SerialPortSocket::UnescapeBuffer::clear()
+{
+	data.clear();
+	inEscape = false;
 }
 
 }

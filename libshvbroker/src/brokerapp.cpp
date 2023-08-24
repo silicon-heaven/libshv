@@ -401,6 +401,16 @@ BrokerApp::~BrokerApp()
 	shvInfo() << "Destroying SHV BROKER application object";
 }
 
+AppCliOptions* BrokerApp::cliOptions()
+{
+	return m_cliOptions;
+}
+
+BrokerApp* BrokerApp::instance()
+{
+	return qobject_cast<BrokerApp*>(Super::instance());
+}
+
 void BrokerApp::registerLogTopics()
 {
 	NecroLog::registerTopic("Access", "users access log");
@@ -874,6 +884,11 @@ AclManager *BrokerApp::createAclManager()
 	return new AclManagerConfigFiles(this);
 }
 
+const std::string& BrokerApp::brokerId() const
+{
+	return m_brokerId;
+}
+
 iotqt::node::ShvNode *BrokerApp::nodeForService(const core::utils::ShvUrl &spp)
 {
 	if(spp.isServicePath()) {
@@ -922,8 +937,11 @@ std::string BrokerApp::resolveMountPoint(const shv::chainpack::RpcValue::Map &de
 
 std::string BrokerApp::primaryIPAddress(bool &is_public)
 {
-	if(cliOptions()->publicIP_isset())
+	if(cliOptions()->publicIP_isset()) {
+		is_public = true;
 		return cliOptions()->publicIP();
+	}
+
 	QHostAddress ha = shv::iotqt::utils::Network::primaryPublicIPv4Address();
 	if(!ha.isNull()) {
 		is_public = true;

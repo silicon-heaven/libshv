@@ -55,6 +55,11 @@ bool CommonRpcClientHandle::Subscription::match(const shv::core::StringView &shv
 		return (method.empty() || shv_method == method);
 	return false;
 }
+
+std::string CommonRpcClientHandle::Subscription::toString() const
+{
+	return localPath + ':' + method;
+}
 //=====================================================================
 // CommonRpcClientHandle
 //=====================================================================
@@ -112,6 +117,16 @@ int CommonRpcClientHandle::isSubscribed(const std::string &shv_path, const std::
 		}
 	}
 	return -1;
+}
+
+size_t CommonRpcClientHandle::subscriptionCount() const
+{
+	return m_subscriptions.size();
+}
+
+const CommonRpcClientHandle::Subscription& CommonRpcClientHandle::subscriptionAt(size_t ix) const
+{
+	return m_subscriptions.at(ix);
 }
 
 bool CommonRpcClientHandle::rejectNotSubscribedSignal(const std::string &path, const std::string &method)

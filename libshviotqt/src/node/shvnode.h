@@ -47,7 +47,7 @@ public:
 	QList<ShvNode*> ownChildren() const;
 	virtual ShvNode* childNode(const String &name, bool throw_exc = true) const;
 	virtual void setParentNode(ShvNode *parent);
-	virtual String nodeId() const {return m_nodeId;}
+	virtual String nodeId() const;
 	void setNodeId(String &&n);
 	void setNodeId(const String &n);
 
@@ -57,11 +57,11 @@ public:
 	virtual void emitSendRpcMessage(const shv::chainpack::RpcMessage &msg);
 	void emitLogUserCommand(const shv::core::utils::ShvJournalEntry &e);
 
-	void setSortedChildren(bool b) {m_isSortedChildren = b;}
+	void setSortedChildren(bool b);
 
 	void deleteIfEmptyWithParents();
 
-	bool isRootNode() const {return m_isRootNode;}
+	bool isRootNode() const;
 
 	virtual void handleRawRpcRequest(chainpack::RpcValue::MetaData &&meta, std::string &&data);
 	virtual void handleRpcRequest(const chainpack::RpcRequest &rq);
@@ -78,7 +78,7 @@ public:
 	static int basicGrantToAccessLevel(const shv::chainpack::AccessGrant &acces_grant);
 	virtual int grantToAccessLevel(const chainpack::AccessGrant &acces_grant) const;
 
-	void treeWalk(std::function<void (ShvNode *parent_nd, const StringViewList &shv_path)> callback) { treeWalk_helper(callback, this, {}); }
+	void treeWalk(std::function<void (ShvNode *parent_nd, const StringViewList &shv_path)> callback);
 private:
 	static void treeWalk_helper(std::function<void (ShvNode *parent_nd, const StringViewList &shv_path)> callback, ShvNode *parent_nd, const StringViewList &shv_path);
 public:
@@ -87,7 +87,7 @@ public:
 	const shv::chainpack::MetaMethod* metaMethod(const StringViewList &shv_path, const std::string &name);
 
 	virtual StringList childNames(const StringViewList &shv_path);
-	StringList childNames() {return childNames(StringViewList());}
+	StringList childNames();
 
 	virtual shv::chainpack::RpcValue callMethodRq(const chainpack::RpcRequest &rq);
 	virtual shv::chainpack::RpcValue callMethod(const StringViewList &shv_path, const std::string &method, const shv::chainpack::RpcValue &params, const shv::chainpack::RpcValue &user_id);
@@ -115,8 +115,7 @@ class SHVIOTQT_DECL_EXPORT MethodsTableNode : public shv::iotqt::node::ShvNode
 {
 	using Super = shv::iotqt::node::ShvNode;
 public:
-	explicit MethodsTableNode(const std::string &node_id, const std::vector<shv::chainpack::MetaMethod> *methods, shv::iotqt::node::ShvNode *parent = nullptr)
-		: Super(node_id, parent), m_methods(methods) {}
+	explicit MethodsTableNode(const std::string &node_id, const std::vector<shv::chainpack::MetaMethod> *methods, shv::iotqt::node::ShvNode *parent = nullptr);
 
 	size_t methodCount(const StringViewList &shv_path) override;
 	const shv::chainpack::MetaMethod* metaMethod(const StringViewList &shv_path, size_t ix) override;
@@ -152,9 +151,9 @@ public:
 	void setValueOnPath(const std::string &shv_path, const shv::chainpack::RpcValue &val);
 	virtual void setValueOnPath(const StringViewList &shv_path, const shv::chainpack::RpcValue &val);
 
-	void commitChanges() {saveValues();}
+	void commitChanges();
 
-	void clearValuesCache() {m_valuesLoaded = false;}
+	void clearValuesCache();
 
 	Q_SIGNAL void configSaved();
 protected:
@@ -235,13 +234,13 @@ public:
 	{
 		friend class ValueProxyShvNode;
 	public:
-		Handle() = default;
+		Handle();
 		virtual ~Handle();
 
 		virtual shv::chainpack::RpcValue shvValue(int value_id) = 0;
 		virtual void setShvValue(int value_id, const shv::chainpack::RpcValue &val) = 0;
 		virtual std::string shvValueIdToName(int value_id) = 0;
-		const shv::chainpack::RpcRequest& servedRpcRequest() const {return m_servedRpcRequest;}
+		const shv::chainpack::RpcRequest& servedRpcRequest() const;
 	protected:
 		shv::chainpack::RpcRequest m_servedRpcRequest;
 	};
@@ -256,9 +255,9 @@ public:
 	shv::chainpack::RpcValue callMethodRq(const shv::chainpack::RpcRequest &rq) override;
 	shv::chainpack::RpcValue callMethod(const StringViewList &shv_path, const std::string &method, const shv::chainpack::RpcValue &params, const shv::chainpack::RpcValue &user_id) override;
 protected:
-	bool isWriteable() {return static_cast<int>(m_type) & static_cast<int>(Type::Write);}
-	bool isReadable() {return static_cast<int>(m_type) & static_cast<int>(Type::Read);}
-	bool isSignal() {return static_cast<int>(m_type) & static_cast<int>(Type::Signal);}
+	bool isWriteable();
+	bool isReadable();
+	bool isSignal();
 
 	Q_SLOT void onShvValueChanged(int value_id, shv::chainpack::RpcValue val);
 protected:

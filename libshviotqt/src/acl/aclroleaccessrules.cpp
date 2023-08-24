@@ -14,6 +14,21 @@ namespace shv::iotqt::acl {
 //================================================================
 // PathAccessGrant
 //================================================================
+AclAccessRule::AclAccessRule() = default;
+
+AclAccessRule::AclAccessRule(const std::string &path_pattern_, const std::string &method_)
+	: pathPattern(path_pattern_)
+	, method(method_)
+{
+}
+
+AclAccessRule::AclAccessRule(const std::string &path_pattern_, const std::string &method_, const shv::chainpack::AccessGrant &grant_)
+	: pathPattern(path_pattern_)
+	, method(method_)
+	, grant(grant_)
+{
+}
+
 RpcValue AclAccessRule::toRpcValue() const
 {
 	RpcValue::Map m = grant.toRpcValueMap().asMap();
@@ -41,6 +56,11 @@ static bool is_wild_card_pattern(const string path)
 	if(path == ASTERISKS)
 		return true;
 	return shv::core::String::endsWith(path, SLASH_ASTERISKS);
+}
+
+bool AclAccessRule::isValid() const
+{
+	return !pathPattern.empty() && grant.isValid();
 }
 
 bool AclAccessRule::isMoreSpecificThan(const AclAccessRule &other) const

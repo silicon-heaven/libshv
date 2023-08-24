@@ -31,6 +31,11 @@ Crypt::Generator Crypt::createGenerator(uint32_t a, uint32_t b, uint32_t max_ran
 	return ret;
 }
 
+void Crypt::setGenerator(Generator gen)
+{
+	m_generator = gen;
+}
+
 static std::string code_byte(uint8_t b)
 {
 	std::string ret;

@@ -35,6 +35,22 @@ Exception::Exception(const std::string &_msg, const RpcValue &_data, const std::
 		std::abort();
 }
 
+std::string Exception::message() const
+{
+	return m_msg;
+}
+
+std::string Exception::where() const
+{
+	return m_where;
+}
+
+shv::chainpack::RpcValue Exception::data() const
+{
+	return m_data;
+}
+
+
 const char *Exception::what() const noexcept
 {
 	return m_what.c_str();

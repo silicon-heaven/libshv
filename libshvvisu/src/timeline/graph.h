@@ -38,10 +38,10 @@ public:
 		XRange xRange;
 		YRange yRange;
 
-		DataRect() = default;
-		DataRect(const XRange &xr, const YRange &yr) : xRange(xr), yRange(yr) {}
+		DataRect();
+		DataRect(const XRange &xr, const YRange &yr);
 
-		bool isValid() const { return xRange.isValid() && yRange.isValid(); }
+		bool isValid() const;
 	};
 
 	using WidgetRange = Range<int>;
@@ -90,14 +90,14 @@ public:
 
 		QString toJson() const;
 		static VisualSettings fromJson(const QString &json);
-		bool isValid() const { return channels.count(); }
+		bool isValid() const;
 		QVector<Channel> channels;
 	};
 
 	Graph(QObject *parent = nullptr);
 	virtual ~Graph();
 
-	const Style& effectiveStyle() const { return  m_style; }
+	const Style& effectiveStyle() const;
 
 	void setModel(GraphModel *model);
 	GraphModel *model() const;
@@ -115,7 +115,7 @@ public:
 	void resetChannelsRanges();
 	bool isInitialView() const;
 
-	qsizetype channelCount() const { return  m_channels.count(); }
+	qsizetype channelCount() const;
 	void clearChannels();
 	GraphChannel* appendChannel(qsizetype model_index = -1);
 	GraphChannel* channelAt(qsizetype ix, bool throw_exc = shv::core::Exception::Throw);
@@ -127,7 +127,7 @@ public:
 	void showAllChannels();
 	QStringList channelPaths();
 	void hideFlatChannels();
-	const ChannelFilter& channelFilter() const { return m_channelFilter; }
+	const ChannelFilter& channelFilter() const;
 	void setChannelFilter(const ChannelFilter &filter);
 	void setChannelVisible(qsizetype channel_ix, bool is_visible);
 	void setChannelMaximized(qsizetype channel_ix, bool is_maximized);
@@ -151,31 +151,31 @@ public:
 
 	QString timeToStringTZ(timemsec_t time) const;
 	QVariantMap sampleValues(qsizetype channel_ix, const Sample &s) const;
-	const QRect& rect() const { return  m_layout.rect; }
-	const QRect& miniMapRect() const { return  m_layout.miniMapRect; }
-	const QRect& cornerCellRect() const { return  m_layout.cornerCellRect; }
+	const QRect& rect() const;
+	const QRect& miniMapRect() const;
+	const QRect& cornerCellRect() const;
 	QRect southFloatingBarRect() const;
 	struct SHVVISU_DECL_EXPORT CrossHairPos
 	{
 		qsizetype channelIndex = -1;
 		QPoint possition;
 
-		CrossHairPos() = default;
-		CrossHairPos(qsizetype ch_ix, const QPoint &pos) : channelIndex(ch_ix), possition(pos) {}
+		CrossHairPos();
+		CrossHairPos(qsizetype ch_ix, const QPoint &pos);
 
-		bool isValid() const { return channelIndex >= 0 && !possition.isNull(); }
+		bool isValid() const;
 	};
-	CrossHairPos crossHairPos() const {return m_state.crossHairPos;}
+	CrossHairPos crossHairPos() const;
 	void setCrossHairPos(const CrossHairPos &pos);
 
 	void setCurrentTime(timemsec_t time);
-	timemsec_t currentTime() const { return m_state.currentTime; }
+	timemsec_t currentTime() const;
 
 	void setSelectionRect(const QRect &rect);
 	QRect selectionRect() const;
 
-	XRange xRange() const { return m_state.xRange; }
-	XRange xRangeZoom() const { return m_state.xRangeZoom; }
+	XRange xRange() const;
+	XRange xRangeZoom() const;
 	void setXRange(const XRange &r, bool keep_zoom = false);
 	void setXRangeZoom(const XRange &r);
 	void resetXZoom();
@@ -189,10 +189,10 @@ public:
 	void resetYZoom(qsizetype channel_ix);
 	void zoomToSelection(bool zoom_vertically);
 
-	const Style& style() const { return m_style; }
+	const Style& style() const;
 	void setStyle(const Style &st);
 	void setDefaultChannelStyle(const GraphChannel::Style &st);
-	GraphChannel::Style defaultChannelStyle() const { return m_defaultChannelStyle; }
+	GraphChannel::Style defaultChannelStyle() const;
 
 	void makeLayout(const QRect &pref_rect);
 	void draw(QPainter *painter, const QRect &dirty_rect, const QRect &view_rect);
@@ -213,11 +213,11 @@ public:
 	void processEvent(QEvent *ev);
 
 	Q_SIGNAL void presentationDirty(const QRect &rect);
-	void emitPresentationDirty(const QRect &rect) { emit presentationDirty(rect); }
+	void emitPresentationDirty(const QRect &rect);
 	Q_SIGNAL void layoutChanged();
 	Q_SIGNAL void channelFilterChanged();
 	Q_SIGNAL void channelContextMenuRequest(int channel_index, const QPoint &mouse_pos);
-	void emitChannelContextMenuRequest(int channel_index, const QPoint &mouse_pos) { emit channelContextMenuRequest(channel_index, mouse_pos); }
+	void emitChannelContextMenuRequest(int channel_index, const QPoint &mouse_pos);
 	Q_SIGNAL void graphContextMenuRequest(const QPoint &mouse_pos);
 
 	static QString rectToString(const QRect &r);
@@ -296,13 +296,9 @@ protected:
 		double tickLen = 0.15;
 		LabelScale labelScale = LabelScale::MSec;
 
-		XAxis() = default;
-		XAxis(timemsec_t t, int se, LabelScale f)
-			: tickInterval(t)
-			, subtickEvery(se)
-			, labelScale(f)
-		{}
-		bool isValid() const { return tickInterval > 0; }
+		XAxis();
+		XAxis(timemsec_t t, int se, LabelScale f);
+		bool isValid() const;
 	};
 	struct
 	{

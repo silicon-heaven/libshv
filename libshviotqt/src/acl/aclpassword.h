@@ -17,13 +17,10 @@ struct SHVIOTQT_DECL_EXPORT AclPassword
 	std::string password;
 	Format format = Format::Invalid;
 
-	AclPassword() = default;
-	AclPassword(std::string password_, Format format_)
-		: password(std::move(password_))
-		, format(format_)
-	{}
+	AclPassword();
+	AclPassword(std::string password_, Format format_);
 
-	bool isValid() const {return format != Format::Invalid;}
+	bool isValid() const;
 
 	shv::chainpack::RpcValue toRpcValue() const;
 	static AclPassword fromRpcValue(const shv::chainpack::RpcValue &v);

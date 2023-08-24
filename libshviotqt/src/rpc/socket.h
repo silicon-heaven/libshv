@@ -47,7 +47,7 @@ public:
 	virtual void writeMessageEnd() = 0;
 	virtual void ignoreSslErrors() = 0;
 
-	virtual void onParseDataException(const shv::chainpack::ParseException &) { abort(); }
+	virtual void onParseDataException(const shv::chainpack::ParseException &);
 
 	Q_SIGNAL void connected();
 	Q_SIGNAL void disconnected();
@@ -78,9 +78,9 @@ public:
 	quint16 peerPort() const override;
 	QByteArray readAll() override;
 	qint64 write(const char *data, qint64 max_size) override;
-	void writeMessageBegin() override {}
-	void writeMessageEnd() override {};
-	void ignoreSslErrors() override {}
+	void writeMessageBegin() override;
+	void writeMessageEnd() override;
+	void ignoreSslErrors() override;
 
 protected:
 	QTcpSocket *m_socket = nullptr;
@@ -103,9 +103,9 @@ public:
 	quint16 peerPort() const override;
 	QByteArray readAll() override;
 	qint64 write(const char *data, qint64 max_size) override;
-	void writeMessageBegin() override {}
-	void writeMessageEnd() override {}
-	void ignoreSslErrors() override {}
+	void writeMessageBegin() override;
+	void writeMessageEnd() override;
+	void ignoreSslErrors() override;
 protected:
 	QLocalSocket *m_socket = nullptr;
 };

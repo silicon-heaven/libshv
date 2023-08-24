@@ -32,11 +32,9 @@ struct SHVCHAINPACK_DECL_EXPORT UserLoginResult
 	std::string brokerId;
 	std::optional<std::string> userNameOverride;
 
-	UserLoginResult() = default;
-	UserLoginResult(bool password_ok) : UserLoginResult(password_ok, std::string()) {}
-	UserLoginResult(bool password_ok, std::string login_error)
-		: passwordOk(password_ok)
-		, loginError(std::move(login_error)) {}
+	UserLoginResult();
+	UserLoginResult(bool password_ok);
+	UserLoginResult(bool password_ok, std::string login_error);
 
 	shv::chainpack::RpcValue toRpcValue() const;
 };
@@ -50,7 +48,7 @@ public:
 	std::string password;
 	LoginType loginType;
 
-	bool isValid() const {return !user.empty();}
+	bool isValid() const;
 
 	static const char *loginTypeToString(LoginType t);
 	static LoginType loginTypeFromString(const std::string &s);
@@ -78,9 +76,8 @@ public:
 		static void registerMetaType();
 	};
 public:
-	AccessGrant() = default;
-	AccessGrant(const std::string &role_)
-		: type(Type::Role), role(role_) {}
+	AccessGrant();
+	AccessGrant(const std::string &role_);
 
 	bool isValid() const;
 	bool isUserLogin() const;
