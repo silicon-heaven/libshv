@@ -420,7 +420,7 @@ void ClientConnection::whenBrokerConnectedChanged(bool b)
 void ClientConnection::onSocketConnectedChanged(bool is_connected)
 {
 	if(is_connected) {
-		shvInfo() << objectName() << connectionId() << "Socket connected to RPC server";
+		shvInfo() << objectName() << "connection id:" << connectionId() << "Socket connected to RPC server";
 		shvInfo() << "peer:" << peerAddress() << "port:" << peerPort();
 		setState(State::SocketConnected);
 		clearSendBuffers();
@@ -433,7 +433,7 @@ void ClientConnection::onSocketConnectedChanged(bool is_connected)
 		}
 	}
 	else {
-		shvInfo() << objectName() << connectionId() << "Socket disconnected from RPC server";
+		shvInfo() << objectName() << "connection id:" << connectionId() << "Socket disconnected from RPC server";
 		setState(State::NotConnected);
 	}
 }
