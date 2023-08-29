@@ -19,7 +19,7 @@ struct Tag {
 	};
 };
 
-class MetaInfo
+class SHVCHAINPACK_DECL_EXPORT MetaInfo
 {
 public:
 	int id = 0;
@@ -32,7 +32,7 @@ public:
 };
 
 class MetaType;
-class MetaNameSpace
+class SHVCHAINPACK_DECL_EXPORT MetaNameSpace
 {
 public:
 	MetaNameSpace(const char *name = nullptr);
@@ -72,7 +72,7 @@ enum class NameSpaceID
 	Eyas,
 };
 
-class GlobalNS : public meta::MetaNameSpace
+class SHVCHAINPACK_DECL_EXPORT GlobalNS : public meta::MetaNameSpace
 {
 	using Super = meta::MetaNameSpace;
 public:
@@ -96,7 +96,7 @@ public:
 	static void registerMetaTypes();
 };
 
-class ElesysNS : public meta::MetaNameSpace
+class SHVCHAINPACK_DECL_EXPORT ElesysNS : public meta::MetaNameSpace
 {
 	using Super = meta::MetaNameSpace;
 public:
