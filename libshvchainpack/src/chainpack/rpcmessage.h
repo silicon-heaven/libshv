@@ -243,6 +243,8 @@ public:
 	RpcResponse(const RpcResponse &msg);
 	~RpcResponse() override;
 
+	RpcResponse& operator=(const RpcResponse &msg) = default;
+
 	static RpcResponse forRequest(const RpcValue::MetaData &meta);
 	static RpcResponse forRequest(const RpcRequest &rq);
 public:
