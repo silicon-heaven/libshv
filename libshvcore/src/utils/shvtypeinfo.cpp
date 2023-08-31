@@ -688,6 +688,7 @@ ShvDeviceDescription ShvDeviceDescription::fromRpcValue(const chainpack::RpcValu
 {
 	ShvDeviceDescription ret;
 	const auto &map = v.asMap();
+	ret.deviceType = map.value(KEY_DEVICE_TYPE).asString();
 	ret.restrictionOfDevice = map.value(KEY_RESTRICTION_OF_DEVICE).asString();
 	ret.siteSpecificLocalization = map.value(KEY_SITE_SPECIFIC_LOCALIZATION).toBool();
 	for(const auto &rv : map.valref("properties").asList()) {
@@ -699,6 +700,7 @@ ShvDeviceDescription ShvDeviceDescription::fromRpcValue(const chainpack::RpcValu
 RpcValue ShvDeviceDescription::toRpcValue() const
 {
 	RpcValue::Map ret;
+	ret[KEY_DEVICE_TYPE] = deviceType;
 	if(!restrictionOfDevice.empty())
 		ret[KEY_RESTRICTION_OF_DEVICE] = restrictionOfDevice;
 	if(siteSpecificLocalization)
@@ -709,6 +711,25 @@ RpcValue ShvDeviceDescription::toRpcValue() const
 	}
 	ret["properties"] = props;
 	return ret;
+}
+
+ShvDeviceDescription &ShvDeviceDescription::setPropertyDescription(const ShvPropertyDescr &property_descr)
+{
+	auto property_name = property_descr.name();
+	if(property_descr.isValid()) {
+		if(auto it = findProperty(property_name); it != properties.end()) {
+			*it = property_descr;
+		}
+		else {
+			properties.push_back(property_descr);
+		}
+	}
+	else {
+		if(auto it = findProperty(property_name); it != properties.end()) {
+			properties.erase(it);
+		}
+	}
+	return *this;
 }
 
 //=====================================================================
@@ -848,20 +869,7 @@ ShvTypeInfo &ShvTypeInfo::setDeviceDescription(const std::string &device_type, c
 ShvTypeInfo &ShvTypeInfo::setPropertyDescription(const std::string &device_type, const ShvPropertyDescr &property_descr)
 {
 	auto &dev_descr = m_deviceDescriptions[device_type];
-	auto property_name = property_descr.name();
-	if(property_descr.isValid()) {
-		if(auto it = dev_descr.findProperty(property_name); it != dev_descr.properties.end()) {
-			*it = property_descr;
-		}
-		else {
-			dev_descr.properties.push_back(property_descr);
-		}
-	}
-	else {
-		if(auto it = dev_descr.findProperty(property_name); it != dev_descr.properties.end()) {
-			dev_descr.properties.erase(it);
-		}
-	}
+	dev_descr.setPropertyDescription(property_descr);
 	return *this;
 }
 

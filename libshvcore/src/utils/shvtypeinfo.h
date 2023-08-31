@@ -162,11 +162,14 @@ public:
 	using Properties = std::vector<ShvPropertyDescr>;
 
 	Properties properties;
+	std::string deviceType;
 	std::string restrictionOfDevice;
 	bool siteSpecificLocalization = false;
 
 	static ShvDeviceDescription fromRpcValue(const chainpack::RpcValue &v);
 	chainpack::RpcValue toRpcValue() const;
+
+	ShvDeviceDescription& setPropertyDescription(const ShvPropertyDescr &property_descr);
 
 	Properties::iterator findProperty(const std::string &name);
 	Properties::const_iterator findProperty(const std::string &name) const;
