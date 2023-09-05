@@ -688,7 +688,7 @@ ShvDeviceDescription ShvDeviceDescription::fromRpcValue(const chainpack::RpcValu
 {
 	ShvDeviceDescription ret;
 	const auto &map = v.asMap();
-	ret.deviceType = map.value(KEY_DEVICE_TYPE).asString();
+	//ret.deviceType = map.value(KEY_DEVICE_TYPE).asString();
 	ret.restrictionOfDevice = map.value(KEY_RESTRICTION_OF_DEVICE).asString();
 	ret.siteSpecificLocalization = map.value(KEY_SITE_SPECIFIC_LOCALIZATION).toBool();
 	for(const auto &rv : map.valref("properties").asList()) {
@@ -700,7 +700,7 @@ ShvDeviceDescription ShvDeviceDescription::fromRpcValue(const chainpack::RpcValu
 RpcValue ShvDeviceDescription::toRpcValue() const
 {
 	RpcValue::Map ret;
-	ret[KEY_DEVICE_TYPE] = deviceType;
+	//ret[KEY_DEVICE_TYPE] = deviceType;
 	if(!restrictionOfDevice.empty())
 		ret[KEY_RESTRICTION_OF_DEVICE] = restrictionOfDevice;
 	if(siteSpecificLocalization)

@@ -162,7 +162,7 @@ public:
 	using Properties = std::vector<ShvPropertyDescr>;
 
 	Properties properties;
-	std::string deviceType;
+	//std::string deviceType;
 	std::string restrictionOfDevice;
 	bool siteSpecificLocalization = false;
 
