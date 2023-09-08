@@ -315,7 +315,7 @@ chainpack::RpcValue ShvNode::hasChildren(const StringViewList &shv_path)
 	}
 	return !childNames(shv_path).empty();
 }
-
+/*
 chainpack::RpcValue ShvNode::lsAttributes(const StringViewList &shv_path, unsigned attributes)
 {
 	shvLogFuncFrame() << "node:" << nodeId() << "attributes:" << attributes << "shv path:" << shv_path.join('/');
@@ -324,7 +324,7 @@ chainpack::RpcValue ShvNode::lsAttributes(const StringViewList &shv_path, unsign
 		ret.push_back(hasChildren(shv_path));
 	return ret;
 }
-
+*/
 int ShvNode::basicGrantToAccessLevel(const shv::chainpack::AccessGrant &acces_grant)
 {
 	if(acces_grant.isRole()) {
@@ -406,20 +406,21 @@ chainpack::RpcValue ShvNode::ls(const StringViewList &shv_path, const chainpack:
 {
 	RpcValue::List ret;
 	chainpack::RpcValueGenList mpl(methods_params);
-	const std::string child_name_pattern = mpl.value(0).toString();
-	unsigned attrs = mpl.value(1).toUInt();
-	for(const std::string &child_name : childNames(shv_path)) {
-		if(child_name_pattern.empty() || child_name_pattern == child_name) {
-			StringViewList ch_shv_path = shv_path;
-			ch_shv_path.push_back(shv::core::StringView(child_name));
-			RpcValue::List attrs_result = lsAttributes(ch_shv_path, attrs).asList();
-			if(attrs_result.empty()) {
-				ret.push_back(child_name);
-			}
-			else {
-				attrs_result.insert(attrs_result.begin(), child_name);
-				ret.push_back(attrs_result);
-			}
+	const std::string child_name = mpl.value(0).toString();
+	//unsigned attrs = mpl.value(1).toUInt();
+	for(const std::string &ch_name : childNames(shv_path)) {
+		if(child_name.empty() || child_name == ch_name) {
+			ret.push_back(child_name);
+			//StringViewList ch_shv_path = shv_path;
+			//ch_shv_path.push_back(shv::core::StringView(child_name));
+			//RpcValue::List attrs_result = lsAttributes(ch_shv_path, attrs).asList();
+			//if(attrs_result.empty()) {
+			//	ret.push_back(child_name);
+			//}
+			//else {
+			//	attrs_result.insert(attrs_result.begin(), child_name);
+			//	ret.push_back(attrs_result);
+			//}
 		}
 	}
 	return chainpack::RpcValue{ret};
