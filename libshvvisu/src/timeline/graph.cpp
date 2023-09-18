@@ -801,46 +801,46 @@ void Graph::makeYAxis(qsizetype channel)
 	int tick_px = u2px(tick_units);
 	double d1 = ch->posToValue(0);
 	double d2 = ch->posToValue(tick_px);
-	double interval = d1 - d2;
-	if(qFuzzyIsNull(interval)) {
+	double tick_interval = d1 - d2;
+	if(qFuzzyIsNull(tick_interval)) {
 		shvError() << "channel:" << channel << "Y axis interval == 0";
 		return;
 	}
-	shvDebug() << channel << "tick interval:" << interval << "range interval:" << range.interval();
+	shvDebug() << "range min:" << range.min << "max:"<< range.max << "interval:" << range.interval() << "tick interval:" << tick_interval;
 	double pow = 1;
-	if( interval >= 1 ) {
-		while(interval >= 7) {
-			interval /= 10;
+	if( tick_interval >= 1 ) {
+		while(tick_interval >= 7) {
+			tick_interval /= 10;
 			pow *= 10;
 		}
 	}
 	else {
-		while(interval > 0 && interval < 1) {
-			interval *= 10;
+		while(tick_interval > 0 && tick_interval < 1) {
+			tick_interval *= 10;
 			pow /= 10;
 		}
 	}
 
 	GraphChannel::YAxis &axis = ch->m_state.axis;
 	// snap to closest 1, 2, 5
-	if(interval < 1.5) {
+	if(tick_interval < 1.5) {
 		axis.tickInterval = 1 * pow;
 		axis.subtickEvery = tick_units;
 	}
-	else if(interval < 3) {
+	else if(tick_interval < 3) {
 		axis.tickInterval = 2 * pow;
 		axis.subtickEvery = tick_units;
 	}
-	else if(interval < 7) {
+	else if(tick_interval < 7) {
 		axis.tickInterval = 5 * pow;
 		axis.subtickEvery = tick_units;
 	}
-	else if(interval < 10) {
+	else if(tick_interval < 10) {
 		axis.tickInterval = 5 * pow * 10;
 		axis.subtickEvery = tick_units;
 	}
 	else
-		shvWarning() << "snapping interval error, interval:" << interval;
+		shvWarning() << "snapping interval error, interval:" << tick_interval;
 	shvDebug() << channel << "axis.tickInterval:" << axis.tickInterval << "subtickEvery:" << axis.subtickEvery;
 }
 
@@ -1780,7 +1780,7 @@ std::function<int (double)> Graph::valueToPosFn(const YRange &src, const Graph::
 	int y1 = dest.min;
 	int y2 = dest.max;
 	return [d1, d2, y1, y2](double val) {
-		return static_cast<int>(y1 + val - d1 * (y2 - y1) / (d2 - d1));
+		return static_cast<int>(y1 + (val - d1) * (y2 - y1) / (d2 - d1));
 	};
 }
 
@@ -1889,7 +1889,7 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 		line_area_color.setAlphaF(0.4F);
 	}
 
-	int sample_point_size = u2px(0.5);
+	int sample_point_size = u2px(0.3);
 	if(sample_point_size % 2 == 0)
 		sample_point_size++; // make sample point size odd to have it center-able
 	Graph::TypeId channel_meta_type_id = channelTypeId(channel_ix);

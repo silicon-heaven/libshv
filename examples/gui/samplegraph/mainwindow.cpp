@@ -132,11 +132,11 @@ void MainWindow::generateSampleData()
 	for (int i = 0; i < m_graph->channelCount(); ++i) {
 		shv::visu::timeline::GraphChannel *ch = m_graph->channelAt(i);
 		shv::visu::timeline::GraphChannel::Style style = ch->style();
-		if(ch->shvPath() == "line") {
+		if(ch->shvPath() == "Line") {
 			style.setInterpolation(tl::GraphChannel::Style::Interpolation::Line);
 			style.setLineAreaStyle(tl::GraphChannel::Style::LineAreaStyle::Filled);
 		}
-		else if(ch->shvPath() == "discrete") {
+		else if(ch->shvPath() == "Discrete") {
 			style.setInterpolation(tl::GraphChannel::Style::Interpolation::None);
 			style.setLineAreaStyle(tl::GraphChannel::Style::LineAreaStyle::Filled);
 		}
