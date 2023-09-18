@@ -73,7 +73,7 @@ public:
 	virtual shv::chainpack::RpcValue ls(const StringViewList &shv_path, const shv::chainpack::RpcValue &methods_params);
 	// returns null if does not know
 	virtual chainpack::RpcValue hasChildren(const StringViewList &shv_path);
-	virtual shv::chainpack::RpcValue lsAttributes(const StringViewList &shv_path, unsigned attributes);
+	//virtual shv::chainpack::RpcValue lsAttributes(const StringViewList &shv_path, unsigned attributes);
 
 	static int basicGrantToAccessLevel(const shv::chainpack::AccessGrant &acces_grant);
 	virtual int grantToAccessLevel(const chainpack::AccessGrant &acces_grant) const;

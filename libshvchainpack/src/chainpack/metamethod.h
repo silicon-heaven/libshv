@@ -42,11 +42,11 @@ public:
 			Tags = 1 << 4,
 		};
 	};
-	struct LsAttribute {
-		enum {
-			HasChildren = 1 << 0,
-		};
-	};
+	//struct LsAttribute {
+	//	enum {
+	//		HasChildren = 1 << 0,
+	//	};
+	//};
 public:
 	MetaMethod();
 	MetaMethod(std::string name, Signature ms, unsigned flags = 0
