@@ -1,6 +1,24 @@
 #include "metamethod.h"
 
+#include <array>
+
+using namespace std::string_literals;
+
 namespace shv::chainpack {
+
+namespace {
+constexpr auto KEY_ACCESSGRANT = "accessGrant";
+const std::array NO_TAGS_KEYS{
+	MetaMethod::KEY_NAME,
+	MetaMethod::KEY_SIGNATURE,
+	MetaMethod::KEY_FLAGS,
+	MetaMethod::KEY_ACCESS,
+	MetaMethod::KEY_DESCRIPTION,
+	MetaMethod::KEY_LABEL,
+	KEY_ACCESSGRANT,
+};
+}
+
 MetaMethod::MetaMethod() = default;
 
 MetaMethod::MetaMethod(std::string name, Signature ms, unsigned flags, const RpcValue &access_grant
@@ -12,15 +30,7 @@ MetaMethod::MetaMethod(std::string name, Signature ms, unsigned flags, const Rpc
 	, m_description(description)
 	, m_tags(tags)
 {
-	auto descr = m_tags.take("description").toString();
-	if(m_description.empty())
-		m_description = descr;
-	auto lbl = m_tags.take("label").toString();
-	if(m_label.empty())
-		m_label = lbl;
-	auto access = m_tags.take("access");
-	if(!m_accessGrant.isValid())
-		m_accessGrant = access;
+	applyAttributesMap(tags);
 }
 
 bool MetaMethod::isValid() const
@@ -63,7 +73,7 @@ const RpcValue& MetaMethod::accessGrant() const
 {
 	return m_accessGrant;
 }
-
+/*
 RpcValue MetaMethod::attributes(unsigned mask) const
 {
 	RpcValue::List lst;
@@ -82,7 +92,7 @@ RpcValue MetaMethod::attributes(unsigned mask) const
 	lst.insert(lst.begin(), name());
 	return RpcValue{lst};
 }
-
+*/
 const RpcValue::Map& MetaMethod::tags() const
 {
 	return m_tags;
@@ -98,27 +108,70 @@ MetaMethod& MetaMethod::setTag(const std::string &key, const RpcValue& value)
 	m_tags.setValue(key, value); return *this;
 }
 
-
 RpcValue MetaMethod::toRpcValue() const
 {
 	RpcValue::Map ret;
-	ret["name"] = m_name;
-	ret["signature"] = static_cast<int>(m_signature);
-	ret["flags"] = m_flags;
-	ret["accessGrant"] = m_accessGrant;
+	ret[KEY_NAME] = m_name;
+	ret[KEY_SIGNATURE] = static_cast<int>(m_signature);
+	ret[KEY_FLAGS] = m_flags;
+	ret[KEY_ACCESS] = m_accessGrant;
 	if(!m_label.empty())
-		ret["label"] = m_label;
+		ret[KEY_LABEL] = m_label;
 	if(!m_description.empty())
-		ret["description"] = m_description;
+		ret[KEY_DESCRIPTION] = m_description;
 	RpcValue::Map tags = m_tags;
 	ret.merge(tags);
+	return ret;
+}
+
+RpcValue MetaMethod::toIMap() const
+{
+	RpcValue::IMap ret;
+	ret[DirKey::Name] = m_name;
+	ret[DirKey::Signature] = static_cast<int>(m_signature);
+	ret[DirKey::Flags] = m_flags;
+	ret[DirKey::Access] = m_accessGrant;
+	if(!m_label.empty())
+		ret[DirKey::Label] = m_label;
+	if(!m_description.empty())
+		ret[DirKey::Description] = m_description;
+	RpcValue::Map tags = m_tags;
+	for(const auto &k : NO_TAGS_KEYS) {
+		tags.erase(k);
+	}
+	if(!tags.empty()) {
+		ret[DirKey::Tags] = tags;
+	}
 	return ret;
 }
 
 MetaMethod MetaMethod::fromRpcValue(const RpcValue &rv)
 {
 	MetaMethod ret;
-	ret.applyAttributesMap(rv.asMap());
+	if(rv.isList()) {
+		const auto &lst = rv.asList();
+		ret.m_name = lst.value(0).asString();
+		ret.m_signature = static_cast<Signature>(lst.value(1).toUInt());
+		ret.m_flags = lst.value(2).toUInt();
+		ret.m_accessGrant = lst.value(3);
+		ret.m_description = lst.value(4).asString();
+		const auto &tags = lst.value(5).asMap();
+		ret.applyAttributesMap(tags);
+	}
+	else if(rv.isIMap()) {
+		const auto &imap = rv.asIMap();
+		ret.m_name = imap.value(DirKey::Name).asString();
+		ret.m_signature = static_cast<Signature>(imap.value(DirKey::Signature).toUInt());
+		ret.m_flags = imap.value(DirKey::Flags).toUInt();
+		ret.m_accessGrant = imap.value(DirKey::Access);
+		ret.m_description = imap.value(DirKey::Description).asString();
+		ret.m_label = imap.value(DirKey::Label).asString();
+		const auto &tags = imap.value(DirKey::Tags).asMap();
+		ret.applyAttributesMap(tags);
+	}
+	else if(rv.isMap()) {
+		ret.applyAttributesMap(rv.asMap());
+	}
 	return ret;
 }
 
@@ -127,19 +180,19 @@ void MetaMethod::applyAttributesMap(const RpcValue::Map &attr_map)
 	RpcValue::Map map = attr_map;
 	RpcValue::Map tags = map.take("tags").asMap();
 	map.merge(tags);
-	if(auto rv = map.take("name"); rv.isValid())
+	if(auto rv = map.take(KEY_NAME); rv.isString())
 		m_name = rv.asString();
-	if(auto rv = map.take("signature"); rv.isValid())
+	if(auto rv = map.take(KEY_SIGNATURE); rv.isValid())
 		m_signature = static_cast<Signature>(rv.toInt());
-	if(auto rv = map.take("flags"); rv.isValid())
+	if(auto rv = map.take(KEY_FLAGS); rv.isValid())
 		m_flags = rv.toInt();
-	if(auto rv = map.take("access"); rv.isValid())
+	if(auto rv = map.take(KEY_ACCESS); rv.isString())
 		m_accessGrant = rv.asString();
-	if(auto rv = map.take("accessGrant"); rv.isValid())
+	if(auto rv = map.take(KEY_ACCESSGRANT); rv.isString())
 		m_accessGrant = rv.asString();
-	if(auto rv = map.take("label"); rv.isValid())
+	if(auto rv = map.take(KEY_LABEL); rv.isString())
 		m_label = rv.asString();
-	if(auto rv = map.take("description"); rv.isValid())
+	if(auto rv = map.take(KEY_DESCRIPTION); rv.isString())
 		m_description = rv.asString();
 	m_tags = map;
 }

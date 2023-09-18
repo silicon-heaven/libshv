@@ -404,32 +404,25 @@ void ShvNode::treeWalk_helper(std::function<void (ShvNode *, const ShvNode::Stri
 
 chainpack::RpcValue ShvNode::dir(const StringViewList &shv_path, const chainpack::RpcValue &methods_params)
 {
-	chainpack::RpcValueGenList params(methods_params);
-	const std::string method = params.value(0).toString();
-	RpcValue rvattrs = params.value(1);
-	bool is_attr_dict = !(rvattrs.isInt() || rvattrs.isUInt());
-	unsigned nattrs = 0;
-	if(is_attr_dict) {
-		if(rvattrs.isValid() || rvattrs.isNull())
-			nattrs = 0;
-		else
-			nattrs = 0xff;
+	auto method_name = methods_params.asString();
+	size_t cnt = methodCount(shv_path);
+	if(method_name.empty()) {
+		RpcValue::List ret;
+		for (size_t ix = 0; ix < cnt; ++ix) {
+			const chainpack::MetaMethod *mm = metaMethod(shv_path, ix);
+			ret.push_back(mm->toIMap());
+		}
+		return RpcValue{ret};
 	}
 	else {
-		nattrs = rvattrs.toUInt();
-	}
-	RpcValue::List ret;
-	size_t cnt = methodCount(shv_path);
-	for (size_t ix = 0; ix < cnt; ++ix) {
-		const chainpack::MetaMethod *mm = metaMethod(shv_path, ix);
-		if(method.empty() || method == mm->name()) {
-			if(is_attr_dict)
-				ret.push_back(mm->toRpcValue());
-			else
-				ret.push_back(mm->attributes(nattrs));
+		for (size_t ix = 0; ix < cnt; ++ix) {
+			const chainpack::MetaMethod *mm = metaMethod(shv_path, ix);
+			if(mm->name() == method_name) {
+				return RpcValue{mm->toIMap()};
+			}
 		}
+		return RpcValue{nullptr};
 	}
-	return RpcValue{ret};
 }
 
 chainpack::RpcValue ShvNode::ls(const StringViewList &shv_path, const chainpack::RpcValue &methods_params)

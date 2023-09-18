@@ -33,20 +33,26 @@ public:
 			Admin = 70,
 		};
 	};
-	struct DirAttribute {
+	struct DirKey {
 		enum {
-			Signature = 1 << 0,
-			Flags = 1 << 1,
-			AccessGrant = 1 << 2,
-			Description = 1 << 3,
-			Tags = 1 << 4,
+			Name = 1,
+			Signature,
+			Flags,
+			Access,
+			Description,
+			Label,
+			Tags,
 		};
 	};
-	//struct LsAttribute {
-	//	enum {
-	//		HasChildren = 1 << 0,
-	//	};
-	//};
+
+	static constexpr auto KEY_NAME = "name";
+	static constexpr auto KEY_SIGNATURE = "signature";
+	static constexpr auto KEY_FLAGS = "flags";
+	static constexpr auto KEY_ACCESS = "access";
+	static constexpr auto KEY_DESCRIPTION = "description";
+	static constexpr auto KEY_LABEL = "label";
+	static constexpr auto KEY_TAGS = "tags";
+
 public:
 	MetaMethod();
 	MetaMethod(std::string name, Signature ms, unsigned flags = 0
@@ -63,12 +69,13 @@ public:
 	Signature signature() const;
 	unsigned flags() const;
 	const RpcValue& accessGrant() const;
-	RpcValue attributes(unsigned mask) const;
+	//RpcValue attributes(unsigned mask) const;
 	const RpcValue::Map& tags() const;
 	RpcValue tag(const std::string &key, const RpcValue& default_value = {}) const;
 	MetaMethod& setTag(const std::string &key, const RpcValue& value);
 
 	RpcValue toRpcValue() const;
+	RpcValue toIMap() const;
 	static MetaMethod fromRpcValue(const RpcValue &rv);
 	void applyAttributesMap(const RpcValue::Map &attr_map);
 
