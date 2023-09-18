@@ -155,8 +155,8 @@ MetaMethod MetaMethod::fromRpcValue(const RpcValue &rv)
 		ret.m_flags = lst.value(2).toUInt();
 		ret.m_accessGrant = lst.value(3);
 		ret.m_description = lst.value(4).asString();
-		const auto &tags = lst.value(5).asMap();
-		ret.applyAttributesMap(tags);
+		const auto tags = lst.value(5);
+		ret.applyAttributesMap(tags.asMap());
 	}
 	else if(rv.isIMap()) {
 		const auto &imap = rv.asIMap();
@@ -166,8 +166,8 @@ MetaMethod MetaMethod::fromRpcValue(const RpcValue &rv)
 		ret.m_accessGrant = imap.value(DirKey::Access);
 		ret.m_description = imap.value(DirKey::Description).asString();
 		ret.m_label = imap.value(DirKey::Label).asString();
-		const auto &tags = imap.value(DirKey::Tags).asMap();
-		ret.applyAttributesMap(tags);
+		const auto tags = imap.value(DirKey::Tags);
+		ret.applyAttributesMap(tags.asMap());
 	}
 	else if(rv.isMap()) {
 		ret.applyAttributesMap(rv.asMap());

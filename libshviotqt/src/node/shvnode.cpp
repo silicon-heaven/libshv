@@ -427,26 +427,21 @@ chainpack::RpcValue ShvNode::dir(const StringViewList &shv_path, const chainpack
 
 chainpack::RpcValue ShvNode::ls(const StringViewList &shv_path, const chainpack::RpcValue &methods_params)
 {
-	RpcValue::List ret;
-	chainpack::RpcValueGenList mpl(methods_params);
-	const std::string child_name = mpl.value(0).toString();
-	//unsigned attrs = mpl.value(1).toUInt();
-	for(const std::string &ch_name : childNames(shv_path)) {
-		if(child_name.empty() || child_name == ch_name) {
-			ret.push_back(child_name);
-			//StringViewList ch_shv_path = shv_path;
-			//ch_shv_path.push_back(shv::core::StringView(child_name));
-			//RpcValue::List attrs_result = lsAttributes(ch_shv_path, attrs).asList();
-			//if(attrs_result.empty()) {
-			//	ret.push_back(child_name);
-			//}
-			//else {
-			//	attrs_result.insert(attrs_result.begin(), child_name);
-			//	ret.push_back(attrs_result);
-			//}
+	const std::string &child_name = methods_params.asString();
+	if(child_name.empty()) {
+		RpcValue::List ret;
+		for(const std::string &ch_name : childNames(shv_path)) {
+			ret.push_back(ch_name);
 		}
+		return chainpack::RpcValue{ret};
 	}
-	return chainpack::RpcValue{ret};
+	else {
+		for(const std::string &ch_name : childNames(shv_path)) {
+			if(ch_name == child_name)
+				return true;
+		}
+		return false;
+	}
 }
 
 static const std::vector<MetaMethod> meta_methods {
