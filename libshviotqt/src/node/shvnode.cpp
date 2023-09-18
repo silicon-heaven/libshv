@@ -340,16 +340,7 @@ chainpack::RpcValue ShvNode::hasChildren(const StringViewList &shv_path)
 	}
 	return !childNames(shv_path).empty();
 }
-/*
-chainpack::RpcValue ShvNode::lsAttributes(const StringViewList &shv_path, unsigned attributes)
-{
-	shvLogFuncFrame() << "node:" << nodeId() << "attributes:" << attributes << "shv path:" << shv_path.join('/');
-	RpcValue::List ret;
-	if(attributes & MetaMethod::LsAttribute::HasChildren)
-		ret.push_back(hasChildren(shv_path));
-	return ret;
-}
-*/
+
 int ShvNode::basicGrantToAccessLevel(const shv::chainpack::AccessGrant &acces_grant)
 {
 	if(acces_grant.isRole()) {
