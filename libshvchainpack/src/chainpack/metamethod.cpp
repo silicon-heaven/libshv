@@ -8,15 +8,6 @@ namespace shv::chainpack {
 
 namespace {
 constexpr auto KEY_ACCESSGRANT = "accessGrant";
-const std::array NO_TAGS_KEYS{
-	MetaMethod::KEY_NAME,
-	MetaMethod::KEY_SIGNATURE,
-	MetaMethod::KEY_FLAGS,
-	MetaMethod::KEY_ACCESS,
-	MetaMethod::KEY_DESCRIPTION,
-	MetaMethod::KEY_LABEL,
-	KEY_ACCESSGRANT,
-};
 }
 
 MetaMethod::MetaMethod() = default;
@@ -123,7 +114,7 @@ RpcValue MetaMethod::toRpcValue() const
 	ret.merge(tags);
 	return ret;
 }
-
+/*
 RpcValue MetaMethod::toIMap() const
 {
 	RpcValue::IMap ret;
@@ -144,7 +135,7 @@ RpcValue MetaMethod::toIMap() const
 	}
 	return ret;
 }
-
+*/
 MetaMethod MetaMethod::fromRpcValue(const RpcValue &rv)
 {
 	MetaMethod ret;
@@ -156,17 +147,6 @@ MetaMethod MetaMethod::fromRpcValue(const RpcValue &rv)
 		ret.m_accessGrant = lst.value(3);
 		ret.m_description = lst.value(4).asString();
 		const auto tags = lst.value(5);
-		ret.applyAttributesMap(tags.asMap());
-	}
-	else if(rv.isIMap()) {
-		const auto &imap = rv.asIMap();
-		ret.m_name = imap.value(DirKey::Name).asString();
-		ret.m_signature = static_cast<Signature>(imap.value(DirKey::Signature).toUInt());
-		ret.m_flags = imap.value(DirKey::Flags).toUInt();
-		ret.m_accessGrant = imap.value(DirKey::Access);
-		ret.m_description = imap.value(DirKey::Description).asString();
-		ret.m_label = imap.value(DirKey::Label).asString();
-		const auto tags = imap.value(DirKey::Tags);
 		ret.applyAttributesMap(tags.asMap());
 	}
 	else if(rv.isMap()) {

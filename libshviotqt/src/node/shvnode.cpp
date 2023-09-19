@@ -403,14 +403,14 @@ chainpack::RpcValue ShvNode::dir(const StringViewList &shv_path, const chainpack
 		RpcValue::List ret;
 		for (size_t ix = 0; ix < cnt; ++ix) {
 			const chainpack::MetaMethod *mm = metaMethod(shv_path, ix);
-			ret.push_back(mm->toIMap());
+			ret.push_back(mm->toRpcValue());
 		}
 		return RpcValue{ret};
 	}
 	for (size_t ix = 0; ix < cnt; ++ix) {
 		const chainpack::MetaMethod *mm = metaMethod(shv_path, ix);
 		if(mm->name() == method_name) {
-			return RpcValue{mm->toIMap()};
+			return RpcValue{mm->toRpcValue()};
 		}
 	}
 	return RpcValue{nullptr};

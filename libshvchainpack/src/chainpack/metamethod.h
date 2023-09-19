@@ -33,17 +33,6 @@ public:
 			Admin = 70,
 		};
 	};
-	struct DirKey {
-		enum {
-			Name = 1,
-			Signature,
-			Flags,
-			Access,
-			Description,
-			Label,
-			Tags,
-		};
-	};
 
 	static constexpr auto KEY_NAME = "name";
 	static constexpr auto KEY_SIGNATURE = "signature";
@@ -75,7 +64,7 @@ public:
 	MetaMethod& setTag(const std::string &key, const RpcValue& value);
 
 	RpcValue toRpcValue() const;
-	RpcValue toIMap() const;
+	//RpcValue toIMap() const;
 	static MetaMethod fromRpcValue(const RpcValue &rv);
 	void applyAttributesMap(const RpcValue::Map &attr_map);
 
