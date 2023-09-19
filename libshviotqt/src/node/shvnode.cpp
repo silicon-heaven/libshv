@@ -414,15 +414,14 @@ chainpack::RpcValue ShvNode::dir(const StringViewList &shv_path, const chainpack
 		}
 		return RpcValue{ret};
 	}
-	else {
-		for (size_t ix = 0; ix < cnt; ++ix) {
-			const chainpack::MetaMethod *mm = metaMethod(shv_path, ix);
-			if(mm->name() == method_name) {
-				return RpcValue{mm->toIMap()};
-			}
+
+	for (size_t ix = 0; ix < cnt; ++ix) {
+		const chainpack::MetaMethod *mm = metaMethod(shv_path, ix);
+		if(mm->name() == method_name) {
+			return RpcValue{mm->toIMap()};
 		}
-		return RpcValue{nullptr};
 	}
+	return RpcValue{nullptr};
 }
 
 chainpack::RpcValue ShvNode::ls(const StringViewList &shv_path, const chainpack::RpcValue &methods_params)
