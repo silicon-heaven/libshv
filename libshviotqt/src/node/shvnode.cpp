@@ -216,17 +216,15 @@ void ShvNode::handleRpcRequest(const chainpack::RpcRequest &rq)
 	}
 	catch (const chainpack::RpcException &e) {
 		shvDebug() << "method:"  << method << "path:" << shv_path_str << "err code:" << e.errorCode() << "msg:" << e.message();
-		RpcResponse::Error err = RpcResponse::Error::create(e.errorCode(), e.message());
-		resp.setError(err);
+		resp.setError(RpcResponse::Error(e.message(), e.errorCode(), e.data()));
 	}
 	catch (const chainpack::Exception &e) {
 		shvDebug() << "method:"  << method << "path:" << shv_path_str << "error:" << e.what();
-		RpcResponse::Error err(e.message(), RpcResponse::Error::MethodCallException, e.data());
-		resp.setError(err);
+		resp.setError(RpcResponse::Error(e.message(), RpcResponse::Error::MethodCallException, e.data()));
 	}
 	catch (const std::exception &e) {
 		shvError() << e.what();
-		resp.setError(RpcResponse::Error::create(RpcResponse::Error::MethodCallException, e.what()));
+		resp.setError(RpcResponse::Error(e.what(), RpcResponse::Error::MethodCallException));
 	}
 	if(resp.hasResult()) {
 		ShvNode *root = rootNode();
@@ -265,8 +263,11 @@ chainpack::RpcValue ShvNode::processRpcRequest(const chainpack::RpcRequest &rq)
 	core::StringViewList shv_path = core::utils::ShvPath::split(rq.shvPath().asString());
 	const chainpack::RpcValue::String method = rq.method().asString();
 	const chainpack::MetaMethod *mm = metaMethod(shv_path, method);
-	if(!mm)
-		SHV_EXCEPTION(std::string("Method: '") + method + "' on path '" + shvPath() + '/' + rq.shvPath().toString() + "' doesn't exist.");
+	if (!mm) {
+		throw chainpack::RpcException(RpcResponse::Error::MethodNotFound,
+									  "Method: '" + method + "' on path '" + shvPath() + '/' + rq.shvPath().toString() + "' doesn't exist",
+									  std::string(__FILE__) + ":" + std::to_string(__LINE__));
+	}
 	const chainpack::RpcValue &rq_grant = rq.accessGrant();
 	const RpcValue &mm_grant = mm->accessGrant();
 	int rq_access_level = grantToAccessLevel(AccessGrant::fromRpcValue(rq_grant));
