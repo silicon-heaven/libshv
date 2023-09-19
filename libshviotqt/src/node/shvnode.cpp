@@ -168,18 +168,20 @@ void ShvNode::handleRawRpcRequest(RpcValue::MetaData &&meta, std::string &&data)
 		}
 		else {
 			string path = shv::core::utils::joinPath(shvPath(), shv_path_str);
-			SHV_EXCEPTION("Method: '" + method + "' on path '" + path + "' doesn't exist");
+			throw chainpack::RpcException(RpcResponse::Error::MethodNotFound,
+										  "Method: '" + method + "' on path '" + path + "' doesn't exist",
+										  std::string(__FILE__) + ":" + std::to_string(__LINE__));
 		}
 	}
 	catch (const chainpack::RpcException &e) {
-		shvDebug() << "method:"  << method << "path:" << shv_path_str << "err code:" << e.errorCode() << "msg:" << e.message();
+		shvError() << "method:"  << method << "path:" << shv_path_str << "err code:" << e.errorCode() << "msg:" << e.message();
 		RpcResponse::Error err(e.message(), e.errorCode(), e.data());
 		resp.setError(err);
 	}
 	catch (const std::exception &e) {
 		std::string err_str = "method: " + method + " path: " + shv_path_str + " what: " +  e.what();
 		shvError() << err_str;
-		RpcResponse::Error err = RpcResponse::Error::create(RpcResponse::Error::MethodCallException , err_str);
+		RpcResponse::Error err(err_str, RpcResponse::Error::MethodCallException);
 		resp.setError(err);
 	}
 	if(resp.hasRetVal()) {
@@ -414,15 +416,13 @@ chainpack::RpcValue ShvNode::dir(const StringViewList &shv_path, const chainpack
 		}
 		return RpcValue{ret};
 	}
-	else {
-		for (size_t ix = 0; ix < cnt; ++ix) {
-			const chainpack::MetaMethod *mm = metaMethod(shv_path, ix);
-			if(mm->name() == method_name) {
-				return RpcValue{mm->toIMap()};
-			}
+	for (size_t ix = 0; ix < cnt; ++ix) {
+		const chainpack::MetaMethod *mm = metaMethod(shv_path, ix);
+		if(mm->name() == method_name) {
+			return RpcValue{mm->toIMap()};
 		}
-		return RpcValue{nullptr};
 	}
+	return RpcValue{nullptr};
 }
 
 chainpack::RpcValue ShvNode::ls(const StringViewList &shv_path, const chainpack::RpcValue &methods_params)
@@ -435,13 +435,11 @@ chainpack::RpcValue ShvNode::ls(const StringViewList &shv_path, const chainpack:
 		}
 		return chainpack::RpcValue{ret};
 	}
-	else {
-		for(const std::string &ch_name : childNames(shv_path)) {
-			if(ch_name == child_name)
-				return true;
-		}
-		return false;
+	for(const std::string &ch_name : childNames(shv_path)) {
+		if(ch_name == child_name)
+			return true;
 	}
+	return false;
 }
 
 static const std::vector<MetaMethod> meta_methods {
