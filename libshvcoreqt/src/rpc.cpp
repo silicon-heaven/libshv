@@ -101,10 +101,14 @@ chainpack::RpcValue qVariantToRpcValue(const QVariant &v, bool *ok)
 	}
 	case QMetaType::QDateTime: {
 		QDateTime qdt = v.toDateTime();
-		chainpack::RpcValue::DateTime cdt = chainpack::RpcValue::DateTime::fromMSecsSinceEpoch(qdt.toMSecsSinceEpoch());
-		int offset = qdt.offsetFromUtc();
-		cdt.setUtcOffsetMin(offset / 60);
-		return cdt;
+		chainpack::RpcValue dt;
+		if (!qdt.isNull()) {
+			chainpack::RpcValue::DateTime cdt = chainpack::RpcValue::DateTime::fromMSecsSinceEpoch(qdt.toMSecsSinceEpoch());
+			int offset = qdt.offsetFromUtc();
+			cdt.setUtcOffsetMin(offset / 60);
+			dt = cdt;
+		}
+		return dt;
 	}
 	case QMetaType::QStringList:
 	case QMetaType::QVariantList: {
