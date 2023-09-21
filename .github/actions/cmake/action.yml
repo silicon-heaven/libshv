@@ -37,7 +37,7 @@ runs:
     - name: Install Windows deps
       if: runner.os == 'Windows'
       run: |
-        vcpkg install doctest:x64-mingw-dynamic trompeloeil:x64-mingw-dynamic
+        vcpkg install doctest:x64-mingw-dynamic trompeloeil:x64-mingw-dynamic vcpkg-tool-ninja:x64-windows
         echo cmake_extra_args="'-DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake' '-DMINGW=ON'" >> "$GITHUB_ENV"
       shell: bash
 
