@@ -37,8 +37,8 @@ runs:
     - name: Install Windows deps
       if: runner.os == 'Windows'
       run: |
-        vcpkg install doctest:x64-mingw-dynamic trompeloeil:x64-mingw-dynamic vcpkg-tool-ninja:x64-windows
-        echo cmake_extra_args="'-DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake' '-DMINGW=ON'" >> "$GITHUB_ENV"
+        vcpkg install doctest:x64-mingw-dynamic trompeloeil:x64-mingw-dynamic
+        echo cmake_extra_args="'-DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake' '-DMINGW=ON' '-G MinGW Makefiles'" >> "$GITHUB_ENV"
       shell: bash
 
     # Qt
@@ -56,7 +56,6 @@ runs:
         CFLAGS="-Werror ${CFLAGS}" \
         CXXFLAGS="-Werror ${CXXFLAGS}" \
         cmake \
-        -G Ninja \
         -S '${{github.workspace}}' \
         -B '${{github.workspace}}/build' \
         -DCMAKE_BUILD_TYPE=Release \

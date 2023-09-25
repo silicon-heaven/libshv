@@ -285,12 +285,12 @@ static QColor parseColor(const QString &color, const QString &opacity)
 			// starts with "rgb(", ends with ")" and consists of at least 7 characters "rgb(,,)"
 			if (color_str.length() >= 7 && color_str.at(color_str.length() - 1) == QLatin1Char(')')
 					&& color_str.left(4) == QLatin1String("rgb(")) {
-				const QChar *s = color_str.constData() + 4;
+				const QChar *s = color_str.constBegin() + 4;
 				QVector<qreal> compo = parseNumbersList(s);
 				//1 means that it failed after reaching non-parsable
 				//character which is going to be "%"
 				if (compo.size() == 1) {
-					s = color_str.constData() + 4;
+					s = color_str.constBegin() + 4;
 					compo = parsePercentageList(s);
 					for (double & i : compo)
 						i *= 2.55;
