@@ -689,7 +689,7 @@ RpcError RpcError::createSyncMethodCallTimeout(const RpcValue::String &msg)
 
 bool RpcError::isValid() const
 {
-	return !m_value.asIMap().empty();
+	return code() != NoError;
 }
 
 //==================================================================
