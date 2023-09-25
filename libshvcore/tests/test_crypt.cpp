@@ -19,6 +19,8 @@ DOCTEST_TEST_CASE("Crypt")
 		nDebug() << s1 << "->" << s2 << "->" << s3;
 		REQUIRE(s1 == s3);
 	}
+// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105651
+#ifndef _WIN32
 	{
 		shv::core::utils::Crypt crypt;
 		std::string s1 = "Using QtTest library 5.9.1, Qt 5.9.1 (x86_64-little_endian-lp64 shared (dynamic) debug build; by Clang 3.5.0 (tags/RELEASE_350/final))";
@@ -49,4 +51,5 @@ DOCTEST_TEST_CASE("Crypt")
 		nDebug() << s1 << "->" << s2 << "->" << s3;
 		REQUIRE(s1 == s3);
 	}
+#endif
 }
