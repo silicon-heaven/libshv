@@ -678,10 +678,15 @@ void GraphWidget::showGraphSelectionContextMenu(const QPoint &mouse_pos)
 		m_graph->zoomToSelection(false);
 		update();
 	});
-	menu.addAction(tr("Zoom channel to selection"), this, [this]() {
+	auto *act_zoom_channel = menu.addAction(tr("Zoom channel to selection"), this, [this]() {
 		m_graph->zoomToSelection(true);
 		update();
 	});
+	qsizetype sel_ch1 = m_graph->posToChannel(m_graph->selectionRect().topLeft());
+	qsizetype sel_ch2 = m_graph->posToChannel(m_graph->selectionRect().bottomRight());
+	if (sel_ch1 != sel_ch2 || sel_ch1 < 0) {
+		act_zoom_channel->setEnabled(false);
+	}
 	menu.addAction(tr("Show selection info"), this, [this]() {
 		auto sel_rect = m_graph->selectionRect();
 		auto ch1_ix = m_graph->posToChannel(sel_rect.bottomLeft());
