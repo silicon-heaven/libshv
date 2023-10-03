@@ -284,11 +284,11 @@ QStringList Graph::channelPaths()
 
 void Graph::hideFlatChannels()
 {
-	if (!m_channelFilter.isValid()) {
-		m_channelFilter.setMatchingPaths(channelPaths());
-	}
+	QStringList matching_paths = channelPaths();
 
-	QStringList matching_paths = m_channelFilter.matchingPaths();
+	if (m_channelFilter.isValid()) {
+		matching_paths = m_channelFilter.matchingPaths();
+	}
 
 	for (qsizetype i = 0; i < m_channels.count(); ++i) {
 		GraphChannel *ch = m_channels[i];
