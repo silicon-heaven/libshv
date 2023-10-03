@@ -1223,21 +1223,31 @@ void Graph::setVisualSettings(const VisualSettings &settings)
 	}
 }
 
-void Graph::resizeChannel(qsizetype ix, int delta_px)
+void Graph::resizeChannelHeight(qsizetype ix, int delta_px)
 {
 	GraphChannel *ch = channelAt(ix);
 
 	if (ch != nullptr) {
 		GraphChannel::Style ch_style = ch->style();
 
-		double new_u = px2u(ch->verticalHeaderRect().height() + (delta_px));
+		double h = px2u(ch->verticalHeaderRect().height() + (delta_px));
 
-		if (new_u > GraphChannel::Style::DEFAULT_HEIGHT_MIN) {
-			ch_style.setHeightMax(new_u);
-			ch_style.setHeightMin(new_u);
+		if (h > GraphChannel::Style::DEFAULT_HEIGHT_MIN) {
+			ch_style.setHeightMax(h);
+			ch_style.setHeightMin(h);
 			ch->setStyle(ch_style);
 			Q_EMIT layoutChanged();
 		}
+	}
+}
+
+void Graph::resizeVerticalHeaderWidth(int delta_px)
+{
+	double w = m_style.verticalHeaderWidth() + px2u(delta_px);
+
+	if (w > MIN_VERTICAL_HEADER_WIDTH && w < MAX_VERTICAL_HEADER_WIDTH) {
+		m_style.setVerticalHeaderWidth(w);
+		Q_EMIT layoutChanged();
 	}
 }
 
@@ -1886,7 +1896,7 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 	QColor line_area_color;
 	if(ch_style.lineAreaStyle() == GraphChannel::Style::LineAreaStyle::Filled) {
 		line_area_color = line_color;
-		line_area_color.setAlphaF(0.4F);
+		line_area_color.setAlphaF(0.2F);
 	}
 
 	int sample_point_size = u2px(0.3);

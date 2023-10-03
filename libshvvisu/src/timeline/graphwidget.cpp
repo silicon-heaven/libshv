@@ -211,13 +211,21 @@ void GraphWidget::mousePressEvent(QMouseEvent *event)
 			event->accept();
 			return;
 		}
-		if (isMouseAboveChannelResizeHandle(pos)) {
-			m_mouseOperation = MouseOperation::ChannelHeaderResize;
+		if (isMouseAboveChannelResizeHandle(pos, Qt::Edge::BottomEdge)) {
+			m_mouseOperation = MouseOperation::ChannelHeaderResizeHeight;
 			m_resizeChannelIx = graph()->posToChannelHeader(pos);
 			m_recentMousePos = pos;
 			event->accept();
 			return;
 		}
+		if (isMouseAboveChannelResizeHandle(pos, Qt::Edge::RightEdge)) {
+			m_mouseOperation = MouseOperation::GraphVerticalHeaderResizeWidth;
+			m_resizeChannelIx = graph()->posToChannelHeader(pos);
+			m_recentMousePos = pos;
+			event->accept();
+			return;
+		}
+
 		if(posToChannel(pos) >= 0) {
 			if(event->modifiers() == Qt::ControlModifier) {
 				m_mouseOperation = MouseOperation::GraphDataAreaLeftCtrlPress;
@@ -301,7 +309,7 @@ void GraphWidget::mouseReleaseEvent(QMouseEvent *event)
 			update();
 			return;
 		}
-		else if(old_mouse_op == MouseOperation::ChannelHeaderResize) {
+		else if((old_mouse_op == MouseOperation::ChannelHeaderResizeHeight) || (old_mouse_op == MouseOperation::GraphVerticalHeaderResizeWidth)) {
 			m_resizeChannelIx = -1;
 			event->accept();
 			update();
@@ -335,8 +343,11 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 	else if(isMouseAboveMiniMapSlider(pos)) {
 		setCursor(QCursor(Qt::SizeHorCursor));
 	}
-	else if((isMouseAboveChannelResizeHandle(pos)) || (m_mouseOperation == MouseOperation::ChannelHeaderResize)) {
+	else if(isMouseAboveChannelResizeHandle(pos, Qt::Edge::BottomEdge) || (m_mouseOperation == MouseOperation::ChannelHeaderResizeHeight)) {
 		setCursor(QCursor(Qt::SizeVerCursor));
+	}
+	else if(isMouseAboveChannelResizeHandle(pos, Qt::Edge::RightEdge) || (m_mouseOperation == MouseOperation::GraphVerticalHeaderResizeWidth)) {
+		setCursor(QCursor(Qt::SizeHorCursor));
 	}
 	else {
 		setCursor(QCursor(Qt::ArrowCursor));
@@ -412,8 +423,13 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 	case MouseOperation::GraphDataAreaRightPress:
 	case MouseOperation::GraphDataAreaLeftCtrlShiftPress:
 		return;
-	case MouseOperation::ChannelHeaderResize: {
-		gr->resizeChannel(m_resizeChannelIx, pos.y() - m_recentMousePos.y());
+	case MouseOperation::ChannelHeaderResizeHeight: {
+		gr->resizeChannelHeight(m_resizeChannelIx, pos.y() - m_recentMousePos.y());
+		m_recentMousePos = pos;
+		return;
+	}
+	case MouseOperation::GraphVerticalHeaderResizeWidth: {
+		gr->resizeVerticalHeaderWidth(pos.x() - m_recentMousePos.x());
 		m_recentMousePos = pos;
 		return;
 	}
@@ -828,7 +844,7 @@ void GraphWidget::removeProbes(qsizetype channel_ix)
 	}
 }
 
-bool GraphWidget::isMouseAboveChannelResizeHandle(const QPoint &mouse_pos) const
+bool GraphWidget::isMouseAboveChannelResizeHandle(const QPoint &mouse_pos, Qt::Edge header_edge) const
 {
 	const Graph *gr = graph();
 	const int MARGIN = gr->u2px(0.5);
@@ -838,7 +854,18 @@ bool GraphWidget::isMouseAboveChannelResizeHandle(const QPoint &mouse_pos) const
 	if (channel_ix > -1) {
 		const GraphChannel *ch = gr->channelAt(channel_ix);
 		QRect header_rect = ch->verticalHeaderRect();
-		return (header_rect.bottom() - mouse_pos.y() < MARGIN);
+
+		switch (header_edge) {
+		case Qt::Edge::BottomEdge:
+			return (header_rect.bottom() - mouse_pos.y() < MARGIN);
+			break;
+		case Qt::Edge::RightEdge:
+			return (header_rect.right() - mouse_pos.x() < MARGIN);
+			break;
+		default:
+			shvWarning() << "Unsupported resize header edge option";
+			break;
+		}
 	}
 
 	return false;
