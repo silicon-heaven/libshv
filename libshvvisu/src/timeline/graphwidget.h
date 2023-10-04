@@ -62,6 +62,7 @@ protected:
 	void createProbe(qsizetype channel_ix, timemsec_t time);
 	void removeProbes(qsizetype channel_ix);
 	bool isMouseAboveChannelResizeHandle(const QPoint &mouse_pos) const;
+	bool isMouseAboveChannelHeader(const QPoint &mouse_pos) const;
 	bool isMouseAboveMiniMap(const QPoint &mouse_pos) const;
 	bool isMouseAboveMiniMapHandle(const QPoint &mouse_pos, bool left) const;
 	bool isMouseAboveLeftMiniMapHandle(const QPoint &pos) const;
