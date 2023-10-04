@@ -22,6 +22,10 @@
 #include <cmath>
 #include <QMessageBox>
 
+#if QT_VERSION_MAJOR < 6
+#include <QDesktopWidget>
+#endif
+
 #define logMouseSelection() nCDebug("MouseSelection")
 
 namespace shv::visu::timeline {
@@ -439,7 +443,11 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 			mime->setText(QString());
 			drag->setMimeData(mime);
 			QPoint p = mapToGlobal(header_rect.topLeft());
-			drag->setPixmap(screen()->grabWindow(winId(), p.x(), p.y(), header_rect.width(), header_rect.height()));
+#if QT_VERSION_MAJOR < 6
+			drag->setPixmap(screen()->grabWindow(QDesktopWidget().winId(), p.x(), p.y(), header_rect.width(), header_rect.height()));
+#else
+			drag->setPixmap(screen()->grabWindow(0, p.x(), p.y(), header_rect.width(), header_rect.height()));
+#endif
 			drag->setHotSpot(mapToGlobal(pos) - p);
 			setAcceptDrops(true);
 
