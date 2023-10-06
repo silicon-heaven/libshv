@@ -60,6 +60,8 @@ class SHVIOTQT_DECL_EXPORT RpcCall : public QObject
 public:
 	static RpcCall* createSubscriptionRequest(::shv::iotqt::rpc::ClientConnection *connection, const QString &shv_path, const QString &method = QString(shv::chainpack::Rpc::SIG_VAL_CHANGED));
 	static RpcCall* create(::shv::iotqt::rpc::ClientConnection *connection);
+
+	RpcCall* setRequestId(int rq_id);
 	RpcCall* setShvPath(const std::string &shv_path);
 	RpcCall* setShvPath(const char *shv_path);
 	RpcCall* setShvPath(const QString &shv_path);
@@ -71,7 +73,7 @@ public:
 	RpcCall* setTimeout(int timeout);
 	RpcCall* setUserId(const ::shv::chainpack::RpcValue &user_id);
 
-	void start();
+	int start();
 
 	Q_SIGNAL void maybeResult(const ::shv::chainpack::RpcValue &result, const ::shv::chainpack::RpcError &error);
 	Q_SIGNAL void result(const ::shv::chainpack::RpcValue &result);
@@ -85,6 +87,7 @@ private:
 	shv::chainpack::RpcValue m_params;
 	int m_timeout = 0;
 	shv::chainpack::RpcValue m_userId;
+	int m_requestId = 0;
 };
 
 } // namespace rpc
