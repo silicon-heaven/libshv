@@ -21,6 +21,7 @@
 #include <QMimeData>
 #include <cmath>
 #include <QMessageBox>
+#include <QToolTip>
 
 #define logMouseSelection() nCDebug("MouseSelection")
 
@@ -92,8 +93,23 @@ void GraphWidget::makeLayout()
 
 bool GraphWidget::event(QEvent *ev)
 {
-	if(Graph *gr = graph())
+	if(Graph *gr = graph()) {
 		gr->processEvent(ev);
+		if (ev->type() == QEvent::ToolTip) {
+			auto *help_event = static_cast<QHelpEvent *>(ev);
+
+			auto channel_ix = gr->posToChannelHeader(help_event->pos());
+
+			if (channel_ix > -1) {
+				const GraphChannel *ch = gr->channelAt(channel_ix);
+				QToolTip::showText(help_event->globalPos(), ch->shvPath(), this, {}, 2000);
+				help_event->accept();
+				return true;
+			}
+			QToolTip::hideText();
+			help_event->ignore();
+		}
+	}
 	return Super::event(ev);
 }
 
