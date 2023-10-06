@@ -354,6 +354,9 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 	else if((isMouseAboveChannelResizeHandle(pos)) || (m_mouseOperation == MouseOperation::ChannelHeaderResize)) {
 		setCursor(QCursor(Qt::SizeVerCursor));
 	}
+	else if (isMouseAboveChannelHeader(pos)) {
+		setCursor(QCursor(Qt::OpenHandCursor));
+	}
 	else {
 		setCursor(QCursor(Qt::ArrowCursor));
 	}
@@ -847,6 +850,11 @@ void GraphWidget::removeProbes(qsizetype channel_ix)
 		if (pw->probe()->channelIndex() == channel_ix)
 			pw->close();
 	}
+}
+
+bool GraphWidget::isMouseAboveChannelHeader(const QPoint &mouse_pos) const
+{
+	return graph()->posToChannelHeader(mouse_pos) > -1;
 }
 
 bool GraphWidget::isMouseAboveChannelResizeHandle(const QPoint &mouse_pos) const
