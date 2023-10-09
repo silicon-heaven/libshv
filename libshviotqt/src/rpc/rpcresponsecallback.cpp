@@ -154,6 +154,12 @@ RpcCall *RpcCall::create(ClientConnection *connection)
 	return new RpcCall(connection);
 }
 
+RpcCall *RpcCall::setRequestId(int rq_id)
+{
+	m_requestId = rq_id;
+	return this;
+}
+
 RpcCall *RpcCall::setShvPath(const std::string &shv_path)
 {
 	m_shvPath = shv_path;
@@ -210,19 +216,19 @@ RpcCall *RpcCall::setUserId(const chainpack::RpcValue &user_id)
 	return this;
 }
 
-void RpcCall::start()
+int RpcCall::start()
 {
 	if(m_rpcConnection.isNull()) {
 		emit maybeResult({}, RpcError("RPC connection is NULL"));
 		deleteLater();
-		return;
+		return 0;
 	}
 	if(!m_rpcConnection->isBrokerConnected()) {
 		emit maybeResult({}, RpcError("RPC connection is not open"));
 		deleteLater();
-		return;
+		return 0;
 	}
-	int rq_id = m_rpcConnection->nextRequestId();
+	int rq_id = m_requestId > 0? m_requestId: m_rpcConnection->nextRequestId();
 	auto *cb = new RpcResponseCallBack(m_rpcConnection, rq_id, this);
 	if (m_timeout) {
 		cb->setTimeout(m_timeout);
@@ -237,6 +243,7 @@ void RpcCall::start()
 		deleteLater();
 	});
 	m_rpcConnection->callShvMethod(rq_id, m_shvPath, m_method, m_params, m_userId);
+	return rq_id;
 }
 
 } // namespace shv

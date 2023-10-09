@@ -21,6 +21,11 @@
 #include <QMimeData>
 #include <cmath>
 #include <QMessageBox>
+#include <QToolTip>
+
+#if QT_VERSION_MAJOR < 6
+#include <QDesktopWidget>
+#endif
 
 #define logMouseSelection() nCDebug("MouseSelection")
 
@@ -92,8 +97,23 @@ void GraphWidget::makeLayout()
 
 bool GraphWidget::event(QEvent *ev)
 {
-	if(Graph *gr = graph())
+	if(Graph *gr = graph()) {
 		gr->processEvent(ev);
+		if (ev->type() == QEvent::ToolTip) {
+			auto *help_event = static_cast<QHelpEvent *>(ev);
+
+			auto channel_ix = gr->posToChannelHeader(help_event->pos());
+
+			if (channel_ix > -1) {
+				const GraphChannel *ch = gr->channelAt(channel_ix);
+				QToolTip::showText(help_event->globalPos(), ch->shvPath(), this, {}, 2000);
+				help_event->accept();
+				return true;
+			}
+			QToolTip::hideText();
+			help_event->ignore();
+		}
+	}
 	return Super::event(ev);
 }
 
@@ -349,6 +369,9 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 	else if(isMouseAboveChannelResizeHandle(pos, Qt::Edge::RightEdge) || (m_mouseOperation == MouseOperation::GraphVerticalHeaderResizeWidth)) {
 		setCursor(QCursor(Qt::SizeHorCursor));
 	}
+	else if (isMouseAboveChannelHeader(pos)) {
+		setCursor(QCursor(Qt::OpenHandCursor));
+	}
 	else {
 		setCursor(QCursor(Qt::ArrowCursor));
 	}
@@ -455,7 +478,11 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 			mime->setText(QString());
 			drag->setMimeData(mime);
 			QPoint p = mapToGlobal(header_rect.topLeft());
-			drag->setPixmap(screen()->grabWindow(winId(), p.x(), p.y(), header_rect.width(), header_rect.height()));
+#if QT_VERSION_MAJOR < 6
+			drag->setPixmap(screen()->grabWindow(QDesktopWidget().winId(), p.x(), p.y(), header_rect.width(), header_rect.height()));
+#else
+			drag->setPixmap(screen()->grabWindow(0, p.x(), p.y(), header_rect.width(), header_rect.height()));
+#endif
 			drag->setHotSpot(mapToGlobal(pos) - p);
 			setAcceptDrops(true);
 
@@ -694,10 +721,15 @@ void GraphWidget::showGraphSelectionContextMenu(const QPoint &mouse_pos)
 		m_graph->zoomToSelection(false);
 		update();
 	});
-	menu.addAction(tr("Zoom channel to selection"), this, [this]() {
+	auto *act_zoom_channel = menu.addAction(tr("Zoom channel to selection"), this, [this]() {
 		m_graph->zoomToSelection(true);
 		update();
 	});
+	qsizetype sel_ch1 = m_graph->posToChannel(m_graph->selectionRect().topLeft());
+	qsizetype sel_ch2 = m_graph->posToChannel(m_graph->selectionRect().bottomRight());
+	if (sel_ch1 != sel_ch2 || sel_ch1 < 0) {
+		act_zoom_channel->setEnabled(false);
+	}
 	menu.addAction(tr("Show selection info"), this, [this]() {
 		auto sel_rect = m_graph->selectionRect();
 		auto ch1_ix = m_graph->posToChannel(sel_rect.bottomLeft());
@@ -842,6 +874,11 @@ void GraphWidget::removeProbes(qsizetype channel_ix)
 		if (pw->probe()->channelIndex() == channel_ix)
 			pw->close();
 	}
+}
+
+bool GraphWidget::isMouseAboveChannelHeader(const QPoint &mouse_pos) const
+{
+	return graph()->posToChannelHeader(mouse_pos) > -1;
 }
 
 bool GraphWidget::isMouseAboveChannelResizeHandle(const QPoint &mouse_pos, Qt::Edge header_edge) const

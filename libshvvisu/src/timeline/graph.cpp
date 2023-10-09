@@ -284,7 +284,7 @@ QStringList Graph::channelPaths()
 
 void Graph::hideFlatChannels()
 {
-	QStringList matching_paths = m_channelFilter.matchingPaths();
+	QStringList matching_paths = (m_channelFilter.isValid()) ? m_channelFilter.matchingPaths() : channelPaths();
 
 	for (qsizetype i = 0; i < m_channels.count(); ++i) {
 		GraphChannel *ch = m_channels[i];
@@ -1343,6 +1343,7 @@ void Graph::drawMiniMap(QPainter *painter)
 		for (int i : visible_channels) {
 			GraphChannel *ch = channelAt(i);
 			GraphChannel::Style ch_st = ch->m_effectiveStyle;
+			ch_st.setLineAreaStyle(GraphChannel::Style::LineAreaStyle::Blank);
 			DataRect drect{xRange(), ch->yRange()};
 			drawSamples(painter2, i, drect, mm_rect, ch_st);
 		}
