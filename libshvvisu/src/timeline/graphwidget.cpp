@@ -360,13 +360,11 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 	if(isMouseAboveLeftMiniMapHandle(pos) || isMouseAboveRightMiniMapHandle(pos)) {
 		setCursor(QCursor(Qt::SplitHCursor));
 	}
-	else if(isMouseAboveMiniMapSlider(pos)) {
-		setCursor(QCursor(Qt::SizeHorCursor));
-	}
 	else if(isMouseAboveChannelResizeHandle(pos, Qt::Edge::BottomEdge) || (m_mouseOperation == MouseOperation::ChannelHeaderResizeHeight)) {
 		setCursor(QCursor(Qt::SizeVerCursor));
 	}
-	else if(isMouseAboveChannelResizeHandle(pos, Qt::Edge::RightEdge) || (m_mouseOperation == MouseOperation::GraphVerticalHeaderResizeWidth)) {
+	else if(isMouseAboveMiniMapSlider(pos) || isMouseAboveChannelResizeHandle(pos, Qt::Edge::RightEdge) ||
+			(m_mouseOperation == MouseOperation::GraphVerticalHeaderResizeWidth)) {
 		setCursor(QCursor(Qt::SizeHorCursor));
 	}
 	else if (isMouseAboveChannelHeader(pos)) {
