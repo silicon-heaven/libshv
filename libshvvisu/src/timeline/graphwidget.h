@@ -61,7 +61,7 @@ protected:
 protected:
 	void createProbe(qsizetype channel_ix, timemsec_t time);
 	void removeProbes(qsizetype channel_ix);
-	bool isMouseAboveChannelResizeHandle(const QPoint &mouse_pos) const;
+	bool isMouseAboveChannelResizeHandle(const QPoint &mouse_pos, Qt::Edge header_edge) const;
 	bool isMouseAboveChannelHeader(const QPoint &mouse_pos) const;
 	bool isMouseAboveMiniMap(const QPoint &mouse_pos) const;
 	bool isMouseAboveMiniMapHandle(const QPoint &mouse_pos, bool left) const;
@@ -82,7 +82,8 @@ protected:
 		None = 0,
 		MiniMapLeftResize,
 		MiniMapRightResize,
-		ChannelHeaderResize,
+		ChannelHeaderResizeHeight,
+		GraphVerticalHeaderResizeWidth,
 		MiniMapScrollZoom,
 		ChannelHeaderMove,
 		GraphDataAreaLeftPress,

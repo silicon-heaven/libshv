@@ -46,6 +46,9 @@ public:
 
 	using WidgetRange = Range<int>;
 
+	static constexpr double MIN_VERTICAL_HEADER_WIDTH = 10;
+	static constexpr double MAX_VERTICAL_HEADER_WIDTH = 25;
+
 	class SHVVISU_DECL_EXPORT Style : public QVariantMap
 	{
 		SHV_VARIANTMAP_FIELD2(int, u, setU, nitSize, 20) // px
@@ -59,7 +62,7 @@ public:
 		SHV_VARIANTMAP_FIELD2(double, x, setX, AxisHeight, 1.5) // units
 		SHV_VARIANTMAP_FIELD2(double, y, setY, AxisWidth, 2.5) // units
 		SHV_VARIANTMAP_FIELD2(double, m, setM, iniMapHeight, 2) // units
-		SHV_VARIANTMAP_FIELD2(double, v, setV, erticalHeaderWidth, 10) // units
+		SHV_VARIANTMAP_FIELD2(double, v, setV, erticalHeaderWidth, MIN_VERTICAL_HEADER_WIDTH) // units
 		SHV_VARIANTMAP_FIELD2(bool, s, setS, eparateChannels, true)
 		SHV_VARIANTMAP_FIELD2(bool, y, setY, AxisVisible, true)
 
@@ -224,7 +227,8 @@ public:
 
 	VisualSettings visualSettings() const;
 	void setVisualSettings(const VisualSettings &settings);
-	void resizeChannel(qsizetype ix, int delta_px);
+	void resizeChannelHeight(qsizetype ix, int delta_px);
+	void resizeVerticalHeaderWidth(int delta_px);
 
 	void saveVisualSettings(const QString &settings_id, const QString &name) const;
 	void deleteVisualSettings(const QString &settings_id, const QString &name) const;

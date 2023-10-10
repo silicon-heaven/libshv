@@ -42,7 +42,7 @@ public:
 
 		SHV_VARIANTMAP_FIELD2(int, i, setI, nterpolation, Interpolation::Stepped)
 		SHV_VARIANTMAP_FIELD2(int, l, setL, ineAreaStyle, LineAreaStyle::Blank)
-		SHV_VARIANTMAP_FIELD2(double, l, setL, ineWidth, 0.2)
+		SHV_VARIANTMAP_FIELD2(double, l, setL, ineWidth, 0.1)
 
 	public:
 		Style();
