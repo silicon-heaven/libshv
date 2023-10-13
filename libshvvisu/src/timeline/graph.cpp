@@ -147,6 +147,11 @@ void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sor
 		QColor("orange"),
 		QColor(0x6d, 0xa1, 0x3a), // green
 	};
+	QMap<QString, GraphChannel::Style> orig_styles;
+	for (int i = 0; i < channelCount(); ++i) {
+		auto *ch = channelAt(i);
+		orig_styles[ch->shvPath()] = ch->style();
+	}
 	clearChannels();
 	if(!m_model)
 		return;
@@ -168,9 +173,14 @@ void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sor
 	for(auto model_ix : model_ixs) {
 		GraphChannel *ch = appendChannel(model_ix);
 		auto channel_ix = channelCount() - 1;
-		GraphChannel::Style style = ch->style();
-		style.setColor(colors.value(channel_ix % colors.count()));
-		ch->setStyle(style);
+		if (orig_styles.contains(ch->shvPath())) {
+			ch->setStyle(orig_styles[ch->shvPath()]);
+		}
+		else {
+			GraphChannel::Style style = ch->style();
+			style.setColor(colors.value(channel_ix % colors.count()));
+			ch->setStyle(style);
+		}
 	}
 	resetChannelsRanges();
 }
