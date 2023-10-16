@@ -53,17 +53,9 @@ bool LogSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex
 	bool row_accepted = false;
 	if (m_shvPathColumn >= 0) {
 		QModelIndex ix = sourceModel()->index(source_row, m_shvPathColumn, source_parent);
-		row_accepted = !m_channelFilter.isValid();
-		if (!row_accepted) {
-			for (const QString &selected_path : m_channelFilter.matchingPaths()) {
-				auto row_path = sourceModel()->data(ix).toString();
-				if (selected_path.startsWith(row_path)) {
-					row_accepted = true;
-					break;
-				}
-			}
-		}
+		row_accepted = m_channelFilter.isPathPermitted(sourceModel()->data(ix).toString());
 	}
+
 	if (row_accepted && !m_fulltextFilter.pattern().isEmpty()) {
 		bool fulltext_match = false;
 		{

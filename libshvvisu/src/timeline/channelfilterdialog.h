@@ -23,10 +23,10 @@ public:
 	explicit ChannelFilterDialog(QWidget *parent = nullptr);
 	~ChannelFilterDialog();
 
-	void init(const QString &site_path, const QStringList &logged_paths);
+	void init(const QString &site_path, const QSet<QString> &logged_paths);
 
-	QStringList selectedChannels();
-	void setSelectedChannels(const QStringList &channels);
+	QSet<QString> selectedChannels();
+	void setSelectedChannels(const QSet<QString> &channels);
 
 private:
 	void applyTextFilter();

@@ -40,18 +40,18 @@ ChannelFilterDialog::~ChannelFilterDialog()
 	delete ui;
 }
 
-void ChannelFilterDialog::init(const QString &site_path, const QStringList &logged_paths)
+void ChannelFilterDialog::init(const QString &site_path, const QSet<QString> &logged_paths)
 {
 	m_sitePath = site_path;
 	m_channelsFilterModel->createNodes(logged_paths);
 }
 
-QStringList ChannelFilterDialog::selectedChannels()
+QSet<QString> ChannelFilterDialog::selectedChannels()
 {
 	return m_channelsFilterModel->selectedChannels();
 }
 
-void ChannelFilterDialog::setSelectedChannels(const QStringList &channels)
+void ChannelFilterDialog::setSelectedChannels(const QSet<QString> &channels)
 {
 	m_channelsFilterModel->setSelectedChannels(channels);
 }

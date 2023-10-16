@@ -105,9 +105,6 @@ QTimeZone Graph::timeZone() const
 
 bool Graph::isInitialView() const
 {
-	if (m_channelFilter.isValid()) {
-		return false;
-	}
 	GraphChannel::Style default_style;
 
 	QMap<QString, qsizetype> path_to_model_index;
@@ -132,7 +129,7 @@ bool Graph::isInitialView() const
 void Graph::reset()
 {
 	createChannelsFromModel();
-	m_channelFilter = ChannelFilter();
+	m_channelFilter = channelPaths();
 	Q_EMIT layoutChanged();
 	Q_EMIT channelFilterChanged();
 }
@@ -173,6 +170,7 @@ void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sor
 		ch->setStyle(style);
 	}
 	resetChannelsRanges();
+	m_channelFilter.setPermittedPaths(channelPaths());
 }
 
 void Graph::resetChannelsRanges()
@@ -265,35 +263,35 @@ void Graph::moveChannel(qsizetype channel, qsizetype new_pos)
 
 void Graph::showAllChannels()
 {
-	m_channelFilter.setMatchingPaths(channelPaths());
+	m_channelFilter.setPermittedPaths(channelPaths());
 
 	emit layoutChanged();
 	emit channelFilterChanged();
 }
 
-QStringList Graph::channelPaths()
+QSet<QString> Graph::channelPaths()
 {
-	QStringList shv_paths;
+	QSet<QString> ret;
 
 	for (int i = 0; i < m_channels.count(); ++i) {
-		shv_paths << m_channels[i]->shvPath();
+		ret.insert(m_channels[i]->shvPath());
 	}
 
-	return shv_paths;
+	return ret;
 }
 
 void Graph::hideFlatChannels()
 {
-	QStringList matching_paths = (m_channelFilter.isValid()) ? m_channelFilter.matchingPaths() : channelPaths();
+	QSet<QString> matching_paths = m_channelFilter.permittedPaths();
 
 	for (qsizetype i = 0; i < m_channels.count(); ++i) {
 		GraphChannel *ch = m_channels[i];
 		if(isChannelFlat(ch)) {
-			matching_paths.removeOne(ch->shvPath());
+			matching_paths.remove(ch->shvPath());
 		}
 	}
 
-	m_channelFilter.setMatchingPaths(matching_paths);
+	m_channelFilter.setPermittedPaths(matching_paths);
 
 	emit layoutChanged();
 	emit channelFilterChanged();
@@ -321,14 +319,11 @@ void Graph::setChannelVisible(qsizetype channel_ix, bool is_visible)
 {
 	GraphChannel *ch = channelAt(channel_ix);
 
-	if (!m_channelFilter.isValid()) {
-		m_channelFilter.setMatchingPaths(channelPaths());
-	}
 	if (is_visible) {
-		m_channelFilter.addMatchingPath(ch->shvPath());
+		m_channelFilter.addPermittedPath(ch->shvPath());
 	}
 	else {
-		m_channelFilter.removeMatchingPath(ch->shvPath());
+		m_channelFilter.removePermittedPath(ch->shvPath());
 	}
 
 	emit layoutChanged();
@@ -1180,17 +1175,13 @@ QVector<int> Graph::visibleChannels() const
 	if (maximized_channel >= 0) {
 		visible_channels << maximized_channel;
 	}
-	else if(m_channelFilter.isValid()) {
+	else {
 		for (int i = 0; i < m_channels.count(); ++i) {
 			QString shv_path = model()->channelInfo(m_channels[i]->modelIndex()).shvPath;
-			if(m_channelFilter.isPathMatch(shv_path)) {
+			if(m_channelFilter.isPathPermitted(shv_path)) {
 				visible_channels << i;
 			}
 		}
-	}
-	else {
-		for (int i = 0; i < m_channels.count(); ++i)
-			visible_channels << i;
 	}
 
 	return visible_channels;
@@ -1199,14 +1190,14 @@ QVector<int> Graph::visibleChannels() const
 void Graph::setVisualSettings(const VisualSettings &settings)
 {
 	if (settings.isValid()) {
-		QStringList new_filter;
+		QSet<QString> f;
 		createChannelsFromModel();
 		for (int i = 0; i < settings.channels.count(); ++i) {
 			const VisualSettings::Channel &channel_settings = settings.channels[i];
 			for (int j = i; j < m_channels.count(); ++j) {
 				GraphChannel *channel = m_channels[j];
 				if (channel->shvPath() == channel_settings.shvPath) {
-					new_filter << channel_settings.shvPath;
+					f.insert(channel_settings.shvPath);
 					channel->setStyle(channel_settings.style);
 					m_channels.insert(i, m_channels.takeAt(j));
 					break;
@@ -1214,7 +1205,7 @@ void Graph::setVisualSettings(const VisualSettings &settings)
 			}
 		}
 
-		m_channelFilter.setMatchingPaths(new_filter);
+		m_channelFilter.setPermittedPaths(f);
 		Q_EMIT layoutChanged();
 		Q_EMIT channelFilterChanged();
 	}

@@ -128,7 +128,7 @@ public:
 	QString channelName(qsizetype channel) const;
 
 	void showAllChannels();
-	QStringList channelPaths();
+	QSet<QString> channelPaths();
 	void hideFlatChannels();
 	const ChannelFilter& channelFilter() const;
 	void setChannelFilter(const ChannelFilter &filter);

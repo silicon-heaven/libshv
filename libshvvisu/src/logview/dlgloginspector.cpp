@@ -486,7 +486,7 @@ void DlgLogInspector::parseLog(shv::chainpack::RpcValue log)
 
 	m_graph->createChannelsFromModel();
 
-	QStringList channel_paths = m_graph->channelPaths();
+	QSet<QString> channel_paths = m_graph->channelPaths();
 	m_channelFilterDialog->init(shvPath(), channel_paths);
 	ui->graphView->makeLayout();
 	applyFilters(channel_paths);
@@ -547,16 +547,16 @@ void DlgLogInspector::setTimeZone(const QTimeZone &tz)
 }
 #endif
 
-void DlgLogInspector::applyFilters(const QStringList &channel_paths)
+void DlgLogInspector::applyFilters(const QSet<QString> &channel_paths)
 {
-	auto graph_filter = m_graph->channelFilter();
-	graph_filter.setMatchingPaths(channel_paths);
+	timeline::ChannelFilter graph_filter = m_graph->channelFilter();
+	graph_filter.setPermittedPaths(channel_paths);
 	m_graph->setChannelFilter(graph_filter);
 }
 
 void DlgLogInspector::onChannelsFilterClicked()
 {
-	m_channelFilterDialog->setSelectedChannels(m_graph->channelFilter().matchingPaths());
+	m_channelFilterDialog->setSelectedChannels(m_graph->channelFilter().permittedPaths());
 
 	if(m_channelFilterDialog->exec() == QDialog::Accepted) {
 		applyFilters(m_channelFilterDialog->selectedChannels());

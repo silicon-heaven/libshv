@@ -54,7 +54,7 @@ private:
 	void setTimeZone(const QTimeZone &tz);
 #endif
 
-	void applyFilters(const QStringList &channel_paths);
+	void applyFilters(const QSet<QString> &channel_paths);
 	void onChannelsFilterClicked();
 	void onGraphChannelFilterChanged();
 

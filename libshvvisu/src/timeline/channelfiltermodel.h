@@ -21,10 +21,10 @@ public:
 	ChannelFilterModel(QObject *parent = nullptr);
 	~ChannelFilterModel() Q_DECL_OVERRIDE;
 
-	void createNodes(const QStringList &channels);
+	void createNodes(const QSet<QString> &channels);
 
-	QStringList selectedChannels();
-	void setSelectedChannels(const QStringList &channels);
+	QSet<QString> selectedChannels();
+	void setSelectedChannels(const QSet<QString> &channels);
 	void setItemCheckState(const QModelIndex &mi, Qt::CheckState check_state);
 	void fixCheckBoxesIntegrity();
 protected:
@@ -38,7 +38,7 @@ protected:
 
 	void createNodesForPath(const QString &path);
 
-	void selectedChannels_helper(QStringList *channels, QStandardItem *it);
+	void selectedChannels_helper(QSet<QString> *channels, QStandardItem *it);
 	bool setData ( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
 	void setChildItemsCheckedState(QStandardItem *it, Qt::CheckState check_state);
 	void fixChildItemsCheckBoxesIntegrity(QStandardItem *it);

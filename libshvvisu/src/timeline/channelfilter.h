@@ -12,20 +12,18 @@ namespace timeline {
 class SHVVISU_DECL_EXPORT ChannelFilter
 {
 public:
-	ChannelFilter();
-	ChannelFilter(const QStringList &matching_paths);
+	ChannelFilter(const QSet<QString> &permitted_paths = {});
 
-	void addMatchingPath(const QString &shv_path);
-	void removeMatchingPath(const QString &shv_path);
+	void addPermittedPath(const QString &path);
+	void removePermittedPath(const QString &path);
 
-	QStringList matchingPaths() const;
-	void setMatchingPaths(const QStringList &paths);
+	QSet<QString> permittedPaths() const;
+	void setPermittedPaths(const QSet<QString> &paths);
 
-	bool isPathMatch(const QString &path) const;
-	bool isValid() const;
+	bool isPathPermitted(const QString &path) const;
+	bool isEmpty() const;
 private:
-	QStringList m_matchingPaths;
-	bool m_isValid;
+	QSet<QString> m_permittedPaths;
 };
 
 }
