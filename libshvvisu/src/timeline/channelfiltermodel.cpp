@@ -21,9 +21,13 @@ void ChannelFilterModel::createNodes(const QSet<QString> &channels)
 {
 	beginResetModel();
 
-	for (const auto &shv_path: channels) {
-		createNodesForPath(shv_path);
+	QStringList sorted_channels = QStringList(channels.begin(), channels.end());
+	sorted_channels.sort(Qt::CaseInsensitive);
+
+	for (const auto &p: sorted_channels) {
+		createNodesForPath(p);
 	}
+
 	endResetModel();
 }
 
