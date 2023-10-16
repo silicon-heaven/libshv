@@ -3,6 +3,7 @@
 #include "../shvvisuglobal.h"
 
 #include <shv/core/utils.h>
+#include <shv/core/utils/shvlogtypeinfo.h>
 
 #include <QDialog>
 
@@ -80,6 +81,7 @@ private:
 	shv::visu::timeline::Graph *m_graph = nullptr;
 	shv::visu::timeline::GraphWidget *m_graphWidget = nullptr;
 	shv::visu::timeline::ChannelFilterDialog *m_channelFilterDialog = nullptr;
+	shv::core::utils::ShvTypeInfo m_typeInfo;
 };
 
 }}}

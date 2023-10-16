@@ -4,6 +4,8 @@
 #include "logmodel.h"
 #include "logsortfilterproxymodel.h"
 
+#include "remotefileloader.h"
+
 #include "../timeline/graphmodel.h"
 #include "../timeline/graphwidget.h"
 #include "../timeline/graph.h"
@@ -234,7 +236,14 @@ DlgLogInspector::DlgLogInspector(const QString &shv_path, QWidget *parent) :
 	ui->cbxTimeZone->setEnabled(false);
 #endif
 
-	connect(ui->btLoad, &QPushButton::clicked, this, &DlgLogInspector::downloadLog);
+	connect(ui->btLoad, &QPushButton::clicked, this, [this]{
+		RemoteFileLoader::getSitesProviderFileParsed(shvPath().mid(4), "typeInfo.cpon", rpcConnection(), this, [this](const cp::RpcValue &rv, const QString &errmsg) {
+			if(errmsg.isEmpty()) {
+				m_typeInfo = shv::core::utils::ShvTypeInfo::fromRpcValue(rv);
+			}
+			downloadLog();
+		});
+	});
 
 	connect(m_graph, &shv::visu::timeline::Graph::channelFilterChanged, this, &DlgLogInspector::onGraphChannelFilterChanged);
 	connect(ui->pbChannelsFilter, &QPushButton::clicked, this, &DlgLogInspector::onChannelsFilterClicked);
@@ -435,8 +444,8 @@ void DlgLogInspector::parseLog(shv::chainpack::RpcValue log)
 		shv::core::utils::ShvLogRpcValueReader rd(log, shv::core::Exception::Throw);
 		m_graphModel->clear();
 		m_graphModel->beginAppendValues();
-		m_graphModel->setTypeInfo(rd.logHeader().typeInfo());
-		shvDebug() << "typeinfo:" << m_graphModel->typeInfo().toRpcValue().toCpon("  ");
+		m_graphModel->setTypeInfo(m_typeInfo);
+
 		ShortTime anca_hook_short_time;
 		while(rd.next()) {
 			const core::utils::ShvJournalEntry &entry = rd.entry();
