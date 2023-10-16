@@ -116,7 +116,6 @@ public:
 	enum class SortChannels { No = 0, Yes };
 	void createChannelsFromModel(SortChannels sorted = SortChannels::Yes);
 	void resetChannelsRanges();
-	bool isInitialView() const;
 
 	qsizetype channelCount() const;
 	void clearChannels();

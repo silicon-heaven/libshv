@@ -103,29 +103,6 @@ QTimeZone Graph::timeZone() const
 }
 #endif
 
-bool Graph::isInitialView() const
-{
-	GraphChannel::Style default_style;
-
-	QMap<QString, qsizetype> path_to_model_index;
-	for (qsizetype i = 0; i < m_model->channelCount(); ++i) {
-		QString shv_path = m_model->channelShvPath(i);
-		path_to_model_index[shv_path] = i;
-	}
-	QString previous_shv_path;
-	for (GraphChannel *channel : m_channels) {
-		if (channel->style().heightMax() != default_style.heightMax()) {
-			return false;
-		}
-		QString channel_shv_path = m_model->channelShvPath(channel->modelIndex());
-		if (channel_shv_path < previous_shv_path) {
-			return false;
-		}
-		previous_shv_path = channel_shv_path;
-	}
-	return true;
-}
-
 void Graph::reset()
 {
 	createChannelsFromModel();
@@ -1245,12 +1222,11 @@ void Graph::resizeVerticalHeaderWidth(int delta_px)
 Graph::VisualSettings Graph::visualSettings() const
 {
 	VisualSettings view;
-	if (!isInitialView()) {
-		for (int ix : visibleChannels()) {
-			const GraphChannel *channel = channelAt(ix);
-			view.channels << VisualSettings::Channel{ channel->shvPath(), channel->style() };
-		}
+	for (int ix : visibleChannels()) {
+		const GraphChannel *channel = channelAt(ix);
+		view.channels << VisualSettings::Channel{ channel->shvPath(), channel->style() };
 	}
+
 	return view;
 }
 
