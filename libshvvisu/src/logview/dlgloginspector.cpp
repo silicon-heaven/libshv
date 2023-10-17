@@ -272,7 +272,7 @@ void DlgLogInspector::initVisualSettingSelector(const QString &shv_path)
 {
 	ui->cbViews->clear();
 
-	ui->cbViews->addItem(tr("Initial view"));
+	ui->cbViews->addItem(tr("Without filter"));
 	for (const QString &view_name : m_graph->savedVisualSettingsNames(shv_path)) {
 		ui->cbViews->addItem(view_name);
 	}

@@ -106,7 +106,6 @@ QTimeZone Graph::timeZone() const
 void Graph::reset()
 {
 	createChannelsFromModel();
-	m_channelFilter = channelPaths();
 	Q_EMIT layoutChanged();
 	Q_EMIT channelFilterChanged();
 }
@@ -147,7 +146,6 @@ void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sor
 		ch->setStyle(style);
 	}
 	resetChannelsRanges();
-	m_channelFilter.setPermittedPaths(channelPaths());
 }
 
 void Graph::resetChannelsRanges()
@@ -259,7 +257,7 @@ QSet<QString> Graph::channelPaths()
 
 void Graph::hideFlatChannels()
 {
-	QSet<QString> matching_paths = m_channelFilter.permittedPaths();
+	QSet<QString> matching_paths = (m_channelFilter.isValid()) ? m_channelFilter.permittedPaths() : channelPaths();
 
 	for (qsizetype i = 0; i < m_channels.count(); ++i) {
 		GraphChannel *ch = m_channels[i];
@@ -1152,13 +1150,17 @@ QVector<int> Graph::visibleChannels() const
 	if (maximized_channel >= 0) {
 		visible_channels << maximized_channel;
 	}
-	else {
+	else if (m_channelFilter.isValid()) {
 		for (int i = 0; i < m_channels.count(); ++i) {
 			QString shv_path = model()->channelInfo(m_channels[i]->modelIndex()).shvPath;
 			if(m_channelFilter.isPathPermitted(shv_path)) {
 				visible_channels << i;
 			}
 		}
+	}
+	else {
+		for (int i = 0; i < m_channels.count(); ++i)
+			visible_channels << i;
 	}
 
 	return visible_channels;

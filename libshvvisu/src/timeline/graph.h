@@ -97,6 +97,12 @@ public:
 		QVector<Channel> channels;
 	};
 
+	struct View {
+		QString name;
+		bool edited = false;
+		VisualSettings settings;
+	};
+
 	Graph(QObject *parent = nullptr);
 	virtual ~Graph();
 

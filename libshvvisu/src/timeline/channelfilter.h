@@ -12,7 +12,8 @@ namespace timeline {
 class SHVVISU_DECL_EXPORT ChannelFilter
 {
 public:
-	ChannelFilter(const QSet<QString> &permitted_paths = {});
+	ChannelFilter();
+	ChannelFilter(const QSet<QString> &permitted_paths);
 
 	void addPermittedPath(const QString &path);
 	void removePermittedPath(const QString &path);
@@ -21,9 +22,11 @@ public:
 	void setPermittedPaths(const QSet<QString> &paths);
 
 	bool isPathPermitted(const QString &path) const;
-	bool isEmpty() const;
+	bool isValid() const;
+
 private:
 	QSet<QString> m_permittedPaths;
+	bool m_isValid = false;
 };
 
 }

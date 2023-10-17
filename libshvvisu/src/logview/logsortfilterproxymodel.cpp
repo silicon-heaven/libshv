@@ -50,25 +50,24 @@ bool startsWithPath(const QStringView &str, const QStringView &path)
 
 bool LogSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
-	bool row_accepted = false;
+	bool is_row_accepted = true;
+
 	if (m_shvPathColumn >= 0) {
 		QModelIndex ix = sourceModel()->index(source_row, m_shvPathColumn, source_parent);
-		row_accepted = m_channelFilter.isPathPermitted(sourceModel()->data(ix).toString());
+		is_row_accepted = (m_channelFilter.isValid()) ? m_channelFilter.isPathPermitted(sourceModel()->data(ix).toString()) : true;
+
+		if (is_row_accepted && !m_fulltextFilter.pattern().isEmpty()) {
+			bool is_fulltext_filter_matched = m_fulltextFilter.matches(sourceModel()->data(ix).toString());
+
+			if (m_valueColumn >= 0) {
+				ix = sourceModel()->index(source_row, m_valueColumn, source_parent);
+				is_fulltext_filter_matched = is_fulltext_filter_matched || m_fulltextFilter.matches(sourceModel()->data(ix).toString());
+			}
+			is_row_accepted = is_row_accepted || is_fulltext_filter_matched;
+		}
 	}
 
-	if (row_accepted && !m_fulltextFilter.pattern().isEmpty()) {
-		bool fulltext_match = false;
-		{
-			QModelIndex ix = sourceModel()->index(source_row, m_shvPathColumn, source_parent);
-			fulltext_match = fulltext_match || m_fulltextFilter.matches(sourceModel()->data(ix).toString());
-		}
-		if (m_valueColumn >= 0) {
-			QModelIndex ix = sourceModel()->index(source_row, m_valueColumn, source_parent);
-			fulltext_match = fulltext_match || m_fulltextFilter.matches(sourceModel()->data(ix).toString());
-		}
-		row_accepted = fulltext_match;
-	}
-	return row_accepted;
+	return is_row_accepted;
 }
 
 }
