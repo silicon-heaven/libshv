@@ -554,6 +554,12 @@ qsizetype Graph::posToChannel(const QPoint &pos) const
 
 qsizetype Graph::posToChannelHeader(const QPoint &pos) const
 {
+	if (m_layout.cornerCellRect.contains(pos)) {
+		return -1;
+	}
+	if (m_layout.cornerCellRect.right() < pos.x()) {
+		return -1;
+	}
 	for (qsizetype i = 0; i < channelCount(); ++i) {
 		const GraphChannel *ch = channelAt(i);
 

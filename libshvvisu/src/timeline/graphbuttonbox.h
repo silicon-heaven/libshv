@@ -37,6 +37,8 @@ public:
 	int buttonSize() const;
 	int buttonSpace() const;
 	QRect buttonRect(ButtonId id) const;
+	bool isMouseOverButton() const { return m_mouseOverButtonIndex >= 0; }
+
 protected:
 	qsizetype buttonCount() const;
 	QRect buttonRect(int ix) const;

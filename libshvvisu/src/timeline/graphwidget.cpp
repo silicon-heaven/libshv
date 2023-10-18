@@ -367,11 +367,14 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 			(m_mouseOperation == MouseOperation::GraphVerticalHeaderResizeWidth)) {
 		setCursor(QCursor(Qt::SizeHorCursor));
 	}
-	else if (isMouseAboveChannelHeader(pos)) {
-		setCursor(QCursor(Qt::OpenHandCursor));
-	}
 	else {
-		setCursor(QCursor(Qt::ArrowCursor));
+		auto channel_ix = graph()->posToChannelHeader(pos);
+		if (channel_ix > -1 && !graph()->channelAt(channel_ix)->buttonBox()->isMouseOverButton()) {
+			setCursor(QCursor(Qt::OpenHandCursor));
+		}
+		else {
+			setCursor(QCursor(Qt::ArrowCursor));
+		}
 	}
 
 	switch (m_mouseOperation) {
@@ -867,11 +870,6 @@ void GraphWidget::removeProbes(qsizetype channel_ix)
 		if (pw->probe()->channelIndex() == channel_ix)
 			pw->close();
 	}
-}
-
-bool GraphWidget::isMouseAboveChannelHeader(const QPoint &mouse_pos) const
-{
-	return graph()->posToChannelHeader(mouse_pos) > -1;
 }
 
 bool GraphWidget::isMouseAboveChannelResizeHandle(const QPoint &mouse_pos, Qt::Edge header_edge) const
