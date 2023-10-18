@@ -108,3 +108,9 @@ DOCTEST_TEST_CASE("RpcValue::DateTime")
 		}
 	}
 }
+
+DOCTEST_TEST_CASE("RpcValue::Decimal")
+{
+	REQUIRE(RpcValue(RpcValue::Decimal(45, 2186)).toInt() == std::numeric_limits<RpcValue::Int>::max());
+	REQUIRE(RpcValue(RpcValue(-2.41785e+306)).toInt() == std::numeric_limits<RpcValue::Int>::min());
+}
