@@ -4,8 +4,6 @@
 #include "logmodel.h"
 #include "logsortfilterproxymodel.h"
 
-#include "remotefileloader.h"
-
 #include "../timeline/graphmodel.h"
 #include "../timeline/graphwidget.h"
 #include "../timeline/graph.h"
@@ -236,14 +234,7 @@ DlgLogInspector::DlgLogInspector(const QString &shv_path, QWidget *parent) :
 	ui->cbxTimeZone->setEnabled(false);
 #endif
 
-	connect(ui->btLoad, &QPushButton::clicked, this, [this]{
-		RemoteFileLoader::getSitesProviderFileParsed(shvPath().mid(4), "typeInfo.cpon", rpcConnection(), this, [this](const cp::RpcValue &rv, const QString &errmsg) {
-			if(errmsg.isEmpty()) {
-				m_typeInfo = shv::core::utils::ShvTypeInfo::fromRpcValue(rv);
-			}
-			downloadLog();
-		});
-	});
+	connect(ui->btLoad, &QPushButton::clicked, this, &DlgLogInspector::downloadLog);
 
 	connect(m_graph, &shv::visu::timeline::Graph::channelFilterChanged, this, &DlgLogInspector::onGraphChannelFilterChanged);
 	connect(ui->pbChannelsFilter, &QPushButton::clicked, this, &DlgLogInspector::onChannelsFilterClicked);
