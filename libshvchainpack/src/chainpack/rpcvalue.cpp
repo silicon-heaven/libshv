@@ -1506,12 +1506,12 @@ void RpcValue::Decimal::setDouble(double d)
 double RpcValue::Decimal::toDouble() const
 {
 	auto ret = static_cast<double>(mantisa());
-		int exp = exponent();
-		if(exp > 0)
-			for(; exp > 0; exp--) ret *= Base;
-		else
-			for(; exp < 0; exp++) ret /= Base;
-		return ret;;
+	int exp = exponent();
+	if(exp > 0)
+		for(; exp > 0; exp--) ret *= Base;
+	else
+		for(; exp < 0; exp++) ret /= Base;
+	return ret;
 }
 
 std::string RpcValue::Decimal::toString() const
