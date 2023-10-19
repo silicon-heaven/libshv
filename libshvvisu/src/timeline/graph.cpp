@@ -1150,6 +1150,28 @@ void Graph::drawCenterTopText(QPainter *painter, const QPoint &top_center, const
 	drawRectText(painter, br, text, font, color, background, inset);
 }
 
+void Graph::drawLeftBottomText(QPainter *painter, const QPoint &left_bottom, const QString &text, const QFont &font, const QColor &color, const QColor &background)
+{
+	QFontMetrics fm(font);
+	QRect br = fm.boundingRect(text);
+	int inset = u2px(0.2)*2;
+	br.adjust(-inset, 0, inset, 0);
+	br.moveLeft(left_bottom.x());
+	br.moveBottom(left_bottom.y());
+	drawRectText(painter, br, text, font, color, background, inset);
+}
+
+void Graph::drawRightBottomText(QPainter *painter, const QPoint &right_bottom, const QString &text, const QFont &font, const QColor &color, const QColor &background)
+{
+	QFontMetrics fm(font);
+	QRect br = fm.boundingRect(text);
+	int inset = u2px(0.2)*2;
+	br.adjust(-inset, 0, inset, 0);
+	br.moveRight(right_bottom.x());
+	br.moveBottom(right_bottom.y());
+	drawRectText(painter, br, text, font, color, background, inset);
+}
+
 void Graph::drawCenterBottomText(QPainter *painter, const QPoint &top_center, const QString &text, const QFont &font, const QColor &color, const QColor &background)
 {
 	QFontMetrics fm(font);
@@ -1158,15 +1180,6 @@ void Graph::drawCenterBottomText(QPainter *painter, const QPoint &top_center, co
 	br.adjust(-inset, 0, inset, 0);
 	br.moveCenter(top_center);
 	br.moveBottom(top_center.y());
-
-	if (br.right() > m_layout.xAxisRect.right()) {
-		br.moveRight(m_layout.xAxisRect.right() - 1);
-	}
-
-	if (br.left() < m_layout.xAxisRect.left()) {
-		br.moveLeft(m_layout.xAxisRect.left());
-	}
-
 	drawRectText(painter, br, text, font, color, background, inset);
 }
 
@@ -1305,6 +1318,7 @@ void Graph::draw(QPainter *painter, const QRect &dirty_rect, const QRect &view_r
 			drawYAxis(painter, i);
 	}
 
+	//Info bubble must be rendered only after all channels have been rendered
 	for (int i : visibleChannels()) {
 		const GraphChannel *ch = channelAt(i);
 		if(dirty_rect.intersects(ch->graphAreaRect())) {
@@ -2083,7 +2097,20 @@ void Graph::drawCrossHairTimeMarker(QPainter *painter)
 	p1.setY(p1.y() - tick_len);
 	auto c_text = color;
 	auto c_background = effectiveStyle().colorBackground();
-	drawCenterBottomText(painter, p1 - QPoint{0, tick_len / 2}, text, m_style.font(), c_text, c_background);
+
+	QFontMetrics fm(m_style.font());
+	QRect br = fm.boundingRect(text);
+	int inset = u2px(0.2) * 2;
+	br.adjust(-inset, 0, inset, 0);
+	if (p1.x() + br.width() / 2 > m_layout.xAxisRect.right()) {
+		drawRightBottomText(painter, QPoint{m_layout.xAxisRect.right() - 1, p1.y() - tick_len / 2}, text, m_style.font(), c_text, c_background);
+	}
+	else if (p1.x() - br.width() / 2 < m_layout.xAxisRect.left()) {
+		drawLeftBottomText(painter, QPoint{m_layout.xAxisRect.left(), p1.y() - tick_len / 2}, text, m_style.font(), c_text, c_background);
+	}
+	else {
+		drawCenterBottomText(painter, p1 - QPoint{0, tick_len / 2}, text, m_style.font(), c_text, c_background);
+	}
 }
 
 void Graph::drawCrossHair(QPainter *painter, int channel_ix)
