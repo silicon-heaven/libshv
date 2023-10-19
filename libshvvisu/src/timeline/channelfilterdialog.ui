@@ -15,42 +15,53 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="2">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QPushButton" name="pbCheckItems">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../../images/images.qrc">
-           <normaloff>:/shv/visu/images/check-box-outline.svg</normaloff>:/shv/visu/images/check-box-outline.svg</iconset>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pbUncheckItems">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../../images/images.qrc">
-           <normaloff>:/shv/visu/images/checkbox-blank-outline.svg</normaloff>:/shv/visu/images/checkbox-blank-outline.svg</iconset>
-         </property>
-        </widget>
-       </item>
-      </layout>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="lName">
+       <property name="font">
+        <font>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Layout name:</string>
+       </property>
+      </widget>
      </item>
-     <item row="0" column="0">
+     <item>
+      <widget class="QComboBox" name="cbLayouts">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbActions">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../images/images.qrc">
+         <normaloff>:/shv/visu/images/hamburger-menu.svg</normaloff>:/shv/visu/images/hamburger-menu.svg</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
       <widget class="QLabel" name="lblFilter">
        <property name="text">
         <string>Matching text</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <property name="spacing">
         <number>0</number>
        </property>
@@ -76,6 +87,28 @@
         </widget>
        </item>
       </layout>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbCheckItems">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../images/images.qrc">
+         <normaloff>:/shv/visu/images/check-box-outline.svg</normaloff>:/shv/visu/images/check-box-outline.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbUncheckItems">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../images/images.qrc">
+         <normaloff>:/shv/visu/images/checkbox-blank-outline.svg</normaloff>:/shv/visu/images/checkbox-blank-outline.svg</iconset>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

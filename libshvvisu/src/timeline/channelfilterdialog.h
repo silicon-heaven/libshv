@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../shvvisuglobal.h"
+#include <shv/visu/timeline/graph.h>
+
 
 #include <QDialog>
 
@@ -23,13 +25,21 @@ public:
 	explicit ChannelFilterDialog(QWidget *parent = nullptr);
 	~ChannelFilterDialog();
 
-	void init(const QString &site_path, const QSet<QString> &logged_paths);
+	void init(const QString &site_path, Graph *graph);
 
 	QSet<QString> selectedChannels();
-	void setSelectedChannels(const QSet<QString> &channels);
+	void setFilter(const QString &filter_name, const QSet<QString> &channels);
 
 private:
 	void applyTextFilter();
+
+	void saveView();
+	void saveViewAs();
+	void revertView();
+	void resetView();
+	void deleteView();
+	void exportView();
+	void importView();
 
 	void setVisibleItemsCheckState(Qt::CheckState state);
 	void setVisibleItemsCheckState_helper(const QModelIndex &mi, Qt::CheckState state);
@@ -43,9 +53,18 @@ private:
 	void onChbFindRegexChanged(int state);
 
 	Ui::ChannelFilterDialog *ui;
+	shv::visu::timeline::Graph *m_graph = nullptr;
 	ChannelFilterModel *m_channelsFilterModel = nullptr;
 	ChannelFilterSortFilterProxyModel *m_channelsFilterProxyModel = nullptr;
 	QString m_sitePath;
+
+	QAction *m_saveViewAction = nullptr;
+	QAction *m_saveViewAsAction = nullptr;
+	QAction *m_revertViewAction = nullptr;
+	QAction *m_resetViewAction = nullptr;
+	QAction *m_deleteViewAction = nullptr;
+	QAction *m_exportViewAction = nullptr;
+	QAction *m_importViewAction = nullptr;
 };
 
 }

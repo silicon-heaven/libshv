@@ -27,6 +27,7 @@ add_library(libshvvisu
 	src/timeline/graphwidget.cpp
 	src/timeline/sample.cpp
 	src/widgets/timezonecombobox.cpp
+	src/widgets/dataviewwidget.cpp
 	)
 
 target_link_libraries(libshvvisu PUBLIC Qt::Widgets libshviotqt)
