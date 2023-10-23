@@ -1,5 +1,5 @@
-#include "metatypes.h"
-#include "exception.h"
+#include <shv/chainpack/metatypes.h>
+#include <shv/chainpack/exception.h>
 
 #include <necrolog.h>
 

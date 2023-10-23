@@ -1,4 +1,4 @@
-#include "abstractstreamwriter.h"
+#include <shv/chainpack/abstractstreamwriter.h>
 
 namespace shv::chainpack {
 

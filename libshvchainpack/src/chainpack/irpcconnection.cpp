@@ -1,4 +1,4 @@
-#include "irpcconnection.h"
+#include <shv/chainpack/irpcconnection.h>
 
 #include <necrolog.h>
 
