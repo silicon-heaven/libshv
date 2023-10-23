@@ -1,9 +1,9 @@
-#include "rpcmessage.h"
-#include "metatypes.h"
-#include "tunnelctl.h"
-#include "datachange.h"
-#include "accessgrant.h"
-#include "abstractstreamwriter.h"
+#include <shv/chainpack/rpcmessage.h>
+#include <shv/chainpack/metatypes.h>
+#include <shv/chainpack/tunnelctl.h>
+#include <shv/chainpack/datachange.h>
+#include <shv/chainpack/accessgrant.h>
+#include <shv/chainpack/abstractstreamwriter.h>
 
 #include <cassert>
 

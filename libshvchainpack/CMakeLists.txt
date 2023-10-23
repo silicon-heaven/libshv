@@ -19,7 +19,7 @@ add_library(libshvchainpack-cpp
 	src/chainpack/rpcvalue.cpp
 	src/chainpack/tunnelctl.cpp
 	src/chainpack/utils.cpp
-	src/chainpack/crc32.h
+	include/shv/chainpack/crc32.h
 	)
 
 if (NOT WIN32)

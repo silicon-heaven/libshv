@@ -1,7 +1,7 @@
 #pragma once
 
-#include "rpcvalue.h"
-#include "rpc.h"
+#include <shv/chainpack/rpcvalue.h>
+#include <shv/chainpack/rpc.h>
 
 namespace shv {
 namespace chainpack {

@@ -1,4 +1,4 @@
-#include "tunnelctl.h"
+#include <shv/chainpack/tunnelctl.h>
 
 namespace shv::chainpack {
 
