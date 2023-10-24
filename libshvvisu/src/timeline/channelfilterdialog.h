@@ -25,25 +25,35 @@ public:
 	explicit ChannelFilterDialog(QWidget *parent = nullptr);
 	~ChannelFilterDialog();
 
-	void init(const QString &site_path, Graph *graph);
+	void init(const QString &site_path, Graph *graph, const QString &filter_name);
 
 	QSet<QString> selectedChannels();
-	void setFilter(const QString &filter_name, const QSet<QString> &channels);
+	QString selectedFilterName();
+
+	Q_SIGNAL void selectedFilterNameChanged(const QString &filter_name);
 
 private:
+	void enableOnDataViewChangedAction() {m_onDataViewChangedActionEnabled = true;}
+	void disableOnDataViewChangedAction() {m_onDataViewChangedActionEnabled = false;}
+
 	void applyTextFilter();
+
+	void reloadDataViewsComboboxAndSetlect(const QString &text = {});
 
 	void saveView();
 	void saveViewAs();
-	void revertView();
-	void resetView();
+	void discardUserChanges();
 	void deleteView();
 	void exportView();
 	void importView();
 
+	void updateContextMenuActionsAvailability();
+
 	void setVisibleItemsCheckState(Qt::CheckState state);
 	void setVisibleItemsCheckState_helper(const QModelIndex &mi, Qt::CheckState state);
+	void applyPermittedChannelsFromGraph();
 
+	void onDataViewCurrentIndexChanged(int index);
 	void onCustomContextMenuRequested(QPoint pos);
 
 	void onPbCheckItemsClicked();
@@ -65,6 +75,9 @@ private:
 	QAction *m_deleteViewAction = nullptr;
 	QAction *m_exportViewAction = nullptr;
 	QAction *m_importViewAction = nullptr;
+
+	bool m_onDataViewChangedActionEnabled = true;
+
 };
 
 }

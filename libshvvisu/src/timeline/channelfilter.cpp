@@ -4,10 +4,7 @@
 
 namespace shv::visu::timeline {
 
-ChannelFilter::ChannelFilter()
-{
-
-}
+ChannelFilter::ChannelFilter() = default;
 
 ChannelFilter::ChannelFilter(const QSet<QString> &permitted_paths)
 {

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>407</width>
+    <width>391</width>
     <height>802</height>
    </rect>
   </property>
@@ -24,12 +24,12 @@
         </font>
        </property>
        <property name="text">
-        <string>Layout name:</string>
+        <string>Data view</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="cbLayouts">
+      <widget class="QComboBox" name="cbDataView">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>1</horstretch>
@@ -52,7 +52,45 @@
     </layout>
    </item>
    <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>10</width>
+       <height>10</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPushButton" name="pbCheckItems">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../images/images.qrc">
+         <normaloff>:/shv/visu/images/check-box-outline.svg</normaloff>:/shv/visu/images/check-box-outline.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbUncheckItems">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../images/images.qrc">
+         <normaloff>:/shv/visu/images/checkbox-blank-outline.svg</normaloff>:/shv/visu/images/checkbox-blank-outline.svg</iconset>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QLabel" name="lblFilter">
        <property name="text">
@@ -88,28 +126,6 @@
        </item>
       </layout>
      </item>
-     <item>
-      <widget class="QPushButton" name="pbCheckItems">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../../images/images.qrc">
-         <normaloff>:/shv/visu/images/check-box-outline.svg</normaloff>:/shv/visu/images/check-box-outline.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pbUncheckItems">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../../images/images.qrc">
-         <normaloff>:/shv/visu/images/checkbox-blank-outline.svg</normaloff>:/shv/visu/images/checkbox-blank-outline.svg</iconset>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item>
@@ -121,7 +137,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>

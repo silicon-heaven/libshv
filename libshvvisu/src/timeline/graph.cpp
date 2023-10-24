@@ -106,8 +106,7 @@ QTimeZone Graph::timeZone() const
 void Graph::reset()
 {
 	createChannelsFromModel();
-	Q_EMIT layoutChanged();
-	Q_EMIT channelFilterChanged();
+	setChannelFilter(ChannelFilter());
 }
 
 void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sorted)
@@ -146,6 +145,8 @@ void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sor
 		ch->setStyle(style);
 	}
 	resetChannelsRanges();
+
+	emit layoutChanged();
 }
 
 void Graph::resetChannelsRanges()
@@ -281,6 +282,7 @@ bool Graph::isChannelFlat(GraphChannel *ch)
 void Graph::setChannelFilter(const ChannelFilter &filter)
 {
 	m_channelFilter = filter;
+
 	emit layoutChanged();
 	emit channelFilterChanged();
 }
@@ -1170,7 +1172,6 @@ void Graph::setVisualSettings(const VisualSettings &settings)
 {
 	if (settings.isValid()) {
 		QSet<QString> f;
-		createChannelsFromModel();
 		for (int i = 0; i < settings.channels.count(); ++i) {
 			const VisualSettings::Channel &channel_settings = settings.channels[i];
 			for (int j = i; j < m_channels.count(); ++j) {
@@ -2279,7 +2280,6 @@ void Graph::saveVisualSettings(const QString &settings_id, const QString &name) 
 
 void Graph::loadVisualSettings(const QString &settings_id, const QString &name)
 {
-	VisualSettings graph_view;
 	QSettings settings;
 	settings.beginGroup(USER_PROFILES_KEY);
 	settings.beginGroup(m_settingsUserName);

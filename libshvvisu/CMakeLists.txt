@@ -1,5 +1,6 @@
 add_library(libshvvisu
 	images/images.qrc
+	src/logview/dataviewwidget.cpp
 	src/logview/dlgloginspector.cpp
 	src/logview/logmodel.cpp
 	src/logview/logsortfilterproxymodel.cpp
@@ -27,7 +28,6 @@ add_library(libshvvisu
 	src/timeline/graphwidget.cpp
 	src/timeline/sample.cpp
 	src/widgets/timezonecombobox.cpp
-	src/widgets/dataviewwidget.cpp
 	)
 
 target_link_libraries(libshvvisu PUBLIC Qt::Widgets libshviotqt)
