@@ -1,13 +1,13 @@
-#include "shvfilejournal.h"
+#include <shv/core/utils/shvfilejournal.h>
 
-#include "patternmatcher.h"
-#include "shvjournalfilewriter.h"
-#include "shvjournalfilereader.h"
-#include "shvlogheader.h"
+#include <shv/core/utils/patternmatcher.h>
+#include <shv/core/utils/shvjournalfilewriter.h>
+#include <shv/core/utils/shvjournalfilereader.h>
+#include <shv/core/utils/shvlogheader.h>
 
-#include "../log.h"
-#include "../exception.h"
-#include "../string.h"
+#include <shv/core/log.h>
+#include <shv/core/exception.h>
+#include <shv/core/string.h>
 
 #include <shv/chainpack/rpc.h>
 

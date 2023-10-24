@@ -1,7 +1,8 @@
-#include "shvjournalfilewriter.h"
-#include "shvfilejournal.h"
-#include "../exception.h"
-#include "../log.h"
+#include <shv/core/utils/shvjournalfilewriter.h>
+#include <shv/core/utils/shvfilejournal.h>
+
+#include <shv/core/exception.h>
+#include <shv/core/log.h>
 
 #include <shv/chainpack/rpc.h>
 

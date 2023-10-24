@@ -1,10 +1,10 @@
-#include "shvmemoryjournal.h"
-#include "shvlogheader.h"
-#include "shvlogrpcvaluereader.h"
-#include "patternmatcher.h"
+#include <shv/core/utils/shvmemoryjournal.h>
+#include <shv/core/utils/shvlogheader.h>
+#include <shv/core/utils/shvlogrpcvaluereader.h>
+#include <shv/core/utils/patternmatcher.h>
 
-#include "../exception.h"
-#include "../log.h"
+#include <shv/core/exception.h>
+#include <shv/core/log.h>
 
 #define logWShvJournal() shvCWarning("ShvJournal")
 #define logIShvJournal() shvCInfo("ShvJournal")
