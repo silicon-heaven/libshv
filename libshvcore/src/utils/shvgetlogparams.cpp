@@ -1,4 +1,4 @@
-#include "shvgetlogparams.h"
+#include <shv/core/utils/shvgetlogparams.h>
 
 namespace cp = shv::chainpack;
 

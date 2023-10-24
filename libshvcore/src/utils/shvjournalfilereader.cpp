@@ -1,9 +1,9 @@
-#include "shvjournalfilereader.h"
-#include "shvfilejournal.h"
+#include <shv/core/utils/shvjournalfilereader.h>
+#include <shv/core/utils/shvfilejournal.h>
 
-#include "../exception.h"
-#include "../log.h"
-#include "../string.h"
+#include <shv/core/exception.h>
+#include <shv/core/log.h>
+#include <shv/core/string.h>
 
 #define logWShvJournal() shvCWarning("ShvJournal")
 #define logIShvJournal() shvCInfo("ShvJournal")

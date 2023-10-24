@@ -1,6 +1,6 @@
 // NOLINTNEXTLINE(modernize-deprecated-headers)
-#include "string.h"
-#include "stringview.h"
+#include <shv/core/string.h>
+#include <shv/core/stringview.h>
 
 #include <algorithm>
 
