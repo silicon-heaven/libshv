@@ -1,5 +1,5 @@
 #include "masterbrokerconnection.h"
-#include "../brokerapp.h"
+#include <shv/broker/brokerapp.h>
 
 #include <shv/chainpack/rpcmessage.h>
 #include <shv/core/string.h>

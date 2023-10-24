@@ -1,5 +1,5 @@
-#include "aclmanager.h"
-#include "brokerapp.h"
+#include <shv/broker/aclmanager.h>
+#include <shv/broker/brokerapp.h>
 //#include "currentclientshvnode.h"
 
 #include <shv/chainpack/utils.h>

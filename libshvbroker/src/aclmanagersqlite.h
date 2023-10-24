@@ -1,7 +1,7 @@
 #ifndef SHV_BROKER_ACLMANAGERSQLITE_H
 #define SHV_BROKER_ACLMANAGERSQLITE_H
 
-#include "aclmanager.h"
+#include <shv/broker/aclmanager.h>
 
 class QSqlQuery;
 
