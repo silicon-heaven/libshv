@@ -1,6 +1,6 @@
-﻿#include "serverconnection.h"
-#include "socketrpcconnection.h"
-#include "socket.h"
+﻿#include <shv/iotqt/rpc/serverconnection.h>
+#include <shv/iotqt/rpc/socketrpcconnection.h>
+#include <shv/iotqt/rpc/socket.h>
 
 #include <shv/coreqt/log.h>
 

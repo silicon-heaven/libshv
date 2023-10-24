@@ -1,4 +1,4 @@
-#include "deviceappclioptions.h"
+#include <shv/iotqt/rpc/deviceappclioptions.h>
 
 #include <shv/core/utils/shvfilejournal.h>
 

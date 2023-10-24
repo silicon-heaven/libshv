@@ -1,4 +1,4 @@
-#include "socket.h"
+#include <shv/iotqt/rpc/socket.h>
 
 #include <shv/coreqt/log.h>
 #include <shv/chainpack/irpcconnection.h>

@@ -1,4 +1,4 @@
-#include "aclpassword.h"
+#include <shv/iotqt/acl/aclpassword.h>
 
 #include <shv/chainpack/rpcvalue.h>
 

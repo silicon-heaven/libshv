@@ -1,4 +1,4 @@
-#include "aclroleaccessrules.h"
+#include <shv/iotqt/acl/aclroleaccessrules.h>
 
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/core/log.h>

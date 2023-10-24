@@ -1,4 +1,4 @@
-#include "shvnode.h"
+#include <shv/iotqt/node/shvnode.h>
 
 #include <shv/core/utils/shvfilejournal.h>
 #include <shv/coreqt/log.h>

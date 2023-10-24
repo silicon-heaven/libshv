@@ -1,4 +1,4 @@
-#include "aclrole.h"
+#include <shv/iotqt/acl/aclrole.h>
 
 #include <shv/chainpack/rpcvalue.h>
 
