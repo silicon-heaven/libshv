@@ -1,4 +1,4 @@
-#include "sample.h"
+#include <shv/visu/timeline/sample.h>
 
 namespace shv::visu::timeline {
 

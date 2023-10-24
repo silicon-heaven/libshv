@@ -1,4 +1,4 @@
-#include "groupitem.h"
+#include <shv/visu/svgscene/groupitem.h>
 
 #include <QPainter>
 

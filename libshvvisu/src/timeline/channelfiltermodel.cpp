@@ -1,4 +1,4 @@
-#include "channelfiltermodel.h"
+#include <shv/visu/timeline/channelfiltermodel.h>
 
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/coreqt/log.h>

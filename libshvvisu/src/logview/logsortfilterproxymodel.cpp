@@ -1,4 +1,4 @@
-#include "logsortfilterproxymodel.h"
+#include <shv/visu/logview/logsortfilterproxymodel.h>
 
 #include <shv/core/utils/shvpath.h>
 #include <shv/core/log.h>

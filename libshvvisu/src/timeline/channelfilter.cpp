@@ -1,4 +1,4 @@
-#include "channelfilter.h"
+#include <shv/visu/timeline/channelfilter.h>
 
 #include <shv/core/log.h>
 

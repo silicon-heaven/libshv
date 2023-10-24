@@ -1,5 +1,5 @@
-#include "visucontroller.h"
-#include "types.h"
+#include <shv/visu/svgscene/visucontroller.h>
+#include <shv/visu/svgscene/types.h>
 
 #include <shv/coreqt/log.h>
 

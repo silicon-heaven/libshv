@@ -1,6 +1,6 @@
-#include "channelprobe.h"
-#include "graph.h"
-#include "graphmodel.h"
+#include <shv/visu/timeline/channelprobe.h>
+#include <shv/visu/timeline/graph.h>
+#include <shv/visu/timeline/graphmodel.h>
 
 #include <QDateTime>
 

@@ -601,7 +601,7 @@
   <customwidget>
    <class>shv::visu::timeline::GraphView</class>
    <extends>QScrollArea</extends>
-   <header>src/timeline/graphview.h</header>
+   <header>shv/visu/timeline/graphview.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
