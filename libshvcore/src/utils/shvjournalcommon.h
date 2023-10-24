@@ -1,6 +1,4 @@
-#ifndef SHV_CORE_UTILS_SHVJOURNALCOMMON_H
-#define SHV_CORE_UTILS_SHVJOURNALCOMMON_H
-
+#pragma once
 
 namespace shv {
 namespace core {
@@ -36,5 +34,3 @@ protected:
 } // namespace utils
 } // namespace core
 } // namespace shv
-
-#endif // SHV_CORE_UTILS_SHVJOURNALCOMMON_H

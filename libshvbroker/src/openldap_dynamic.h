@@ -1,3 +1,5 @@
+#pragma once
+
 #include <ldap.h>
 namespace shv::ldap::OpenLDAP {
 	// NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
