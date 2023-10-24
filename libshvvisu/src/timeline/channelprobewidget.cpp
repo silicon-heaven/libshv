@@ -1,7 +1,7 @@
-#include "channelprobewidget.h"
-#include "channelprobe.h"
-
 #include "ui_channelprobewidget.h"
+
+#include <shv/visu/timeline/channelprobewidget.h>
+#include <shv/visu/timeline/channelprobe.h>
 
 #include <shv/core/log.h>
 

@@ -1,5 +1,6 @@
-#include "graphicsview.h"
 #include "log.h"
+
+#include <shv/visu/svgscene/graphicsview.h>
 
 #include <QMouseEvent>
 

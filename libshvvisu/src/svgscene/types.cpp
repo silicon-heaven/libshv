@@ -1,4 +1,4 @@
-#include "types.h"
+#include <shv/visu/svgscene/types.h>
 
 namespace shv::visu::svgscene {
 

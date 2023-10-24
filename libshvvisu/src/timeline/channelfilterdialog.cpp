@@ -1,8 +1,9 @@
-#include "channelfilterdialog.h"
 #include "ui_channelfilterdialog.h"
-
-#include "channelfiltermodel.h"
 #include "channelfiltersortfilterproxymodel.h"
+
+#include <shv/visu/timeline/channelfilterdialog.h>
+
+#include <shv/visu/timeline/channelfiltermodel.h>
 
 #include <shv/core/log.h>
 
