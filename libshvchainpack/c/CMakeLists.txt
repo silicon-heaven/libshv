@@ -4,6 +4,14 @@ add_library(libshvchainpack-c STATIC
 	ccpcp_convert.c
 	ccpon.c
 	)
+target_precompile_headers(libshvchainpack-c
+	PRIVATE
+	cchainpack.h
+	ccpcp.h
+	ccpcp_convert.h
+	ccpon.h
+	pack_double.h
+	)
 target_include_directories(libshvchainpack-c PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 function(add_shv_test test_name)

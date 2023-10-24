@@ -1,3 +1,37 @@
+set(HEADER_FILES
+	src/brokerappnode.h
+	src/subscriptionsnode.h
+	src/rpc/brokertcpserver.h
+	src/rpc/ssl_common.h
+	src/rpc/masterbrokerconnection.h
+	src/rpc/websocketserver.h
+	src/rpc/commonrpcclienthandle.h
+	src/rpc/clientconnectiononbroker.h
+	src/brokeraclnode.h
+	src/brokerrootnode.h
+	src/aclmanagersqlite.h
+	src/clientshvnode.h
+	include/shv/broker/shvbrokerglobal.h
+	include/shv/broker/tunnelsecretlist.h
+	include/shv/broker/currentclientshvnode.h
+	include/shv/broker/aclmanager.h
+	include/shv/broker/azureconfig.h
+	include/shv/broker/brokerapp.h
+	include/shv/broker/appclioptions.h
+	include/shv/broker/clientconnectionnode.h
+	include/shv/broker/groupmapping.h
+	)
+
+if(OpenLDAP_FOUND)
+	set(HEADER_FILES
+		${HEADER_FILES}
+		src/openldap_dynamic.h
+		include/shv/broker/ldap/ldapconfig.h
+		include/shv/broker/ldap/ldap.h
+		)
+endif()
+
+
 qt_add_library(libshvbroker
 	src/aclmanager.cpp
 	src/aclmanagersqlite.cpp
@@ -17,17 +51,12 @@ qt_add_library(libshvbroker
 	src/subscriptionsnode.cpp
 	src/tunnelsecretlist.cpp
 
-	include/shv/broker/shvbrokerglobal.h
-	include/shv/broker/tunnelsecretlist.h
-	include/shv/broker/currentclientshvnode.h
-	include/shv/broker/aclmanager.h
-	include/shv/broker/azureconfig.h
-	include/shv/broker/ldap/ldapconfig.h
-	include/shv/broker/ldap/ldap.h
-	include/shv/broker/brokerapp.h
-	include/shv/broker/appclioptions.h
-	include/shv/broker/clientconnectionnode.h
-	include/shv/broker/groupmapping.h
+	${HEADER_FILES}
+	)
+
+target_precompile_headers(libshvbroker
+	PRIVATE
+	${HEADER_FILES}
 	)
 
 if(WITH_SHV_WEBSOCKETS)

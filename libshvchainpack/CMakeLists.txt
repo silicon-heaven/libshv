@@ -22,6 +22,33 @@ add_library(libshvchainpack-cpp
 	include/shv/chainpack/crc32.h
 	)
 
+target_precompile_headers(libshvchainpack-cpp
+	PRIVATE
+	src/chainpack/cpon.h
+	include/shv/chainpack/irpcconnection.h
+	include/shv/chainpack/accessgrant.h
+	include/shv/chainpack/metatypes.h
+	include/shv/chainpack/rpcvalue.h
+	include/shv/chainpack/cponreader.h
+	include/shv/chainpack/socketrpcdriver.h
+	include/shv/chainpack/shvchainpackglobal.h
+	include/shv/chainpack/chainpackwriter.h
+	include/shv/chainpack/cponwriter.h
+	include/shv/chainpack/datachange.h
+	include/shv/chainpack/crc32.h
+	include/shv/chainpack/abstractstreamreader.h
+	include/shv/chainpack/rpc.h
+	include/shv/chainpack/abstractstreamwriter.h
+	include/shv/chainpack/rpcmessage.h
+	include/shv/chainpack/chainpackreader.h
+	include/shv/chainpack/metamethod.h
+	include/shv/chainpack/chainpack.h
+	include/shv/chainpack/rpcdriver.h
+	include/shv/chainpack/utils.h
+	include/shv/chainpack/tunnelctl.h
+	include/shv/chainpack/exception.h
+	)
+
 if (NOT WIN32)
 	target_sources(libshvchainpack-cpp PRIVATE src/chainpack/socketrpcdriver.cpp)
 endif()

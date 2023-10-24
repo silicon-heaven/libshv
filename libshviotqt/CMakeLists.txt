@@ -1,3 +1,30 @@
+set(HEADER_FILES
+	include/shv/iotqt/acl/aclmountdef.h
+	include/shv/iotqt/acl/acluser.h
+	include/shv/iotqt/acl/aclrole.h
+	include/shv/iotqt/acl/aclpassword.h
+	include/shv/iotqt/acl/aclroleaccessrules.h
+	include/shv/iotqt/node/shvnodetree.h
+	include/shv/iotqt/node/shvnode.h
+	include/shv/iotqt/node/localfsnode.h
+	include/shv/iotqt/node/filenode.h
+	include/shv/iotqt/shviotqtglobal.h
+	include/shv/iotqt/utils/network.h
+	include/shv/iotqt/rpc/deviceconnection.h
+	include/shv/iotqt/rpc/tcpserver.h
+	include/shv/iotqt/rpc/rpcresponsecallback.h
+	include/shv/iotqt/rpc/websocket.h
+	include/shv/iotqt/rpc/socket.h
+	include/shv/iotqt/rpc/clientconnection.h
+	include/shv/iotqt/rpc/serverconnection.h
+	include/shv/iotqt/rpc/serialportsocket.h
+	include/shv/iotqt/rpc/clientappclioptions.h
+	include/shv/iotqt/rpc/deviceappclioptions.h
+	include/shv/iotqt/rpc/rpccall.h
+	include/shv/iotqt/rpc/socketrpcconnection.h
+	include/shv/iotqt/utils.h
+	)
+
 qt_add_library(libshviotqt
 	src/acl/aclmountdef.cpp
 	src/acl/aclpassword.cpp
@@ -19,31 +46,14 @@ qt_add_library(libshviotqt
 	src/rpc/tcpserver.cpp
 	src/utils.cpp
 	src/utils/network.cpp
+	${HEADER_FILES}
+)
 
-	include/shv/iotqt/acl/aclmountdef.h
-	include/shv/iotqt/acl/acluser.h
-	include/shv/iotqt/acl/aclrole.h
-	include/shv/iotqt/acl/aclpassword.h
-	include/shv/iotqt/acl/aclroleaccessrules.h
-	include/shv/iotqt/node/shvnodetree.h
-	include/shv/iotqt/node/shvnode.h
-	include/shv/iotqt/node/localfsnode.h
-	include/shv/iotqt/node/filenode.h
-	include/shv/iotqt/utils/network.h
-	include/shv/iotqt/rpc/deviceconnection.h
-	include/shv/iotqt/rpc/tcpserver.h
-	include/shv/iotqt/rpc/rpcresponsecallback.h
-	include/shv/iotqt/rpc/websocket.h
-	include/shv/iotqt/rpc/socket.h
-	include/shv/iotqt/rpc/clientconnection.h
-	include/shv/iotqt/rpc/serverconnection.h
-	include/shv/iotqt/rpc/serialportsocket.h
-	include/shv/iotqt/rpc/clientappclioptions.h
-	include/shv/iotqt/rpc/deviceappclioptions.h
-	include/shv/iotqt/rpc/rpccall.h
-	include/shv/iotqt/rpc/socketrpcconnection.h
-	include/shv/iotqt/utils.h
+target_precompile_headers(libshviotqt
+	PRIVATE
+	${HEADER_FILES}
 	)
+
 target_link_libraries(libshviotqt PUBLIC Qt::Network libshvcoreqt)
 
 if(NOT EMSCRIPTEN)
@@ -65,11 +75,22 @@ if(WITH_SHV_WEBSOCKETS)
 endif()
 
 function(add_shviotqt_serialportsocket_test test_name)
+	set(HEADER_FILES
+		tests/serialportsocket/mockrpcconnection.h
+		tests/serialportsocket/mockserialport.h
+		)
 	add_executable(test_iotqt_${test_name}
 		tests/serialportsocket/test_${test_name}.cpp
 		tests/serialportsocket/mockserialport.cpp
 		tests/serialportsocket/mockrpcconnection.cpp
+		${HEADER_FILES}
 	)
+
+	target_precompile_headers(test_iotqt_${test_name}
+		PRIVATE
+		${HEADER_FILES}
+		)
+
 	#target_compile_definitions(test_iotqt_${test_name} PRIVATE DEF_FILES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests/files")
 	target_link_libraries(test_iotqt_${test_name} libshviotqt doctest::doctest)
 	add_test(NAME test_iotqt_${test_name} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:test_iotqt_${test_name}>)

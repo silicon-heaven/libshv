@@ -1,12 +1,4 @@
-qt_add_library(libshvcoreqt
-	src/data/valuechange.cpp
-	src/exception.cpp
-	src/log.cpp
-	src/utils.cpp
-	src/rpc.cpp
-	src/utils/clioptions.cpp
-	src/utils/versioninfo.cpp
-
+set(HEADER_FILES
 	include/shv/coreqt/shvcoreqtglobal.h
 	include/shv/coreqt/utils/versioninfo.h
 	include/shv/coreqt/utils/clioptions.h
@@ -16,6 +8,23 @@ qt_add_library(libshvcoreqt
 	include/shv/coreqt/utils.h
 	include/shv/coreqt/exception.h
 	)
+
+qt_add_library(libshvcoreqt
+	src/data/valuechange.cpp
+	src/exception.cpp
+	src/log.cpp
+	src/utils.cpp
+	src/rpc.cpp
+	src/utils/clioptions.cpp
+	src/utils/versioninfo.cpp
+	${HEADER_FILES}
+	)
+
+target_precompile_headers(libshvcoreqt
+	PRIVATE
+	${HEADER_FILES}
+	)
+
 target_link_libraries(libshvcoreqt PUBLIC Qt::Core libshvcore)
 target_include_directories(libshvcoreqt PUBLIC include)
 target_compile_definitions(libshvcoreqt PRIVATE SHVCOREQT_BUILD_DLL)

@@ -57,6 +57,14 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU
 	set(CMAKE_CXX_FLAGS "${SHV_WARNING_FLAGS_CXX} ${CMAKE_CXX_FLAGS}")
 endif()
 
+if(CMAKE_CXX_COMPILER_LAUNCHER STREQUAL "ccache" AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+	# These flags are needed for ccache with Clang because of precompiled headers.
+	set(CMAKE_C_COMPILER_LAUNCHER env CCACHE_SLOPPINESS=pch_defines,time_macros ccache)
+	set(CMAKE_CXX_COMPILER_LAUNCHER env CCACHE_SLOPPINESS=pch_defines,time_macros ccache)
+	set(CMAKE_C_FLAGS "-Xclang -fno-pch-timestamp ${CMAKE_C_FLAGS}")
+	set(CMAKE_CXX_FLAGS "-Xclang -fno-pch-timestamp ${CMAKE_CXX_FLAGS}")
+endif()
+
 if(BUILD_TESTING)
 	find_package(doctest QUIET)
 	if(NOT doctest_FOUND)
