@@ -1,5 +1,5 @@
-#include "utils.h"
-#include "rpc.h"
+#include <shv/coreqt/utils.h>
+#include <shv/coreqt/rpc.h>
 
 #include <shv/chainpack/rpcvalue.h>
 
