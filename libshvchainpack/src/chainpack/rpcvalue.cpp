@@ -165,13 +165,27 @@ protected:
 	RpcValue::MetaData *m_metaData = nullptr;
 };
 
+namespace {
+auto convert_to_int(const double d)
+{
+	if (std::numeric_limits<RpcValue::Int>::max() <= d) {
+		return std::numeric_limits<RpcValue::Int>::max();
+	}
+	if (std::numeric_limits<RpcValue::Int>::min() >= d) {
+		return std::numeric_limits<RpcValue::Int>::min();
+	}
+
+	return static_cast<RpcValue::Int>(d);
+}
+}
+
 class ChainPackDouble final : public ValueData<RpcValue::Type::Double, double>
 {
 	ChainPackDouble* create() override { return new ChainPackDouble(0); }
 	std::string toStdString() const override { return std::to_string(m_value); }
 	double toDouble() const override { return m_value; }
 	bool toBool() const override { return !(m_value == 0.); }
-	RpcValue::Int toInt() const override { return static_cast<RpcValue::Int>(m_value); }
+	RpcValue::Int toInt() const override { return convert_to_int(m_value); }
 	RpcValue::UInt toUInt() const override { return static_cast<RpcValue::UInt>(m_value); }
 	int64_t toInt64() const override { return static_cast<int64_t>(m_value); }
 	uint64_t toUInt64() const override { return static_cast<uint64_t>(m_value); }
@@ -189,7 +203,7 @@ class ChainPackDecimal final : public ValueData<RpcValue::Type::Decimal, RpcValu
 
 	double toDouble() const override { return m_value.toDouble(); }
 	bool toBool() const override { return !(m_value.mantisa() == 0); }
-	RpcValue::Int toInt() const override { return static_cast<RpcValue::Int>(m_value.toDouble()); }
+	RpcValue::Int toInt() const override { return convert_to_int(m_value.toDouble()); }
 	RpcValue::UInt toUInt() const override { return static_cast<RpcValue::UInt>(m_value.toDouble()); }
 	int64_t toInt64() const override { return static_cast<int64_t>(m_value.toDouble()); }
 	uint64_t toUInt64() const override { return static_cast<uint64_t>(m_value.toDouble()); }
@@ -1506,12 +1520,12 @@ void RpcValue::Decimal::setDouble(double d)
 double RpcValue::Decimal::toDouble() const
 {
 	auto ret = static_cast<double>(mantisa());
-		int exp = exponent();
-		if(exp > 0)
-			for(; exp > 0; exp--) ret *= Base;
-		else
-			for(; exp < 0; exp++) ret /= Base;
-		return ret;;
+	int exp = exponent();
+	if(exp > 0)
+		for(; exp > 0; exp--) ret *= Base;
+	else
+		for(; exp < 0; exp++) ret /= Base;
+	return ret;
 }
 
 std::string RpcValue::Decimal::toString() const

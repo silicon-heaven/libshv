@@ -484,4 +484,10 @@ DOCTEST_TEST_CASE("ChainPack")
 		REQUIRE(RpcValue::typeForName("Int bla bla", 4) == RpcValue::Type::Invalid);
 	}
 
+	DOCTEST_SUBCASE("fuzzing tests")
+	{
+		std::array<uint8_t, 15> input{0x8b, 0x8b, 0x0, 0x8d, 0xf6, 0xff, 0xff, 0xff, 0xff, 0x0, 0x8b, 0x0, 0x8e, 0x0, 0x0};
+		REQUIRE_THROWS_WITH_AS(shv::chainpack::RpcValue::fromChainPack({reinterpret_cast<const char*>(input.data()), input.size()}), "ChainPack Parse error:  error code: 4 at pos: 15 near to:\n", ParseException);
+	}
+
 }
