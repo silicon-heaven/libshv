@@ -1,5 +1,5 @@
-#include "socketrpcconnection.h"
-#include "socket.h"
+#include <shv/iotqt/rpc/socketrpcconnection.h>
+#include <shv/iotqt/rpc/socket.h>
 
 #include <shv/coreqt/rpc.h>
 #include <shv/coreqt/log.h>

@@ -1,4 +1,4 @@
-#include "serialportsocket.h"
+#include <shv/iotqt/rpc/serialportsocket.h>
 
 #include <shv/chainpack/utils.h>
 

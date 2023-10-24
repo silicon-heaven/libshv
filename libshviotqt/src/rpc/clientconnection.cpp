@@ -1,10 +1,11 @@
-#include "clientconnection.h"
+#include <shv/iotqt/rpc/clientconnection.h>
 
-#include "clientappclioptions.h"
-#include "socket.h"
-#include "socketrpcconnection.h"
-#include "../utils.h"
-#include "websocket.h"
+#include <shv/iotqt/rpc/clientappclioptions.h>
+#include <shv/iotqt/rpc/socket.h>
+#include <shv/iotqt/rpc/socketrpcconnection.h>
+#include <shv/iotqt/rpc/websocket.h>
+
+#include <shv/iotqt/utils.h>
 
 #include <shv/coreqt/log.h>
 
@@ -23,7 +24,7 @@
 #include <QCryptographicHash>
 #include <QThread>
 #ifdef QT_SERIALPORT_LIB
-#include "serialportsocket.h"
+#include <shv/iotqt/rpc/serialportsocket.h>
 #include <QSerialPort>
 #endif
 

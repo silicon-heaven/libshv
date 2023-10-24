@@ -1,4 +1,4 @@
-#include "websocket.h"
+#include <shv/iotqt/rpc/websocket.h>
 
 #include <shv/coreqt/log.h>
 

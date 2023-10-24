@@ -1,5 +1,5 @@
-#include "serverconnection.h"
-#include "tcpserver.h"
+#include <shv/iotqt/rpc/serverconnection.h>
+#include <shv/iotqt/rpc/tcpserver.h>
 
 #include <shv/coreqt/log.h>
 
