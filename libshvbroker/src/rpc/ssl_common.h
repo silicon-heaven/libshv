@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../appclioptions.h"
+#include <shv/broker/appclioptions.h>
 
 #include <QSslKey>
 #include <QSslCertificate>

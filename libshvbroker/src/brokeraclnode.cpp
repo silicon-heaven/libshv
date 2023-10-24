@@ -1,5 +1,5 @@
 #include "brokeraclnode.h"
-#include "brokerapp.h"
+#include <shv/broker/brokerapp.h>
 
 #ifdef WITH_SHV_LDAP
 #include <shv/broker/ldap/ldap.h>
