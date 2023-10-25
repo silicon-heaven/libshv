@@ -93,8 +93,12 @@ public:
 
 		QString toJson() const;
 		static VisualSettings fromJson(const QString &json);
+		void setIsValid(bool is_valid);
 		bool isValid() const;
 		QVector<Channel> channels;
+
+	protected:
+		bool m_isValid = false;
 	};
 
 	Graph(QObject *parent = nullptr);
@@ -111,8 +115,8 @@ public:
 #endif
 
 	void setSettingsUserName(const QString &user);
-
-	void reset();
+	
+	void resetVisualSettingsAndChannelFilter();
 	enum class SortChannels { No = 0, Yes };
 	void createChannelsFromModel(SortChannels sorted = SortChannels::Yes);
 	void resetChannelsRanges();
@@ -225,7 +229,7 @@ public:
 	static QString rectToString(const QRect &r);
 
 	VisualSettings visualSettings() const;
-	void setVisualSettings(const VisualSettings &settings);
+	void setVisualSettingsAndChannelFilter(const VisualSettings &settings);
 	void resizeChannelHeight(qsizetype ix, int delta_px);
 	void resizeVerticalHeaderWidth(int delta_px);
 

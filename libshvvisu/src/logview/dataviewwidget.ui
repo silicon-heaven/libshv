@@ -34,7 +34,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QComboBox" name="cbDataViews">
+    <widget class="QComboBox" name="cbDataView">
      <property name="editable">
       <bool>false</bool>
      </property>

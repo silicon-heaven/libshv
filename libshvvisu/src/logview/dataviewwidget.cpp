@@ -19,7 +19,7 @@ DataViewWidget::DataViewWidget(QWidget *parent) :
 	ui->setupUi(this);
 
 	connect(ui->pbShowChannelFilterDialog, &QToolButton::clicked, this, &DataViewWidget::onShowChannelFilterClicked);
-	connect(ui->cbDataViews, &QComboBox::currentIndexChanged, this, &DataViewWidget::onDataViewChanged);
+	connect(ui->cbDataView, &QComboBox::currentIndexChanged, this, &DataViewWidget::onDataViewChanged);
 }
 
 DataViewWidget::~DataViewWidget()
@@ -32,25 +32,27 @@ void DataViewWidget::init(const QString &site_path, timeline::Graph *graph)
 	m_graph = graph;
 	m_sitePath = site_path;
 
-	disableOnDataViewChangedAction();
-	reloadDataViewsCombobox();
-	enableOnDataViewChangedAction();
+	reloadDataViewsComboboxAndSetlectItem();
 }
 
-void DataViewWidget::reloadDataViewsCombobox()
+void DataViewWidget::reloadDataViewsComboboxAndSetlectItem(const QString &text)
 {
-	ui->cbDataViews->clear();
-	ui->cbDataViews->addItem(tr("All channels"));
+	ui->cbDataView->clear();
+	ui->cbDataView->addItem(tr("All channels"));
+	ui->cbDataView->addItems(m_graph->savedVisualSettingsNames(m_sitePath));
 
-	for (const QString &view_name : m_graph->savedVisualSettingsNames(m_sitePath)) {
-		ui->cbDataViews->addItem(view_name);
+	if (!text.isEmpty()) {
+		ui->cbDataView->setCurrentText(text);
+	}
+	else {
+		ui->cbDataView->setCurrentIndex(INVALID_FILTER_INDEX);
 	}
 }
 
 void DataViewWidget::onShowChannelFilterClicked()
 {
 	tl::ChannelFilterDialog *channel_filter_dialog = new tl::ChannelFilterDialog(this);
-	channel_filter_dialog->init(m_sitePath, m_graph, ui->cbDataViews->currentText());
+	channel_filter_dialog->init(m_sitePath, m_graph, ui->cbDataView->currentText());
 
 	if (channel_filter_dialog->exec() == QDialog::Accepted) {
 		shv::visu::timeline::ChannelFilter filter(channel_filter_dialog->selectedChannels());
@@ -60,18 +62,18 @@ void DataViewWidget::onShowChannelFilterClicked()
 	channel_filter_dialog->deleteLater();
 
 	disableOnDataViewChangedAction();
-	reloadDataViewsCombobox();
-	ui->cbDataViews->setCurrentText(channel_filter_dialog->selectedFilterName());
+	reloadDataViewsComboboxAndSetlectItem(channel_filter_dialog->selectedFilterName());
 	enableOnDataViewChangedAction();
 }
 
 void DataViewWidget::onDataViewChanged(int index)
 {
-	if (m_onDataViewChangedActionEnabled) {
-		if (index > INVALID_FILTER_INDEX)
-			m_graph->loadVisualSettings(m_sitePath, ui->cbDataViews->currentText());
-		else {
-			m_graph->setChannelFilter(timeline::ChannelFilter());
+	if (m_onDataViewChangedActionEnabled && (index >= 0)) { //ignore event for index = -1, currentIndexChanged(-1) is emmited from clear() method
+		if (index == INVALID_FILTER_INDEX) {
+			m_graph->resetVisualSettingsAndChannelFilter();
+		}
+		else{
+			m_graph->loadVisualSettings(m_sitePath, ui->cbDataView->currentText());
 		}
 	}
 }

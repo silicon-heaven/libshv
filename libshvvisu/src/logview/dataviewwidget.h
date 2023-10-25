@@ -24,7 +24,7 @@ public:
 private:
 	void enableOnDataViewChangedAction() {m_onDataViewChangedActionEnabled = true;}
 	void disableOnDataViewChangedAction() {m_onDataViewChangedActionEnabled = false;}
-	void reloadDataViewsCombobox();
+	void reloadDataViewsComboboxAndSetlectItem(const QString &text = {});
 
 	void onDataViewChanged(int index);
 	void onShowChannelFilterClicked();

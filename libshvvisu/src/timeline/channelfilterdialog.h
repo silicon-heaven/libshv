@@ -33,12 +33,9 @@ public:
 	Q_SIGNAL void selectedFilterNameChanged(const QString &filter_name);
 
 private:
-	void enableOnDataViewChangedAction() {m_onDataViewChangedActionEnabled = true;}
-	void disableOnDataViewChangedAction() {m_onDataViewChangedActionEnabled = false;}
-
 	void applyTextFilter();
 
-	void reloadDataViewsComboboxAndSetlect(const QString &text = {});
+	void reloadDataViewsComboboxAndSetlectItem(const QString &text = {});
 
 	void saveView();
 	void saveViewAs();
@@ -51,9 +48,9 @@ private:
 
 	void setVisibleItemsCheckState(Qt::CheckState state);
 	void setVisibleItemsCheckState_helper(const QModelIndex &mi, Qt::CheckState state);
-	void applyPermittedChannelsFromGraph();
+	void setPermittedChannelsFromGraph();
 
-	void onDataViewCurrentIndexChanged(int index);
+	void onDataViewChanged(int index);
 	void onCustomContextMenuRequested(QPoint pos);
 
 	void onPbCheckItemsClicked();
@@ -75,9 +72,6 @@ private:
 	QAction *m_deleteViewAction = nullptr;
 	QAction *m_exportViewAction = nullptr;
 	QAction *m_importViewAction = nullptr;
-
-	bool m_onDataViewChangedActionEnabled = true;
-
 };
 
 }

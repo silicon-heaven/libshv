@@ -40,6 +40,11 @@ bool ChannelFilter::isPathPermitted(const QString &path) const
 	return m_permittedPaths.contains(path);
 }
 
+void ChannelFilter::setValid(bool is_valid)
+{
+	m_isValid = is_valid;
+}
+
 bool ChannelFilter::isValid() const
 {
 	return m_isValid;

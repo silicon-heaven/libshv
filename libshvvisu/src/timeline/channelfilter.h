@@ -22,6 +22,8 @@ public:
 	void setPermittedPaths(const QSet<QString> &paths);
 
 	bool isPathPermitted(const QString &path) const;
+
+	void setValid(bool is_valid);
 	bool isValid() const;
 
 private:

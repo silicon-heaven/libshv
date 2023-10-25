@@ -103,10 +103,9 @@ QTimeZone Graph::timeZone() const
 }
 #endif
 
-void Graph::reset()
+void Graph::resetVisualSettingsAndChannelFilter()
 {
-	createChannelsFromModel();
-	setChannelFilter(ChannelFilter());
+	setVisualSettingsAndChannelFilter(VisualSettings());
 }
 
 void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sorted)
@@ -1168,7 +1167,7 @@ QVector<int> Graph::visibleChannels() const
 	return visible_channels;
 }
 
-void Graph::setVisualSettings(const VisualSettings &settings)
+void Graph::setVisualSettingsAndChannelFilter(const VisualSettings &settings)
 {
 	if (settings.isValid()) {
 		QSet<QString> f;
@@ -1186,12 +1185,18 @@ void Graph::setVisualSettings(const VisualSettings &settings)
 		}
 
 		m_channelFilter.setPermittedPaths(f);
-		Q_EMIT layoutChanged();
-		Q_EMIT channelFilterChanged();
+		m_channelFilter.setValid(true);
 	}
 	else {
-		reset();
+		for (GraphChannel *ch: m_channels) {
+			ch->setStyle(Style());
+		}
+
+		m_channelFilter = ChannelFilter();
 	}
+
+	emit layoutChanged();
+	emit channelFilterChanged();
 }
 
 void Graph::resizeChannelHeight(qsizetype ix, int delta_px)
@@ -1207,7 +1212,7 @@ void Graph::resizeChannelHeight(qsizetype ix, int delta_px)
 			ch_style.setHeightMax(h);
 			ch_style.setHeightMin(h);
 			ch->setStyle(ch_style);
-			Q_EMIT layoutChanged();
+			emit layoutChanged();
 		}
 	}
 }
@@ -1218,19 +1223,20 @@ void Graph::resizeVerticalHeaderWidth(int delta_px)
 
 	if (w > MIN_VERTICAL_HEADER_WIDTH && w < MAX_VERTICAL_HEADER_WIDTH) {
 		m_style.setVerticalHeaderWidth(w);
-		Q_EMIT layoutChanged();
+		emit layoutChanged();
 	}
 }
 
 Graph::VisualSettings Graph::visualSettings() const
 {
-	VisualSettings view;
+	VisualSettings visual_settings;
 	for (int ix : visibleChannels()) {
 		const GraphChannel *channel = channelAt(ix);
-		view.channels << VisualSettings::Channel{ channel->shvPath(), channel->style() };
+		visual_settings.channels << VisualSettings::Channel{ channel->shvPath(), channel->style() };
+		visual_settings.setIsValid(true);
 	}
 
-	return view;
+	return visual_settings;
 }
 
 int Graph::maximizedChannelIndex() const
@@ -2286,7 +2292,9 @@ void Graph::loadVisualSettings(const QString &settings_id, const QString &name)
 	settings.beginGroup(SITES_KEY);
 	settings.beginGroup(settings_id);
 	settings.beginGroup(VIEWS_KEY);
-	setVisualSettings(VisualSettings::fromJson(settings.value(name).toString()));
+	VisualSettings vs = VisualSettings::fromJson(settings.value(name).toString());
+	vs.setIsValid(true); //force set valid, because settings without channels are also valid
+	setVisualSettingsAndChannelFilter(vs);
 }
 
 void Graph::deleteVisualSettings(const QString &settings_id, const QString &name) const
@@ -2343,17 +2351,25 @@ Graph::VisualSettings Graph::VisualSettings::fromJson(const QString &json)
 											 item["style"].toVariant().toMap()
 										 });
 			}
+
+			settings.setIsValid(!settings.channels.isEmpty());
 		}
 		else {
 			shvWarning() << "Error on parsing user settings" << parse_error.errorString();
 		}
 	}
+
 	return settings;
+}
+
+void Graph::VisualSettings::setIsValid(bool is_valid)
+{
+	m_isValid = is_valid;
 }
 
 bool Graph::VisualSettings::isValid() const
 {
-	return channels.count();
+	return m_isValid;
 }
 
 Graph::XAxis::XAxis() = default;
