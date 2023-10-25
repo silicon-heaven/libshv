@@ -1188,9 +1188,17 @@ void Graph::setVisualSettingsAndChannelFilter(const VisualSettings &settings)
 		m_channelFilter.setValid(true);
 	}
 	else {
-		for (GraphChannel *ch: m_channels) {
-			ch->setStyle(Style());
+		std::sort(m_channels.begin(), m_channels.end(), [](const GraphChannel *a, const GraphChannel *b) {
+			return (QString::compare(a->shvPath(), b->shvPath()) < 0);
+		});
+
+		for (GraphChannel *ch : m_channels) {
+			GraphChannel::Style s = ch->style();
+			s.setHeightMin(GraphChannel::Style::DEFAULT_HEIGHT_MIN);
+			ch->setStyle(s);
 		}
+
+		resetChannelsRanges();
 
 		m_channelFilter = ChannelFilter();
 	}
