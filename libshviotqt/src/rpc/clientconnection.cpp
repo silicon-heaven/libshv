@@ -32,6 +32,7 @@
 #endif
 
 #include <fstream>
+#include <regex>
 
 namespace cp = shv::chainpack;
 using namespace std;
@@ -446,10 +447,17 @@ chainpack::RpcValue ClientConnection::createLoginParams(const chainpack::RpcValu
 	if(loginType() == chainpack::IRpcConnection::LoginType::Sha1) {
 		std::string server_nonce = server_hello.asMap().value("nonce").toString();
 		std::string pwd = password();
-		if(pwd.size() == 40)
-			shvWarning() << "Using shadowed password directly by client is unsecure and it will be disabled in future SHV versions";
-		else
-			pwd = utils::sha1Hex(pwd); /// SHA1 password must be 40 chars long, it is considered to be plain if shorter
+		do {
+			if(pwd.size() == 40) {
+				// sha1passwd
+				std::regex re(R"([0-9a-f]{40})");
+				if(std::regex_match(pwd, re)) {
+					/// SHA1 password
+					break;
+				}
+			}
+			pwd = utils::sha1Hex(pwd);
+		} while(false);
 		std::string pn = server_nonce + pwd;
 		QCryptographicHash hash(QCryptographicHash::Algorithm::Sha1);
 #if QT_VERSION_MAJOR >= 6 && QT_VERSION_MINOR >= 3
