@@ -41,6 +41,7 @@
 #include <shv/chainpack/tunnelctl.h>
 #include <shv/chainpack/accessgrant.h>
 
+#include <QDir>
 #include <QFile>
 #include <QSocketNotifier>
 #include <QSqlDatabase>
@@ -862,6 +863,10 @@ void BrokerApp::initDbConfigSqlConnection()
 		if(fn[0] != '/')
 			fn = opts->effectiveConfigDir() + '/' + fn;
 		QString qfn = QString::fromStdString(fn);
+		if (!QFile(qfn).exists()) {
+			auto last_slash = qfn.lastIndexOf('/');
+			QDir("/").mkpath(qfn.mid(0, last_slash));
+		}
 		shvInfo() << "Openning SQL config database:" << fn;
 		QSqlDatabase db = QSqlDatabase::addDatabase(QString::fromStdString(cliOptions()->sqlConfigDriver()), SQL_CONFIG_CONN_NAME);
 		db.setDatabaseName(qfn);
