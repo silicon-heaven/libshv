@@ -25,6 +25,8 @@ jobs:
           lint_program_with_args: clang-tidy-15 --quiet --warnings-as-errors=*
 
   clazy:
+    # FIXME: https://github.com/actions/runner-images/issues/8659
+    if: false
     name: clazy / Ubuntu 22.04
     runs-on: ubuntu-22.04
     env:
