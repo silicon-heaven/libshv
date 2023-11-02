@@ -139,7 +139,10 @@ RpcValue MetaMethod::toIMap() const
 MetaMethod MetaMethod::fromRpcValue(const RpcValue &rv)
 {
 	MetaMethod ret;
-	if(rv.isList()) {
+	if(rv.isString()) {
+		ret.m_name = rv.asString();
+	}
+	else if(rv.isList()) {
 		const auto &lst = rv.asList();
 		ret.m_name = lst.value(0).asString();
 		ret.m_signature = static_cast<Signature>(lst.value(1).toUInt());
