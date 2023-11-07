@@ -1,4 +1,4 @@
-#include "exception.h"
+#include <shv/coreqt/exception.h>
 
 namespace shv::coreqt {
 

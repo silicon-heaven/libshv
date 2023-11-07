@@ -1,5 +1,5 @@
-#include "chainpackreader.h"
-#include "utils.h"
+#include <shv/chainpack/chainpackreader.h>
+#include <shv/chainpack/utils.h>
 #include "../../c/cchainpack.h"
 
 #include <iostream>

@@ -1,4 +1,4 @@
-#include "accessgrant.h"
+#include <shv/chainpack/accessgrant.h>
 
 #include <necrolog.h>
 

@@ -1,8 +1,8 @@
-#include "shvtypeinfo.h"
-#include "shvpath.h"
-#include "../string.h"
-#include "../utils.h"
-#include "../log.h"
+#include <shv/core/utils/shvtypeinfo.h>
+#include <shv/core/utils/shvpath.h>
+#include <shv/core/string.h>
+#include <shv/core/utils.h>
+#include <shv/core/log.h>
 
 #include<shv/chainpack/metamethod.h>
 

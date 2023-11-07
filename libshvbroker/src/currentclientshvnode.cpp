@@ -1,6 +1,6 @@
-#include "currentclientshvnode.h"
-#include "brokerapp.h"
 #include "rpc/clientconnectiononbroker.h"
+#include <shv/broker/currentclientshvnode.h>
+#include <shv/broker/brokerapp.h>
 
 #include <shv/core/utils/shvurl.h>
 

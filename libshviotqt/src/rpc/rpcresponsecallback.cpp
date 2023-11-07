@@ -1,5 +1,5 @@
-#include "rpcresponsecallback.h"
-#include "clientconnection.h"
+#include <shv/iotqt/rpc/rpcresponsecallback.h>
+#include <shv/iotqt/rpc/clientconnection.h>
 
 #include <shv/chainpack/rpcmessage.h>
 #include <shv/coreqt/log.h>

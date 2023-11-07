@@ -1,5 +1,5 @@
-#include "deviceconnection.h"
-#include "deviceappclioptions.h"
+#include <shv/iotqt/rpc/deviceconnection.h>
+#include <shv/iotqt/rpc/deviceappclioptions.h>
 
 #include <shv/core/log.h>
 #include <shv/core/string.h>

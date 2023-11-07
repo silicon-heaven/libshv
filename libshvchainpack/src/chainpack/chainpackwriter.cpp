@@ -1,5 +1,5 @@
-#include "chainpackwriter.h"
-#include "exception.h"
+#include <shv/chainpack/chainpackwriter.h>
+#include <shv/chainpack/exception.h>
 
 #include "../../c/cchainpack.h"
 

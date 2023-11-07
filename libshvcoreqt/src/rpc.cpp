@@ -1,4 +1,4 @@
-#include "rpc.h"
+#include <shv/coreqt/rpc.h>
 
 #include <shv/coreqt/log.h>
 

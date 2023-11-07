@@ -1,6 +1,6 @@
-#include "channelprobe.h"
-#include "graphwidget.h"
-#include "graphmodel.h"
+#include <shv/visu/timeline/channelprobe.h>
+#include <shv/visu/timeline/graphwidget.h>
+#include <shv/visu/timeline/graphmodel.h>
 
 #include <shv/core/exception.h>
 #include <shv/coreqt/log.h>

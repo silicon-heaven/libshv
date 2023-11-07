@@ -1,4 +1,4 @@
-#include "log.h"
+#include <shv/coreqt/log.h>
 
 NecroLog operator<<(NecroLog log, const QString &s)
 {

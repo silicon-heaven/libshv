@@ -1,7 +1,8 @@
-#include "graphwidget.h"
-#include "graphmodel.h"
-#include "graphview.h"
-#include "channelprobewidget.h"
+
+#include <shv/visu/timeline/graphview.h>
+#include <shv/visu/timeline/graphwidget.h>
+#include <shv/visu/timeline/graphmodel.h>
+#include <shv/visu/timeline/channelprobewidget.h>
 
 
 #include <shv/core/exception.h>

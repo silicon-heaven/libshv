@@ -1,4 +1,4 @@
-#include "fulltextfilter.h"
+#include <shv/visu/timeline/fulltextfilter.h>
 
 #include <QRegularExpression>
 

@@ -1,4 +1,4 @@
-#include "logmodel.h"
+#include <shv/visu/logview/logmodel.h>
 
 #include <shv/core/utils/shvfilejournal.h>
 #include <shv/core/log.h>

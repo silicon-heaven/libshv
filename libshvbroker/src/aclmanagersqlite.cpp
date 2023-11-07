@@ -1,5 +1,5 @@
 #include "aclmanagersqlite.h"
-#include "brokerapp.h"
+#include <shv/broker/brokerapp.h>
 
 #include <shv/core/exception.h>
 #include <shv/coreqt/log.h>

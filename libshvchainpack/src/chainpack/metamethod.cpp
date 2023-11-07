@@ -1,4 +1,4 @@
-#include "metamethod.h"
+#include <shv/chainpack/metamethod.h>
 
 #include <array>
 

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "channelprobe.h"
-#include "graphbuttonbox.h"
-#include "sample.h"
+#include <shv/visu/timeline/channelprobe.h>
+#include <shv/visu/timeline/graphbuttonbox.h>
+#include <shv/visu/timeline/sample.h>
 
-#include "../shvvisuglobal.h"
+#include <shv/visu/shvvisuglobal.h>
 
 #include <shv/coreqt/utils.h>
 

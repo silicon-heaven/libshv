@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../shvvisuglobal.h"
+#include <shv/visu/shvvisuglobal.h>
 
-#include "logtablemodelbase.h"
+#include <shv/visu/logtablemodelbase.h>
 
 #include <QTableView>
 

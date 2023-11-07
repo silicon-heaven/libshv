@@ -6,6 +6,15 @@ qt_add_library(libshvcoreqt
 	src/rpc.cpp
 	src/utils/clioptions.cpp
 	src/utils/versioninfo.cpp
+
+	include/shv/coreqt/shvcoreqtglobal.h
+	include/shv/coreqt/utils/versioninfo.h
+	include/shv/coreqt/utils/clioptions.h
+	include/shv/coreqt/rpc.h
+	include/shv/coreqt/log.h
+	include/shv/coreqt/data/valuechange.h
+	include/shv/coreqt/utils.h
+	include/shv/coreqt/exception.h
 	)
 target_link_libraries(libshvcoreqt PUBLIC Qt::Core libshvcore)
 target_include_directories(libshvcoreqt PUBLIC include)

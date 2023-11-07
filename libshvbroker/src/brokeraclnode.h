@@ -2,7 +2,7 @@
 #pragma once
 
 #ifdef WITH_SHV_LDAP
-#include "ldapconfig.h"
+#include <shv/broker/ldap/ldapconfig.h>
 #endif
 
 #include <shv/iotqt/node/shvnode.h>

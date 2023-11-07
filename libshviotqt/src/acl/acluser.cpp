@@ -1,4 +1,4 @@
-#include "acluser.h"
+#include <shv/iotqt/acl/acluser.h>
 
 #include <shv/chainpack/rpcvalue.h>
 

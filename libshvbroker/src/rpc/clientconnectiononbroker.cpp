@@ -1,7 +1,7 @@
 #include "clientconnectiononbroker.h"
 #include "masterbrokerconnection.h"
 
-#include "../brokerapp.h"
+#include <shv/broker/brokerapp.h>
 
 #include <shv/chainpack/cponwriter.h>
 #include <shv/chainpack/accessgrant.h>

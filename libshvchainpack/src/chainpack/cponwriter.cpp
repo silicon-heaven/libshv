@@ -1,5 +1,5 @@
-#include "cponwriter.h"
-#include "exception.h"
+#include <shv/chainpack/cponwriter.h>
+#include <shv/chainpack/exception.h>
 
 #include "../../c/ccpon.h"
 

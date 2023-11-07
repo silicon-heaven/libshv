@@ -1,4 +1,4 @@
-#include "chainpack.h"
+#include <shv/chainpack/chainpack.h>
 
 namespace shv::chainpack {
 

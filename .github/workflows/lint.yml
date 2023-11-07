@@ -1,6 +1,10 @@
 # vim: sw=2
 name: Lint
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [ "master" ]
@@ -12,8 +16,8 @@ jobs:
     name: clang-tidy / Ubuntu 22.04
     runs-on: ubuntu-22.04
     env:
-      CC: clang
-      CXX: clang++
+      CC: clang-15
+      CXX: clang++-15
     steps:
       - uses: actions/checkout@v3
         with:
@@ -22,14 +26,16 @@ jobs:
       - name: Run clang-tidy
         uses: ./.github/actions/run-linter
         with:
-          lint_program_with_args: clang-tidy --quiet --warnings-as-errors=*
+          lint_program_with_args: clang-tidy-15 --quiet --warnings-as-errors=*
 
   clazy:
+    # FIXME: https://github.com/actions/runner-images/issues/8659
+    if: false
     name: clazy / Ubuntu 22.04
     runs-on: ubuntu-22.04
     env:
-      CC: clang
-      CXX: clang++
+      CC: clang-15
+      CXX: clang++-15
     steps:
       - uses: actions/checkout@v3
         with:

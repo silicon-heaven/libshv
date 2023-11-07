@@ -1,5 +1,5 @@
 #pragma once
-#include "groupmapping.h"
+#include <shv/broker/groupmapping.h>
 #include <optional>
 #include <string>
 #include <vector>

@@ -1,6 +1,6 @@
-#include "valuechange.h"
+#include <shv/coreqt/data/valuechange.h>
 
-#include "../exception.h"
+#include <shv/coreqt/exception.h>
 
 namespace shv::coreqt::data {
 ValueChange::ValueX::ValueX(TimeStamp value)
