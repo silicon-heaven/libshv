@@ -290,11 +290,11 @@ size_t RpcDriver::decodeMetaData(RpcValue::MetaData &meta_data, Rpc::ProtocolTyp
 			nError() << "JSON message cannot be translated to ChainPack";
 		}
 		else {
-			const RpcValue::Map &map = msg.toMap();
+			const RpcValue::Map &map = msg.asMap();
 			int id = map.value(Rpc::JSONRPC_REQUEST_ID).toInt();
 			int caller_id = map.value(Rpc::JSONRPC_CALLER_ID).toInt();
-			RpcValue::String method = map.value(Rpc::JSONRPC_METHOD).toString();
-			std::string shv_path = map.value(Rpc::JSONRPC_SHV_PATH).toString();
+			RpcValue::String method = map.value(Rpc::JSONRPC_METHOD).asString();
+			std::string shv_path = map.value(Rpc::JSONRPC_SHV_PATH).asString();
 			if(id > 0)
 				RpcMessage::setRequestId(meta_data, id);
 			if(!method.empty())
@@ -338,7 +338,7 @@ RpcValue RpcDriver::decodeData(Rpc::ProtocolType protocol_type, const std::strin
 		case Rpc::ProtocolType::JsonRpc: {
 			CponReader rd(in);
 			rd.read(ret);
-			RpcValue::Map map = ret.toMap();
+			RpcValue::Map map = ret.asMap();
 			RpcValue::IMap imap;
 			RpcValue params = map.value(Rpc::JSONRPC_PARAMS);
 			if(params.isValid()) {
@@ -352,7 +352,7 @@ RpcValue RpcDriver::decodeData(Rpc::ProtocolType protocol_type, const std::strin
 				else {
 					RpcValue error = map.value(Rpc::JSONRPC_ERROR);
 					if(error.isValid())
-						imap[RpcMessage::MetaType::Key::Error] = RpcResponse::Error::fromJson(error.toMap());
+						imap[RpcMessage::MetaType::Key::Error] = RpcResponse::Error::fromJson(error.asMap());
 				}
 			}
 			ret = imap;

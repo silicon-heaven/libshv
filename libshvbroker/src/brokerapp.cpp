@@ -825,8 +825,8 @@ void BrokerApp::onClientLogin(int connection_id)
 	}
 
 	if(conn->deviceOptions().isMap()) {
-		const shv::chainpack::RpcValue::Map &device_opts = conn->deviceOptions().toMap();
-		std::string mount_point = resolveMountPoint(device_opts);
+		const auto device_opts = conn->deviceOptions();
+		std::string mount_point = resolveMountPoint(device_opts.asMap());
 		if(!mount_point.empty()) {
 			string path_rest;
 			ClientShvNode *cli_nd = qobject_cast<ClientShvNode*>(m_nodesTree->cd(mount_point, &path_rest));
@@ -1021,8 +1021,8 @@ void BrokerApp::onRpcDataReceived(int connection_id, shv::chainpack::Rpc::Protoc
 						}
 					}
 				}
-				const std::string &method = cp::RpcMessage::method(meta).asString();
-				const std::string &resolved_shv_path = cp::RpcMessage::shvPath(meta).asString();
+				const std::string method = cp::RpcMessage::method(meta).asString();
+				const std::string resolved_shv_path = cp::RpcMessage::shvPath(meta).asString();
 				ShvUrl resolved_shv_url(resolved_shv_path);
 				//shvError() << resolved_shv_url.toShvUrl() << "path:" << resolved_shv_url.pathPart();
 				cp::AccessGrant acg;
@@ -1318,8 +1318,8 @@ void BrokerApp::createMasterBrokerConnections()
 	shvInfo() << "Creating master broker connections";
 	shv::chainpack::RpcValue masters = cliOptions()->masterBrokersConnections();
 
-	for(const auto &kv : masters.toMap()) {
-		cp::RpcValue::Map opts = kv.second.toMap();
+	for(const auto &kv : masters.asMap()) {
+		cp::RpcValue::Map opts = kv.second.asMap();
 
 		//if (cliOptions()->masterBrokerDeviceId_isset()) {
 		//	cp::RpcValue::Map dev = opts.value("device").toMap();

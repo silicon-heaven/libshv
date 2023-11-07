@@ -46,7 +46,7 @@ QVariant Utils::rpcValueToQVariant(const chainpack::RpcValue &v, bool *ok)
 	}
 	case chainpack::RpcValue::Type::Map: {
 		QVariantMap map;
-		for(const auto &kv : v.toMap())
+		for(const auto &kv : v.asMap())
 			map[QString::fromStdString(kv.first)] = rpcValueToQVariant(kv.second);
 		return map;
 	}
