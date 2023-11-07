@@ -277,7 +277,7 @@ chainpack::RpcValue ShvNode::processRpcRequest(const chainpack::RpcRequest &rq)
 	if(mm_access_level > rq_access_level)
 		SHV_EXCEPTION(std::string("Call method: '") + method + "' on path '" + shvPath() + '/' + rq.shvPath().toString() + "' permission denied, grant: " + rq_grant.toCpon() + " required: " + mm_grant.toCpon());
 
-	if(mm_access_level >= MetaMethod::AccessLevel::Write) {
+	if(mm_access_level > MetaMethod::AccessLevel::Write) {
 
 
 		shv::core::utils::ShvJournalEntry e(shv::core::Utils::joinPath(shvPath(), rq.shvPath().asString())
