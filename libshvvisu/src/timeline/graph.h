@@ -94,6 +94,7 @@ public:
 		QString toJson() const;
 		static VisualSettings fromJson(const QString &json);
 		QVector<Channel> channels;
+		QString name;
 	};
 
 	Graph(QObject *parent = nullptr);
@@ -234,7 +235,7 @@ public:
 	void loadVisualSettings(const QString &settings_id, const QString &name);
 	QString loadedVisualSettingsId();
 	bool isFilteringEnabled() const;
-	void enableFilteringAndSetPermittedPaths(const QSet<QString> &paths);
+	void enableFiltering();
 	void disableFiltering();
 
 protected:
@@ -271,6 +272,8 @@ protected:
 	virtual void drawSelection(QPainter *painter);
 	virtual void drawCurrentTime(QPainter *painter, int channel_ix);
 	void drawCurrentTimeMarker(QPainter *painter, time_t time);
+
+	virtual void applyCustomChannelColor(GraphChannel *channel);
 
 	QVariantMap mergeMaps(const QVariantMap &base, const QVariantMap &overlay) const;
 	void makeXAxis();

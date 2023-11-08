@@ -111,17 +111,10 @@ void Graph::resetVisualSettingsAndChannelFilter()
 
 void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sorted)
 {
-	static QVector<QColor> colors {
-		Qt::magenta,
-		Qt::cyan,
-		Qt::blue,
-		QColor(0xe6, 0x3c, 0x33), //red
-		QColor("orange"),
-		QColor(0x6d, 0xa1, 0x3a), // green
-	};
 	clearChannels();
 	if(!m_model)
 		return;
+
 	QList<qsizetype> model_ixs;
 	if(sorted == SortChannels::Yes) {
 		// sort channels alphabetically
@@ -139,11 +132,9 @@ void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sor
 	}
 	for(auto model_ix : model_ixs) {
 		GraphChannel *ch = appendChannel(model_ix);
-		auto channel_ix = channelCount() - 1;
-		GraphChannel::Style style = ch->style();
-		style.setColor(colors.value(channel_ix % colors.count()));
-		ch->setStyle(style);
+		applyCustomChannelColor(ch);
 	}
+
 	resetChannelsRanges();
 	disableFiltering();
 
@@ -269,7 +260,8 @@ void Graph::hideFlatChannels()
 		}
 	}
 
-	enableFilteringAndSetPermittedPaths(permitted_paths);
+	enableFiltering();
+	m_channelFilter->setPermittedPaths(permitted_paths);
 
 	emit layoutChanged();
 	emit channelFilterChanged();
@@ -1189,7 +1181,7 @@ void Graph::setVisualSettingsAndChannelFilter(const VisualSettings &settings)
 		}
 	}
 
-	enableFilteringAndSetPermittedPaths(permitted_paths);
+	setChannelFilter(ChannelFilter(permitted_paths, settings.name));
 
 	emit layoutChanged();
 	emit channelFilterChanged();
@@ -2248,6 +2240,23 @@ void Graph::drawCurrentTimeMarker(QPainter *painter, time_t time)
 	drawCenterTopText(painter, p1, text, m_style.font(), color.darker(400), color);
 }
 
+void Graph::applyCustomChannelColor(GraphChannel *channel)
+{
+	static QVector<QColor> colors {
+		Qt::magenta,
+		Qt::cyan,
+		Qt::blue,
+		QColor(0xe6, 0x3c, 0x33), //red
+		QColor("orange"),
+		QColor(0x6d, 0xa1, 0x3a), // green
+	};
+
+	auto channel_ix = channelCount() - 1;
+	GraphChannel::Style style = channel->style();
+	style.setColor(colors.value(channel_ix % colors.count()));
+	channel->setStyle(style);
+}
+
 QString Graph::timeToStringTZ(timemsec_t time) const
 {
 	QDateTime dt = QDateTime::fromMSecsSinceEpoch(time);
@@ -2288,6 +2297,7 @@ void Graph::loadVisualSettings(const QString &settings_id, const QString &name)
 	settings.beginGroup(settings_id);
 	settings.beginGroup(VIEWS_KEY);
 	VisualSettings vs = VisualSettings::fromJson(settings.value(name).toString());
+	vs.name = settings_id;
 	setVisualSettingsAndChannelFilter(vs);
 }
 
@@ -2296,12 +2306,10 @@ bool Graph::isFilteringEnabled() const
 	return (m_channelFilter != std::nullopt);
 }
 
-void Graph::enableFilteringAndSetPermittedPaths(const QSet<QString> &paths)
+void Graph::enableFiltering()
 {
 	if (m_channelFilter == std::nullopt)
 		m_channelFilter = ChannelFilter();
-
-	m_channelFilter->setPermittedPaths(paths);
 }
 
 void Graph::disableFiltering()

@@ -6,9 +6,10 @@ namespace shv::visu::timeline {
 
 ChannelFilter::ChannelFilter() = default;
 
-ChannelFilter::ChannelFilter(const QSet<QString> &permitted_paths)
+ChannelFilter::ChannelFilter(const QSet<QString> &permitted_paths, const QString &name)
 {
 	m_permittedPaths = permitted_paths;
+	m_name = name;
 }
 
 QSet<QString> ChannelFilter::permittedPaths() const
@@ -34,6 +35,11 @@ void ChannelFilter::setPermittedPaths(const QSet<QString> &paths)
 bool ChannelFilter::isPathPermitted(const QString &path) const
 {
 	return m_permittedPaths.contains(path);
+}
+
+QString ChannelFilter::name()
+{
+	return m_name;
 }
 
 }

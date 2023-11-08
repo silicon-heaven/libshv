@@ -59,7 +59,7 @@ ChannelFilterDialog::~ChannelFilterDialog()
 	delete ui;
 }
 
-void ChannelFilterDialog::init(const QString &site_path, const QString &visual_settings_id, Graph *graph)
+void ChannelFilterDialog::init(const QString &site_path, Graph *graph)
 {
 	if (m_graph != nullptr) {
 		shvWarning() << "Dialog is allready initialized.";
@@ -70,23 +70,26 @@ void ChannelFilterDialog::init(const QString &site_path, const QString &visual_s
 	m_graph = graph;
 	m_channelsFilterModel->createNodes(graph->channelPaths());
 
-	ui->chbFileterEnabled->setChecked(m_graph->channelFilter() != std::nullopt);
+	ui->chbFileterEnabled->setChecked(m_graph->isFilteringEnabled());
 
 	setPermittedChannelsFromGraph();
 	reloadDataViewsCombobox();
 
-	connect(ui->cbDataView, &QComboBox::currentIndexChanged, this, &ChannelFilterDialog::onDataViewChanged);
+	std::optional<ChannelFilter> chf = m_graph->channelFilter();
 
-	if (ui->chbFileterEnabled->isChecked())
-		ui->cbDataView->setCurrentText(visual_settings_id);
+	if ((chf != std::nullopt) && (!chf->name().isEmpty()))
+		ui->cbDataView->setCurrentText(chf->name());
 	else
 		ui->cbDataView->setCurrentIndex(-1);
+
+	updateContextMenuActionsAvailability();
+	connect(ui->cbDataView, &QComboBox::currentIndexChanged, this, &ChannelFilterDialog::onDataViewChanged);
 }
 
 std::optional<ChannelFilter> ChannelFilterDialog::filter()
 {
 	if (ui->chbFileterEnabled->isChecked()) {
-		return ChannelFilter(m_channelsFilterModel->selectedChannels());
+		return ChannelFilter(m_channelsFilterModel->selectedChannels(), ui->cbDataView->currentText());
 	}
 
 	return std::nullopt;
@@ -152,6 +155,7 @@ void ChannelFilterDialog::importView()
 			}
 
 			Graph::VisualSettings visual_settings = Graph::VisualSettings::fromJson(settings_file.value("settings").toString());
+			visual_settings.name = view_name;
 			m_graph->setVisualSettingsAndChannelFilter(visual_settings);
 			m_graph->saveVisualSettings(m_sitePath, view_name);
 			reloadDataViewsCombobox();
@@ -171,6 +175,11 @@ void ChannelFilterDialog::updateContextMenuActionsAvailability()
 
 void ChannelFilterDialog::saveView()
 {
+	if(ui->cbDataView->currentText().isEmpty()) {
+		shvWarning() << "Failed to save empty filter name.";
+		return;
+	}
+
 	m_graph->setChannelFilter(filter());
 	m_graph->saveVisualSettings(m_sitePath, ui->cbDataView->currentText());
 }
@@ -281,8 +290,8 @@ void ChannelFilterDialog::onDataViewChanged(int index)
 	if (index >= 0) { //ignore event with index = -1, which is emmited from clear() method
 		m_graph->loadVisualSettings(m_sitePath, ui->cbDataView->currentText());
 		setPermittedChannelsFromGraph();
-		updateContextMenuActionsAvailability();
 	}
+	updateContextMenuActionsAvailability();
 }
 
 }

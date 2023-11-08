@@ -26,7 +26,6 @@ private:
 
 	timeline::Graph *m_graph = nullptr;
 	QString m_sitePath;
-	QString m_currentVisualSettingsId;
 
 	Ui::DataViewWidget *ui;
 };

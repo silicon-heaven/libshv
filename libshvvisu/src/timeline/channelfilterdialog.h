@@ -25,7 +25,7 @@ public:
 	explicit ChannelFilterDialog(QWidget *parent = nullptr);
 	~ChannelFilterDialog();
 
-	void init(const QString &site_path, const QString &visual_settings_id, Graph *graph);
+	void init(const QString &site_path, Graph *graph);
 	std::optional<ChannelFilter> filter();
 	QString currentVisualSettingsId();
 

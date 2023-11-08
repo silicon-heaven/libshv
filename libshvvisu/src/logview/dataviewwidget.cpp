@@ -43,11 +43,10 @@ void DataViewWidget::init(const QString &site_path, timeline::Graph *graph)
 void DataViewWidget::onShowChannelFilterClicked()
 {
 	tl::ChannelFilterDialog *channel_filter_dialog = new tl::ChannelFilterDialog(this);
-	channel_filter_dialog->init(m_sitePath, m_currentVisualSettingsId, m_graph);
+	channel_filter_dialog->init(m_sitePath, m_graph);
 
 	if (channel_filter_dialog->exec() == QDialog::Accepted) {
 		m_graph->setChannelFilter(channel_filter_dialog->filter());
-		m_currentVisualSettingsId = channel_filter_dialog->currentVisualSettingsId();
 	}
 
 	channel_filter_dialog->deleteLater();
