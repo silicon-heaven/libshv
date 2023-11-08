@@ -11,7 +11,7 @@ LogSortFilterProxyModel::LogSortFilterProxyModel(QObject *parent) :
 
 }
 
-void LogSortFilterProxyModel::setChannelFilter(const shv::visu::timeline::ChannelFilter &filter)
+void LogSortFilterProxyModel::setChannelFilter(const std::optional<shv::visu::timeline::ChannelFilter> &filter)
 {
 	m_channelFilter = filter;
 	invalidateFilter();
@@ -54,7 +54,7 @@ bool LogSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex
 
 	if (m_shvPathColumn >= 0) {
 		QModelIndex ix = sourceModel()->index(source_row, m_shvPathColumn, source_parent);
-		is_row_accepted = (m_channelFilter.isValid()) ? m_channelFilter.isPathPermitted(sourceModel()->data(ix).toString()) : true;
+		is_row_accepted = (m_channelFilter == std::nullopt) ? true : m_channelFilter->isPathPermitted(sourceModel()->data(ix).toString());
 
 		if (is_row_accepted && !m_fulltextFilter.pattern().isEmpty()) {
 			bool is_fulltext_filter_matched = m_fulltextFilter.matches(sourceModel()->data(ix).toString());

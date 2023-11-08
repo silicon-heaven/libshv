@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>195</width>
+    <width>24</width>
     <height>25</height>
    </rect>
   </property>
@@ -27,33 +27,16 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QLabel" name="lblDataViews">
-     <property name="text">
-      <string>Data view:</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QComboBox" name="cbDataView">
-     <property name="editable">
-      <bool>false</bool>
-     </property>
-     <property name="sizeAdjustPolicy">
-      <enum>QComboBox::AdjustToContents</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QToolButton" name="pbShowChannelFilterDialog">
      <property name="toolTip">
-      <string>Channels filter</string>
+      <string>Show filter dialog</string>
      </property>
      <property name="text">
       <string>...</string>
      </property>
      <property name="icon">
       <iconset resource="../../images/images.qrc">
-       <normaloff>:/shv/visu/images/settings.svg</normaloff>:/shv/visu/images/settings.svg</iconset>
+       <normaloff>:/shv/visu/images/filter-off.svg</normaloff>:/shv/visu/images/filter-off.svg</iconset>
      </property>
     </widget>
    </item>

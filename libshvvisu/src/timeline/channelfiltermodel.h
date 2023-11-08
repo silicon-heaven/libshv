@@ -24,7 +24,7 @@ public:
 	void createNodes(const QSet<QString> &channels);
 
 	QSet<QString> selectedChannels();
-	void setSelectedChannels(const QSet<QString> &channels);
+	void setPermittedChannels(const QSet<QString> &channels);
 	void setItemCheckState(const QModelIndex &mi, Qt::CheckState check_state);
 	void fixCheckBoxesIntegrity();
 protected:

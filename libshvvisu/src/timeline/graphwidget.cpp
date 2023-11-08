@@ -761,9 +761,6 @@ void GraphWidget::showGraphContextMenu(const QPoint &mouse_pos)
 	});
 	menu.addAction(tr("Reset channels to defaults"), this, [this]() {
 		m_graph->createChannelsFromModel();
-		auto graph_filter = m_graph->channelFilter();
-		graph_filter.setPermittedPaths(m_graph->channelPaths());
-		m_graph->setChannelFilter(graph_filter);
 	});
 	if (m_graph->isYAxisVisible()) {
 		menu.addAction(tr("Hide Y axis"), this, [this]() {

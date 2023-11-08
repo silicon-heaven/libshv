@@ -23,12 +23,8 @@ public:
 
 	bool isPathPermitted(const QString &path) const;
 
-	void setValid(bool is_valid);
-	bool isValid() const;
-
 private:
 	QSet<QString> m_permittedPaths;
-	bool m_isValid = false;
 };
 
 }

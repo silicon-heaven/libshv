@@ -22,16 +22,11 @@ public:
 	void init(const QString &site_path, timeline::Graph *graph);
 
 private:
-	void enableOnDataViewChangedAction() {m_onDataViewChangedActionEnabled = true;}
-	void disableOnDataViewChangedAction() {m_onDataViewChangedActionEnabled = false;}
-	void reloadDataViewsComboboxAndSetlectItem(const QString &text = {});
-
-	void onDataViewChanged(int index);
 	void onShowChannelFilterClicked();
 
 	timeline::Graph *m_graph = nullptr;
 	QString m_sitePath;
-	bool m_onDataViewChangedActionEnabled = true;
+	QString m_currentVisualSettingsId;
 
 	Ui::DataViewWidget *ui;
 };

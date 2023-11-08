@@ -105,7 +105,8 @@ QTimeZone Graph::timeZone() const
 
 void Graph::resetVisualSettingsAndChannelFilter()
 {
-	setVisualSettingsAndChannelFilter(VisualSettings());
+	createChannelsFromModel();
+
 }
 
 void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sorted)
@@ -144,8 +145,10 @@ void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sor
 		ch->setStyle(style);
 	}
 	resetChannelsRanges();
+	disableFiltering();
 
 	emit layoutChanged();
+	emit channelFilterChanged();
 }
 
 void Graph::resetChannelsRanges()
@@ -238,7 +241,7 @@ void Graph::moveChannel(qsizetype channel, qsizetype new_pos)
 
 void Graph::showAllChannels()
 {
-	m_channelFilter.setPermittedPaths(channelPaths());
+	disableFiltering();
 
 	emit layoutChanged();
 	emit channelFilterChanged();
@@ -257,16 +260,16 @@ QSet<QString> Graph::channelPaths()
 
 void Graph::hideFlatChannels()
 {
-	QSet<QString> matching_paths = (m_channelFilter.isValid()) ? m_channelFilter.permittedPaths() : channelPaths();
+	QSet<QString> permitted_paths = (isFilteringEnabled()) ? m_channelFilter->permittedPaths() : channelPaths();
 
 	for (qsizetype i = 0; i < m_channels.count(); ++i) {
 		GraphChannel *ch = m_channels[i];
 		if(isChannelFlat(ch)) {
-			matching_paths.remove(ch->shvPath());
+			permitted_paths.remove(ch->shvPath());
 		}
 	}
 
-	m_channelFilter.setPermittedPaths(matching_paths);
+	enableFilteringAndSetPermittedPaths(permitted_paths);
 
 	emit layoutChanged();
 	emit channelFilterChanged();
@@ -278,7 +281,7 @@ bool Graph::isChannelFlat(GraphChannel *ch)
 	return yrange.isEmpty();
 }
 
-void Graph::setChannelFilter(const ChannelFilter &filter)
+void Graph::setChannelFilter(const std::optional<shv::visu::timeline::ChannelFilter> &filter)
 {
 	m_channelFilter = filter;
 
@@ -286,7 +289,7 @@ void Graph::setChannelFilter(const ChannelFilter &filter)
 	emit channelFilterChanged();
 }
 
-const ChannelFilter& Graph::channelFilter() const
+const std::optional<ChannelFilter>& Graph::channelFilter() const
 {
 	return m_channelFilter;
 }
@@ -294,12 +297,14 @@ const ChannelFilter& Graph::channelFilter() const
 void Graph::setChannelVisible(qsizetype channel_ix, bool is_visible)
 {
 	GraphChannel *ch = channelAt(channel_ix);
+	if (m_channelFilter == std::nullopt)
+		m_channelFilter = ChannelFilter();
 
 	if (is_visible) {
-		m_channelFilter.addPermittedPath(ch->shvPath());
+		m_channelFilter->addPermittedPath(ch->shvPath());
 	}
 	else {
-		m_channelFilter.removePermittedPath(ch->shvPath());
+		m_channelFilter->removePermittedPath(ch->shvPath());
 	}
 
 	emit layoutChanged();
@@ -1151,10 +1156,10 @@ QVector<int> Graph::visibleChannels() const
 	if (maximized_channel >= 0) {
 		visible_channels << maximized_channel;
 	}
-	else if (m_channelFilter.isValid()) {
+	else if (isFilteringEnabled()) {
 		for (int i = 0; i < m_channels.count(); ++i) {
 			QString shv_path = model()->channelInfo(m_channels[i]->modelIndex()).shvPath;
-			if(m_channelFilter.isPathPermitted(shv_path)) {
+			if(m_channelFilter->isPathPermitted(shv_path)) {
 				visible_channels << i;
 			}
 		}
@@ -1169,39 +1174,22 @@ QVector<int> Graph::visibleChannels() const
 
 void Graph::setVisualSettingsAndChannelFilter(const VisualSettings &settings)
 {
-	if (settings.isValid()) {
-		QSet<QString> f;
-		for (int i = 0; i < settings.channels.count(); ++i) {
-			const VisualSettings::Channel &channel_settings = settings.channels[i];
-			for (int j = i; j < m_channels.count(); ++j) {
-				GraphChannel *channel = m_channels[j];
-				if (channel->shvPath() == channel_settings.shvPath) {
-					f.insert(channel_settings.shvPath);
-					channel->setStyle(channel_settings.style);
-					m_channels.insert(i, m_channels.takeAt(j));
-					break;
-				}
+	QSet<QString> permitted_paths;
+
+	for (int i = 0; i < settings.channels.count(); ++i) {
+		const VisualSettings::Channel &channel_settings = settings.channels[i];
+		for (int j = i; j < m_channels.count(); ++j) {
+			GraphChannel *channel = m_channels[j];
+			if (channel->shvPath() == channel_settings.shvPath) {
+				permitted_paths.insert(channel_settings.shvPath);
+				channel->setStyle(channel_settings.style);
+				m_channels.insert(i, m_channels.takeAt(j));
+				break;
 			}
 		}
-
-		m_channelFilter.setPermittedPaths(f);
-		m_channelFilter.setValid(true);
 	}
-	else {
-		std::sort(m_channels.begin(), m_channels.end(), [](const GraphChannel *a, const GraphChannel *b) {
-			return (QString::compare(a->shvPath(), b->shvPath()) < 0);
-		});
 
-		for (GraphChannel *ch : m_channels) {
-			GraphChannel::Style s = ch->style();
-			s.setHeightMin(GraphChannel::Style::DEFAULT_HEIGHT_MIN);
-			ch->setStyle(s);
-		}
-
-		resetChannelsRanges();
-
-		m_channelFilter = ChannelFilter();
-	}
+	enableFilteringAndSetPermittedPaths(permitted_paths);
 
 	emit layoutChanged();
 	emit channelFilterChanged();
@@ -1241,7 +1229,6 @@ Graph::VisualSettings Graph::visualSettings() const
 	for (int ix : visibleChannels()) {
 		const GraphChannel *channel = channelAt(ix);
 		visual_settings.channels << VisualSettings::Channel{ channel->shvPath(), channel->style() };
-		visual_settings.setIsValid(true);
 	}
 
 	return visual_settings;
@@ -2301,8 +2288,25 @@ void Graph::loadVisualSettings(const QString &settings_id, const QString &name)
 	settings.beginGroup(settings_id);
 	settings.beginGroup(VIEWS_KEY);
 	VisualSettings vs = VisualSettings::fromJson(settings.value(name).toString());
-	vs.setIsValid(true); //force set valid, because settings without channels are also valid
 	setVisualSettingsAndChannelFilter(vs);
+}
+
+bool Graph::isFilteringEnabled() const
+{
+	return (m_channelFilter != std::nullopt);
+}
+
+void Graph::enableFilteringAndSetPermittedPaths(const QSet<QString> &paths)
+{
+	if (m_channelFilter == std::nullopt)
+		m_channelFilter = ChannelFilter();
+
+	m_channelFilter->setPermittedPaths(paths);
+}
+
+void Graph::disableFiltering()
+{
+	m_channelFilter = std::nullopt;
 }
 
 void Graph::deleteVisualSettings(const QString &settings_id, const QString &name) const
@@ -2329,19 +2333,15 @@ QStringList Graph::savedVisualSettingsNames(const QString &settings_id) const
 
 QString Graph::VisualSettings::toJson() const
 {
-	if (isValid()) {
-		QJsonArray settings;
+	QJsonArray settings;
 
-		for (int i = 0; i < channels.count(); ++i) {
-			settings << QJsonObject {
-							{ "shvPath", channels[i].shvPath },
-							{ "style", QJsonObject::fromVariantMap(channels[i].style) }
-						};
+	for (int i = 0; i < channels.count(); ++i) {
+		settings << QJsonObject {
+						{ "shvPath", channels[i].shvPath },
+						{ "style", QJsonObject::fromVariantMap(channels[i].style) }
+					};
 		}
-		return QJsonDocument(QJsonObject{{ "channels", settings }}).toJson(QJsonDocument::Compact);
-	}
-
-	return QString();
+	return QJsonDocument(QJsonObject{{ "channels", settings }}).toJson(QJsonDocument::Compact);
 }
 
 Graph::VisualSettings Graph::VisualSettings::fromJson(const QString &json)
@@ -2359,8 +2359,6 @@ Graph::VisualSettings Graph::VisualSettings::fromJson(const QString &json)
 											 item["style"].toVariant().toMap()
 										 });
 			}
-
-			settings.setIsValid(!settings.channels.isEmpty());
 		}
 		else {
 			shvWarning() << "Error on parsing user settings" << parse_error.errorString();
@@ -2368,16 +2366,6 @@ Graph::VisualSettings Graph::VisualSettings::fromJson(const QString &json)
 	}
 
 	return settings;
-}
-
-void Graph::VisualSettings::setIsValid(bool is_valid)
-{
-	m_isValid = is_valid;
-}
-
-bool Graph::VisualSettings::isValid() const
-{
-	return m_isValid;
 }
 
 Graph::XAxis::XAxis() = default;

@@ -93,12 +93,7 @@ public:
 
 		QString toJson() const;
 		static VisualSettings fromJson(const QString &json);
-		void setIsValid(bool is_valid);
-		bool isValid() const;
 		QVector<Channel> channels;
-
-	protected:
-		bool m_isValid = false;
 	};
 
 	Graph(QObject *parent = nullptr);
@@ -133,8 +128,8 @@ public:
 	void showAllChannels();
 	QSet<QString> channelPaths();
 	void hideFlatChannels();
-	const ChannelFilter& channelFilter() const;
-	void setChannelFilter(const ChannelFilter &filter);
+	const std::optional<ChannelFilter> &channelFilter() const;
+	void setChannelFilter(const std::optional<ChannelFilter> &filter);
 	void setChannelVisible(qsizetype channel_ix, bool is_visible);
 	void setChannelMaximized(qsizetype channel_ix, bool is_maximized);
 
@@ -237,6 +232,10 @@ public:
 	void deleteVisualSettings(const QString &settings_id, const QString &name) const;
 	QStringList savedVisualSettingsNames(const QString &settings_id) const;
 	void loadVisualSettings(const QString &settings_id, const QString &name);
+	QString loadedVisualSettingsId();
+	bool isFilteringEnabled() const;
+	void enableFilteringAndSetPermittedPaths(const QSet<QString> &paths);
+	void disableFiltering();
 
 protected:
 	void sanityXRangeZoom();
@@ -293,7 +292,7 @@ protected:
 
 	QVector<ChannelProbe*> m_channelProbes;
 	QVector<GraphChannel*> m_channels;
-	ChannelFilter m_channelFilter;
+	std::optional<ChannelFilter> m_channelFilter;
 
 	struct SHVVISU_DECL_EXPORT XAxis
 	{

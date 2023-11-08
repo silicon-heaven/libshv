@@ -25,17 +25,13 @@ public:
 	explicit ChannelFilterDialog(QWidget *parent = nullptr);
 	~ChannelFilterDialog();
 
-	void init(const QString &site_path, Graph *graph, const QString &filter_name);
-
-	QSet<QString> selectedChannels();
-	QString selectedFilterName();
-
-	Q_SIGNAL void selectedFilterNameChanged(const QString &filter_name);
+	void init(const QString &site_path, const QString &visual_settings_id, Graph *graph);
+	std::optional<ChannelFilter> filter();
+	QString currentVisualSettingsId();
 
 private:
 	void applyTextFilter();
-
-	void reloadDataViewsComboboxAndSetlectItem(const QString &text = {});
+	void reloadDataViewsCombobox();
 
 	void saveView();
 	void saveViewAs();
@@ -53,6 +49,7 @@ private:
 	void onDataViewChanged(int index);
 	void onCustomContextMenuRequested(QPoint pos);
 
+	void onChbFilterEnabledClicked(int state);
 	void onPbCheckItemsClicked();
 	void onPbUncheckItemsClicked();
 	void onPbClearMatchingTextClicked();

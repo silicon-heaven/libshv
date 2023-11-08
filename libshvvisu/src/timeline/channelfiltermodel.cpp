@@ -50,7 +50,7 @@ void ChannelFilterModel::selectedChannels_helper(QSet<QString> *channels, QStand
 	}
 }
 
-void ChannelFilterModel::setSelectedChannels(const QSet<QString> &channels)
+void ChannelFilterModel::setPermittedChannels(const QSet<QString> &channels)
 {
 	setChildItemsCheckedState(invisibleRootItem(), Qt::CheckState::Unchecked);
 
