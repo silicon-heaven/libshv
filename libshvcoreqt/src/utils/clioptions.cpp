@@ -483,7 +483,7 @@ void ConfigCLIOptions::mergeConfig(const QVariant &config_map)
 void ConfigCLIOptions::mergeConfig_helper(const QString &key_prefix, const shv::chainpack::RpcValue &config_map)
 {
 	//shvLogFuncFrame() << key_prefix;
-	const chainpack::RpcValue::Map &cm = config_map.toMap();
+	const chainpack::RpcValue::Map &cm = config_map.asMap();
 	for(const auto &kv : cm) {
 		QString key = QString::fromStdString(kv.first);
 		SHV_ASSERT(!key.isEmpty(), "Empty key!", continue);

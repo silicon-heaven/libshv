@@ -24,28 +24,28 @@ void MasterBrokerConnection::setOptions(const shv::chainpack::RpcValue &slave_br
 {
 	m_options = slave_broker_options;
 	if(slave_broker_options.isMap()) {
-		const cp::RpcValue::Map &m = slave_broker_options.toMap();
+		const cp::RpcValue::Map &m = slave_broker_options.asMap();
 
 		shv::iotqt::rpc::DeviceAppCliOptions device_opts;
 
-		const cp::RpcValue::Map &server = m.value("server").toMap();
+		const cp::RpcValue::Map &server = m.valref("server").asMap();
 		device_opts.setServerHost(server.value("host", "localhost").asString());
 		device_opts.setServerPort(server.value("port", shv::chainpack::IRpcConnection::DEFAULT_RPC_BROKER_PORT_NONSECURED).toInt());
 		device_opts.setServerSecurityType(server.value("securityType", "none").asString());
 		device_opts.setServerPeerVerify(server.value("peerVerify", true).toBool());
 
-		const cp::RpcValue::Map &login = m.value(cp::Rpc::KEY_LOGIN).toMap();
+		const cp::RpcValue::Map &login = m.valref(cp::Rpc::KEY_LOGIN).asMap();
 		for(const std::string key : {"user", "password", "passwordFile", "type"}) {
 			if(login.hasKey(key))
 				device_opts.setValue("login." + key, login.value(key).asString());
 		}
-		const cp::RpcValue::Map &rpc = m.value("rpc").toMap();
+		const cp::RpcValue::Map &rpc = m.valref("rpc").asMap();
 		if(rpc.count("heartbeatInterval") == 1)
 			device_opts.setHeartBeatInterval(rpc.value("heartbeatInterval", 60).toInt());
 		if(rpc.count("reconnectInterval") == 1)
 			device_opts.setReconnectInterval(rpc.value("reconnectInterval").toInt());
 
-		const cp::RpcValue::Map &device = m.value(cp::Rpc::KEY_DEVICE).toMap();
+		const cp::RpcValue::Map &device = m.valref(cp::Rpc::KEY_DEVICE).asMap();
 		if(device.count("id") == 1)
 			device_opts.setDeviceId(device.value("id").asString());
 		if(device.count("idFile") == 1)
@@ -55,13 +55,13 @@ void MasterBrokerConnection::setOptions(const shv::chainpack::RpcValue &slave_br
 		//device_opts.dump();
 		setCliOptions(&device_opts);
 		{
-			chainpack::RpcValue::Map opts = connectionOptions().toMap();
+			chainpack::RpcValue::Map opts = connectionOptions().asMap();
 			cp::RpcValue::Map broker;
 			opts[cp::Rpc::KEY_BROKER] = broker;
 			setConnectionOptions(opts);
 		}
 	}
-	m_exportedShvPath = slave_broker_options.toMap().value("exportedShvPath").asString();
+	m_exportedShvPath = slave_broker_options.asMap().value("exportedShvPath").asString();
 }
 
 void MasterBrokerConnection::sendMasterBrokerIdRequest()

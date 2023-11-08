@@ -28,7 +28,7 @@ const char *ShvLogHeader::Column::name(ShvLogHeader::Column::Enum e)
 ShvLogHeader ShvLogHeader::fromMetaData(const chainpack::RpcValue::MetaData &md)
 {
 	ShvLogHeader ret;
-	const chainpack::RpcValue::Map &device = md.valref("device").toMap();
+	const chainpack::RpcValue::Map &device = md.valref("device").asMap();
 	ret.setDeviceId(device.value("id").asString());
 	ret.setDeviceType(device.value("type").asString());
 	ret.setLogVersion(md.value("logVersion").toInt());
@@ -42,7 +42,7 @@ ShvLogHeader ShvLogHeader::fromMetaData(const chainpack::RpcValue::MetaData &md)
 	ret.setFields(md.value("fields").toList());
 	ret.setPathDict(md.value("pathsDict").toIMap());
 	{
-		const chainpack::RpcValue::Map &m = md.valref("typeInfos").toMap();
+		const chainpack::RpcValue::Map &m = md.valref("typeInfos").asMap();
 		for(const auto &kv : m) {
 			ret.m_typeInfos[kv.first] = ShvLogTypeInfo::fromRpcValue(kv.second);
 		}

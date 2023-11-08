@@ -432,12 +432,12 @@ shv::chainpack::RpcValue AclManagerConfigFiles::loadAclConfig(const std::string 
 std::vector<std::string> AclManagerConfigFiles::aclMountDeviceIds()
 {
 	const chainpack::RpcValue cfg = aclConfig(FILE_ACL_MOUNTS);
-	return cp::Utils::mapKeys(cfg.toMap());
+	return cp::Utils::mapKeys(cfg.asMap());
 }
 
 shv::iotqt::acl::AclMountDef AclManagerConfigFiles::aclMountDef(const std::string &device_id)
 {
-	chainpack::RpcValue v = aclConfig(FILE_ACL_MOUNTS).toMap().value(device_id);
+	chainpack::RpcValue v = aclConfig(FILE_ACL_MOUNTS).asMap().value(device_id);
 	return shv::iotqt::acl::AclMountDef::fromRpcValue(v);
 }
 
@@ -445,36 +445,36 @@ std::vector<std::string> AclManagerConfigFiles::aclUsers()
 {
 	const chainpack::RpcValue cfg = aclConfig(FILE_ACL_USERS);
 	shvDebug() << cfg.toCpon("\t");
-	return cp::Utils::mapKeys(cfg.toMap());
+	return cp::Utils::mapKeys(cfg.asMap());
 }
 
 shv::iotqt::acl::AclUser AclManagerConfigFiles::aclUser(const std::string &user_name)
 {
-	chainpack::RpcValue v = aclConfig(FILE_ACL_USERS).toMap().value(user_name);
+	chainpack::RpcValue v = aclConfig(FILE_ACL_USERS).asMap().value(user_name);
 	return shv::iotqt::acl::AclUser::fromRpcValue(v);
 }
 
 std::vector<std::string> AclManagerConfigFiles::aclRoles()
 {
 	const chainpack::RpcValue cfg = aclConfig(FILE_ACL_ROLES);
-	return cp::Utils::mapKeys(cfg.toMap());
+	return cp::Utils::mapKeys(cfg.asMap());
 }
 
 shv::iotqt::acl::AclRole AclManagerConfigFiles::aclRole(const std::string &role_name)
 {
-	chainpack::RpcValue v = aclConfig(FILE_ACL_ROLES).toMap().value(role_name);
+	chainpack::RpcValue v = aclConfig(FILE_ACL_ROLES).asMap().value(role_name);
 	return shv::iotqt::acl::AclRole::fromRpcValue(v);
 }
 
 std::vector<std::string> AclManagerConfigFiles::aclAccessRoles()
 {
 	const chainpack::RpcValue cfg = aclConfig(FILE_ACL_ACCESS);
-	return cp::Utils::mapKeys(cfg.toMap());
+	return cp::Utils::mapKeys(cfg.asMap());
 }
 
 shv::iotqt::acl::AclRoleAccessRules AclManagerConfigFiles::aclAccessRoleRules(const std::string &role_name)
 {
-	chainpack::RpcValue v = aclConfig(FILE_ACL_ACCESS).toMap().value(role_name);
+	chainpack::RpcValue v = aclConfig(FILE_ACL_ACCESS).asMap().value(role_name);
 	return shv::iotqt::acl::AclRoleAccessRules::fromRpcValue(v);
 }
 

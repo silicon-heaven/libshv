@@ -19,7 +19,7 @@ AclUser AclUser::fromRpcValue(const shv::chainpack::RpcValue &v)
 {
 	AclUser ret;
 	if(v.isMap()) {
-		const auto &m = v.toMap();
+		const auto &m = v.asMap();
 		//ret.name = m.value("name").toString();
 		ret.password = AclPassword::fromRpcValue(m.value("password"));
 		std::vector<std::string> roles;

@@ -696,7 +696,7 @@ shv::iotqt::node::ShvNode::StringList RpcValueMapNode::childNames(const shv::iot
 {
 	shv::chainpack::RpcValue val = valueOnPath(shv_path);
 	ShvNode::StringList lst;
-	for(const auto &kv : val.toMap()) {
+	for(const auto &kv : val.asMap()) {
 		lst.push_back(kv.first);
 	}
 	return lst;

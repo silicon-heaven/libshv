@@ -95,11 +95,11 @@ shv::chainpack::RpcValue CurrentClientShvNode::callMethodRq(const shv::chainpack
 			auto *app = shv::broker::BrokerApp::instance();
 			auto *cli = app->clientById(client_id);
 			if(cli) {
-				const shv::chainpack::RpcValue::List &plist = rq.params().asList();
-				const string &shv_path = plist.value(0).asString();
+				const shv::chainpack::RpcValue &plist = rq.params();
+				const string &shv_path = plist.asList().valref(0).asString();
 				if(shv_path.empty())
 					SHV_EXCEPTION("Shv path not specified in params.");
-				const string &method = plist.value(1).asString();
+				const string &method = plist.asList().valref(1).asString();
 				if(method.empty())
 					SHV_EXCEPTION("Method not specified in params.");
 				shv::chainpack::AccessGrant acg = app->accessGrantForRequest(cli, shv::core::utils::ShvUrl(shv_path), method, rq.accessGrant());

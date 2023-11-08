@@ -72,7 +72,7 @@ chainpack::RpcValue ShvGetLogParams::toRpcValue( bool fill_legacy_fields ) const
 ShvGetLogParams ShvGetLogParams::fromRpcValue(const chainpack::RpcValue &v)
 {
 	ShvGetLogParams ret;
-	const cp::RpcValue::Map &m = v.toMap();
+	const cp::RpcValue::Map &m = v.asMap();
 	ret.since = m.value(KEY_WITH_SINCE);
 	ret.until = m.value(KEY_WITH_UNTIL);
 	ret.pathPattern = m.value(KEY_PATH_PATTERN).toString();

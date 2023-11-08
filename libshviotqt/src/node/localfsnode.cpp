@@ -217,7 +217,7 @@ chainpack::RpcValue LocalFSNode::ndWrite(const QString &path, const chainpack::R
 		if (params.size() != 2){
 			SHV_EXCEPTION("Cannot write to file " + f.fileName().toStdString() + ". Invalid parameters count.");
 		}
-		chainpack::RpcValue::Map flags = params[1].toMap();
+		chainpack::RpcValue::Map flags = params[1].asMap();
 		QFile::OpenMode open_mode = (flags.value("append").toBool()) ? QFile::Append : QFile::WriteOnly;
 
 		if(f.open(open_mode)) {

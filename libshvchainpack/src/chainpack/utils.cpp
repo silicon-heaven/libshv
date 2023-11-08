@@ -146,7 +146,7 @@ std::string Utils::hexDump(const std::string &bytes)
 RpcValue Utils::mergeMaps(const RpcValue &value_base, const RpcValue &value_over)
 {
 	if(value_over.isMap() && value_base.isMap()) {
-		const shv::chainpack::RpcValue::Map &map_over = value_over.toMap();
+		const shv::chainpack::RpcValue::Map &map_over = value_over.asMap();
 		RpcValue merged = value_base;
 		for(const auto &kv : map_over) {
 			merged.set(kv.first, mergeMaps(merged.at(kv.first), kv.second));

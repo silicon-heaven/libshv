@@ -120,8 +120,8 @@ void CponWriter::write(const RpcValue &value)
 	case RpcValue::Type::String: write_p(value.asString()); break;
 	case RpcValue::Type::DateTime: write_p(value.toDateTime()); break;
 	case RpcValue::Type::List: write_p(value.toList()); break;
-	case RpcValue::Type::Map: write_p(value.toMap()); break;
-	case RpcValue::Type::IMap: write_p(value.toIMap(), &value.metaData()); break;
+	case RpcValue::Type::Map: write_p(value.asMap()); break;
+	case RpcValue::Type::IMap: write_p(value.asIMap(), &value.metaData()); break;
 	case RpcValue::Type::Decimal: write_p(value.toDecimal()); break;
 	case RpcValue::Type::Invalid:
 		if(WRITE_INVALID_AS_NULL) {
