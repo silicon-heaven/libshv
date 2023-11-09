@@ -281,7 +281,10 @@ const std::optional<ChannelFilter>& Graph::channelFilter() const
 void Graph::setChannelVisible(qsizetype channel_ix, bool is_visible)
 {
 	GraphChannel *ch = channelAt(channel_ix);
-	enableFiltering();
+
+	if (!m_channelFilter && !is_visible) {
+		m_channelFilter = ChannelFilter(channelPaths());
+	}
 
 	if (is_visible) {
 		m_channelFilter->addPermittedPath(ch->shvPath());

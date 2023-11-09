@@ -18,24 +18,18 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QCheckBox" name="chbFileterEnabled">
-     <property name="font">
-      <font>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::RightToLeft</enum>
-     </property>
-     <property name="text">
-      <string>Enabled</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="gbFilterSetings">
+    <widget class="QGroupBox" name="gbFilterSettings">
      <property name="title">
-      <string/>
+      <string>Channel filter is enabled</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="topMargin">

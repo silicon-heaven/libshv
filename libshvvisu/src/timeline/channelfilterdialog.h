@@ -48,7 +48,6 @@ private:
 	void onDataViewChanged(int index);
 	void onCustomContextMenuRequested(QPoint pos);
 
-	void onChbFilterEnabledClicked(int state);
 	void onPbCheckItemsClicked();
 	void onPbUncheckItemsClicked();
 	void onPbClearMatchingTextClicked();

@@ -44,9 +44,8 @@ ChannelFilterDialog::ChannelFilterDialog(QWidget *parent) :
 	m_exportViewAction = view_menu->addAction(tr("Export"), this, &ChannelFilterDialog::exportView);
 	m_importViewAction = view_menu->addAction(tr("Import"), this, &ChannelFilterDialog::importView);
 	ui->pbActions->setMenu(view_menu);
-	ui->gbFilterSetings->setEnabled(ui->chbFileterEnabled->isChecked());
+	ui->gbFilterSettings->setChecked(false);
 
-	connect(ui->chbFileterEnabled, &QCheckBox::stateChanged, this, &ChannelFilterDialog::onChbFilterEnabledClicked);
 	connect(ui->tvChannelsFilter, &QTreeView::customContextMenuRequested, this, &ChannelFilterDialog::onCustomContextMenuRequested);
 	connect(ui->leMatchingFilterText, &QLineEdit::textChanged, this, &ChannelFilterDialog::onLeMatchingFilterTextChanged);
 	connect(ui->pbClearMatchingText, &QPushButton::clicked, this, &ChannelFilterDialog::onPbClearMatchingTextClicked);
@@ -70,7 +69,7 @@ void ChannelFilterDialog::init(const QString &site_path, Graph *graph)
 	m_graph = graph;
 	m_channelsFilterModel->createNodes(graph->channelPaths());
 
-	ui->chbFileterEnabled->setChecked(m_graph->isFilteringEnabled());
+	ui->gbFilterSettings->setChecked(m_graph->isFilteringEnabled());
 
 	setPermittedChannelsFromGraph();
 	reloadDataViewsCombobox();
@@ -88,7 +87,7 @@ void ChannelFilterDialog::init(const QString &site_path, Graph *graph)
 
 std::optional<ChannelFilter> ChannelFilterDialog::filter()
 {
-	if (ui->chbFileterEnabled->isChecked()) {
+	if (ui->gbFilterSettings->isChecked()) {
 		return ChannelFilter(m_channelsFilterModel->permittedChannels(), ui->cbDataView->currentText());
 	}
 
@@ -221,11 +220,6 @@ void ChannelFilterDialog::onCustomContextMenuRequested(QPoint pos)
 
 		menu.exec(ui->tvChannelsFilter->mapToGlobal(pos));
 	}
-}
-
-void ChannelFilterDialog::onChbFilterEnabledClicked(int state)
-{
-	ui->gbFilterSetings->setEnabled(state == Qt::CheckState::Checked);
 }
 
 void ChannelFilterDialog::onPbCheckItemsClicked()
