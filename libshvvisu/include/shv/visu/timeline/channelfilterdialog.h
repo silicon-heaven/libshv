@@ -22,30 +22,29 @@ class SHVVISU_DECL_EXPORT ChannelFilterDialog : public QDialog
 	Q_OBJECT
 
 public:
-	explicit ChannelFilterDialog(QWidget *parent = nullptr);
+	explicit ChannelFilterDialog(QWidget *parent, const QString &site_path, Graph *graph);
 	~ChannelFilterDialog();
 
-	void init(const QString &site_path, Graph *graph);
-	std::optional<ChannelFilter> filter();
+	std::optional<ChannelFilter> channelFilter();
 
 private:
 	void applyTextFilter();
 	void reloadDataViewsCombobox();
 
-	void saveView();
-	void saveViewAs();
+	void saveDataView();
+	void saveDataViewAs();
 	void discardUserChanges();
-	void deleteView();
-	void exportView();
-	void importView();
+	void deleteDataView();
+	void exportDataView();
+	void importDataView();
 
-	void updateContextMenuActionsAvailability();
+	void refreshActions();
 
 	void setVisibleItemsCheckState(Qt::CheckState state);
 	void setVisibleItemsCheckState_helper(const QModelIndex &mi, Qt::CheckState state);
-	void setPermittedChannelsFromGraph();
+	void loadChannelFilterFomGraph();
 
-	void onDataViewChanged(int index);
+	void onDataViewComboboxChanged(int index);
 	void onCustomContextMenuRequested(QPoint pos);
 
 	void onPbCheckItemsClicked();

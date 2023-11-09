@@ -35,17 +35,16 @@ void DataViewWidget::init(const QString &site_path, timeline::Graph *graph)
 	m_sitePath = site_path;
 
 	connect(graph, &timeline::Graph::channelFilterChanged, this, [this](){
-		ui->pbShowChannelFilterDialog->setIcon(m_graph->isFilteringEnabled()? QIcon(QStringLiteral(":/shv/visu/images/filter.svg")): QIcon(QStringLiteral(":/shv/visu/images/filter-off.svg")));
+		ui->pbShowChannelFilterDialog->setIcon(m_graph->isChannelFilterValid()? QIcon(QStringLiteral(":/shv/visu/images/filter.svg")): QIcon(QStringLiteral(":/shv/visu/images/filter-off.svg")));
 	});
 }
 
 void DataViewWidget::onShowChannelFilterClicked()
 {
-	auto *channel_filter_dialog = new tl::ChannelFilterDialog(this);
-	channel_filter_dialog->init(m_sitePath, m_graph);
+	auto *channel_filter_dialog = new tl::ChannelFilterDialog(this, m_sitePath, m_graph);
 
 	if (channel_filter_dialog->exec() == QDialog::Accepted) {
-		m_graph->setChannelFilter(channel_filter_dialog->filter());
+		m_graph->setChannelFilter(channel_filter_dialog->channelFilter());
 	}
 
 	channel_filter_dialog->deleteLater();

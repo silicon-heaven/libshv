@@ -18,11 +18,14 @@ namespace shv::visu::timeline {
 static const QString FLATLINE_VIEW_SETTINGS_FILE_TYPE = QStringLiteral("FlatlineViewSettings");
 static const QString FLATLINE_VIEW_SETTINGS_FILE_EXTENSION = QStringLiteral(".fvs");
 
-ChannelFilterDialog::ChannelFilterDialog(QWidget *parent) :
+ChannelFilterDialog::ChannelFilterDialog(QWidget *parent, const QString &site_path, Graph *graph) :
 	QDialog(parent),
 	ui(new Ui::ChannelFilterDialog)
 {
 	ui->setupUi(this);
+
+	m_sitePath = site_path;
+	m_graph = graph;
 
 	m_channelsFilterModel = new ChannelFilterModel(this);
 
@@ -37,14 +40,31 @@ ChannelFilterDialog::ChannelFilterDialog(QWidget *parent) :
 
 	auto *view_menu = new QMenu(this);
 	m_resetViewAction = view_menu->addAction(tr("Discard changes"), this, &ChannelFilterDialog::discardUserChanges);
-	m_saveViewAction = view_menu->addAction(tr("Save"), this, &ChannelFilterDialog::saveView);
-	m_saveViewAsAction = view_menu->addAction(tr("Save as"), this, &ChannelFilterDialog::saveViewAs);
-	m_deleteViewAction = view_menu->addAction(tr("Delete"), this, &ChannelFilterDialog::deleteView);
-	m_exportViewAction = view_menu->addAction(tr("Export"), this, &ChannelFilterDialog::exportView);
-	m_importViewAction = view_menu->addAction(tr("Import"), this, &ChannelFilterDialog::importView);
+	m_saveViewAction = view_menu->addAction(tr("Save"), this, &ChannelFilterDialog::saveDataView);
+	m_saveViewAsAction = view_menu->addAction(tr("Save as"), this, &ChannelFilterDialog::saveDataViewAs);
+	m_deleteViewAction = view_menu->addAction(tr("Delete"), this, &ChannelFilterDialog::deleteDataView);
+	m_exportViewAction = view_menu->addAction(tr("Export"), this, &ChannelFilterDialog::exportDataView);
+	m_importViewAction = view_menu->addAction(tr("Import"), this, &ChannelFilterDialog::importDataView);
 	ui->pbActions->setMenu(view_menu);
 	ui->gbFilterSettings->setChecked(false);
 
+	m_channelsFilterModel->createNodes(graph->channelPaths());
+
+	ui->gbFilterSettings->setChecked(m_graph->isChannelFilterValid());
+
+	loadChannelFilterFomGraph();
+	reloadDataViewsCombobox();
+
+	std::optional<ChannelFilter> chf = m_graph->channelFilter();
+
+	if (chf && !chf.value().name().isEmpty())
+		ui->cbDataView->setCurrentText(chf.value().name());
+	else
+		ui->cbDataView->setCurrentIndex(-1);
+
+	refreshActions();
+
+	connect(ui->cbDataView, qOverload<int>(&QComboBox::currentIndexChanged), this, &ChannelFilterDialog::onDataViewComboboxChanged);
 	connect(ui->tvChannelsFilter, &QTreeView::customContextMenuRequested, this, &ChannelFilterDialog::onCustomContextMenuRequested);
 	connect(ui->leMatchingFilterText, &QLineEdit::textChanged, this, &ChannelFilterDialog::onLeMatchingFilterTextChanged);
 	connect(ui->pbClearMatchingText, &QPushButton::clicked, this, &ChannelFilterDialog::onPbClearMatchingTextClicked);
@@ -57,34 +77,7 @@ ChannelFilterDialog::~ChannelFilterDialog()
 	delete ui;
 }
 
-void ChannelFilterDialog::init(const QString &site_path, Graph *graph)
-{
-	if (m_graph != nullptr) {
-		shvWarning() << "Dialog is allready initialized.";
-		return;
-	}
-
-	m_sitePath = site_path;
-	m_graph = graph;
-	m_channelsFilterModel->createNodes(graph->channelPaths());
-
-	ui->gbFilterSettings->setChecked(m_graph->isFilteringEnabled());
-
-	setPermittedChannelsFromGraph();
-	reloadDataViewsCombobox();
-
-	std::optional<ChannelFilter> chf = m_graph->channelFilter();
-
-	if (chf && !chf.value().name().isEmpty())
-		ui->cbDataView->setCurrentText(chf.value().name());
-	else
-		ui->cbDataView->setCurrentIndex(-1);
-
-	updateContextMenuActionsAvailability();
-	connect(ui->cbDataView, qOverload<int>(&QComboBox::currentIndexChanged), this, &ChannelFilterDialog::onDataViewChanged);
-}
-
-std::optional<ChannelFilter> ChannelFilterDialog::filter()
+std::optional<ChannelFilter> ChannelFilterDialog::channelFilter()
 {
 	if (ui->gbFilterSettings->isChecked()) {
 		return ChannelFilter(m_channelsFilterModel->permittedChannels(), ui->cbDataView->currentText());
@@ -109,14 +102,14 @@ void ChannelFilterDialog::reloadDataViewsCombobox()
 	ui->cbDataView->addItems(m_graph->savedVisualSettingsNames(m_sitePath));
 }
 
-void ChannelFilterDialog::deleteView()
+void ChannelFilterDialog::deleteDataView()
 {
 	m_graph->deleteVisualSettings(m_sitePath, ui->cbDataView->currentText());
 	reloadDataViewsCombobox();
 	ui->cbDataView->setCurrentIndex(ui->cbDataView->count() - 1);
 }
 
-void ChannelFilterDialog::exportView()
+void ChannelFilterDialog::exportDataView()
 {
 	QString file_name = QFileDialog::getSaveFileName(this, tr("Input file name"), m_recentSettingsDir, "*" + FLATLINE_VIEW_SETTINGS_FILE_EXTENSION);
 	if (!file_name.isEmpty()) {
@@ -124,7 +117,7 @@ void ChannelFilterDialog::exportView()
 			file_name.append(FLATLINE_VIEW_SETTINGS_FILE_EXTENSION);
 		}
 
-		m_graph->setChannelFilter(filter());
+		m_graph->setChannelFilter(channelFilter());
 
 		QSettings settings(file_name, QSettings::Format::IniFormat);
 		settings.setValue("fileType", FLATLINE_VIEW_SETTINGS_FILE_TYPE);
@@ -134,7 +127,7 @@ void ChannelFilterDialog::exportView()
 	}
 }
 
-void ChannelFilterDialog::importView()
+void ChannelFilterDialog::importDataView()
 {
 	QString file_name = QFileDialog::getOpenFileName(this, tr("Input file name"), m_recentSettingsDir, "*" + FLATLINE_VIEW_SETTINGS_FILE_EXTENSION);
 	if (!file_name.isEmpty()) {
@@ -159,25 +152,25 @@ void ChannelFilterDialog::importView()
 	}
 }
 
-void ChannelFilterDialog::updateContextMenuActionsAvailability()
+void ChannelFilterDialog::refreshActions()
 {
 	m_saveViewAction->setEnabled(!ui->cbDataView->currentText().isEmpty());
 	m_deleteViewAction->setEnabled(!ui->cbDataView->currentText().isEmpty());
 	m_resetViewAction->setEnabled(!ui->cbDataView->currentText().isEmpty());
 }
 
-void ChannelFilterDialog::saveView()
+void ChannelFilterDialog::saveDataView()
 {
 	if(ui->cbDataView->currentText().isEmpty()) {
 		shvWarning() << "Failed to save empty filter name.";
 		return;
 	}
 
-	m_graph->setChannelFilter(filter());
+	m_graph->setChannelFilter(channelFilter());
 	m_graph->saveVisualSettings(m_sitePath, ui->cbDataView->currentText());
 }
 
-void ChannelFilterDialog::saveViewAs()
+void ChannelFilterDialog::saveDataViewAs()
 {
 	QString view_name = QInputDialog::getText(this, tr("Save as"), tr("Input view name"));
 
@@ -185,7 +178,7 @@ void ChannelFilterDialog::saveViewAs()
 		QMessageBox::warning(this, tr("Error"), tr("Failed to save view: name is empty."));
 	}
 	else {
-		m_graph->setChannelFilter(filter());
+		m_graph->setChannelFilter(channelFilter());
 		m_graph->saveVisualSettings(m_sitePath, view_name);
 		reloadDataViewsCombobox();
 		ui->cbDataView->setCurrentText(view_name);
@@ -194,7 +187,7 @@ void ChannelFilterDialog::saveViewAs()
 
 void ChannelFilterDialog::discardUserChanges()
 {
-	onDataViewChanged(ui->cbDataView->currentIndex());
+	onDataViewComboboxChanged(ui->cbDataView->currentIndex());
 }
 
 void ChannelFilterDialog::onCustomContextMenuRequested(QPoint pos)
@@ -248,7 +241,7 @@ void ChannelFilterDialog::onChbFindRegexChanged(int state)
 	applyTextFilter();
 }
 
-void ChannelFilterDialog::setPermittedChannelsFromGraph()
+void ChannelFilterDialog::loadChannelFilterFomGraph()
 {
 	std::optional<ChannelFilter> f = m_graph->channelFilter();
 	m_channelsFilterModel->setPermittedChannels((f) ? f.value().permittedPaths() : QSet<QString>{});
@@ -276,13 +269,13 @@ void ChannelFilterDialog::setVisibleItemsCheckState_helper(const QModelIndex &mi
 	}
 }
 
-void ChannelFilterDialog::onDataViewChanged(int index)
+void ChannelFilterDialog::onDataViewComboboxChanged(int index)
 {
 	if (index >= 0) { //ignore event with index = -1, which is emmited from clear() method
 		m_graph->loadVisualSettings(m_sitePath, ui->cbDataView->currentText());
-		setPermittedChannelsFromGraph();
+		loadChannelFilterFomGraph();
 	}
-	updateContextMenuActionsAvailability();
+	refreshActions();
 }
 
 }

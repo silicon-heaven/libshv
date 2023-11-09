@@ -130,9 +130,7 @@ void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sor
 	}
 
 	resetChannelsRanges();
-	disableFiltering();
-
-	emit layoutChanged();
+	setChannelFilter(std::nullopt);
 }
 
 void Graph::resetChannelsRanges()
@@ -225,9 +223,7 @@ void Graph::moveChannel(qsizetype channel, qsizetype new_pos)
 
 void Graph::showAllChannels()
 {
-	disableFiltering();
-
-	emit layoutChanged();
+	setChannelFilter(std::nullopt);
 }
 
 QSet<QString> Graph::channelPaths()
@@ -252,7 +248,8 @@ void Graph::hideFlatChannels()
 		}
 	}
 
-	enableFiltering();
+	if (m_channelFilter == std::nullopt)
+		m_channelFilter = ChannelFilter();
 
 	if (m_channelFilter)
 		m_channelFilter.value().setPermittedPaths(permitted_paths);
@@ -1152,7 +1149,7 @@ QVector<int> Graph::visibleChannels() const
 	if (maximized_channel >= 0) {
 		visible_channels << maximized_channel;
 	}
-	else if (isFilteringEnabled()) {
+	else if (isChannelFilterValid()) {
 		for (int i = 0; i < m_channels.count(); ++i) {
 			QString shv_path = model()->channelInfo(m_channels[i]->modelIndex()).shvPath;
 			if(m_channelFilter && m_channelFilter.value().isPathPermitted(shv_path)) {
@@ -2243,18 +2240,8 @@ void Graph::drawCurrentTimeMarker(QPainter *painter, time_t time)
 
 void Graph::applyCustomChannelStyle(GraphChannel *channel)
 {
-	static QVector<QColor> colors {
-		Qt::magenta,
-		Qt::cyan,
-		Qt::blue,
-		QColor(0xe6, 0x3c, 0x33), //red
-		QColor("orange"),
-		QColor(0x6d, 0xa1, 0x3a), // green
-	};
-
-	auto channel_ix = channelCount() - 1;
 	GraphChannel::Style style = channel->style();
-	style.setColor(colors.value(channel_ix % colors.count()));
+	style.setColor(Qt::cyan);
 	channel->setStyle(style);
 }
 
@@ -2302,21 +2289,9 @@ void Graph::loadVisualSettings(const QString &settings_id, const QString &name)
 	setVisualSettingsAndChannelFilter(vs);
 }
 
-bool Graph::isFilteringEnabled() const
+bool Graph::isChannelFilterValid() const
 {
 	return (m_channelFilter != std::nullopt);
-}
-
-void Graph::enableFiltering()
-{
-	if (m_channelFilter == std::nullopt)
-		m_channelFilter = ChannelFilter();
-}
-
-void Graph::disableFiltering()
-{
-	m_channelFilter = std::nullopt;
-	emit channelFilterChanged();
 }
 
 void Graph::deleteVisualSettings(const QString &settings_id, const QString &name) const
