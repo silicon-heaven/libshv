@@ -1,4 +1,4 @@
-#include "shvnodetree.h"
+#include <shv/iotqt/node/shvnodetree.h>
 
 #include <shv/core/utils/shvfilejournal.h>
 #include <shv/chainpack/rpcvalue.h>

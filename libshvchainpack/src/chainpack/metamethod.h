@@ -1,7 +1,7 @@
 #pragma once
 
-#include "rpcvalue.h"
-#include "rpc.h"
+#include <shv/chainpack/rpcvalue.h>
+#include <shv/chainpack/rpc.h>
 
 namespace shv {
 namespace chainpack {
@@ -41,7 +41,6 @@ public:
 	static constexpr auto KEY_DESCRIPTION = "description";
 	static constexpr auto KEY_LABEL = "label";
 	static constexpr auto KEY_TAGS = "tags";
-
 public:
 	MetaMethod();
 	MetaMethod(std::string name, Signature ms, unsigned flags = 0
@@ -58,15 +57,14 @@ public:
 	Signature signature() const;
 	unsigned flags() const;
 	const RpcValue& accessGrant() const;
-	//RpcValue attributes(unsigned mask) const;
 	const RpcValue::Map& tags() const;
 	RpcValue tag(const std::string &key, const RpcValue& default_value = {}) const;
 	MetaMethod& setTag(const std::string &key, const RpcValue& value);
 
 	RpcValue toRpcValue() const;
-	//RpcValue toIMap() const;
 	static MetaMethod fromRpcValue(const RpcValue &rv);
 	void applyAttributesMap(const RpcValue::Map &attr_map);
+	void applyAttributesIMap(const RpcValue::IMap &attr_map);
 
 	static Signature signatureFromString(const std::string &sigstr);
 	static const char* signatureToString(Signature sig);

@@ -1,4 +1,4 @@
-#include "network.h"
+#include <shv/iotqt/utils/network.h>
 
 #include <shv/coreqt/log.h>
 

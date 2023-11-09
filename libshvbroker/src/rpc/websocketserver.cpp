@@ -2,7 +2,7 @@
 
 #include "ssl_common.h"
 #include "clientconnectiononbroker.h"
-#include "../brokerapp.h"
+#include <shv/broker/brokerapp.h>
 
 #include <shv/coreqt/log.h>
 #include <shv/iotqt/rpc/websocket.h>

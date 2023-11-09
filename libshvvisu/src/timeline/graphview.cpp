@@ -1,5 +1,5 @@
-#include "graphview.h"
-#include "graphwidget.h"
+#include <shv/visu/timeline/graphview.h>
+#include <shv/visu/timeline/graphwidget.h>
 
 #include <shv/coreqt/log.h>
 

@@ -1,9 +1,10 @@
-﻿#include "saxhandler.h"
+﻿#include "log.h"
 
-#include "types.h"
-#include "log.h"
-#include "simpletextitem.h"
-#include "groupitem.h"
+#include <shv/visu/svgscene/saxhandler.h>
+
+#include <shv/visu/svgscene/types.h>
+#include <shv/visu/svgscene/simpletextitem.h>
+#include <shv/visu/svgscene/groupitem.h>
 
 #include <QGraphicsItem>
 #include <QGraphicsTextItem>

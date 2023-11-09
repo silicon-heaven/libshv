@@ -1,6 +1,6 @@
-#include "utils.h"
-#include "log.h"
-#include "stringview.h"
+#include <shv/core/utils.h>
+#include <shv/core/log.h>
+#include <shv/core/stringview.h>
 
 #include <shv/chainpack/utils.h>
 #include <cstring>

@@ -16,6 +16,18 @@ qt_add_library(libshvbroker
 	src/rpc/ssl_common.cpp
 	src/subscriptionsnode.cpp
 	src/tunnelsecretlist.cpp
+
+	include/shv/broker/shvbrokerglobal.h
+	include/shv/broker/tunnelsecretlist.h
+	include/shv/broker/currentclientshvnode.h
+	include/shv/broker/aclmanager.h
+	include/shv/broker/azureconfig.h
+	include/shv/broker/ldap/ldapconfig.h
+	include/shv/broker/ldap/ldap.h
+	include/shv/broker/brokerapp.h
+	include/shv/broker/appclioptions.h
+	include/shv/broker/clientconnectionnode.h
+	include/shv/broker/groupmapping.h
 	)
 
 if(WITH_SHV_WEBSOCKETS)

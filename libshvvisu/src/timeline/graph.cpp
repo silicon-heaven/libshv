@@ -1,6 +1,6 @@
-#include "channelprobe.h"
-#include "graphwidget.h"
-#include "graphmodel.h"
+#include <shv/visu/timeline/channelprobe.h>
+#include <shv/visu/timeline/graphwidget.h>
+#include <shv/visu/timeline/graphmodel.h>
 
 #include <shv/core/exception.h>
 #include <shv/coreqt/log.h>
@@ -506,6 +506,12 @@ qsizetype Graph::posToChannel(const QPoint &pos) const
 
 qsizetype Graph::posToChannelHeader(const QPoint &pos) const
 {
+	if (m_layout.cornerCellRect.contains(pos)) {
+		return -1;
+	}
+	if (m_layout.cornerCellRect.right() < pos.x()) {
+		return -1;
+	}
 	for (qsizetype i = 0; i < channelCount(); ++i) {
 		const GraphChannel *ch = channelAt(i);
 

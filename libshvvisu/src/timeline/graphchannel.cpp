@@ -1,6 +1,6 @@
-#include "graphchannel.h"
-#include "graph.h"
-#include "graphmodel.h"
+#include <shv/visu/timeline/graphchannel.h>
+#include <shv/visu/timeline/graph.h>
+#include <shv/visu/timeline/graphmodel.h>
 
 #include <shv/coreqt/log.h>
 

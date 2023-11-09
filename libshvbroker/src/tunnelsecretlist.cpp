@@ -1,4 +1,4 @@
-#include "tunnelsecretlist.h"
+#include <shv/broker/tunnelsecretlist.h>
 
 #include <QCryptographicHash>
 #include <QDateTime>

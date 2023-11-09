@@ -1,4 +1,4 @@
-#include "exception.h"
+#include <shv/chainpack/exception.h>
 
 #include <necrolog.h>
 

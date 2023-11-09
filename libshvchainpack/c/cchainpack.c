@@ -463,6 +463,11 @@ static void unpack_int(ccpcp_unpack_context* unpack_context, int64_t *pval)
 	int64_t snum = 0;
 	int bitlen;
 	unpack_uint(unpack_context, &bitlen);
+
+	if (bitlen - 1 >= 64) {
+		unpack_context->err_no = CCPCP_RC_MALFORMED_INPUT;
+	}
+
 	if(unpack_context->err_no == CCPCP_RC_OK) {
 		const uint64_t sign_bit_mask = (uint64_t)1 << (bitlen - 1);
 		uint64_t num = unpack_context->item.as.UInt;

@@ -1,7 +1,8 @@
-#include "graphwidget.h"
-#include "graphmodel.h"
-#include "graphview.h"
-#include "channelprobewidget.h"
+
+#include <shv/visu/timeline/graphview.h>
+#include <shv/visu/timeline/graphwidget.h>
+#include <shv/visu/timeline/graphmodel.h>
+#include <shv/visu/timeline/channelprobewidget.h>
 
 
 #include <shv/core/exception.h>
@@ -367,11 +368,14 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 			(m_mouseOperation == MouseOperation::GraphVerticalHeaderResizeWidth)) {
 		setCursor(QCursor(Qt::SizeHorCursor));
 	}
-	else if (isMouseAboveChannelHeader(pos)) {
-		setCursor(QCursor(Qt::OpenHandCursor));
-	}
 	else {
-		setCursor(QCursor(Qt::ArrowCursor));
+		auto channel_ix = graph()->posToChannelHeader(pos);
+		if (channel_ix > -1 && !graph()->channelAt(channel_ix)->buttonBox()->isMouseOverButton()) {
+			setCursor(QCursor(Qt::OpenHandCursor));
+		}
+		else {
+			setCursor(QCursor(Qt::ArrowCursor));
+		}
 	}
 
 	switch (m_mouseOperation) {
@@ -759,9 +763,11 @@ void GraphWidget::showGraphContextMenu(const QPoint &mouse_pos)
 	menu.addAction(tr("Hide channels without changes"), this, [this]() {
 		m_graph->hideFlatChannels();
 	});
+
 	menu.addAction(tr("Reset channels to defaults"), this, [this]() {
 		m_graph->createChannelsFromModel();
 	});
+
 	if (m_graph->isYAxisVisible()) {
 		menu.addAction(tr("Hide Y axis"), this, [this]() {
 			m_graph->setYAxisVisible(false);
@@ -869,11 +875,6 @@ void GraphWidget::removeProbes(qsizetype channel_ix)
 		if (pw->probe()->channelIndex() == channel_ix)
 			pw->close();
 	}
-}
-
-bool GraphWidget::isMouseAboveChannelHeader(const QPoint &mouse_pos) const
-{
-	return graph()->posToChannelHeader(mouse_pos) > -1;
 }
 
 bool GraphWidget::isMouseAboveChannelResizeHandle(const QPoint &mouse_pos, Qt::Edge header_edge) const

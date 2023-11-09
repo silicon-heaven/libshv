@@ -1,7 +1,7 @@
-#include "versioninfo.h"
+#include <shv/core/utils/versioninfo.h>
 
-#include "../string.h"
-#include "../utils.h"
+#include <shv/core/string.h>
+#include <shv/core/utils.h>
 
 namespace shv::core::utils {
 

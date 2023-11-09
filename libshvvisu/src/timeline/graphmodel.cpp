@@ -1,4 +1,4 @@
-#include "graphmodel.h"
+#include <shv/visu/timeline/graphmodel.h>
 
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/coreqt/log.h>

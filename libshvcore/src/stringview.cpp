@@ -1,4 +1,4 @@
-#include "stringview.h"
+#include <shv/core/stringview.h>
 
 namespace shv::core {
 

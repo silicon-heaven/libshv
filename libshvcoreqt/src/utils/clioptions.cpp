@@ -1,6 +1,6 @@
-#include "clioptions.h"
-#include "../utils.h"
-#include "../log.h"
+#include <shv/coreqt/utils/clioptions.h>
+#include <shv/coreqt/utils.h>
+#include <shv/coreqt/log.h>
 
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/chainpack/utils.h>

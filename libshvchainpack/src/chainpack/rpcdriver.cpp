@@ -1,10 +1,10 @@
-#include "rpcdriver.h"
-#include "exception.h"
-#include "cponwriter.h"
-#include "cponreader.h"
-#include "chainpackwriter.h"
-#include "chainpackreader.h"
-#include "utils.h"
+#include <shv/chainpack/rpcdriver.h>
+#include <shv/chainpack/exception.h>
+#include <shv/chainpack/cponwriter.h>
+#include <shv/chainpack/cponreader.h>
+#include <shv/chainpack/chainpackwriter.h>
+#include <shv/chainpack/chainpackreader.h>
+#include <shv/chainpack/utils.h>
 
 #include <necrolog.h>
 

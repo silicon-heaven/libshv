@@ -10,5 +10,8 @@ runs:
 
     - name: Test
       working-directory: '${{github.workspace}}/build'
-      run: ctest --output-on-failure -j"$(nproc)"
+      run: |
+        # https://github.com/DiligentGraphics/github-action/commit/d2f7990b16def1efa337e5cc2fc8fa22b6fae55d
+        PATH="/c/mingw64/bin:$PATH"
+        ctest --output-on-failure -j"$(nproc)"
       shell: bash

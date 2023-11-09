@@ -1,4 +1,4 @@
-#include "serialportsocket.h"
+#include <shv/iotqt/rpc/serialportsocket.h>
 
 #include <shv/chainpack/utils.h>
 
@@ -232,7 +232,7 @@ void SerialPortSocket::onSerialDataReadyRead()
 				}
 				if(!m_readMessageCrcBuffer.inEscape && m_readMessageCrcBuffer.data.size() == sizeof(shv::chainpack::crc32_t)) {
 					shv::chainpack::crc32_t msg_crc = 0;
-					for(uint8_t bb : qAsConst(m_readMessageCrcBuffer.data)) {
+					for(uint8_t bb : std::as_const(m_readMessageCrcBuffer.data)) {
 						msg_crc <<= 8;
 						msg_crc += bb;
 					}

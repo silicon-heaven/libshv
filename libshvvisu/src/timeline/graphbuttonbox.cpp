@@ -1,5 +1,5 @@
-#include "graphbuttonbox.h"
-#include "graph.h"
+#include <shv/visu/timeline/graphbuttonbox.h>
+#include <shv/visu/timeline/graph.h>
 
 #include <shv/coreqt/log.h>
 

@@ -1,4 +1,4 @@
-#include "abstractstreamreader.h"
+#include <shv/chainpack/abstractstreamreader.h>
 
 namespace shv::chainpack {
 

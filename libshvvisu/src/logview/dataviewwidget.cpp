@@ -1,8 +1,8 @@
-#include "dataviewwidget.h"
 #include "ui_dataviewwidget.h"
 
-#include "shv/visu/timeline/graph.h"
-#include "shv/visu/timeline/channelfilterdialog.h"
+#include <shv/visu/logview//dataviewwidget.h>
+#include <shv/visu/timeline/graph.h>
+#include <shv/visu/timeline/channelfilterdialog.h>
 
 #include "shv/core/log.h"
 

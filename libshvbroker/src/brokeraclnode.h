@@ -2,7 +2,7 @@
 #pragma once
 
 #ifdef WITH_SHV_LDAP
-#include "ldapconfig.h"
+#include <shv/broker/ldap/ldapconfig.h>
 #endif
 
 #include <shv/iotqt/node/shvnode.h>
@@ -97,10 +97,6 @@ class LdapAclNode : public shv::iotqt::node::MethodsTableNode
 	using Super = shv::iotqt::node::MethodsTableNode;
 public:
 	LdapAclNode(const LdapConfig& ldap_config, shv::iotqt::node::ShvNode *parent = nullptr);
-	~LdapAclNode() {
-
-		std::cerr << "lol?? xdd\n";
-	}
 
 protected:
 	shv::chainpack::RpcValue callMethodRq(const shv::chainpack::RpcRequest &rq) override;

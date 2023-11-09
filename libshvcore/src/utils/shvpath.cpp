@@ -1,7 +1,7 @@
-#include "shvpath.h"
-#include "../utils.h"
+#include <shv/core/utils/shvpath.h>
+#include <shv/core/utils.h>
 
-#include "../stringview.h"
+#include <shv/core/stringview.h>
 
 namespace shv::core::utils {
 

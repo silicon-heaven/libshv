@@ -1,15 +1,15 @@
-#include "brokerapp.h"
 #include "aclmanagersqlite.h"
-#include "currentclientshvnode.h"
-#include "clientshvnode.h"
-#include "brokerappnode.h"
-#include "subscriptionsnode.h"
 #include "brokeraclnode.h"
-#include "clientconnectionnode.h"
+#include "brokerappnode.h"
 #include "brokerrootnode.h"
+#include "clientshvnode.h"
 #include "rpc/brokertcpserver.h"
 #include "rpc/clientconnectiononbroker.h"
 #include "rpc/masterbrokerconnection.h"
+#include "subscriptionsnode.h"
+#include <shv/broker/brokerapp.h>
+#include <shv/broker/currentclientshvnode.h>
+#include <shv/broker/clientconnectionnode.h>
 
 #ifdef WITH_SHV_WEBSOCKETS
 #include "rpc/websocketserver.h"
@@ -41,6 +41,7 @@
 #include <shv/chainpack/tunnelctl.h>
 #include <shv/chainpack/accessgrant.h>
 
+#include <QDir>
 #include <QFile>
 #include <QSocketNotifier>
 #include <QSqlDatabase>
@@ -862,6 +863,10 @@ void BrokerApp::initDbConfigSqlConnection()
 		if(fn[0] != '/')
 			fn = opts->effectiveConfigDir() + '/' + fn;
 		QString qfn = QString::fromStdString(fn);
+		if (!QFile(qfn).exists()) {
+			auto last_slash = qfn.lastIndexOf('/');
+			QDir("/").mkpath(qfn.mid(0, last_slash));
+		}
 		shvInfo() << "Openning SQL config database:" << fn;
 		QSqlDatabase db = QSqlDatabase::addDatabase(QString::fromStdString(cliOptions()->sqlConfigDriver()), SQL_CONFIG_CONN_NAME);
 		db.setDatabaseName(qfn);

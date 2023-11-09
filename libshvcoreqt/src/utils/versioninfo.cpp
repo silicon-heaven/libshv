@@ -1,4 +1,4 @@
-#include "versioninfo.h"
+#include <shv/coreqt/utils/versioninfo.h>
 
 namespace shv::coreqt::utils {
 

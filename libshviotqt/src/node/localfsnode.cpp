@@ -1,4 +1,4 @@
-#include "localfsnode.h"
+#include <shv/iotqt/node/localfsnode.h>
 
 #include <shv/chainpack/rpcmessage.h>
 #include <shv/chainpack/metamethod.h>

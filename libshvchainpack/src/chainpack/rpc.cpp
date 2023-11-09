@@ -1,4 +1,4 @@
-#include "rpc.h"
+#include <shv/chainpack/rpc.h>
 
 namespace shv::chainpack {
 

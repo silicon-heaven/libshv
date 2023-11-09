@@ -1,6 +1,10 @@
 # vim: sw=2
 name: Test
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [ "master" ]
@@ -53,7 +57,6 @@ jobs:
   windows:
     name: Qt 6.5.0 / Windows
     runs-on: windows-2022
-    if: false # skip windows tests untill they are fixed
     steps:
       - uses: actions/checkout@v3
         with:

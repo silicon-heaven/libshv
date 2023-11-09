@@ -1,4 +1,4 @@
-#include "simpletextitem.h"
+#include <shv/visu/svgscene/simpletextitem.h>
 
 #include <QPainter>
 

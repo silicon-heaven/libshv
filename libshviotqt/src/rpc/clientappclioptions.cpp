@@ -1,4 +1,4 @@
-#include "clientappclioptions.h"
+#include <shv/iotqt/rpc/clientappclioptions.h>
 
 #include <shv/chainpack/irpcconnection.h>
 #include <shv/chainpack/rpcdriver.h>

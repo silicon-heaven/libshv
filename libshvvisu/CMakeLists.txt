@@ -28,6 +28,35 @@ add_library(libshvvisu
 	src/timeline/graphwidget.cpp
 	src/timeline/sample.cpp
 	src/widgets/timezonecombobox.cpp
+
+	include/shv/visu/logview/dataviewwidget.h
+	include/shv/visu/logview/dlgloginspector.h
+	include/shv/visu/logview/logsortfilterproxymodel.h
+	include/shv/visu/logview/logmodel.h
+	include/shv/visu/timeline/sample.h
+	include/shv/visu/timeline/graphview.h
+	include/shv/visu/timeline/channelprobe.h
+	include/shv/visu/timeline/graphwidget.h
+	include/shv/visu/timeline/graph.h
+	include/shv/visu/timeline/channelprobewidget.h
+	include/shv/visu/timeline/graphmodel.h
+	include/shv/visu/timeline/channelfiltermodel.h
+	include/shv/visu/timeline/fulltextfilter.h
+	include/shv/visu/timeline/channelfilterdialog.h
+	include/shv/visu/timeline/graphbuttonbox.h
+	include/shv/visu/timeline/graphchannel.h
+	include/shv/visu/timeline/channelfilter.h
+	include/shv/visu/shvvisuglobal.h
+	include/shv/visu/logtablemodelbase.h
+	include/shv/visu/logwidget.h
+	include/shv/visu/timezonecombobox.h
+	include/shv/visu/svgscene/visucontroller.h
+	include/shv/visu/svgscene/graphicsview.h
+	include/shv/visu/svgscene/types.h
+	include/shv/visu/svgscene/saxhandler.h
+	include/shv/visu/svgscene/simpletextitem.h
+	include/shv/visu/svgscene/groupitem.h
+	include/shv/visu/errorlogmodel.h
 	)
 
 target_link_libraries(libshvvisu PUBLIC Qt::Widgets libshviotqt)

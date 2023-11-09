@@ -1,13 +1,13 @@
-#include "dlgloginspector.h"
+#include <shv/visu/logview/dlgloginspector.h>
 #include "ui_dlgloginspector.h"
 
-#include "logmodel.h"
-#include "logsortfilterproxymodel.h"
+#include <shv/visu/logview/logmodel.h>
+#include <shv/visu/logview/logsortfilterproxymodel.h>
 
-#include "../timeline/graphmodel.h"
-#include "../timeline/graphwidget.h"
-#include "../timeline/graph.h"
-#include "../timeline/channelfilterdialog.h"
+#include <shv/visu/timeline/graphmodel.h>
+#include <shv/visu/timeline/graphwidget.h>
+#include <shv/visu/timeline/graph.h>
+#include <shv/visu/timeline/channelfilterdialog.h>
 
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/core/exception.h>
