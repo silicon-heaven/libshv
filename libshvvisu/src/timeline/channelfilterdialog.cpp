@@ -81,7 +81,7 @@ void ChannelFilterDialog::init(const QString &site_path, Graph *graph)
 		ui->cbDataView->setCurrentIndex(-1);
 
 	updateContextMenuActionsAvailability();
-	connect(ui->cbDataView, &QComboBox::currentIndexChanged, this, &ChannelFilterDialog::onDataViewChanged);
+	connect(ui->cbDataView, qOverload<int>(&QComboBox::currentIndexChanged), this, &ChannelFilterDialog::onDataViewChanged);
 }
 
 std::optional<ChannelFilter> ChannelFilterDialog::filter()
