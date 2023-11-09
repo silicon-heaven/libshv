@@ -31,7 +31,7 @@ void ChannelFilterModel::createNodes(const QSet<QString> &channels)
 	endResetModel();
 }
 
-QSet<QString> ChannelFilterModel::selectedChannels()
+QSet<QString> ChannelFilterModel::permittedChannels()
 {
 	QSet<QString> channels;
 	selectedChannels_helper(&channels, invisibleRootItem());

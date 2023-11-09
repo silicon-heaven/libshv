@@ -89,15 +89,10 @@ void ChannelFilterDialog::init(const QString &site_path, Graph *graph)
 std::optional<ChannelFilter> ChannelFilterDialog::filter()
 {
 	if (ui->chbFileterEnabled->isChecked()) {
-		return ChannelFilter(m_channelsFilterModel->selectedChannels(), ui->cbDataView->currentText());
+		return ChannelFilter(m_channelsFilterModel->permittedChannels(), ui->cbDataView->currentText());
 	}
 
 	return std::nullopt;
-}
-
-QString ChannelFilterDialog::currentVisualSettingsId()
-{
-	return ui->cbDataView->currentText();
 }
 
 void ChannelFilterDialog::applyTextFilter()
@@ -188,7 +183,10 @@ void ChannelFilterDialog::saveViewAs()
 {
 	QString view_name = QInputDialog::getText(this, tr("Save as"), tr("Input view name"));
 
-	if (!view_name.isEmpty()) {
+	if (view_name.isEmpty()) {
+		QMessageBox::warning(this, tr("Error"), tr("Failed to save view: name is empty."));
+	}
+	else {
 		m_graph->setChannelFilter(filter());
 		m_graph->saveVisualSettings(m_sitePath, view_name);
 		reloadDataViewsCombobox();

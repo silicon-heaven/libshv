@@ -35,8 +35,7 @@ void DataViewWidget::init(const QString &site_path, timeline::Graph *graph)
 	m_sitePath = site_path;
 
 	connect(graph, &timeline::Graph::channelFilterChanged, this, [this](){
-		bool is_filter_enabled = (m_graph->channelFilter() != std::nullopt);
-		ui->pbShowChannelFilterDialog->setIcon(is_filter_enabled? QIcon(QStringLiteral(":/shv/visu/images/filter.svg")): QIcon(QStringLiteral(":/shv/visu/images/filter-off.svg")));
+		ui->pbShowChannelFilterDialog->setIcon(m_graph->isFilteringEnabled()? QIcon(QStringLiteral(":/shv/visu/images/filter.svg")): QIcon(QStringLiteral(":/shv/visu/images/filter-off.svg")));
 	});
 }
 

@@ -27,7 +27,6 @@ public:
 
 	void init(const QString &site_path, Graph *graph);
 	std::optional<ChannelFilter> filter();
-	QString currentVisualSettingsId();
 
 private:
 	void applyTextFilter();

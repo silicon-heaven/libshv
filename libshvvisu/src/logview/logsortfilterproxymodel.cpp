@@ -63,7 +63,7 @@ bool LogSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex
 				ix = sourceModel()->index(source_row, m_valueColumn, source_parent);
 				is_fulltext_filter_matched = is_fulltext_filter_matched || m_fulltextFilter.matches(sourceModel()->data(ix).toString());
 			}
-			is_row_accepted = is_row_accepted || is_fulltext_filter_matched;
+			is_row_accepted = is_row_accepted && is_fulltext_filter_matched;
 		}
 	}
 

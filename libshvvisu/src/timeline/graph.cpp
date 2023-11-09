@@ -103,12 +103,6 @@ QTimeZone Graph::timeZone() const
 }
 #endif
 
-void Graph::resetVisualSettingsAndChannelFilter()
-{
-	createChannelsFromModel();
-
-}
-
 void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sorted)
 {
 	clearChannels();
@@ -132,14 +126,13 @@ void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sor
 	}
 	for(auto model_ix : model_ixs) {
 		GraphChannel *ch = appendChannel(model_ix);
-		applyCustomChannelColor(ch);
+		applyCustomChannelStyle(ch);
 	}
 
 	resetChannelsRanges();
 	disableFiltering();
 
 	emit layoutChanged();
-	emit channelFilterChanged();
 }
 
 void Graph::resetChannelsRanges()
@@ -235,7 +228,6 @@ void Graph::showAllChannels()
 	disableFiltering();
 
 	emit layoutChanged();
-	emit channelFilterChanged();
 }
 
 QSet<QString> Graph::channelPaths()
@@ -289,8 +281,7 @@ const std::optional<ChannelFilter>& Graph::channelFilter() const
 void Graph::setChannelVisible(qsizetype channel_ix, bool is_visible)
 {
 	GraphChannel *ch = channelAt(channel_ix);
-	if (m_channelFilter == std::nullopt)
-		m_channelFilter = ChannelFilter();
+	enableFiltering();
 
 	if (is_visible) {
 		m_channelFilter->addPermittedPath(ch->shvPath());
@@ -1182,9 +1173,6 @@ void Graph::setVisualSettingsAndChannelFilter(const VisualSettings &settings)
 	}
 
 	setChannelFilter(ChannelFilter(permitted_paths, settings.name));
-
-	emit layoutChanged();
-	emit channelFilterChanged();
 }
 
 void Graph::resizeChannelHeight(qsizetype ix, int delta_px)
@@ -2240,7 +2228,7 @@ void Graph::drawCurrentTimeMarker(QPainter *painter, time_t time)
 	drawCenterTopText(painter, p1, text, m_style.font(), color.darker(400), color);
 }
 
-void Graph::applyCustomChannelColor(GraphChannel *channel)
+void Graph::applyCustomChannelStyle(GraphChannel *channel)
 {
 	static QVector<QColor> colors {
 		Qt::magenta,
@@ -2315,6 +2303,7 @@ void Graph::enableFiltering()
 void Graph::disableFiltering()
 {
 	m_channelFilter = std::nullopt;
+	emit channelFilterChanged();
 }
 
 void Graph::deleteVisualSettings(const QString &settings_id, const QString &name) const

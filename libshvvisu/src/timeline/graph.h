@@ -112,7 +112,6 @@ public:
 
 	void setSettingsUserName(const QString &user);
 	
-	void resetVisualSettingsAndChannelFilter();
 	enum class SortChannels { No = 0, Yes };
 	void createChannelsFromModel(SortChannels sorted = SortChannels::Yes);
 	void resetChannelsRanges();
@@ -273,7 +272,7 @@ protected:
 	virtual void drawCurrentTime(QPainter *painter, int channel_ix);
 	void drawCurrentTimeMarker(QPainter *painter, time_t time);
 
-	virtual void applyCustomChannelColor(GraphChannel *channel);
+	virtual void applyCustomChannelStyle(GraphChannel *channel);
 
 	QVariantMap mergeMaps(const QVariantMap &base, const QVariantMap &overlay) const;
 	void makeXAxis();
