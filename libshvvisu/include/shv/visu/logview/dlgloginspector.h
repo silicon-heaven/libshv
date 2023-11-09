@@ -54,15 +54,7 @@ private:
 	void setTimeZone(const QTimeZone &tz);
 #endif
 
-	void applyFilters(const QStringList &channel_paths);
-	void onChannelsFilterClicked();
 	void onGraphChannelFilterChanged();
-
-	void initVisualSettingSelector(const QString &shv_path);
-	void onSaveViewClicked();
-	void onDeleteViewClicked();
-	void onViewSelected(int index);
-	void setView(const QString &name);
 
 private:
 	Ui::DlgLogInspector *ui;
@@ -79,7 +71,6 @@ private:
 	shv::visu::timeline::GraphModel *m_graphModel = nullptr;
 	shv::visu::timeline::Graph *m_graph = nullptr;
 	shv::visu::timeline::GraphWidget *m_graphWidget = nullptr;
-	shv::visu::timeline::ChannelFilterDialog *m_channelFilterDialog = nullptr;
 };
 
 }}}

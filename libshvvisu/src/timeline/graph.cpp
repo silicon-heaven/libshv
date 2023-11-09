@@ -18,11 +18,11 @@
 
 #include <cmath>
 
+namespace shv::visu::timeline {
+
 static const QString USER_PROFILES_KEY = QStringLiteral("userProfiles");
 static const QString SITES_KEY = QStringLiteral("sites");
 static const QString VIEWS_KEY = QStringLiteral("channelViews");
-
-namespace shv::visu::timeline {
 
 const QString Graph::DEFAULT_USER_PROFILE = QStringLiteral("default");
 
@@ -103,58 +103,12 @@ QTimeZone Graph::timeZone() const
 }
 #endif
 
-bool Graph::isInitialView() const
-{
-	if (m_channelFilter.isValid()) {
-		return false;
-	}
-	GraphChannel::Style default_style;
-
-	QMap<QString, qsizetype> path_to_model_index;
-	for (qsizetype i = 0; i < m_model->channelCount(); ++i) {
-		QString shv_path = m_model->channelShvPath(i);
-		path_to_model_index[shv_path] = i;
-	}
-	QString previous_shv_path;
-	for (GraphChannel *channel : m_channels) {
-		if (channel->style().heightMax() != default_style.heightMax()) {
-			return false;
-		}
-		QString channel_shv_path = m_model->channelShvPath(channel->modelIndex());
-		if (channel_shv_path < previous_shv_path) {
-			return false;
-		}
-		previous_shv_path = channel_shv_path;
-	}
-	return true;
-}
-
-void Graph::reset()
-{
-	createChannelsFromModel();
-	m_channelFilter = ChannelFilter();
-	Q_EMIT layoutChanged();
-	Q_EMIT channelFilterChanged();
-}
-
 void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sorted)
 {
-	static QVector<QColor> colors {
-		Qt::magenta,
-		Qt::cyan,
-		Qt::blue,
-		QColor(0xe6, 0x3c, 0x33), //red
-		QColor("orange"),
-		QColor(0x6d, 0xa1, 0x3a), // green
-	};
-	QMap<QString, GraphChannel::Style> orig_styles;
-	for (int i = 0; i < channelCount(); ++i) {
-		auto *ch = channelAt(i);
-		orig_styles[ch->shvPath()] = ch->style();
-	}
 	clearChannels();
 	if(!m_model)
 		return;
+
 	QList<qsizetype> model_ixs;
 	if(sorted == SortChannels::Yes) {
 		// sort channels alphabetically
@@ -172,17 +126,11 @@ void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sor
 	}
 	for(auto model_ix : model_ixs) {
 		GraphChannel *ch = appendChannel(model_ix);
-		auto channel_ix = channelCount() - 1;
-		if (orig_styles.contains(ch->shvPath())) {
-			ch->setStyle(orig_styles[ch->shvPath()]);
-		}
-		else {
-			GraphChannel::Style style = ch->style();
-			style.setColor(colors.value(channel_ix % colors.count()));
-			ch->setStyle(style);
-		}
+		applyCustomChannelStyle(ch);
 	}
+
 	resetChannelsRanges();
+	setChannelFilter(std::nullopt);
 }
 
 void Graph::resetChannelsRanges()
@@ -275,35 +223,36 @@ void Graph::moveChannel(qsizetype channel, qsizetype new_pos)
 
 void Graph::showAllChannels()
 {
-	m_channelFilter.setMatchingPaths(channelPaths());
-
-	emit layoutChanged();
-	emit channelFilterChanged();
+	setChannelFilter(std::nullopt);
 }
 
-QStringList Graph::channelPaths()
+QSet<QString> Graph::channelPaths()
 {
-	QStringList shv_paths;
+	QSet<QString> ret;
 
 	for (int i = 0; i < m_channels.count(); ++i) {
-		shv_paths << m_channels[i]->shvPath();
+		ret.insert(m_channels[i]->shvPath());
 	}
 
-	return shv_paths;
+	return ret;
 }
 
 void Graph::hideFlatChannels()
 {
-	QStringList matching_paths = (m_channelFilter.isValid()) ? m_channelFilter.matchingPaths() : channelPaths();
+	QSet<QString> permitted_paths = (m_channelFilter) ? m_channelFilter.value().permittedPaths() : channelPaths();
 
 	for (qsizetype i = 0; i < m_channels.count(); ++i) {
 		GraphChannel *ch = m_channels[i];
 		if(isChannelFlat(ch)) {
-			matching_paths.removeOne(ch->shvPath());
+			permitted_paths.remove(ch->shvPath());
 		}
 	}
 
-	m_channelFilter.setMatchingPaths(matching_paths);
+	if (m_channelFilter == std::nullopt)
+		m_channelFilter = ChannelFilter();
+
+	if (m_channelFilter)
+		m_channelFilter.value().setPermittedPaths(permitted_paths);
 
 	emit layoutChanged();
 	emit channelFilterChanged();
@@ -315,14 +264,15 @@ bool Graph::isChannelFlat(GraphChannel *ch)
 	return yrange.isEmpty();
 }
 
-void Graph::setChannelFilter(const ChannelFilter &filter)
+void Graph::setChannelFilter(const std::optional<shv::visu::timeline::ChannelFilter> &filter)
 {
 	m_channelFilter = filter;
+
 	emit layoutChanged();
 	emit channelFilterChanged();
 }
 
-const ChannelFilter& Graph::channelFilter() const
+const std::optional<ChannelFilter>& Graph::channelFilter() const
 {
 	return m_channelFilter;
 }
@@ -331,14 +281,17 @@ void Graph::setChannelVisible(qsizetype channel_ix, bool is_visible)
 {
 	GraphChannel *ch = channelAt(channel_ix);
 
-	if (!m_channelFilter.isValid()) {
-		m_channelFilter.setMatchingPaths(channelPaths());
+	if (!m_channelFilter && !is_visible) {
+		m_channelFilter = ChannelFilter(channelPaths());
 	}
-	if (is_visible) {
-		m_channelFilter.addMatchingPath(ch->shvPath());
-	}
-	else {
-		m_channelFilter.removeMatchingPath(ch->shvPath());
+
+	if (m_channelFilter) {
+		if (is_visible) {
+			m_channelFilter.value().addPermittedPath(ch->shvPath());
+		}
+		else {
+			m_channelFilter.value().removePermittedPath(ch->shvPath());
+		}
 	}
 
 	emit layoutChanged();
@@ -1196,10 +1149,10 @@ QVector<int> Graph::visibleChannels() const
 	if (maximized_channel >= 0) {
 		visible_channels << maximized_channel;
 	}
-	else if(m_channelFilter.isValid()) {
+	else if (isChannelFilterValid()) {
 		for (int i = 0; i < m_channels.count(); ++i) {
 			QString shv_path = model()->channelInfo(m_channels[i]->modelIndex()).shvPath;
-			if(m_channelFilter.isPathMatch(shv_path)) {
+			if(m_channelFilter && m_channelFilter.value().isPathPermitted(shv_path)) {
 				visible_channels << i;
 			}
 		}
@@ -1212,31 +1165,24 @@ QVector<int> Graph::visibleChannels() const
 	return visible_channels;
 }
 
-void Graph::setVisualSettings(const VisualSettings &settings)
+void Graph::setVisualSettingsAndChannelFilter(const VisualSettings &settings)
 {
-	if (settings.isValid()) {
-		QStringList new_filter;
-		createChannelsFromModel();
-		for (int i = 0; i < settings.channels.count(); ++i) {
-			const VisualSettings::Channel &channel_settings = settings.channels[i];
-			for (int j = i; j < m_channels.count(); ++j) {
-				GraphChannel *channel = m_channels[j];
-				if (channel->shvPath() == channel_settings.shvPath) {
-					new_filter << channel_settings.shvPath;
-					channel->setStyle(channel_settings.style);
-					m_channels.insert(i, m_channels.takeAt(j));
-					break;
-				}
+	QSet<QString> permitted_paths;
+
+	for (int i = 0; i < settings.channels.count(); ++i) {
+		const VisualSettings::Channel &channel_settings = settings.channels[i];
+		for (int j = i; j < m_channels.count(); ++j) {
+			GraphChannel *channel = m_channels[j];
+			if (channel->shvPath() == channel_settings.shvPath) {
+				permitted_paths.insert(channel_settings.shvPath);
+				channel->setStyle(channel_settings.style);
+				m_channels.insert(i, m_channels.takeAt(j));
+				break;
 			}
 		}
+	}
 
-		m_channelFilter.setMatchingPaths(new_filter);
-		Q_EMIT layoutChanged();
-		Q_EMIT channelFilterChanged();
-	}
-	else {
-		reset();
-	}
+	setChannelFilter(ChannelFilter(permitted_paths, settings.name));
 }
 
 void Graph::resizeChannelHeight(qsizetype ix, int delta_px)
@@ -1252,7 +1198,7 @@ void Graph::resizeChannelHeight(qsizetype ix, int delta_px)
 			ch_style.setHeightMax(h);
 			ch_style.setHeightMin(h);
 			ch->setStyle(ch_style);
-			Q_EMIT layoutChanged();
+			emit layoutChanged();
 		}
 	}
 }
@@ -1263,20 +1209,19 @@ void Graph::resizeVerticalHeaderWidth(int delta_px)
 
 	if (w > MIN_VERTICAL_HEADER_WIDTH && w < MAX_VERTICAL_HEADER_WIDTH) {
 		m_style.setVerticalHeaderWidth(w);
-		Q_EMIT layoutChanged();
+		emit layoutChanged();
 	}
 }
 
 Graph::VisualSettings Graph::visualSettings() const
 {
-	VisualSettings view;
-	if (!isInitialView()) {
-		for (int ix : visibleChannels()) {
-			const GraphChannel *channel = channelAt(ix);
-			view.channels << VisualSettings::Channel{ channel->shvPath(), channel->style() };
-		}
+	VisualSettings visual_settings;
+	for (int ix : visibleChannels()) {
+		const GraphChannel *channel = channelAt(ix);
+		visual_settings.channels << VisualSettings::Channel{ channel->shvPath(), channel->style() };
 	}
-	return view;
+
+	return visual_settings;
 }
 
 int Graph::maximizedChannelIndex() const
@@ -2293,6 +2238,13 @@ void Graph::drawCurrentTimeMarker(QPainter *painter, time_t time)
 	drawCenterTopText(painter, p1, text, m_style.font(), color.darker(400), color);
 }
 
+void Graph::applyCustomChannelStyle(GraphChannel *channel)
+{
+	GraphChannel::Style style = channel->style();
+	style.setColor(Qt::cyan);
+	channel->setStyle(style);
+}
+
 QString Graph::timeToStringTZ(timemsec_t time) const
 {
 	QDateTime dt = QDateTime::fromMSecsSinceEpoch(time);
@@ -2326,14 +2278,20 @@ void Graph::saveVisualSettings(const QString &settings_id, const QString &name) 
 
 void Graph::loadVisualSettings(const QString &settings_id, const QString &name)
 {
-	VisualSettings graph_view;
 	QSettings settings;
 	settings.beginGroup(USER_PROFILES_KEY);
 	settings.beginGroup(m_settingsUserName);
 	settings.beginGroup(SITES_KEY);
 	settings.beginGroup(settings_id);
 	settings.beginGroup(VIEWS_KEY);
-	setVisualSettings(VisualSettings::fromJson(settings.value(name).toString()));
+	VisualSettings vs = VisualSettings::fromJson(settings.value(name).toString());
+	vs.name = settings_id;
+	setVisualSettingsAndChannelFilter(vs);
+}
+
+bool Graph::isChannelFilterValid() const
+{
+	return (m_channelFilter != std::nullopt);
 }
 
 void Graph::deleteVisualSettings(const QString &settings_id, const QString &name) const
@@ -2360,19 +2318,15 @@ QStringList Graph::savedVisualSettingsNames(const QString &settings_id) const
 
 QString Graph::VisualSettings::toJson() const
 {
-	if (isValid()) {
-		QJsonArray settings;
+	QJsonArray settings;
 
-		for (int i = 0; i < channels.count(); ++i) {
-			settings << QJsonObject {
-							{ "shvPath", channels[i].shvPath },
-							{ "style", QJsonObject::fromVariantMap(channels[i].style) }
-						};
+	for (int i = 0; i < channels.count(); ++i) {
+		settings << QJsonObject {
+						{ "shvPath", channels[i].shvPath },
+						{ "style", QJsonObject::fromVariantMap(channels[i].style) }
+					};
 		}
-		return QJsonDocument(QJsonObject{{ "channels", settings }}).toJson(QJsonDocument::Compact);
-	}
-
-	return QString();
+	return QJsonDocument(QJsonObject{{ "channels", settings }}).toJson(QJsonDocument::Compact);
 }
 
 Graph::VisualSettings Graph::VisualSettings::fromJson(const QString &json)
@@ -2395,12 +2349,8 @@ Graph::VisualSettings Graph::VisualSettings::fromJson(const QString &json)
 			shvWarning() << "Error on parsing user settings" << parse_error.errorString();
 		}
 	}
-	return settings;
-}
 
-bool Graph::VisualSettings::isValid() const
-{
-	return channels.count();
+	return settings;
 }
 
 Graph::XAxis::XAxis() = default;

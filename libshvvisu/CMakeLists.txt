@@ -1,5 +1,6 @@
 add_library(libshvvisu
 	images/images.qrc
+	src/logview/dataviewwidget.cpp
 	src/logview/dlgloginspector.cpp
 	src/logview/logmodel.cpp
 	src/logview/logsortfilterproxymodel.cpp
@@ -28,6 +29,7 @@ add_library(libshvvisu
 	src/timeline/sample.cpp
 	src/widgets/timezonecombobox.cpp
 
+	include/shv/visu/logview/dataviewwidget.h
 	include/shv/visu/logview/dlgloginspector.h
 	include/shv/visu/logview/logsortfilterproxymodel.h
 	include/shv/visu/logview/logmodel.h

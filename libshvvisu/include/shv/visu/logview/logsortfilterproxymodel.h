@@ -5,6 +5,7 @@
 #include "../timeline/fulltextfilter.h"
 
 #include <QSortFilterProxyModel>
+#include <optional>
 
 namespace shv {
 namespace visu {
@@ -18,7 +19,7 @@ class SHVVISU_DECL_EXPORT LogSortFilterProxyModel : public QSortFilterProxyModel
 public:
 	explicit LogSortFilterProxyModel(QObject *parent = nullptr);
 
-	void setChannelFilter(const shv::visu::timeline::ChannelFilter &filter);
+	void setChannelFilter(const std::optional<timeline::ChannelFilter> &filter);
 	void setShvPathColumn(int column);
 	void setValueColumn(int column);
 	void setFulltextFilter(const shv::visu::timeline::FullTextFilter &filter);
@@ -26,7 +27,7 @@ public:
 	bool filterAcceptsRow(int source_rrow, const QModelIndex &source_parent) const override;
 
 private:
-	shv::visu::timeline::ChannelFilter m_channelFilter;
+	std::optional<shv::visu::timeline::ChannelFilter> m_channelFilter;
 	shv::visu::timeline::FullTextFilter m_fulltextFilter;
 	int m_shvPathColumn = -1;
 	int m_valueColumn = -1;

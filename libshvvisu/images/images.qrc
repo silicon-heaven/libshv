@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="shv/visu/images">
+	<file>filter.svg</file>
+	<file>filter-off.svg</file>
 	<file>pencil.svg</file>
 	<file>clock.svg</file>
 	<file>ok.svg</file>

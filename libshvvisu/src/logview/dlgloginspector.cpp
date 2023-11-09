@@ -222,7 +222,7 @@ DlgLogInspector::DlgLogInspector(const QString &shv_path, QWidget *parent) :
 	m_graph->setModel(m_graphModel);
 	m_graphWidget->setGraph(m_graph);
 
-	m_channelFilterDialog = new shv::visu::timeline::ChannelFilterDialog(this);
+	ui->wDataView->init(ui->edShvPath->text(), m_graph);
 
 #if SHVVISU_HAS_TIMEZONE
 	connect(ui->cbxTimeZone, &QComboBox::currentTextChanged, this, [this](const QString &) {
@@ -237,22 +237,12 @@ DlgLogInspector::DlgLogInspector(const QString &shv_path, QWidget *parent) :
 	connect(ui->btLoad, &QPushButton::clicked, this, &DlgLogInspector::downloadLog);
 
 	connect(m_graph, &shv::visu::timeline::Graph::channelFilterChanged, this, &DlgLogInspector::onGraphChannelFilterChanged);
-	connect(ui->pbChannelsFilter, &QPushButton::clicked, this, &DlgLogInspector::onChannelsFilterClicked);
 
 	connect(ui->btResizeColumnsToFitWidth, &QAbstractButton::clicked, this, [this]() {
 		ui->tblData->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 	});
 
 	loadSettings();
-
-	initVisualSettingSelector(shv_path);
-	ui->cbViews->setCurrentIndex(VIEW_SELECTOR_NO_VIEW_INDEX);
-
-	connect(ui->cbViews, QOverload<int>::of(&QComboBox::activated), this, &DlgLogInspector::onViewSelected);
-
-	connect(ui->pbDeleteView, &QPushButton::clicked, this, &DlgLogInspector::onDeleteViewClicked);
-	connect(ui->pbSaveView, &QPushButton::clicked, this, &DlgLogInspector::onSaveViewClicked);
-	onViewSelected(VIEW_SELECTOR_NO_VIEW_INDEX);
 }
 
 DlgLogInspector::~DlgLogInspector()
@@ -266,60 +256,6 @@ void DlgLogInspector::loadSettings()
 	QSettings settings;
 	QByteArray ba = settings.value("ui/DlgLogInspector/geometry").toByteArray();
 	restoreGeometry(ba);
-}
-
-void DlgLogInspector::initVisualSettingSelector(const QString &shv_path)
-{
-	ui->cbViews->clear();
-
-	ui->cbViews->addItem(tr("Initial view"));
-	for (const QString &view_name : m_graph->savedVisualSettingsNames(shv_path)) {
-		ui->cbViews->addItem(view_name);
-	}
-}
-
-void DlgLogInspector::onSaveViewClicked()
-{
-	QString current_name = ui->cbViews->currentText();
-	if (current_name.isEmpty() || current_name == ui->cbViews->itemText(0)) {
-		return;
-	}
-	if (ui->cbViews->findText(current_name) == -1) {
-		int index = ui->cbViews->count();
-		ui->cbViews->addItem(current_name);
-		ui->cbViews->setCurrentIndex(index);
-	}
-	m_graph->saveVisualSettings(shvPath(), current_name);
-}
-
-void DlgLogInspector::onDeleteViewClicked()
-{
-	int index = ui->cbViews->currentIndex();
-	const QString &current_name = ui->cbViews->currentText();
-	if (ui->cbViews->findText(current_name) == -1) {
-		ui->cbViews->setEditText(ui->cbViews->itemText(index));
-		return;
-	}
-
-	m_graph->deleteVisualSettings(shvPath(), current_name);
-	ui->cbViews->removeItem(index);
-	ui->cbViews->setCurrentIndex(VIEW_SELECTOR_NO_VIEW_INDEX);
-	onViewSelected(VIEW_SELECTOR_NO_VIEW_INDEX);
-}
-
-void DlgLogInspector::onViewSelected(int index)
-{
-	if (index == VIEW_SELECTOR_NO_VIEW_INDEX) {
-		m_graph->reset();
-	}
-	else {
-		setView(ui->cbViews->currentText());
-	}
-}
-
-void DlgLogInspector::setView(const QString &name)
-{
-	m_graph->loadVisualSettings(shvPath(), name);
 }
 
 void DlgLogInspector::saveSettings()
@@ -485,11 +421,7 @@ void DlgLogInspector::parseLog(shv::chainpack::RpcValue log)
 	}
 
 	m_graph->createChannelsFromModel();
-
-	QStringList channel_paths = m_graph->channelPaths();
-	m_channelFilterDialog->init(shvPath(), channel_paths);
 	ui->graphView->makeLayout();
-	applyFilters(channel_paths);
 }
 
 void DlgLogInspector::showInfo(const QString &msg, bool is_error)
@@ -546,22 +478,6 @@ void DlgLogInspector::setTimeZone(const QTimeZone &tz)
 	m_graphWidget->setTimeZone(tz);
 }
 #endif
-
-void DlgLogInspector::applyFilters(const QStringList &channel_paths)
-{
-	auto graph_filter = m_graph->channelFilter();
-	graph_filter.setMatchingPaths(channel_paths);
-	m_graph->setChannelFilter(graph_filter);
-}
-
-void DlgLogInspector::onChannelsFilterClicked()
-{
-	m_channelFilterDialog->setSelectedChannels(m_graph->channelFilter().matchingPaths());
-
-	if(m_channelFilterDialog->exec() == QDialog::Accepted) {
-		applyFilters(m_channelFilterDialog->selectedChannels());
-	}
-}
 
 void DlgLogInspector::onGraphChannelFilterChanged()
 {

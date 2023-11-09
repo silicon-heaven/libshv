@@ -4,47 +4,42 @@
 
 namespace shv::visu::timeline {
 
-ChannelFilter::ChannelFilter()
-	: m_isValid(false)
+ChannelFilter::ChannelFilter() = default;
+
+ChannelFilter::ChannelFilter(const QSet<QString> &permitted_paths, const QString &name)
 {
+	m_permittedPaths = permitted_paths;
+	m_name = name;
 }
 
-ChannelFilter::ChannelFilter(const QStringList &matching_paths)
-	: m_isValid(true)
+QSet<QString> ChannelFilter::permittedPaths() const
 {
-	setMatchingPaths(matching_paths);
+	return m_permittedPaths;
 }
 
-QStringList ChannelFilter::matchingPaths() const
+void ChannelFilter::addPermittedPath(const QString &path)
 {
-	return m_matchingPaths;
+	m_permittedPaths.insert(path);
 }
 
-void ChannelFilter::addMatchingPath(const QString &shv_path)
+void ChannelFilter::removePermittedPath(const QString &path)
 {
-	m_isValid = true;
-	m_matchingPaths << shv_path;
+	m_permittedPaths.remove(path);
 }
 
-void ChannelFilter::removeMatchingPath(const QString &shv_path)
+void ChannelFilter::setPermittedPaths(const QSet<QString> &paths)
 {
-	m_isValid = true;
-	m_matchingPaths.removeOne(shv_path);
+	m_permittedPaths = paths;
 }
 
-void ChannelFilter::setMatchingPaths(const QStringList &paths)
+bool ChannelFilter::isPathPermitted(const QString &path) const
 {
-	m_isValid = true;
-	m_matchingPaths = paths;
+	return m_permittedPaths.contains(path);
 }
 
-bool ChannelFilter::isPathMatch(const QString &path) const
+QString ChannelFilter::name()
 {
-	return m_matchingPaths.contains(path);
+	return m_name;
 }
 
-bool ChannelFilter::isValid() const
-{
-	return m_isValid;
-}
 }

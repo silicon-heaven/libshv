@@ -1,16 +1,17 @@
 #pragma once
 
-#include <shv/visu/timeline/channelfilter.h>
-#include <shv/visu/timeline/channelprobe.h>
-#include <shv/visu/timeline/graphchannel.h>
-#include <shv/visu/timeline/graphbuttonbox.h>
-#include <shv/visu/timeline/sample.h>
-#include <shv/visu/shvvisuglobal.h>
+#include "channelfilter.h"
+#include "channelprobe.h"
+#include "graphchannel.h"
+#include "graphbuttonbox.h"
+#include "sample.h"
+#include "../shvvisuglobal.h"
 
 #include <shv/coreqt/utils.h>
 #include <shv/core/exception.h>
 #include <shv/core/utils/shvlogtypeinfo.h>
 
+#include <optional>
 #include <QObject>
 #include <QVector>
 #include <QVariantMap>
@@ -93,8 +94,8 @@ public:
 
 		QString toJson() const;
 		static VisualSettings fromJson(const QString &json);
-		bool isValid() const;
 		QVector<Channel> channels;
+		QString name;
 	};
 
 	Graph(QObject *parent = nullptr);
@@ -111,12 +112,10 @@ public:
 #endif
 
 	void setSettingsUserName(const QString &user);
-
-	void reset();
+	
 	enum class SortChannels { No = 0, Yes };
 	void createChannelsFromModel(SortChannels sorted = SortChannels::Yes);
 	void resetChannelsRanges();
-	bool isInitialView() const;
 
 	qsizetype channelCount() const;
 	void clearChannels();
@@ -128,10 +127,10 @@ public:
 	QString channelName(qsizetype channel) const;
 
 	void showAllChannels();
-	QStringList channelPaths();
+	QSet<QString> channelPaths();
 	void hideFlatChannels();
-	const ChannelFilter& channelFilter() const;
-	void setChannelFilter(const ChannelFilter &filter);
+	const std::optional<ChannelFilter> &channelFilter() const;
+	void setChannelFilter(const std::optional<ChannelFilter> &filter);
 	void setChannelVisible(qsizetype channel_ix, bool is_visible);
 	void setChannelMaximized(qsizetype channel_ix, bool is_maximized);
 
@@ -226,7 +225,7 @@ public:
 	static QString rectToString(const QRect &r);
 
 	VisualSettings visualSettings() const;
-	void setVisualSettings(const VisualSettings &settings);
+	void setVisualSettingsAndChannelFilter(const VisualSettings &settings);
 	void resizeChannelHeight(qsizetype ix, int delta_px);
 	void resizeVerticalHeaderWidth(int delta_px);
 
@@ -234,6 +233,8 @@ public:
 	void deleteVisualSettings(const QString &settings_id, const QString &name) const;
 	QStringList savedVisualSettingsNames(const QString &settings_id) const;
 	void loadVisualSettings(const QString &settings_id, const QString &name);
+	QString loadedVisualSettingsId();
+	bool isChannelFilterValid() const;
 
 protected:
 	void sanityXRangeZoom();
@@ -270,6 +271,8 @@ protected:
 	virtual void drawCurrentTime(QPainter *painter, int channel_ix);
 	void drawCurrentTimeMarker(QPainter *painter, time_t time);
 
+	virtual void applyCustomChannelStyle(GraphChannel *channel);
+
 	QVariantMap mergeMaps(const QVariantMap &base, const QVariantMap &overlay) const;
 	void makeXAxis();
 	void makeYAxis(qsizetype channel);
@@ -290,7 +293,7 @@ protected:
 
 	QVector<ChannelProbe*> m_channelProbes;
 	QVector<GraphChannel*> m_channels;
-	ChannelFilter m_channelFilter;
+	std::optional<ChannelFilter> m_channelFilter;
 
 	struct SHVVISU_DECL_EXPORT XAxis
 	{
