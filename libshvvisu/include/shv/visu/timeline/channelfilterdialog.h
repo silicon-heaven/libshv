@@ -3,8 +3,8 @@
 #include "../shvvisuglobal.h"
 #include <shv/visu/timeline/graph.h>
 
-
 #include <QDialog>
+#include <optional>
 
 namespace shv {
 namespace visu {

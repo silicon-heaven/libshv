@@ -11,6 +11,7 @@
 #include <shv/core/exception.h>
 #include <shv/core/utils/shvlogtypeinfo.h>
 
+#include <optional>
 #include <QObject>
 #include <QVector>
 #include <QVariantMap>

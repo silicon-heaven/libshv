@@ -5,6 +5,7 @@
 #include "../timeline/fulltextfilter.h"
 
 #include <QSortFilterProxyModel>
+#include <optional>
 
 namespace shv {
 namespace visu {
