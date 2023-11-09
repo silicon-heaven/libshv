@@ -41,7 +41,7 @@ void DataViewWidget::init(const QString &site_path, timeline::Graph *graph)
 
 void DataViewWidget::onShowChannelFilterClicked()
 {
-	tl::ChannelFilterDialog *channel_filter_dialog = new tl::ChannelFilterDialog(this);
+	auto *channel_filter_dialog = new tl::ChannelFilterDialog(this);
 	channel_filter_dialog->init(m_sitePath, m_graph);
 
 	if (channel_filter_dialog->exec() == QDialog::Accepted) {

@@ -59,6 +59,7 @@ private:
 	ChannelFilterModel *m_channelsFilterModel = nullptr;
 	ChannelFilterSortFilterProxyModel *m_channelsFilterProxyModel = nullptr;
 	QString m_sitePath;
+	QString m_recentSettingsDir;
 
 	QAction *m_saveViewAction = nullptr;
 	QAction *m_saveViewAsAction = nullptr;

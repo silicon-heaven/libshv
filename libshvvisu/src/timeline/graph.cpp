@@ -18,11 +18,11 @@
 
 #include <cmath>
 
+namespace shv::visu::timeline {
+
 static const QString USER_PROFILES_KEY = QStringLiteral("userProfiles");
 static const QString SITES_KEY = QStringLiteral("sites");
 static const QString VIEWS_KEY = QStringLiteral("channelViews");
-
-namespace shv::visu::timeline {
 
 const QString Graph::DEFAULT_USER_PROFILE = QStringLiteral("default");
 
@@ -243,7 +243,7 @@ QSet<QString> Graph::channelPaths()
 
 void Graph::hideFlatChannels()
 {
-	QSet<QString> permitted_paths = (isFilteringEnabled()) ? m_channelFilter->permittedPaths() : channelPaths();
+	QSet<QString> permitted_paths = (m_channelFilter) ? m_channelFilter.value().permittedPaths() : channelPaths();
 
 	for (qsizetype i = 0; i < m_channels.count(); ++i) {
 		GraphChannel *ch = m_channels[i];
@@ -253,7 +253,9 @@ void Graph::hideFlatChannels()
 	}
 
 	enableFiltering();
-	m_channelFilter->setPermittedPaths(permitted_paths);
+
+	if (m_channelFilter)
+		m_channelFilter.value().setPermittedPaths(permitted_paths);
 
 	emit layoutChanged();
 	emit channelFilterChanged();
@@ -286,11 +288,13 @@ void Graph::setChannelVisible(qsizetype channel_ix, bool is_visible)
 		m_channelFilter = ChannelFilter(channelPaths());
 	}
 
-	if (is_visible) {
-		m_channelFilter->addPermittedPath(ch->shvPath());
-	}
-	else {
-		m_channelFilter->removePermittedPath(ch->shvPath());
+	if (m_channelFilter) {
+		if (is_visible) {
+			m_channelFilter.value().addPermittedPath(ch->shvPath());
+		}
+		else {
+			m_channelFilter.value().removePermittedPath(ch->shvPath());
+		}
 	}
 
 	emit layoutChanged();
@@ -1151,7 +1155,7 @@ QVector<int> Graph::visibleChannels() const
 	else if (isFilteringEnabled()) {
 		for (int i = 0; i < m_channels.count(); ++i) {
 			QString shv_path = model()->channelInfo(m_channels[i]->modelIndex()).shvPath;
-			if(m_channelFilter->isPathPermitted(shv_path)) {
+			if(m_channelFilter && m_channelFilter.value().isPathPermitted(shv_path)) {
 				visible_channels << i;
 			}
 		}

@@ -15,7 +15,6 @@
 
 namespace shv::visu::timeline {
 
-static QString RECENT_SETTINGS_DIR;
 static const QString FLATLINE_VIEW_SETTINGS_FILE_TYPE = QStringLiteral("FlatlineViewSettings");
 static const QString FLATLINE_VIEW_SETTINGS_FILE_EXTENSION = QStringLiteral(".fvs");
 
@@ -36,7 +35,7 @@ ChannelFilterDialog::ChannelFilterDialog(QWidget *parent) :
 	ui->tvChannelsFilter->header()->hide();
 	ui->tvChannelsFilter->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
 
-	QMenu *view_menu = new QMenu(this);
+	auto *view_menu = new QMenu(this);
 	m_resetViewAction = view_menu->addAction(tr("Discard changes"), this, &ChannelFilterDialog::discardUserChanges);
 	m_saveViewAction = view_menu->addAction(tr("Save"), this, &ChannelFilterDialog::saveView);
 	m_saveViewAsAction = view_menu->addAction(tr("Save as"), this, &ChannelFilterDialog::saveViewAs);
@@ -76,8 +75,8 @@ void ChannelFilterDialog::init(const QString &site_path, Graph *graph)
 
 	std::optional<ChannelFilter> chf = m_graph->channelFilter();
 
-	if ((chf != std::nullopt) && (!chf->name().isEmpty()))
-		ui->cbDataView->setCurrentText(chf->name());
+	if (chf && !chf.value().name().isEmpty())
+		ui->cbDataView->setCurrentText(chf.value().name());
 	else
 		ui->cbDataView->setCurrentIndex(-1);
 
@@ -119,7 +118,7 @@ void ChannelFilterDialog::deleteView()
 
 void ChannelFilterDialog::exportView()
 {
-	QString file_name = QFileDialog::getSaveFileName(this, tr("Input file name"), RECENT_SETTINGS_DIR, "*" + FLATLINE_VIEW_SETTINGS_FILE_EXTENSION);
+	QString file_name = QFileDialog::getSaveFileName(this, tr("Input file name"), m_recentSettingsDir, "*" + FLATLINE_VIEW_SETTINGS_FILE_EXTENSION);
 	if (!file_name.isEmpty()) {
 		if (!file_name.endsWith(FLATLINE_VIEW_SETTINGS_FILE_EXTENSION)) {
 			file_name.append(FLATLINE_VIEW_SETTINGS_FILE_EXTENSION);
@@ -131,13 +130,13 @@ void ChannelFilterDialog::exportView()
 		settings.setValue("fileType", FLATLINE_VIEW_SETTINGS_FILE_TYPE);
 		settings.setValue("settings", m_graph->visualSettings().toJson());
 
-		RECENT_SETTINGS_DIR = QFileInfo(file_name).path();
+		m_recentSettingsDir = QFileInfo(file_name).path();
 	}
 }
 
 void ChannelFilterDialog::importView()
 {
-	QString file_name = QFileDialog::getOpenFileName(this, tr("Input file name"), RECENT_SETTINGS_DIR, "*" + FLATLINE_VIEW_SETTINGS_FILE_EXTENSION);
+	QString file_name = QFileDialog::getOpenFileName(this, tr("Input file name"), m_recentSettingsDir, "*" + FLATLINE_VIEW_SETTINGS_FILE_EXTENSION);
 	if (!file_name.isEmpty()) {
 		QString view_name = QInputDialog::getText(this, tr("Import as"), tr("Input view name"));
 
@@ -155,7 +154,7 @@ void ChannelFilterDialog::importView()
 			reloadDataViewsCombobox();
 			ui->cbDataView->setCurrentText(view_name);
 
-			RECENT_SETTINGS_DIR = QFileInfo(file_name).path();
+			m_recentSettingsDir = QFileInfo(file_name).path();
 		}
 	}
 }
@@ -252,7 +251,7 @@ void ChannelFilterDialog::onChbFindRegexChanged(int state)
 void ChannelFilterDialog::setPermittedChannelsFromGraph()
 {
 	std::optional<ChannelFilter> f = m_graph->channelFilter();
-	m_channelsFilterModel->setPermittedChannels((f == std::nullopt) ? QSet<QString>{} : f->permittedPaths());
+	m_channelsFilterModel->setPermittedChannels((f) ? f.value().permittedPaths() : QSet<QString>{});
 }
 
 void ChannelFilterDialog::setVisibleItemsCheckState(Qt::CheckState state)
