@@ -33,7 +33,6 @@ qt_add_library(libshviotqt
 	include/shv/iotqt/rpc/deviceconnection.h
 	include/shv/iotqt/rpc/tcpserver.h
 	include/shv/iotqt/rpc/rpcresponsecallback.h
-	include/shv/iotqt/rpc/websocket.h
 	include/shv/iotqt/rpc/socket.h
 	include/shv/iotqt/rpc/clientconnection.h
 	include/shv/iotqt/rpc/serverconnection.h
@@ -58,6 +57,7 @@ target_compile_definitions(libshviotqt PRIVATE SHVIOTQT_BUILD_DLL)
 
 if(WITH_SHV_WEBSOCKETS)
 	target_sources(libshviotqt PRIVATE
+		include/shv/iotqt/rpc/websocket.h
 		src/rpc/websocket.cpp
 		)
 	target_compile_definitions(libshviotqt PUBLIC WITH_SHV_WEBSOCKETS)
