@@ -1,7 +1,10 @@
 #pragma once
 
-#include <QWidget>
+#include "../shvvisuglobal.h"
+
 #include <shv/visu/timeline/graph.h>
+
+#include <QWidget>
 
 namespace shv {
 namespace visu {
@@ -11,7 +14,7 @@ namespace Ui {
 class DataViewWidget;
 }
 
-class DataViewWidget : public QWidget
+class SHVVISU_DECL_EXPORT DataViewWidget : public QWidget
 {
 	Q_OBJECT
 
