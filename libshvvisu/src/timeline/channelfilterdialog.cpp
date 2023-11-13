@@ -121,7 +121,8 @@ void ChannelFilterDialog::exportDataView()
 
 		QSettings settings(file_name, QSettings::Format::IniFormat);
 		settings.setValue("fileType", FLATLINE_VIEW_SETTINGS_FILE_TYPE);
-		settings.setValue("settings", m_graph->visualSettings().toJson());
+		settings.beginGroup("settings");
+		m_graph->visualSettings().saveSettings(settings);
 
 		m_recentSettingsDir = QFileInfo(file_name).path();
 	}
@@ -140,7 +141,9 @@ void ChannelFilterDialog::importDataView()
 				return;
 			}
 
-			Graph::VisualSettings visual_settings = Graph::VisualSettings::fromJson(settings_file.value("settings").toString());
+			settings_file.beginGroup("settings");
+			Graph::VisualSettings visual_settings;
+			visual_settings.readSettings(settings_file);
 			visual_settings.name = view_name;
 			m_graph->setVisualSettingsAndChannelFilter(visual_settings);
 			m_graph->saveVisualSettings(m_sitePath, view_name);

@@ -23,6 +23,8 @@
 #include <QTimeZone>
 #endif
 
+class QSettings;
+
 namespace shv {
 namespace visu {
 namespace timeline {
@@ -92,8 +94,8 @@ public:
 			GraphChannel::Style style;
 		};
 
-		QString toJson() const;
-		static VisualSettings fromJson(const QString &json);
+		void readSettings(QSettings &settings);
+		void saveSettings(QSettings &settings) const;
 		QVector<Channel> channels;
 		QString name;
 	};

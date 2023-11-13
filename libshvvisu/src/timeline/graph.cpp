@@ -2273,7 +2273,8 @@ void Graph::saveVisualSettings(const QString &settings_id, const QString &name) 
 	settings.beginGroup(SITES_KEY);
 	settings.beginGroup(settings_id);
 	settings.beginGroup(VIEWS_KEY);
-	settings.setValue(name, visualSettings().toJson());
+	settings.beginGroup(name);
+	visualSettings().saveSettings(settings);
 }
 
 void Graph::loadVisualSettings(const QString &settings_id, const QString &name)
@@ -2284,7 +2285,9 @@ void Graph::loadVisualSettings(const QString &settings_id, const QString &name)
 	settings.beginGroup(SITES_KEY);
 	settings.beginGroup(settings_id);
 	settings.beginGroup(VIEWS_KEY);
-	VisualSettings vs = VisualSettings::fromJson(settings.value(name).toString());
+	settings.beginGroup(name);
+	VisualSettings vs;
+	vs.readSettings(settings);
 	vs.name = settings_id;
 	setVisualSettingsAndChannelFilter(vs);
 }
@@ -2316,41 +2319,38 @@ QStringList Graph::savedVisualSettingsNames(const QString &settings_id) const
 	return settings.childKeys();
 }
 
-QString Graph::VisualSettings::toJson() const
+void Graph::VisualSettings::readSettings(QSettings &settings)
 {
-	QJsonArray settings;
-
-	for (int i = 0; i < channels.count(); ++i) {
-		settings << QJsonObject {
-						{ "shvPath", channels[i].shvPath },
-						{ "style", QJsonObject::fromVariantMap(channels[i].style) }
-					};
+	channels.clear();
+	int size = settings.beginReadArray("channels");
+	for (int i = 0; i < size; ++i) {
+		settings.setArrayIndex(i);
+		Channel channel;
+		channel.shvPath = settings.value("shvPath").toString();
+		settings.beginGroup("style");
+		for (const QString &key : settings.childKeys()) {
+			channel.style[key] = settings.value(key);
 		}
-	return QJsonDocument(QJsonObject{{ "channels", settings }}).toJson(QJsonDocument::Compact);
+		settings.endGroup();
+		channels << channel;
+	}
+	settings.endArray();
 }
 
-Graph::VisualSettings Graph::VisualSettings::fromJson(const QString &json)
+void Graph::VisualSettings::saveSettings(QSettings &settings) const
 {
-	VisualSettings settings;
-
-	if (!json.isEmpty()) {
-		QJsonParseError parse_error;
-		QJsonArray array = QJsonDocument::fromJson(json.toUtf8(), &parse_error).object()["channels"].toArray();
-		if (parse_error.error == QJsonParseError::NoError) {
-			for (int i = 0; i < array.count(); ++i) {
-				QJsonObject item = array[i].toObject();
-				settings.channels << VisualSettings::Channel({
-											 item["shvPath"].toString(),
-											 item["style"].toVariant().toMap()
-										 });
-			}
+	settings.beginWriteArray("channels");
+	for (int i = 0; i < channels.size(); ++i) {
+		const Channel &channel = channels[i];
+		settings.setArrayIndex(i);
+		settings.setValue("shvPath", channel.shvPath);
+		settings.beginGroup("style");
+		for (auto it = channel.style.cbegin(); it != channel.style.cend(); ++it) {
+			settings.setValue(it.key(), it.value());
 		}
-		else {
-			shvWarning() << "Error on parsing user settings" << parse_error.errorString();
-		}
+		settings.endGroup();
 	}
-
-	return settings;
+	settings.endArray();
 }
 
 Graph::XAxis::XAxis() = default;
