@@ -1,3 +1,4 @@
+#include <shv/core/utils/shvjournalcommon.h>
 #include <shv/core/utils/shvfilejournal.h>
 
 #include <shv/core/utils/patternmatcher.h>
@@ -626,7 +627,7 @@ chainpack::RpcValue ShvFileJournal::getLog(const ShvFileJournal::JournalContext 
 	int64_t journal_start_msec = 0;
 	int64_t first_record_msec = 0;
 	int64_t last_record_msec = 0;
-	int rec_cnt_limit = std::min(params.recordCountLimit, DEFAULT_GET_LOG_RECORD_COUNT_LIMIT);
+	int rec_cnt_limit = std::min(params.recordCountLimit, ShvJournalCommon::DEFAULT_GET_LOG_RECORD_COUNT_LIMIT);
 	bool rec_cnt_limit_hit = false;
 
 	/// this ensure that there be only one copy of each path in memory

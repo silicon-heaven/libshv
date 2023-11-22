@@ -24,8 +24,6 @@ struct SHVCORE_DECL_EXPORT ShvSnapshot
 class SHVCORE_DECL_EXPORT AbstractShvJournal
 {
 public:
-	static constexpr int DEFAULT_GET_LOG_RECORD_COUNT_LIMIT = 100 * 100;
-
 	static constexpr auto KEY_NAME = "name";
 	static constexpr auto const KEY_RECORD_COUNT = "recordCount";
 	static constexpr auto const KEY_PATHS_DICT = "pathsDict";
