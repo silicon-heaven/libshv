@@ -817,13 +817,13 @@ log_finish:
 
 		using Column = ShvLogHeader::Column;
 		RpcValue::List fields;
-		fields.push_back(RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::Timestamp)}});
-		fields.push_back(RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::Path)}});
-		fields.push_back(RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::Value)}});
-		fields.push_back(RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::ShortTime)}});
-		fields.push_back(RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::Domain)}});
-		fields.push_back(RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::ValueFlags)}});
-		fields.push_back(RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::UserId)}});
+		fields.push_back(RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::Timestamp)}});
+		fields.push_back(RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::Path)}});
+		fields.push_back(RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::Value)}});
+		fields.push_back(RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::ShortTime)}});
+		fields.push_back(RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::Domain)}});
+		fields.push_back(RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::ValueFlags)}});
+		fields.push_back(RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::UserId)}});
 		log_header.setFields(std::move(fields));
 	}
 	if(params.withPathsDict) {
