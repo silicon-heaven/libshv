@@ -10,7 +10,7 @@ class ShvJournalCommon
 {
 public:
 	static constexpr long DEFAULT_FILE_SIZE_LIMIT = 100 * 1024;
-	static constexpr int DEFAULT_GET_LOG_RECORD_COUNT_LIMIT = 100 * 1000;
+	static constexpr int DEFAULT_GET_LOG_RECORD_COUNT_LIMIT = 10000;
 
 	static constexpr auto KEY_NAME = "name";
 	static constexpr auto KEY_RECORD_COUNT = "recordCount";
