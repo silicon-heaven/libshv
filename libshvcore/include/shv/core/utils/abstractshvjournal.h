@@ -1,5 +1,5 @@
-#ifndef SHV_CORE_UTILS_SHVJOURNALCOMMON_H
-#define SHV_CORE_UTILS_SHVJOURNALCOMMON_H
+#ifndef SHV_CORE_UTILS_ABSTRACTSHVJOURNAL_H
+#define SHV_CORE_UTILS_ABSTRACTSHVJOURNAL_H
 
 #include "../shvcoreglobal.h"
 
@@ -45,4 +45,4 @@ protected:
 } // namespace core
 } // namespace shv
 
-#endif // SHV_CORE_UTILS_SHVJOURNALCOMMON_H
+#endif // SHV_CORE_UTILS_ABSTRACTSHVJOURNAL_H
