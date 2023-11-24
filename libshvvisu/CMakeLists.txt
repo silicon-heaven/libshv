@@ -65,3 +65,4 @@ target_include_directories(libshvvisu PUBLIC include)
 target_compile_definitions(libshvvisu PRIVATE SHVVISU_BUILD_DLL)
 
 install(TARGETS libshvvisu)
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/shv" TYPE INCLUDE)

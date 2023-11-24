@@ -72,3 +72,4 @@ if(BUILD_TESTING)
 endif()
 
 install(TARGETS libshvchainpack-cpp)
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/shv" TYPE INCLUDE)

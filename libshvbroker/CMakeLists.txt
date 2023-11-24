@@ -61,3 +61,4 @@ if(BUILD_TESTING)
 endif()
 
 install(TARGETS libshvbroker)
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/shv" TYPE INCLUDE)
