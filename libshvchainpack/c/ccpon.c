@@ -1393,29 +1393,7 @@ void ccpon_unpack_next (ccpcp_unpack_context* unpack_context)
 		UNPACK_ERROR(CCPCP_RC_MALFORMED_INPUT, "Invalid character.");
 	}
 
-	ccpcp_item_types current_item_type = unpack_context->item.type;
-	bool is_container_end = false;
-	switch(current_item_type) {
-	case CCPCP_ITEM_LIST:
-	case CCPCP_ITEM_MAP:
-	case CCPCP_ITEM_IMAP:
-	case CCPCP_ITEM_META:
-		ccpcp_unpack_context_push_container_state(unpack_context, current_item_type);
-		break;
-	case CCPCP_ITEM_CONTAINER_END:
-		ccpcp_unpack_context_pop_container_state(unpack_context);
-		is_container_end = true;
-		break;
-	default:
-		break;
-	}
-
-	ccpcp_container_state *top_cont_state = ccpcp_unpack_context_top_container_state(unpack_context);
-	if(top_cont_state && !is_container_end) {
-		if(top_cont_state->current_item_type != CCPCP_ITEM_META)
-			top_cont_state->item_count++;
-		top_cont_state->current_item_type = current_item_type;
-	}
+	ccpcp_unpack_context_update_container_state(unpack_context);
 }
 
 void ccpon_pack_field_delim(ccpcp_pack_context *pack_context, bool is_first_field, bool is_oneliner)

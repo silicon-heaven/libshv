@@ -6,7 +6,7 @@
 void ccpcp_convert(ccpcp_unpack_context* in_ctx, ccpcp_pack_format in_format, ccpcp_pack_context* out_ctx, ccpcp_pack_format out_format)
 {
 	if(!in_ctx->container_stack) {
-		// ccpcp_convert() cannot worj without input context container state set
+		// ccpcp_convert() cannot work without input context container state set
 		in_ctx->err_no = CCPCP_RC_LOGICAL_ERROR;
 		return;
 	}
@@ -14,6 +14,7 @@ void ccpcp_convert(ccpcp_unpack_context* in_ctx, ccpcp_pack_format in_format, cc
 	bool o_chainpack_output = (out_format == CCPCP_ChainPack);
 	bool meta_just_closed = false;
 	do {
+		ccpcp_container_state *current_state = ccpcp_unpack_context_top_container_state(in_ctx);
 		if(o_cpon_input)
 			ccpon_unpack_next(in_ctx);
 		else
@@ -21,11 +22,10 @@ void ccpcp_convert(ccpcp_unpack_context* in_ctx, ccpcp_pack_format in_format, cc
 		if(in_ctx->err_no != CCPCP_RC_OK)
 			break;
 
-		ccpcp_container_state *parent_state = ccpcp_unpack_context_parent_container_state(in_ctx);
 		if(o_chainpack_output) {
 		}
 		else {
-			if(parent_state != NULL) {
+			if(current_state != NULL) {
 				bool is_string_concat = 0;
 				if(in_ctx->item.type == CCPCP_ITEM_STRING) {
 					ccpcp_string *it = &(in_ctx->item.as.String);
@@ -38,23 +38,26 @@ void ccpcp_convert(ccpcp_unpack_context* in_ctx, ccpcp_pack_format in_format, cc
 					}
 				}
 				if(!is_string_concat && in_ctx->item.type != CCPCP_ITEM_CONTAINER_END) {
-					switch(parent_state->container_type) {
+					bool is_first_item = current_state->item_count == 1;
+					static const bool IS_ONE_LINER = true;
+					switch(current_state->container_type) {
 					case CCPCP_ITEM_LIST:
 						if(!meta_just_closed)
-							ccpon_pack_field_delim(out_ctx, parent_state->item_count == 1, false);
+							ccpon_pack_field_delim(out_ctx, is_first_item, !IS_ONE_LINER);
 						break;
 					case CCPCP_ITEM_MAP:
 					case CCPCP_ITEM_IMAP:
 					case CCPCP_ITEM_META: {
-						bool is_key = (parent_state->item_count % 2);
-						if(is_key) {
+						//bool is_key = (current_state->item_count % 2) == 1;
+						bool is_val = (current_state->item_count % 2) == 0;
+						if(is_val) {
 							if(!meta_just_closed)
-								ccpon_pack_field_delim(out_ctx, parent_state->item_count == 1, false);
+								ccpon_pack_key_val_delim(out_ctx);
 						}
 						else {
 							// delimite value
 							if(!meta_just_closed)
-								ccpon_pack_key_val_delim(out_ctx);
+								ccpon_pack_field_delim(out_ctx, is_first_item, !IS_ONE_LINER);
 						}
 						break;
 					}
@@ -106,18 +109,18 @@ void ccpcp_convert(ccpcp_unpack_context* in_ctx, ccpcp_pack_format in_format, cc
 			break;
 		}
 		case CCPCP_ITEM_CONTAINER_END: {
-			ccpcp_container_state *st = ccpcp_unpack_context_closed_container_state(in_ctx);
-			if(!st) {
+			//ccpcp_container_state *st = ccpcp_unpack_context_closed_container_state(in_ctx);
+			if(!current_state) {
 				in_ctx->err_no = CCPCP_RC_CONTAINER_STACK_UNDERFLOW;
 				return;
 			}
-			meta_just_closed = (st->container_type == CCPCP_ITEM_META);
+			meta_just_closed = (current_state->container_type == CCPCP_ITEM_META);
 
 			if(o_chainpack_output) {
 				cchainpack_pack_container_end(out_ctx);
 			}
 			else {
-				switch(st->container_type) {
+				switch(current_state->container_type) {
 				case CCPCP_ITEM_LIST:
 					ccpon_pack_list_end(out_ctx, false);
 					break;

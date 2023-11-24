@@ -553,11 +553,6 @@ void cchainpack_unpack_next (ccpcp_unpack_context* unpack_context)
 
 	uint8_t packing_schema = (uint8_t)(*p);
 
-	ccpcp_container_state *top_cont_state = ccpcp_unpack_context_top_container_state(unpack_context);
-	if(top_cont_state && packing_schema != CP_TERM) {
-		top_cont_state->item_count++;
-	}
-
 	unpack_context->item.type = CCPCP_ITEM_INVALID;
 	if(packing_schema < 128) {
 		if(packing_schema & 64) {
@@ -655,27 +650,22 @@ void cchainpack_unpack_next (ccpcp_unpack_context* unpack_context)
 		}
 		case CP_MetaMap: {
 			unpack_context->item.type = CCPCP_ITEM_META;
-			ccpcp_unpack_context_push_container_state(unpack_context, unpack_context->item.type);
 			break;
 		}
 		case CP_Map: {
 			unpack_context->item.type = CCPCP_ITEM_MAP;
-			ccpcp_unpack_context_push_container_state(unpack_context, unpack_context->item.type);
 			break;
 		}
 		case CP_IMap: {
 			unpack_context->item.type = CCPCP_ITEM_IMAP;
-			ccpcp_unpack_context_push_container_state(unpack_context, unpack_context->item.type);
 			break;
 		}
 		case CP_List: {
 			unpack_context->item.type = CCPCP_ITEM_LIST;
-			ccpcp_unpack_context_push_container_state(unpack_context, unpack_context->item.type);
 			break;
 		}
 		case CP_TERM: {
 			unpack_context->item.type = CCPCP_ITEM_CONTAINER_END;
-			ccpcp_unpack_context_pop_container_state(unpack_context);
 			break;
 		}
 		case CP_Blob: {
@@ -712,6 +702,8 @@ void cchainpack_unpack_next (ccpcp_unpack_context* unpack_context)
 			UNPACK_ERROR(CCPCP_RC_MALFORMED_INPUT, "Invalid type info.");
 		}
 	}
+
+	ccpcp_unpack_context_update_container_state(unpack_context);
 }
 
 uint64_t cchainpack_unpack_uint_data(ccpcp_unpack_context *unpack_context, bool *ok)

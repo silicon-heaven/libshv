@@ -148,7 +148,6 @@ const char *ccpcp_item_type_to_string(ccpcp_item_types t)
 void ccpcp_container_state_init(ccpcp_container_state *self, ccpcp_item_types cont_type)
 {
 	self->container_type = cont_type;
-	self->current_item_type = CCPCP_ITEM_INVALID;
 	self->item_count = 0;
 }
 
@@ -202,6 +201,13 @@ ccpcp_container_state *ccpcp_unpack_context_push_container_state(ccpcp_unpack_co
 	return NULL;
 }
 
+void ccpcp_unpack_context_pop_container_state(ccpcp_unpack_context* self)
+{
+	if(self->container_stack && self->container_stack->length > 0) {
+		self->container_stack->length--;
+	}
+}
+
 ccpcp_container_state* ccpcp_unpack_context_top_container_state(ccpcp_unpack_context* self)
 {
 	if(self->container_stack && self->container_stack->length > 0) {
@@ -210,34 +216,38 @@ ccpcp_container_state* ccpcp_unpack_context_top_container_state(ccpcp_unpack_con
 	return NULL;
 }
 
-ccpcp_container_state *ccpcp_unpack_context_parent_container_state(ccpcp_unpack_context *self)
+void ccpcp_unpack_context_update_container_state(ccpcp_unpack_context *self)
 {
-	if(self->container_stack && self->container_stack->length > 0) {
-		ccpcp_container_state *top_st = self->container_stack->container_states + self->container_stack->length - 1;
-		if(top_st && top_st->item_count == 0) {
-			if(self->container_stack->length > 1)
-				return self->container_stack->container_states + self->container_stack->length - 2;
-
-			return NULL;
+	bool is_container_begin = false;
+	bool is_container_end = false;
+	ccpcp_item_types current_item_type = self->item.type;
+	switch(current_item_type) {
+	case CCPCP_ITEM_LIST:
+	case CCPCP_ITEM_MAP:
+	case CCPCP_ITEM_IMAP:
+	case CCPCP_ITEM_META:
+		is_container_begin = true;
+		break;
+	case CCPCP_ITEM_CONTAINER_END:
+		is_container_end = true;
+		break;
+	default:
+		break;
+	}
+	ccpcp_container_state *top_cont_state = ccpcp_unpack_context_top_container_state(self);
+	if(top_cont_state && !is_container_end) {
+		top_cont_state->item_count++;
+	}
+	if(is_container_begin) {
+		ccpcp_unpack_context_push_container_state(self, current_item_type);
+	}
+	if(is_container_end) {
+		ccpcp_unpack_context_pop_container_state(self);
+		ccpcp_container_state *prev_cont_state = ccpcp_unpack_context_top_container_state(self);
+		if(prev_cont_state && top_cont_state && top_cont_state->container_type == CCPCP_ITEM_META) {
+			//do not increase item count after meta
+			prev_cont_state->item_count--;
 		}
-		return top_st;
-	}
-	return NULL;
-}
-
-ccpcp_container_state *ccpcp_unpack_context_closed_container_state(ccpcp_unpack_context *self)
-{
-	if(self->container_stack && self->item.type == CCPCP_ITEM_CONTAINER_END) {
-		ccpcp_container_state *st = self->container_stack->container_states + self->container_stack->length;
-		return st;
-	}
-	return NULL;
-}
-
-void ccpcp_unpack_context_pop_container_state(ccpcp_unpack_context* self)
-{
-	if(self->container_stack && self->container_stack->length > 0) {
-		self->container_stack->length--;
 	}
 }
 
@@ -391,5 +401,3 @@ size_t ccpcp_decimal_to_string(char *buff, size_t buff_len, int64_t mantisa, int
 	}
 	return mantisa_str_len;
 }
-
-

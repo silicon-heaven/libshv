@@ -131,7 +131,6 @@ typedef struct {
 typedef struct {
 	ccpcp_item_types container_type;
 	size_t item_count;
-	ccpcp_item_types current_item_type;
 } ccpcp_container_state;
 
 void ccpcp_container_state_init(ccpcp_container_state *self, ccpcp_item_types cont_type);
@@ -172,10 +171,10 @@ void ccpcp_unpack_context_init(ccpcp_unpack_context* self, const void* data, siz
 							   , ccpcp_container_stack *stack);
 
 ccpcp_container_state* ccpcp_unpack_context_push_container_state(ccpcp_unpack_context* self, ccpcp_item_types container_type);
-ccpcp_container_state* ccpcp_unpack_context_top_container_state(ccpcp_unpack_context* self);
-ccpcp_container_state* ccpcp_unpack_context_parent_container_state(ccpcp_unpack_context* self);
-ccpcp_container_state* ccpcp_unpack_context_closed_container_state(ccpcp_unpack_context* self);
 void ccpcp_unpack_context_pop_container_state(ccpcp_unpack_context* self);
+ccpcp_container_state* ccpcp_unpack_context_top_container_state(ccpcp_unpack_context* self);
+/// update state with information needed for correct CPON formating
+void ccpcp_unpack_context_update_container_state(ccpcp_unpack_context* self);
 
 const char *ccpcp_unpack_take_byte(ccpcp_unpack_context* unpack_context);
 const char *ccpcp_unpack_peek_byte(ccpcp_unpack_context* unpack_context);
