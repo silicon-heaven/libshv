@@ -72,7 +72,11 @@ if(BUILD_TESTING)
 endif()
 
 if (NOT TARGET libnecrolog)
-	add_subdirectory(3rdparty/necrolog)
+	if(LIBSHV_USE_LOCAL_NECROLOG)
+		find_package(necrolog REQUIRED)
+	else()
+		add_subdirectory(3rdparty/necrolog)
+	endif()
 endif()
 
 function(check_shv_dep dependent dependent_var dependency dependency_var)

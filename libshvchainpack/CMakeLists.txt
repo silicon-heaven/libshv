@@ -26,7 +26,7 @@ if (NOT WIN32)
 	target_sources(libshvchainpack-cpp PRIVATE src/chainpack/socketrpcdriver.cpp)
 endif()
 
-target_link_libraries(libshvchainpack-cpp libnecrolog libshvchainpack-c)
+target_link_libraries(libshvchainpack-cpp libnecrolog::libnecrolog libshvchainpack-c)
 target_include_directories(libshvchainpack-cpp PUBLIC include)
 target_compile_definitions(libshvchainpack-cpp PRIVATE SHVCHAINPACK_BUILD_DLL)
 
