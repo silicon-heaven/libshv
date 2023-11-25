@@ -1,6 +1,6 @@
-#include <ccpon.h>
-#include <cchainpack.h>
-#include <ccpcp_convert.h>
+#include <shv/chainpack/ccpon.h>
+#include <shv/chainpack/cchainpack.h>
+#include <shv/chainpack/ccpcp_convert.h>
 
 #include <stdio.h>
 #include <stdlib.h>

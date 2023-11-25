@@ -1,7 +1,7 @@
 #pragma once
 
 #include <shv/chainpack/rpcvalue.h>
-#include "../../../c/ccpcp.h"
+#include <shv/chainpack/ccpcp.h>
 
 #include <istream>
 

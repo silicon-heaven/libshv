@@ -1,4 +1,4 @@
-#include "cchainpack.h"
+#include <shv/chainpack/cchainpack.h>
 
 #include <string.h>
 #include <limits.h>

@@ -1,4 +1,4 @@
-#include "ccpcp.h"
+#include <shv/chainpack/ccpcp.h>
 
 #include <string.h>
 

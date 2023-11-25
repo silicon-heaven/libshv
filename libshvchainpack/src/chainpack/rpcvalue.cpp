@@ -7,7 +7,7 @@
 #include <shv/chainpack/exception.h>
 #include <shv/chainpack/utils.h>
 
-#include "../../c/ccpon.h"
+#include <shv/chainpack/ccpon.h>
 
 #include <necrolog.h>
 

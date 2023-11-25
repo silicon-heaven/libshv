@@ -4,7 +4,7 @@ add_library(libshvchainpack-c STATIC
 	ccpcp_convert.c
 	ccpon.c
 	)
-target_include_directories(libshvchainpack-c PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(libshvchainpack-c PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 function(add_shv_test test_name)
 	add_executable(test_${test_name}

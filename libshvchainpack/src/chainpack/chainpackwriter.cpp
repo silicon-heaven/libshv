@@ -1,7 +1,7 @@
 #include <shv/chainpack/chainpackwriter.h>
 #include <shv/chainpack/exception.h>
 
-#include "../../c/cchainpack.h"
+#include <shv/chainpack/cchainpack.h>
 
 #include <iostream>
 #include <cmath>
