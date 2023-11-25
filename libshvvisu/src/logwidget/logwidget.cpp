@@ -1,7 +1,7 @@
-#include "logwidget.h"
+#include <shv/visu/logwidget.h>
 #include "ui_logwidget.h"
 
-#include "logtablemodelbase.h"
+#include <shv/visu/logtablemodelbase.h>
 
 
 #include <shv/coreqt/log.h>
