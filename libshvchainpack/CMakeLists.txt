@@ -21,13 +21,18 @@ add_library(libshvchainpack-cpp
 	src/chainpack/utils.cpp
 	include/shv/chainpack/crc32.h
 	)
+add_library(libshv::libshvchainpack-cpp ALIAS libshvchainpack-cpp)
 
 if (NOT WIN32)
 	target_sources(libshvchainpack-cpp PRIVATE src/chainpack/socketrpcdriver.cpp)
 endif()
 
 target_link_libraries(libshvchainpack-cpp libnecrolog::libnecrolog libshvchainpack-c)
-target_include_directories(libshvchainpack-cpp PUBLIC include)
+target_include_directories(libshvchainpack-cpp PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+	$<INSTALL_INTERFACE:include>
+	)
+
 target_compile_definitions(libshvchainpack-cpp PRIVATE SHVCHAINPACK_BUILD_DLL)
 
 function(add_shv_test test_name)
@@ -71,5 +76,8 @@ if(BUILD_TESTING)
 	endif()
 endif()
 
-install(TARGETS libshvchainpack-cpp)
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/shv" TYPE INCLUDE)
+
+install(TARGETS libshvchainpack-cpp EXPORT libshvConfig)
+export(TARGETS libshvchainpack-cpp NAMESPACE libshv:: FILE "${CMAKE_CURRENT_BINARY_DIR}/libshvConfig.cmake")
+install(EXPORT libshvConfig DESTINATION share/libshv/cmake NAMESPACE libshv::)
