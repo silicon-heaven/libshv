@@ -1,5 +1,5 @@
-#ifndef SHV_CORE_UTILS_SHVJOURNALCOMMON_H
-#define SHV_CORE_UTILS_SHVJOURNALCOMMON_H
+#ifndef SHV_CORE_UTILS_ABSTRACTSHVJOURNAL_H
+#define SHV_CORE_UTILS_ABSTRACTSHVJOURNAL_H
 
 #include "../shvcoreglobal.h"
 
@@ -24,12 +24,6 @@ struct SHVCORE_DECL_EXPORT ShvSnapshot
 class SHVCORE_DECL_EXPORT AbstractShvJournal
 {
 public:
-	static constexpr int DEFAULT_GET_LOG_RECORD_COUNT_LIMIT = 100 * 100;
-
-	static constexpr auto KEY_NAME = "name";
-	static constexpr auto const KEY_RECORD_COUNT = "recordCount";
-	static constexpr auto const KEY_PATHS_DICT = "pathsDict";
-public:
 	virtual ~AbstractShvJournal();
 
 	virtual void append(const ShvJournalEntry &entry) = 0;
@@ -45,4 +39,4 @@ protected:
 } // namespace core
 } // namespace shv
 
-#endif // SHV_CORE_UTILS_SHVJOURNALCOMMON_H
+#endif // SHV_CORE_UTILS_ABSTRACTSHVJOURNAL_H

@@ -1,3 +1,4 @@
+#include <shv/core/utils/shvjournalcommon.h>
 #include <shv/core/utils/shvfilejournal.h>
 
 #include <shv/core/utils/patternmatcher.h>
@@ -626,7 +627,7 @@ chainpack::RpcValue ShvFileJournal::getLog(const ShvFileJournal::JournalContext 
 	int64_t journal_start_msec = 0;
 	int64_t first_record_msec = 0;
 	int64_t last_record_msec = 0;
-	int rec_cnt_limit = std::min(params.recordCountLimit, DEFAULT_GET_LOG_RECORD_COUNT_LIMIT);
+	int rec_cnt_limit = std::min(params.recordCountLimit, ShvJournalCommon::DEFAULT_GET_LOG_RECORD_COUNT_LIMIT);
 	bool rec_cnt_limit_hit = false;
 
 	/// this ensure that there be only one copy of each path in memory
@@ -816,13 +817,13 @@ log_finish:
 
 		using Column = ShvLogHeader::Column;
 		RpcValue::List fields;
-		fields.push_back(RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::Timestamp)}});
-		fields.push_back(RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::Path)}});
-		fields.push_back(RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::Value)}});
-		fields.push_back(RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::ShortTime)}});
-		fields.push_back(RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::Domain)}});
-		fields.push_back(RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::ValueFlags)}});
-		fields.push_back(RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::UserId)}});
+		fields.push_back(RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::Timestamp)}});
+		fields.push_back(RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::Path)}});
+		fields.push_back(RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::Value)}});
+		fields.push_back(RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::ShortTime)}});
+		fields.push_back(RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::Domain)}});
+		fields.push_back(RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::ValueFlags)}});
+		fields.push_back(RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::UserId)}});
 		log_header.setFields(std::move(fields));
 	}
 	if(params.withPathsDict) {

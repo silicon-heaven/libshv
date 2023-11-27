@@ -202,7 +202,7 @@ chainpack::RpcValue ShvMemoryJournal::getLog(const ShvGetLogParams &params)
 	int64_t since_msec = std::max(log_since_msec, params_since_msec);
 	int64_t until_msec = min_valid(log_until_msec, params_until_msec);
 
-	int rec_cnt_limit = std::min(params.recordCountLimit, DEFAULT_GET_LOG_RECORD_COUNT_LIMIT);
+	int rec_cnt_limit = std::min(params.recordCountLimit, ShvJournalCommon::DEFAULT_GET_LOG_RECORD_COUNT_LIMIT);
 	bool rec_cnt_limit_hit = false;
 
 	int64_t last_record_msec = 0;
@@ -318,13 +318,13 @@ log_finish:
 		hdr.setWithPathsDict(params.withPathsDict);
 
 		cp::RpcValue::List fields;
-		fields.push_back(cp::RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::Timestamp)}});
-		fields.push_back(cp::RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::Path)}});
-		fields.push_back(cp::RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::Value)}});
-		fields.push_back(cp::RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::ShortTime)}});
-		fields.push_back(cp::RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::Domain)}});
-		fields.push_back(cp::RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::ValueFlags)}});
-		fields.push_back(cp::RpcValue::Map{{KEY_NAME, Column::name(Column::Enum::UserId)}});
+		fields.push_back(cp::RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::Timestamp)}});
+		fields.push_back(cp::RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::Path)}});
+		fields.push_back(cp::RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::Value)}});
+		fields.push_back(cp::RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::ShortTime)}});
+		fields.push_back(cp::RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::Domain)}});
+		fields.push_back(cp::RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::ValueFlags)}});
+		fields.push_back(cp::RpcValue::Map{{ShvJournalCommon::KEY_NAME, Column::name(Column::Enum::UserId)}});
 		hdr.setFields(std::move(fields));
 
 		if(params.withTypeInfo)

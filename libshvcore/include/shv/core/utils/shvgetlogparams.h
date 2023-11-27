@@ -3,6 +3,7 @@
 
 #include "../shvcoreglobal.h"
 
+#include <shv/core/utils/shvjournalcommon.h>
 #include <shv/chainpack/rpcvalue.h>
 
 #include <string>
@@ -36,8 +37,7 @@ struct SHVCORE_DECL_EXPORT ShvGetLogParams
 	std::string pathPattern;
 	enum class PatternType {WildCard, RegEx};
 	PatternType pathPatternType = PatternType::WildCard;
-	static constexpr int DEFAULT_RECORD_COUNT_LIMIT = 1000;
-	int recordCountLimit = DEFAULT_RECORD_COUNT_LIMIT;
+	int recordCountLimit = ::shv::core::utils::ShvJournalCommon::DEFAULT_GET_LOG_RECORD_COUNT_LIMIT;
 	bool withSnapshot = false;
 	std::string domainPattern; /// always regexp
 	bool withTypeInfo = false;

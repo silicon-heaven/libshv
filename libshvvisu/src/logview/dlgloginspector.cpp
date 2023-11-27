@@ -39,8 +39,6 @@ namespace shv::visu::logview {
 
 enum { TabGraph = 0, TabData, TabInfo };
 
-static const int VIEW_SELECTOR_NO_VIEW_INDEX = 0;
-
 DlgLogInspector::DlgLogInspector(const QString &shv_path, QWidget *parent) :
 	QDialog(parent),
 	ui(new Ui::DlgLogInspector)
