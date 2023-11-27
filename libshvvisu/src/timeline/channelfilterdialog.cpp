@@ -15,7 +15,6 @@
 
 namespace shv::visu::timeline {
 
-static const QString FLATLINE_VIEW_SETTINGS_FILE_TYPE = QStringLiteral("FlatlineViewSettings");
 static const QString FLATLINE_VIEW_SETTINGS_FILE_EXTENSION = QStringLiteral(".fvs");
 
 ChannelFilterDialog::ChannelFilterDialog(QWidget *parent, const QString &site_path, Graph *graph) :
@@ -113,16 +112,14 @@ void ChannelFilterDialog::exportDataView()
 {
 	QString file_name = QFileDialog::getSaveFileName(this, tr("Input file name"), m_recentSettingsDir, "*" + FLATLINE_VIEW_SETTINGS_FILE_EXTENSION);
 	if (!file_name.isEmpty()) {
-		if (!file_name.endsWith(FLATLINE_VIEW_SETTINGS_FILE_EXTENSION)) {
-			file_name.append(FLATLINE_VIEW_SETTINGS_FILE_EXTENSION);
+		QFile settings_file(file_name);
+		if (!settings_file.open(QFile::WriteOnly | QFile::Truncate)) {
+			QMessageBox::warning(this, tr("Error"), tr("Cannot open graph setting file."));
+			return;
 		}
 
 		m_graph->setChannelFilter(channelFilter());
-
-		QSettings settings(file_name, QSettings::Format::IniFormat);
-		settings.setValue("fileType", FLATLINE_VIEW_SETTINGS_FILE_TYPE);
-		settings.setValue("settings", m_graph->visualSettings().toJson());
-
+		settings_file.write(m_graph->visualSettings().toJson().toUtf8());
 		m_recentSettingsDir = QFileInfo(file_name).path();
 	}
 }
@@ -134,13 +131,13 @@ void ChannelFilterDialog::importDataView()
 		QString view_name = QInputDialog::getText(this, tr("Import as"), tr("Input view name"));
 
 		if (!view_name.isEmpty()) {
-			QSettings settings_file(file_name, QSettings::Format::IniFormat);
-			if (settings_file.value("fileType").toString() != FLATLINE_VIEW_SETTINGS_FILE_TYPE) {
-				QMessageBox::warning(this, tr("Error"), tr("This file is not flatline view setting file"));
+			QFile settings_file(file_name);
+			if (!settings_file.open(QFile::ReadOnly)) {
+				QMessageBox::warning(this, tr("Error"), tr("Cannot open graph setting file."));
 				return;
 			}
 
-			Graph::VisualSettings visual_settings = Graph::VisualSettings::fromJson(settings_file.value("settings").toString());
+			Graph::VisualSettings visual_settings = Graph::VisualSettings::fromJson(QString::fromUtf8(settings_file.readAll()));
 			visual_settings.name = view_name;
 			m_graph->setVisualSettingsAndChannelFilter(visual_settings);
 			m_graph->saveVisualSettings(m_sitePath, view_name);
