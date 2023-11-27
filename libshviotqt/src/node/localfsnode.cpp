@@ -355,8 +355,7 @@ RpcValue LocalFSNode::ndLsDir(const QString &path, const chainpack::RpcValue &me
 		return lst;
 	}
 
-	SHV_EXCEPTION("Path " + path.toStdString() + " is not dir.");
-	return {};
+	return RpcValue::List{};
 }
 
 } // namespace shv
