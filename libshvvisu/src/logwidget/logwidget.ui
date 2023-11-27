@@ -130,7 +130,7 @@
   <customwidget>
    <class>LogWidgetTableView</class>
    <extends>QTableView</extends>
-   <header>src/logwidget/logwidget.h</header>
+   <header>shv/visu/logwidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

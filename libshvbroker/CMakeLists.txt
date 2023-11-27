@@ -29,6 +29,7 @@ qt_add_library(libshvbroker
 	include/shv/broker/clientconnectionnode.h
 	include/shv/broker/groupmapping.h
 	)
+add_library(libshv::libshvbroker ALIAS libshvbroker)
 
 if(WITH_SHV_WEBSOCKETS)
 	target_sources(libshvbroker PRIVATE
@@ -41,12 +42,15 @@ if(OpenLDAP_FOUND)
 		src/ldap.cpp
 		src/openldap_dynamic.cpp
 		)
-	target_include_directories(libshvbroker PUBLIC "${OpenLDAP_INCLUDE_DIRS}")
+	target_include_directories(libshvbroker PUBLIC $<BUILD_INTERFACE:${OpenLDAP_INCLUDE_DIRS}>)
 	target_compile_definitions(libshvbroker PUBLIC WITH_SHV_LDAP)
 endif()
 
 target_link_libraries(libshvbroker PUBLIC Qt::Sql libshviotqt)
-target_include_directories(libshvbroker PUBLIC include)
+target_include_directories(libshvbroker PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+	$<INSTALL_INTERFACE:include>
+	)
 target_compile_definitions(libshvbroker PRIVATE SHVBROKER_BUILD_DLL)
 
 if(BUILD_TESTING)
@@ -60,4 +64,8 @@ if(BUILD_TESTING)
 	add_shvbroker_test(aclmanager)
 endif()
 
-install(TARGETS libshvbroker)
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/shv" TYPE INCLUDE)
+
+install(TARGETS libshvbroker EXPORT libshvConfig)
+export(TARGETS libshvbroker NAMESPACE libshv:: FILE "${CMAKE_CURRENT_BINARY_DIR}/libshvConfig.cmake")
+install(EXPORT libshvConfig DESTINATION share/libshv/cmake NAMESPACE libshv::)

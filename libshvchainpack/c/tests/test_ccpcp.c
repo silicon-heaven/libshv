@@ -1,8 +1,8 @@
 #define _GNU_SOURCE
-#include <ccpcp.h>
-#include <ccpon.h>
-#include <cchainpack.h>
-#include <ccpcp_convert.h>
+#include <shv/chainpack/ccpcp.h>
+#include <shv/chainpack/ccpon.h>
+#include <shv/chainpack/cchainpack.h>
+#include <shv/chainpack/ccpcp_convert.h>
 
 #include <time.h>
 #include <stdio.h>

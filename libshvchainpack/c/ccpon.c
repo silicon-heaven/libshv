@@ -1,4 +1,4 @@
-#include "ccpon.h"
+#include <shv/chainpack/ccpon.h>
 
 #include <string.h>
 #include <math.h>

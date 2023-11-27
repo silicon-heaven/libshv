@@ -1,7 +1,7 @@
 #include <shv/chainpack/cponwriter.h>
 #include <shv/chainpack/exception.h>
 
-#include "../../c/ccpon.h"
+#include <shv/chainpack/ccpon.h>
 
 #include <cmath>
 #include <iostream>

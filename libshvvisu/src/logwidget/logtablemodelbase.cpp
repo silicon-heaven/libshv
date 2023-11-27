@@ -1,4 +1,4 @@
-#include "logtablemodelbase.h"
+#include <shv/visu/logtablemodelbase.h>
 
 #include <QColor>
 #include <QDateTime>

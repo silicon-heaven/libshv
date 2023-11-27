@@ -43,6 +43,8 @@ qt_add_library(libshviotqt
 	include/shv/iotqt/rpc/socketrpcconnection.h
 	include/shv/iotqt/utils.h
 	)
+add_library(libshv::libshviotqt ALIAS libshviotqt)
+
 target_link_libraries(libshviotqt PUBLIC Qt::Network libshvcoreqt)
 
 if(NOT EMSCRIPTEN)
@@ -52,7 +54,10 @@ if(NOT EMSCRIPTEN)
 		)
 endif()
 
-target_include_directories(libshviotqt PUBLIC include)
+target_include_directories(libshviotqt PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+	$<INSTALL_INTERFACE:include>
+	)
 target_compile_definitions(libshviotqt PRIVATE SHVIOTQT_BUILD_DLL)
 
 if(WITH_SHV_WEBSOCKETS)
@@ -81,4 +86,8 @@ if(BUILD_TESTING)
 	set_property(TEST test_iotqt_serialportsocket APPEND PROPERTY ENVIRONMENT "TESTS_DIR=${CMAKE_CURRENT_BINARY_DIR}/test_serialportsocket")
 endif()
 
-install(TARGETS libshviotqt)
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/shv" TYPE INCLUDE)
+
+install(TARGETS libshviotqt EXPORT libshvConfig)
+export(TARGETS libshviotqt NAMESPACE libshv:: FILE "${CMAKE_CURRENT_BINARY_DIR}/libshvConfig.cmake")
+install(EXPORT libshvConfig DESTINATION share/libshv/cmake NAMESPACE libshv::)

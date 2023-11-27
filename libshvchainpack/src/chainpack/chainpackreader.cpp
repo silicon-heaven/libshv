@@ -1,6 +1,6 @@
 #include <shv/chainpack/chainpackreader.h>
 #include <shv/chainpack/utils.h>
-#include "../../c/cchainpack.h"
+#include <shv/chainpack/cchainpack.h>
 
 #include <iostream>
 #include <cmath>
