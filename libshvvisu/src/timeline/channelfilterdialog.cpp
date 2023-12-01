@@ -45,11 +45,9 @@ ChannelFilterDialog::ChannelFilterDialog(QWidget *parent, const QString &site_pa
 	m_exportViewAction = view_menu->addAction(tr("Export"), this, &ChannelFilterDialog::exportDataView);
 	m_importViewAction = view_menu->addAction(tr("Import"), this, &ChannelFilterDialog::importDataView);
 	ui->pbActions->setMenu(view_menu);
-	ui->gbFilterSettings->setChecked(false);
+	ui->gbFilterSettings->setChecked(true);
 
 	m_channelsFilterModel->createNodes(graph->channelPaths());
-
-	ui->gbFilterSettings->setChecked(m_graph->isChannelFilterValid());
 
 	loadChannelFilterFomGraph();
 	reloadDataViewsCombobox();
