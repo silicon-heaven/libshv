@@ -113,6 +113,22 @@ bool ShvNodeTree::mount(const ShvNode::String &path, ShvNode *node)
 	return true;
 }
 
+chainpack::RpcValue ShvNodeTree::invokeMethod(const std::string &shv_path, const std::string &method, const chainpack::RpcValue &params, const chainpack::RpcValue &user_id)
+{
+	chainpack::RpcRequest rq;
+	rq.setShvPath(shv_path);
+	rq.setMethod(method);
+	rq.setParams(params);
+	rq.setUserId(user_id);
+	if(auto *root_nd = root()) {
+		return root_nd->handleRpcRequestImpl(rq);
+	}
+	else {
+		shvError() << "Root node is NULL";
+		return {};
+	}
+}
+
 static std::string dump_node(ShvNode *parent, int indent)
 {
 	std::string ret;

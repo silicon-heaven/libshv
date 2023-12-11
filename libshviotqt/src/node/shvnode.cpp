@@ -242,7 +242,6 @@ chainpack::RpcValue ShvNode::handleRpcRequestImpl(const chainpack::RpcRequest &r
 	const chainpack::RpcValue::String method = rq.method().asString();
 	const chainpack::RpcValue::String shv_path_str = rq.shvPath().asString();
 	core::StringViewList shv_path = ShvPath::split(shv_path_str);
-	RpcResponse resp = RpcResponse::forRequest(rq);
 	if(!shv_path.empty()) {
 		ShvNode *nd = childNode(std::string{shv_path.at(0)}, !shv::core::Exception::Throw);
 		if(nd) {

@@ -24,6 +24,8 @@ public:
 	ShvNode* cd(const ShvNode::String &path, ShvNode::String *path_rest);
 	bool mount(const ShvNode::String &path, ShvNode *node);
 
+	shv::chainpack::RpcValue invokeMethod(const std::string &shv_path, const std::string &method, const shv::chainpack::RpcValue &params = {}, const shv::chainpack::RpcValue &user_id = {});
+
 	std::string dumpTree();
 protected:
 	ShvNode* mdcd(const ShvNode::StringViewList &path, bool create_dirs, ShvNode::String *path_rest);
