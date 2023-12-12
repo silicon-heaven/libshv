@@ -352,6 +352,7 @@ BrokerApp::BrokerApp(int &argc, char **argv, AppCliOptions *cli_opts)
 		open_function(ldap_sasl_bind_s);
 		open_function(ldap_search_ext_s);
 		open_function(ldap_set_option);
+		open_function(ldap_set_rebind_proc);
 		open_function(ldap_value_free_len);
 
 		shvInfo() << "Enabling LDAP authentication";
