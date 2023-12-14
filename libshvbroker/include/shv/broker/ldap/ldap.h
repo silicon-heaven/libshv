@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <map>
 #include <memory>
+#include <optional>
 #include <vector>
 
 namespace shv::ldap {
@@ -31,12 +32,15 @@ public:
 	void setVersion(Version version);
 	void connect();
 	void bindSasl(const std::string_view& bind_dn, const std::string_view& bind_pw);
+	void bindWithLastCreds();
 	[[nodiscard]] std::vector<Entry> search(const std::string_view& base_dn, const std::string_view& filter, const std::vector<std::string> requested_attr);
 
 private:
 	Ldap(LDAP* conn);
 
 	std::unique_ptr<LDAP, int(*)(LDAP*)> m_conn;
+	std::optional<std::string> m_lastBindDn;
+	std::optional<std::string> m_lastBindPw;
 };
 
 std::vector<std::string> getGroupsForUser(const std::unique_ptr<shv::ldap::Ldap>& my_ldap, const std::string_view& base_dn, const std::vector<std::string>& field_names, const std::string_view& user_name);
