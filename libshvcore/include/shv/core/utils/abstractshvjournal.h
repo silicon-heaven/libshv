@@ -27,7 +27,7 @@ public:
 	virtual ~AbstractShvJournal();
 
 	virtual void append(const ShvJournalEntry &entry) = 0;
-	virtual shv::chainpack::RpcValue getLog(const ShvGetLogParams &params) = 0;
+	virtual shv::chainpack::RpcValue getLog(const ShvGetLogParams &params, bool is_record_count_limit_limitted = true) = 0;
 	virtual shv::chainpack::RpcValue getSnapShotMap();
 	void clearSnapshot();
 	static void addToSnapshot(ShvSnapshot &snapshot, const ShvJournalEntry &entry);
