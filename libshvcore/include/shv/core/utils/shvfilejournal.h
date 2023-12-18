@@ -44,7 +44,7 @@ public:
 	static int64_t findLastEntryDateTime(const std::string &fn, int64_t journal_start_msec, std::ifstream::pos_type *p_date_time_fpos = nullptr);
 	void append(const ShvJournalEntry &entry) override;
 
-	shv::chainpack::RpcValue getLog(const ShvGetLogParams &params, bool is_record_count_limit_limitted = true) override;
+	shv::chainpack::RpcValue getLog(const ShvGetLogParams &params, bool ignore_record_count_limit = false) override;
 	shv::chainpack::RpcValue getSnapShotMap() override;
 
 	void convertLog1JournalDir();
@@ -86,7 +86,7 @@ public:
 	static constexpr bool Force = true;
 	const JournalContext& checkJournalContext(bool force = !Force);
 	void createNewLogFile(int64_t journal_file_start_msec = 0);
-	static shv::chainpack::RpcValue getLog(const JournalContext &journal_context, const ShvGetLogParams &params, bool is_record_count_limit_limitted = true);
+	static shv::chainpack::RpcValue getLog(const JournalContext &journal_context, const ShvGetLogParams &params, bool ignore_record_count_limit = false);
 private:
 
 	void checkJournalContext_helper(bool force = false);

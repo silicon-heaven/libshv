@@ -183,7 +183,7 @@ static int64_t min_valid(int64_t a, int64_t b)
 	return std::min(a, b);
 }
 
-chainpack::RpcValue ShvMemoryJournal::getLog(const ShvGetLogParams &params, bool is_record_count_limit_limitted)
+chainpack::RpcValue ShvMemoryJournal::getLog(const ShvGetLogParams &params, bool ignore_record_count_limit)
 {
 	logIShvJournal() << "========================= getLog ==================";
 	logIShvJournal() << "params:" << params.toRpcValue().toCpon();
@@ -202,7 +202,7 @@ chainpack::RpcValue ShvMemoryJournal::getLog(const ShvGetLogParams &params, bool
 	int64_t since_msec = std::max(log_since_msec, params_since_msec);
 	int64_t until_msec = min_valid(log_until_msec, params_until_msec);
 
-	int rec_cnt_limit = (is_record_count_limit_limitted)? std::min(params.recordCountLimit, ShvJournalCommon::DEFAULT_GET_LOG_RECORD_COUNT_LIMIT): params.recordCountLimit;
+	int rec_cnt_limit = (ignore_record_count_limit)? std::numeric_limits<decltype (params.recordCountLimit)>::max(): std::min(params.recordCountLimit, ShvJournalCommon::DEFAULT_GET_LOG_RECORD_COUNT_LIMIT);
 	bool rec_cnt_limit_hit = false;
 
 	int64_t last_record_msec = 0;
