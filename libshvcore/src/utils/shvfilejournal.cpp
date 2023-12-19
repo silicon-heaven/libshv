@@ -586,10 +586,10 @@ const ShvFileJournal::JournalContext &ShvFileJournal::checkJournalContext(bool f
 	return m_journalContext;
 }
 
-chainpack::RpcValue ShvFileJournal::getLog(const ShvGetLogParams &params)
+chainpack::RpcValue ShvFileJournal::getLog(const ShvGetLogParams &params, bool ignore_record_count_limit)
 {
 	JournalContext ctx = checkJournalContext();
-	return getLog(ctx, params);
+	return getLog(ctx, params, ignore_record_count_limit);
 }
 
 chainpack::RpcValue ShvFileJournal::getSnapShotMap()
@@ -604,7 +604,7 @@ chainpack::RpcValue ShvFileJournal::getSnapShotMap()
 	return m;
 }
 
-chainpack::RpcValue ShvFileJournal::getLog(const ShvFileJournal::JournalContext &journal_context, const ShvGetLogParams &params)
+chainpack::RpcValue ShvFileJournal::getLog(const ShvFileJournal::JournalContext &journal_context, const ShvGetLogParams &params, bool ignore_record_count_limit)
 {
 	logIShvJournal() << "========================= getLog ==================";
 	logIShvJournal() << "params:" << params.toRpcValue().toCpon();
@@ -627,7 +627,7 @@ chainpack::RpcValue ShvFileJournal::getLog(const ShvFileJournal::JournalContext 
 	int64_t journal_start_msec = 0;
 	int64_t first_record_msec = 0;
 	int64_t last_record_msec = 0;
-	int rec_cnt_limit = std::min(params.recordCountLimit, ShvJournalCommon::DEFAULT_GET_LOG_RECORD_COUNT_LIMIT);
+	int rec_cnt_limit = (ignore_record_count_limit)? std::numeric_limits<decltype (params.recordCountLimit)>::max(): std::min(params.recordCountLimit, ShvJournalCommon::DEFAULT_GET_LOG_RECORD_COUNT_LIMIT);
 	bool rec_cnt_limit_hit = false;
 
 	/// this ensure that there be only one copy of each path in memory

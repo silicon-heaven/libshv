@@ -32,7 +32,7 @@ public:
 
 	void loadLog(const shv::chainpack::RpcValue &log, bool append_records = false);
 	void loadLog(const shv::chainpack::RpcValue &log, const shv::chainpack::RpcValue::Map &default_snapshot_values);
-	shv::chainpack::RpcValue getLog(const ShvGetLogParams &params) override;
+	shv::chainpack::RpcValue getLog(const ShvGetLogParams &params, bool ignore_record_count_limit = false) override;
 
 	bool hasSnapshot() const;
 
