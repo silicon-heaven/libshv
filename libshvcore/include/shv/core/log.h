@@ -12,7 +12,7 @@
 #define NECROLOG_NO_DEBUG_LOG
 #endif
 
-#include "stringview.h"
+#include "shvcoreglobal.h"
 #include <necrolog.h>
 
 #define shvCDebug(category) nCDebug(category)
@@ -66,5 +66,7 @@ shvDebug() << ">>>> ENTER FN" << __FUNCTION__
 
 #define logRpcMsg() shvCMessage("RpcMsg")
 
-NecroLog SHVCORE_DECL_EXPORT operator<<(NecroLog log, const shv::core::StringView &v);
+NecroLog SHVCORE_DECL_EXPORT operator<<(NecroLog log, const std::string_view &v);
+namespace shv::chainpack { class RpcValue; }
+NecroLog SHVCORE_DECL_EXPORT operator<<(NecroLog log, const shv::chainpack::RpcValue &v);
 

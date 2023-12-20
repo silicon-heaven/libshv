@@ -2,29 +2,29 @@
 
 #include <shv/coreqt/shvcoreqtglobal.h>
 
-#include <shv/chainpack/rpcvalue.h>
 #include <shv/core/log.h>
 
-#include <QString>
-#include <QByteArray>
 #include <QMetaType>
-#include <QString>
-#include <QDateTime>
-#include <QPoint>
-#include <QPointF>
-#include <QSize>
-#include <QSizeF>
-#include <QRect>
-#include <QRectF>
-#include <QUrl>
+
+class QString;
+class QByteArray;
+class QMetaType;
+class QString;
+class QDateTime;
+class QDate;
+class QTime;
+class QPoint;
+class QPointF;
+class QSize;
+class QSizeF;
+class QRect;
+class QRectF;
+class QUrl;
 
 NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QString &s);
 NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QDateTime &d);
 NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QDate &d);
 NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QTime &d);
-
-NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const shv::chainpack::RpcValue &v);
-
 NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QUrl &url);
 NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QStringList &sl);
 NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QByteArray &ba);

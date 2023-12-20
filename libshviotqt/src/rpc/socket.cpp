@@ -9,6 +9,7 @@
 #include <QTcpSocket>
 #include <QLocalSocket>
 #include <QTimer>
+#include <QUrl>
 
 namespace shv::iotqt::rpc {
 
