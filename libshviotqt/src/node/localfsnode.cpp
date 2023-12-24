@@ -6,6 +6,8 @@
 #include <shv/core/stringview.h>
 #include <shv/coreqt/log.h>
 
+#include <QDateTime>
+
 using namespace shv::chainpack;
 
 namespace shv::iotqt::node {
