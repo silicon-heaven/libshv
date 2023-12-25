@@ -80,7 +80,50 @@ auto snapshot_to_entries(const ShvSnapshot& snapshot, const bool since_last, con
 }
 }
 
-[[nodiscard]] chainpack::RpcValue getLog(const std::vector<std::function<ShvJournalFileReader()>>& readers, const ShvGetLogParams& orig_params)
+namespace {
+class ShvLogVectorReader {
+public:
+	ShvLogVectorReader(const std::vector<ShvJournalEntry>& entries)
+		: m_entries(entries)
+	{
+	}
+	bool next()
+	{
+		if (!m_entriesIter.has_value()) {
+			m_entriesIter = m_entries.begin();
+		} else {
+			m_entriesIter.value()++;
+		}
+
+		if (m_entriesIter.value() == m_entries.end()) {
+			return false;
+		}
+
+		return true;
+	}
+	const ShvJournalEntry& entry() const
+	{
+		if (!m_entriesIter.has_value()) {
+			throw std::logic_error{"ShvLogVectorReader: entry() called before next()"};
+		}
+
+		return *(m_entriesIter.value());
+	}
+
+private:
+	const std::vector<ShvJournalEntry>& m_entries;
+	std::optional<std::vector<ShvJournalEntry>::const_iterator> m_entriesIter;
+};
+
+template <typename Type>
+concept LogReader = requires(Type x)
+{
+	{ x.next() } -> std::same_as<bool>;
+	{ x.entry() } -> std::same_as<const ShvJournalEntry&>;
+};
+
+template <LogReader Type>
+[[nodiscard]] chainpack::RpcValue impl_get_log(const std::vector<std::function<Type()>>& readers, const ShvGetLogParams& orig_params)
 {
 	logIGetLog() << "========================= getLog ==================";
 	logIGetLog() << "params:" << orig_params.toRpcValue().toCpon();
@@ -222,5 +265,23 @@ exit_nested_loop:
 	rpc_value_result.setMetaData(log_header.toMetaData());
 
 	return rpc_value_result;
+}
+}
+
+[[nodiscard]] chainpack::RpcValue getLog(const std::vector<std::function<ShvJournalFileReader()>>& readers, const ShvGetLogParams& params)
+{
+	return impl_get_log(readers, params);
+}
+
+[[nodiscard]] chainpack::RpcValue getLog(const std::vector<std::function<ShvLogRpcValueReader()>>& readers, const ShvGetLogParams& params)
+{
+	return impl_get_log(readers, params);
+}
+
+[[nodiscard]] chainpack::RpcValue getLog(const std::vector<ShvJournalEntry>& entries, const ShvGetLogParams &params)
+{
+	std::vector<std::function<ShvLogVectorReader()>> readers;
+	readers.emplace_back([&entries] { return ShvLogVectorReader(entries); });
+	return impl_get_log(readers, params);
 }
 }
