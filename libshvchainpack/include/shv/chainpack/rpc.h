@@ -54,6 +54,9 @@ public:
 	static constexpr auto METH_HELP = "help";
 	static constexpr auto METH_GET_LOG = "getLog";
 
+	static constexpr auto PAR_PATHS = "paths";
+	static constexpr auto PAR_METHODS = "methods";
+
 	static constexpr auto PAR_PATH = "path";
 	static constexpr auto PAR_METHOD = "method";
 	static constexpr auto PAR_PARAMS = "params";
@@ -80,6 +83,9 @@ public:
 	static constexpr auto DIR_BROKER_APP = ".broker/app";
 	static constexpr auto DIR_CLIENTS = "clients";
 	static constexpr auto DIR_MASTERS = "masters";
+
+	static constexpr auto DIR_APP_BROKER = ".app/broker";
+	static constexpr auto DIR_APP_BROKER_CURRENTCLIENT = ".app/broker/currentClient";
 
 	static constexpr auto JSONRPC_REQUEST_ID = "id";
 	static constexpr auto JSONRPC_METHOD = PAR_METHOD;
