@@ -21,7 +21,7 @@ std::function<shv::core::utils::ShvJournalFileReader()> create_reader(std::vecto
 	if (entries.empty()) {
 		return {};
 	}
-	shv::core::utils::ShvJournalFileWriter writer(journal_dir, entries.begin()->epochMsec, entries.back().epochMsec);
+	shv::core::utils::ShvJournalFileWriter writer(journal_dir.string(), entries.begin()->epochMsec, entries.back().epochMsec);
 
 	for (const auto& entry : entries) {
 		writer.append(entry);
