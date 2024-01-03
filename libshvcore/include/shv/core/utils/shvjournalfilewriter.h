@@ -2,6 +2,7 @@
 
 #include <shv/core/shvcoreglobal.h>
 
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <map>
