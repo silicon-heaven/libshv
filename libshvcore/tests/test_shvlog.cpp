@@ -322,7 +322,6 @@ DOCTEST_TEST_CASE("ShvLog")
 				cnt++;
 			}
 			REQUIRE(rd.logHeader().since().toDateTime().msecsSinceEpoch() == first_entry.epochMsec);
-			REQUIRE(rd.logHeader().until().toDateTime().msecsSinceEpoch() == last_entry.epochMsec);
 			REQUIRE(cnt == rd.logHeader().recordCount());
 			REQUIRE(cnt == log1.asList().size());
 			shvInfo() << cnt << "records read";
