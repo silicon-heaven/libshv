@@ -21,13 +21,18 @@ struct SHVCORE_DECL_EXPORT ShvSnapshot
 	std::map<std::string, ShvJournalEntry> keyvals;
 };
 
+enum class IgnoreRecordCountLimit{
+	Yes,
+	No
+};
+
 class SHVCORE_DECL_EXPORT AbstractShvJournal
 {
 public:
 	virtual ~AbstractShvJournal();
 
 	virtual void append(const ShvJournalEntry &entry) = 0;
-	virtual shv::chainpack::RpcValue getLog(const ShvGetLogParams &params, bool ignore_record_count_limit = false) = 0;
+	virtual shv::chainpack::RpcValue getLog(const ShvGetLogParams &params, IgnoreRecordCountLimit ignore_record_count_limit = IgnoreRecordCountLimit::No) = 0;
 	virtual shv::chainpack::RpcValue getSnapShotMap();
 	void clearSnapshot();
 	static void addToSnapshot(ShvSnapshot &snapshot, const ShvJournalEntry &entry);

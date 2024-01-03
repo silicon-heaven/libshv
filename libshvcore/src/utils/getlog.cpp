@@ -123,7 +123,7 @@ concept LogReader = requires(Type x)
 };
 
 template <LogReader Type>
-[[nodiscard]] chainpack::RpcValue impl_get_log(const std::vector<std::function<Type()>>& readers, const ShvGetLogParams& orig_params)
+[[nodiscard]] chainpack::RpcValue impl_get_log(const std::vector<std::function<Type()>>& readers, const ShvGetLogParams& orig_params, IgnoreRecordCountLimit ignore_record_count_limit)
 {
 	logIGetLog() << "========================= getLog ==================";
 	logIGetLog() << "params:" << orig_params.toRpcValue().toCpon();
@@ -141,7 +141,9 @@ template <LogReader Type>
 	PatternMatcher pattern_matcher(ctx.params);
 
 	ShvLogHeader log_header;
-	auto record_count_limit = std::min(ctx.params.recordCountLimit, ShvJournalCommon::DEFAULT_GET_LOG_RECORD_COUNT_LIMIT);
+	auto record_count_limit =
+		ignore_record_count_limit == IgnoreRecordCountLimit::Yes ? std::numeric_limits<decltype(ctx.params.recordCountLimit)>::max()
+		: std::min(ctx.params.recordCountLimit, ShvJournalCommon::DEFAULT_GET_LOG_RECORD_COUNT_LIMIT);
 
 	log_header.setRecordCountLimit(record_count_limit);
 	log_header.setWithSnapShot(ctx.params.withSnapshot);
@@ -268,20 +270,20 @@ exit_nested_loop:
 }
 }
 
-[[nodiscard]] chainpack::RpcValue getLog(const std::vector<std::function<ShvJournalFileReader()>>& readers, const ShvGetLogParams& params)
+[[nodiscard]] chainpack::RpcValue getLog(const std::vector<std::function<ShvJournalFileReader()>>& readers, const ShvGetLogParams& params, IgnoreRecordCountLimit ignore_record_count_limit)
 {
-	return impl_get_log(readers, params);
+	return impl_get_log(readers, params, ignore_record_count_limit);
 }
 
-[[nodiscard]] chainpack::RpcValue getLog(const std::vector<std::function<ShvLogRpcValueReader()>>& readers, const ShvGetLogParams& params)
+[[nodiscard]] chainpack::RpcValue getLog(const std::vector<std::function<ShvLogRpcValueReader()>>& readers, const ShvGetLogParams& params, IgnoreRecordCountLimit ignore_record_count_limit)
 {
-	return impl_get_log(readers, params);
+	return impl_get_log(readers, params, ignore_record_count_limit);
 }
 
-[[nodiscard]] chainpack::RpcValue getLog(const std::vector<ShvJournalEntry>& entries, const ShvGetLogParams &params)
+[[nodiscard]] chainpack::RpcValue getLog(const std::vector<ShvJournalEntry>& entries, const ShvGetLogParams &params, IgnoreRecordCountLimit ignore_record_count_limit)
 {
 	std::vector<std::function<ShvLogVectorReader()>> readers;
 	readers.emplace_back([&entries] { return ShvLogVectorReader(entries); });
-	return impl_get_log(readers, params);
+	return impl_get_log(readers, params, ignore_record_count_limit);
 }
 }

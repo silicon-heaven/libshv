@@ -587,7 +587,7 @@ const ShvFileJournal::JournalContext &ShvFileJournal::checkJournalContext(bool f
 	return m_journalContext;
 }
 
-chainpack::RpcValue ShvFileJournal::getLog(const ShvGetLogParams &params, bool ignore_record_count_limit)
+chainpack::RpcValue ShvFileJournal::getLog(const ShvGetLogParams &params, IgnoreRecordCountLimit ignore_record_count_limit)
 {
 	std::vector<std::function<ShvJournalFileReader()>> readers;
 	{
@@ -598,7 +598,7 @@ chainpack::RpcValue ShvFileJournal::getLog(const ShvGetLogParams &params, bool i
 			});
 		}
 	}
-	return shv::core::utils::getLog(readers, params);
+	return shv::core::utils::getLog(readers, params, ignore_record_count_limit);
 }
 
 chainpack::RpcValue ShvFileJournal::getSnapShotMap()
