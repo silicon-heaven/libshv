@@ -9,6 +9,8 @@ namespace chainpack {
 class SHVCHAINPACK_DECL_EXPORT IRpcConnection
 {
 public:
+	enum class ShvApiVersion {V2, V3};
+
 	static constexpr int DEFAULT_RPC_BROKER_PORT_NONSECURED = 3755;
 	static constexpr int DEFAULT_RPC_BROKER_PORT_SECURED = 37555;
 	static constexpr int DEFAULT_RPC_BROKER_WEB_SOCKET_PORT_NONSECURED = 3777;
@@ -28,6 +30,7 @@ public:
 	virtual void onRpcMessageReceived(const shv::chainpack::RpcMessage &msg) = 0;
 
 	int nextRequestId();
+	void setShvApiVersion(ShvApiVersion ver) { m_shvApiVersion = ver; }
 
 	void sendSignal(std::string method, const shv::chainpack::RpcValue &params = shv::chainpack::RpcValue());
 	void sendShvSignal(const std::string &shv_path, std::string method, const shv::chainpack::RpcValue &params = shv::chainpack::RpcValue());
@@ -46,13 +49,11 @@ public:
 	int callMethodSubscribe(int rq_id, const std::string &shv_path, std::string method);
 	int callMethodUnsubscribe(const std::string &shv_path, std::string method);
 	int callMethodUnsubscribe(int rq_id, const std::string &shv_path, std::string method);
-
-	int callMethodSubscribe_v3(const std::string &shv_path, const std::string &method);
-	int callMethodUnsubscribe_v3(const std::string &shv_path, const std::string &method);
 protected:
 	static int nextConnectionId();
 protected:
 	int m_connectionId;
+	ShvApiVersion m_shvApiVersion = ShvApiVersion::V2;
 };
 
 } // namespace chainpack

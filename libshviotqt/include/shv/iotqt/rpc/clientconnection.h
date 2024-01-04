@@ -105,6 +105,7 @@ protected:
 private:
 	bool isAutoConnect() const;
 	void restartIfAutoConnect();
+	const std::string& pingShvPath() const;
 
 	static void tst_connectionUrlFromString();
 private:

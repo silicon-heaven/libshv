@@ -79,6 +79,7 @@ public:
 
 	static constexpr auto ROLE_MASTER_BROKER = "masterBroker";
 
+	static constexpr auto DIR_APP = ".app";
 	static constexpr auto DIR_BROKER = ".broker";
 	static constexpr auto DIR_BROKER_APP = ".broker/app";
 	static constexpr auto DIR_CLIENTS = "clients";

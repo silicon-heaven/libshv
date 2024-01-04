@@ -402,7 +402,7 @@ void ClientConnection::whenBrokerConnectedChanged(bool b)
 						restartIfAutoConnect();
 					}
 					else {
-						m_connectionState.pingRqId = callShvMethod(".broker/app", cp::Rpc::METH_PING);
+						m_connectionState.pingRqId = callShvMethod(pingShvPath(), cp::Rpc::METH_PING);
 					}
 				});
 			}
@@ -524,6 +524,18 @@ void ClientConnection::restartIfAutoConnect()
 		setState(State::ConnectionError);
 	else
 		close();
+}
+
+const string &ClientConnection::pingShvPath() const
+{
+	if(m_shvApiVersion == ShvApiVersion::V3) {
+		static std::string s = ".app";
+		return s;
+	}
+	else {
+		static std::string s = ".broker/app";
+		return s;
+	}
 }
 
 ClientConnection::State ClientConnection::state() const
