@@ -98,7 +98,7 @@ bool ShvJournalFileReader::next()
 				std::string err;
 				m_currentEntry.value = cp::RpcValue::fromCpon(std::string{fld}, &err);
 				if(!err.empty()) {
-					logWShvJournal() << "Invalid CPON value:" << fld;
+					logWShvJournal().nospace() << "Invalid CPON value: '" << fld << '\'';
 					goto next_line;
 				}
 				break;
