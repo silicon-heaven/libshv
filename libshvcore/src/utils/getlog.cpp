@@ -1,4 +1,3 @@
-
 #include <shv/core/log.h>
 #include <shv/core/utils/abstractshvjournal.h>
 #include <shv/core/utils/getlog.h>
@@ -227,16 +226,24 @@ exit_nested_loop:
 		}());
 	}
 
+	auto unmap_path = [&log_header, &ctx] (const RpcValue& path) {
+		if (ctx.params.withPathsDict) {
+			return log_header.pathDictCRef().at(path.toInt()).asString();
+		}
+
+		return path.asString();
+	};
+
+	// If there isn't an unmatched entry, and we don't have any result log entries, we'll use a snapshot entry as the
+	// last unmatched entry. This means that result until will be the same as result since, but that's fine - it's ok if
+	// the caller calls getLog again with the same since, because there were no data to give him anyway.
+	if (!first_unmatching_entry.has_value() && result_log.empty() && !snapshot_entries.empty()) {
+		first_unmatching_entry = ShvJournalEntry::fromRpcValueList(result_entries.back().asList(), unmap_path);
+	}
+
 	// If there isn't an unmatched entry, we can't be sure we have all the entries from the last ms in result_entries.
 	// We must remove all of them and they'll become the first_unmatching_entry.
 	if (!ctx.params.isSinceLast() && !result_entries.empty() && !first_unmatching_entry.has_value()) {
-		auto unmap_path = [&log_header, &ctx] (const RpcValue& path) {
-			if (ctx.params.withPathsDict) {
-				return log_header.pathDictCRef().at(path.toInt()).asString();
-			}
-
-			return path.asString();
-		};
 		first_unmatching_entry = ShvJournalEntry::fromRpcValueList(result_entries.back().asList(), unmap_path);
 		std::erase_if(result_entries, [compare_with = first_unmatching_entry.value().dateTime(), &unmap_path] (const RpcValue& entry) {
 			return ShvJournalEntry::fromRpcValueList(entry.asList(), unmap_path).dateTime() == compare_with;
