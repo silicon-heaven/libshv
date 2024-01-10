@@ -14,6 +14,46 @@ namespace cp = shv::chainpack;
 using cp::RpcValue;
 using namespace std::string_literals;
 
+// https://stackoverflow.com/a/56766138
+template <typename T>
+constexpr auto type_name()
+{
+    std::string_view name, prefix, suffix;
+#ifdef __clang__
+    name = __PRETTY_FUNCTION__;
+    prefix = "auto type_name() [T = ";
+    suffix = "]";
+#elif defined(__GNUC__)
+    name = __PRETTY_FUNCTION__;
+    prefix = "constexpr auto type_name() [with T = ";
+    suffix = "]";
+#elif defined(_MSC_VER)
+    name = __FUNCSIG__;
+    prefix = "auto __cdecl type_name<";
+    suffix = ">(void)";
+#endif
+    name.remove_prefix(prefix.size());
+    name.remove_suffix(suffix.size());
+    return name;
+}
+
+namespace std {
+    template <typename Type>
+    doctest::String toString(const std::vector<Type>& values) {
+        std::ostringstream res;
+        res << "std::vector<" << type_name<Type>() << ">{\n";
+        for (const auto& value : values) {
+            if constexpr (std::is_same<Type, shv::core::utils::ShvJournalEntry>()) {
+                res << "    " << value.toRpcValue().toCpon() << ",\n";
+            } else {
+                res << "    " << value << ",\n";
+            }
+        }
+        res << "}";
+        return res.str().c_str();
+    }
+}
+
 const auto journal_dir = std::filesystem::path{TEST_FILES_DIR} / "getlog";
 
 std::function<shv::core::utils::ShvJournalFileReader()> create_reader(std::vector<shv::core::utils::ShvJournalEntry> entries)
@@ -365,6 +405,17 @@ DOCTEST_TEST_CASE("getLog")
 					make_entry("2022-07-07T18:06:17.800Z", "value1", 0, true),
 					make_entry("2022-07-07T18:06:17.800Z", "value2", 1, true),
 					make_entry("2022-07-07T18:06:17.800Z", "value3", 3, true),
+				};
+			}
+
+			DOCTEST_SUBCASE("with since after the last entry")
+			{
+				expected_with_snapshot = true;
+				get_log_params.since = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:20.850");
+				expected_entries = {
+					make_entry("2022-07-07T18:06:20.850Z", "value1", 0, true),
+					make_entry("2022-07-07T18:06:20.850Z", "value2", 10, true),
+					make_entry("2022-07-07T18:06:20.850Z", "value3", 200, true),
 				};
 			}
 		}
