@@ -87,18 +87,13 @@ public:
 		int subtickEvery = 1;
 	};
 
-	const GraphButtonBox *buttonBox() const;
-	GraphButtonBox *buttonBox();
-
 	bool isMaximized() const;
 	void setMaximized(bool b);
 
 	Graph *graph() const;
 protected:
-	void onButtonBoxClicked(int button_id);
 	int graphChannelIndex() const;
 protected:
-	GraphButtonBox *m_buttonBox = nullptr;
 	struct
 	{
 		YRange yRange;

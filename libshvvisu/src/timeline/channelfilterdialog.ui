@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>391</width>
+    <width>416</width>
     <height>802</height>
    </rect>
   </property>
@@ -98,6 +98,9 @@
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
          <widget class="QPushButton" name="pbCheckItems">
+          <property name="toolTip">
+           <string>Check channels</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -109,12 +112,29 @@
         </item>
         <item>
          <widget class="QPushButton" name="pbUncheckItems">
+          <property name="toolTip">
+           <string>Uncheck channels</string>
+          </property>
           <property name="text">
            <string/>
           </property>
           <property name="icon">
            <iconset resource="../../images/images.qrc">
             <normaloff>:/shv/visu/images/checkbox-blank-outline.svg</normaloff>:/shv/visu/images/checkbox-blank-outline.svg</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pbUncheckItemsWithoutChanges">
+          <property name="toolTip">
+           <string>Uncheck channels without data changes</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../images/images.qrc">
+            <normaloff>:/shv/visu/images/chart-line.svg</normaloff>:/shv/visu/images/chart-line.svg</iconset>
           </property>
          </widget>
         </item>

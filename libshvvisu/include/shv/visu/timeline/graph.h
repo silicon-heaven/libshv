@@ -128,7 +128,7 @@ public:
 
 	void showAllChannels();
 	QSet<QString> channelPaths();
-	void hideFlatChannels();
+	QSet<QString> flatChannels();
 	const std::optional<ChannelFilter> &channelFilter() const;
 	void setChannelFilter(const std::optional<ChannelFilter> &filter);
 	void setChannelVisible(qsizetype channel_ix, bool is_visible);
@@ -211,8 +211,6 @@ public:
 	static std::function<int (timemsec_t)> timeToPosFn(const XRange &src, const WidgetRange &dest);
 	static std::function<int (double)> valueToPosFn(const YRange &src, const WidgetRange &dest);
 	static std::function<double (int)> posToValueFn(const WidgetRange &src, const YRange &dest);
-
-	void processEvent(QEvent *ev);
 
 	Q_SIGNAL void presentationDirty(const QRect &rect);
 	void emitPresentationDirty(const QRect &rect);
@@ -326,7 +324,6 @@ protected:
 	} m_layout;
 
 	QPixmap m_miniMapCache;
-	GraphButtonBox *m_cornerCellButtonBox = nullptr;
 	QString m_settingsUserName = DEFAULT_USER_PROFILE;
 };
 

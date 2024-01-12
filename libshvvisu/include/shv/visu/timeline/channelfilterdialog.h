@@ -42,6 +42,7 @@ private:
 
 	void setVisibleItemsCheckState(Qt::CheckState state);
 	void setVisibleItemsCheckState_helper(const QModelIndex &mi, Qt::CheckState state);
+
 	void loadChannelFilterFomGraph();
 
 	void onDataViewComboboxChanged(int index);
@@ -50,6 +51,7 @@ private:
 	void onPbCheckItemsClicked();
 	void onPbUncheckItemsClicked();
 	void onPbClearMatchingTextClicked();
+	void onPbUncheckItemsWithoutChangesClicked();
 	void onLeMatchingFilterTextChanged(const QString &text);
 	void onChbFindRegexChanged(int state);
 

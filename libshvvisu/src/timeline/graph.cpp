@@ -55,11 +55,8 @@ bool Graph::DataRect::isValid() const
 
 Graph::Graph(QObject *parent)
 	: QObject(parent)
-	, m_cornerCellButtonBox(new GraphButtonBox({GraphButtonBox::ButtonId::Menu}, this))
 {
-	m_cornerCellButtonBox->setObjectName("cornerCellButtonBox");
-	m_cornerCellButtonBox->setAutoRaise(false);
-	connect(m_cornerCellButtonBox, &GraphButtonBox::buttonClicked, this, &Graph::onButtonBoxClicked);
+
 }
 
 Graph::~Graph()
@@ -237,25 +234,18 @@ QSet<QString> Graph::channelPaths()
 	return ret;
 }
 
-void Graph::hideFlatChannels()
+QSet<QString> Graph::flatChannels()
 {
-	QSet<QString> permitted_paths = (m_channelFilter) ? m_channelFilter.value().permittedPaths() : channelPaths();
+	QSet<QString> ret;
 
 	for (qsizetype i = 0; i < m_channels.count(); ++i) {
 		GraphChannel *ch = m_channels[i];
 		if(isChannelFlat(ch)) {
-			permitted_paths.remove(ch->shvPath());
+			ret.insert(ch->shvPath());
 		}
 	}
 
-	if (m_channelFilter == std::nullopt)
-		m_channelFilter = ChannelFilter();
-
-	if (m_channelFilter)
-		m_channelFilter.value().setPermittedPaths(permitted_paths);
-
-	emit layoutChanged();
-	emit channelFilterChanged();
+	return ret;
 }
 
 bool Graph::isChannelFlat(GraphChannel *ch)
@@ -819,10 +809,6 @@ void Graph::moveSouthFloatingBarBottom(int bottom)
 	m_layout.miniMapRect.moveBottom(bottom);
 	m_layout.xAxisRect.moveBottom(m_layout.miniMapRect.top());
 	m_layout.cornerCellRect.moveBottom(m_layout.miniMapRect.bottom());
-	{
-		int inset = m_cornerCellButtonBox->buttonSpace();
-		m_cornerCellButtonBox->moveTopRight(m_layout.cornerCellRect.topRight() + QPoint(-inset, inset));
-	}
 }
 
 std::pair<Sample, int> Graph::posToSample(const QPoint &pos) const
@@ -988,13 +974,6 @@ void Graph::makeLayout(const QRect &pref_rect)
 	m_layout.cornerCellRect.setLeft(u2px(m_style.leftMargin()));
 	m_layout.cornerCellRect.setWidth(m_layout.xAxisRect.left() - m_layout.cornerCellRect.left());
 
-	// hide clickable areas, visible channels will show them again
-	for (GraphChannel *ch : m_channels) {
-		ch->m_layout.verticalHeaderRect = QRect();
-		if(auto *bbx = ch->buttonBox())
-			bbx->hide();
-	}
-
 	// set height of all channels to 0
 	// if some channel is maximized, hidden channel must not interact with mouse
 	for (int i = 0; i < m_channels.count(); ++i) {
@@ -1069,12 +1048,6 @@ void Graph::makeLayout(const QRect &pref_rect)
 		int line_width = u2px(ch->m_effectiveStyle.lineWidth());
 		ch->m_layout.graphDataGridRect = ch->m_layout.graphAreaRect.adjusted(0, line_width, 0, -line_width);
 		shvDebug() << "channel:" << i << "graphDataGridRect:" << rstr(ch->m_layout.graphDataGridRect);
-		// place buttons
-		GraphButtonBox *bbx = ch->buttonBox();
-		if(bbx) {
-			int inset = bbx->buttonSpace();
-			bbx->moveTopRight(ch->m_layout.verticalHeaderRect.topRight() + QPoint(-inset, inset));
-		}
 	}
 
 	m_layout.xAxisRect.moveTop(widget_height);
@@ -1284,7 +1257,6 @@ void Graph::drawCornerCell(QPainter *painter)
 	pen.setColor(m_style.colorBackground());
 	painter->setPen(pen);
 	painter->drawRect(m_layout.cornerCellRect);
-	m_cornerCellButtonBox->draw(painter);
 }
 
 void Graph::drawMiniMap(QPainter *painter)
@@ -1378,9 +1350,6 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 	painter->drawText(text_rect, name);
 
 	painter->restore();
-	GraphButtonBox *bbx = ch->buttonBox();
-	if(bbx)
-		bbx->draw(painter);
 }
 
 void Graph::drawBackground(QPainter *painter, int channel)
@@ -1768,24 +1737,6 @@ std::function<double (int)> Graph::posToValueFn(const Graph::WidgetRange &src, c
 	return [d1, d2, to, bo](int y) {
 		return d1 + (y - bo) * (d2 - d1) / (to - bo);
 	};
-}
-
-void Graph::processEvent(QEvent *ev)
-{
-	if(ev->type() == QEvent::MouseMove
-			|| ev->type() == QEvent::MouseButtonPress
-			|| ev->type() == QEvent::MouseButtonRelease) {
-		if(m_cornerCellButtonBox->processEvent(ev))
-			return;
-		for (int i = 0; i < channelCount(); ++i) {
-			GraphChannel *ch = channelAt(i);
-			GraphButtonBox *bbx = ch->buttonBox();
-			if(bbx) {
-				if(bbx->processEvent(ev))
-					break;
-			}
-		}
-	}
 }
 
 void Graph::emitPresentationDirty(const QRect &rect)
@@ -2258,11 +2209,8 @@ QString Graph::timeToStringTZ(timemsec_t time) const
 
 void Graph::onButtonBoxClicked(int button_id)
 {
+	Q_UNUSED(button_id);
 	shvLogFuncFrame();
-	if(button_id == static_cast<int>(GraphButtonBox::ButtonId::Menu)) {
-		QPoint pos = m_cornerCellButtonBox->buttonRect(static_cast<GraphButtonBox::ButtonId>(button_id)).center();
-		emit graphContextMenuRequest(pos);
-	}
 }
 
 void Graph::saveVisualSettings(const QString &settings_id, const QString &name) const
