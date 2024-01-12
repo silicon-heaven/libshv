@@ -1,7 +1,6 @@
 #pragma once
 
 #include <shv/visu/timeline/channelprobe.h>
-#include <shv/visu/timeline/graphbuttonbox.h>
 #include <shv/visu/timeline/sample.h>
 
 #include <shv/visu/shvvisuglobal.h>

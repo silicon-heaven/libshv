@@ -2207,12 +2207,6 @@ QString Graph::timeToStringTZ(timemsec_t time) const
 	return text;
 }
 
-void Graph::onButtonBoxClicked(int button_id)
-{
-	Q_UNUSED(button_id);
-	shvLogFuncFrame();
-}
-
 void Graph::saveVisualSettings(const QString &settings_id, const QString &name) const
 {
 	QSettings settings;

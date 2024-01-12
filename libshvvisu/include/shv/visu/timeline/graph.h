@@ -3,7 +3,6 @@
 #include "channelfilter.h"
 #include "channelprobe.h"
 #include "graphchannel.h"
-#include "graphbuttonbox.h"
 #include "sample.h"
 #include "../shvvisuglobal.h"
 
@@ -278,7 +277,6 @@ protected:
 	void moveSouthFloatingBarBottom(int bottom);
 protected:
 	QVariantMap toolTipValues(const QPoint &pos) const;
-	void onButtonBoxClicked(int button_id);
 protected:
 	GraphModel *m_model = nullptr;
 

@@ -367,7 +367,13 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 		setCursor(QCursor(Qt::SizeHorCursor));
 	}
 	else {
-		setCursor(QCursor(Qt::ArrowCursor));
+		auto channel_ix = graph()->posToChannelHeader(pos);
+		if (channel_ix > -1) {
+			setCursor(QCursor(Qt::OpenHandCursor));
+		}
+		else {
+			setCursor(QCursor(Qt::ArrowCursor));
+		}
 	}
 
 	switch (m_mouseOperation) {

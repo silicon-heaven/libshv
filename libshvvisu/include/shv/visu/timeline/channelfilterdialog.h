@@ -42,7 +42,6 @@ private:
 
 	void setVisibleItemsCheckState(Qt::CheckState state);
 	void setVisibleItemsCheckState_helper(const QModelIndex &mi, Qt::CheckState state);
-
 	void loadChannelFilterFomGraph();
 
 	void onDataViewComboboxChanged(int index);
