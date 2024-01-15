@@ -954,9 +954,11 @@ QString Graph::durationToString(timemsec_t duration)
 	}
 }
 
-static QString rstr(const QRect &r)
+namespace {
+QString rstr(const QRect &r)
 {
 	return QStringLiteral("[%1, %2](%3, %4)").arg(r.x()).arg(r.y()).arg(r.width()).arg(r.height());
+}
 }
 
 void Graph::makeLayout(const QRect &pref_rect)
