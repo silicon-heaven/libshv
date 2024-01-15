@@ -67,6 +67,7 @@ ChannelFilterDialog::ChannelFilterDialog(QWidget *parent, const QString &site_pa
 	connect(ui->pbClearMatchingText, &QPushButton::clicked, this, &ChannelFilterDialog::onPbClearMatchingTextClicked);
 	connect(ui->pbCheckItems, &QPushButton::clicked, this, &ChannelFilterDialog::onPbCheckItemsClicked);
 	connect(ui->pbUncheckItems, &QPushButton::clicked, this, &ChannelFilterDialog::onPbUncheckItemsClicked);
+	connect(ui->pbUncheckItemsWithoutChanges, &QPushButton::clicked, this, &ChannelFilterDialog::onPbUncheckItemsWithoutChangesClicked);
 }
 
 ChannelFilterDialog::~ChannelFilterDialog()
@@ -222,6 +223,12 @@ void ChannelFilterDialog::onPbUncheckItemsClicked()
 void ChannelFilterDialog::onPbClearMatchingTextClicked()
 {
 	ui->leMatchingFilterText->setText(QString());
+}
+
+void ChannelFilterDialog::onPbUncheckItemsWithoutChangesClicked()
+{
+	QSet<QString> channels = m_channelsFilterModel->permittedChannels().subtract(m_graph->flatChannels());
+	m_channelsFilterModel->setPermittedChannels(channels);
 }
 
 void ChannelFilterDialog::onLeMatchingFilterTextChanged(const QString &text)

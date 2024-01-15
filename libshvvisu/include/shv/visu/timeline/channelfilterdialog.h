@@ -50,6 +50,7 @@ private:
 	void onPbCheckItemsClicked();
 	void onPbUncheckItemsClicked();
 	void onPbClearMatchingTextClicked();
+	void onPbUncheckItemsWithoutChangesClicked();
 	void onLeMatchingFilterTextChanged(const QString &text);
 	void onChbFindRegexChanged(int state);
 

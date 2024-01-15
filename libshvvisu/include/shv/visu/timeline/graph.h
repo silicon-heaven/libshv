@@ -3,7 +3,6 @@
 #include "channelfilter.h"
 #include "channelprobe.h"
 #include "graphchannel.h"
-#include "graphbuttonbox.h"
 #include "sample.h"
 #include "../shvvisuglobal.h"
 
@@ -128,7 +127,7 @@ public:
 
 	void showAllChannels();
 	QSet<QString> channelPaths();
-	void hideFlatChannels();
+	QSet<QString> flatChannels();
 	const std::optional<ChannelFilter> &channelFilter() const;
 	void setChannelFilter(const std::optional<ChannelFilter> &filter);
 	void setChannelVisible(qsizetype channel_ix, bool is_visible);
@@ -212,8 +211,6 @@ public:
 	static std::function<int (double)> valueToPosFn(const YRange &src, const WidgetRange &dest);
 	static std::function<double (int)> posToValueFn(const WidgetRange &src, const YRange &dest);
 
-	void processEvent(QEvent *ev);
-
 	Q_SIGNAL void presentationDirty(const QRect &rect);
 	void emitPresentationDirty(const QRect &rect);
 	Q_SIGNAL void layoutChanged();
@@ -280,7 +277,6 @@ protected:
 	void moveSouthFloatingBarBottom(int bottom);
 protected:
 	QVariantMap toolTipValues(const QPoint &pos) const;
-	void onButtonBoxClicked(int button_id);
 protected:
 	GraphModel *m_model = nullptr;
 
@@ -326,7 +322,6 @@ protected:
 	} m_layout;
 
 	QPixmap m_miniMapCache;
-	GraphButtonBox *m_cornerCellButtonBox = nullptr;
 	QString m_settingsUserName = DEFAULT_USER_PROFILE;
 };
 

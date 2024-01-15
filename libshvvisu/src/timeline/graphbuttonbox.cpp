@@ -181,31 +181,6 @@ void GraphButtonBox::drawButton(QPainter *painter, const QRect &rect, int button
 		}
 		break;
 	}
-	case ButtonId::Hide: {
-		int inset = rect.height() / 8;
-		QPen p = p1;
-		p.setColor(QColor("skyblue"));
-		painter->setPen(p);
-		QRect r1 = rect.adjusted(inset, inset, -inset, -inset);
-
-		QRect r = r1;
-		int start_angle = 25;
-		const double pi = std::acos(-1);
-		int offset = static_cast<int>(std::sin(start_angle * pi / 180) * r.height() / 2);
-		int span_angle = 180 - 2*start_angle;
-		r.moveTop(r.top() + offset);
-		painter->drawArc(r, start_angle * 16, span_angle * 16);
-		r.moveTop(r.top() - 2*offset);
-		painter->drawArc(r, (180 + start_angle) * 16, span_angle * 16);
-
-		int w = r1.width() / 3;
-		QRect r2{0, 0, w, w};
-		r2.moveCenter(rect.center());
-		painter->drawEllipse(r2);
-		r = r1.adjusted(inset, inset, -inset, -inset);
-		painter->drawLine(r.bottomLeft(), r.topRight());
-		break;
-	}
 	default:
 		break;
 	}
