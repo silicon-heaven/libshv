@@ -56,7 +56,7 @@
 #include <QFuture>
 
 #include <ctime>
-#include <fstream>
+//#include <fstream>
 
 #ifdef Q_OS_UNIX
 #include <csignal>
@@ -67,6 +67,7 @@
 
 #define logTunnelD() nCDebug("Tunnel")
 
+#define logBrokerDiscoveryW() nCWarning("BrokerDiscovery")
 #define logBrokerDiscoveryM() nCMessage("BrokerDiscovery")
 #define logServiceProvidersM() nCMessage("ServiceProviders")
 
@@ -279,9 +280,9 @@ static const auto SQL_CONFIG_CONN_NAME = QStringLiteral("ShvBrokerDbConfigSqlCon
 BrokerApp::BrokerApp(int &argc, char **argv, AppCliOptions *cli_opts)
 	: Super(argc, argv)
 	, m_cliOptions(cli_opts)
-#ifdef WITH_SHV_LDAP
+	#ifdef WITH_SHV_LDAP
 	, m_ldapLib(nullptr, nullptr)
-#endif
+	#endif
 {
 	m_brokerId = m_cliOptions->brokerId();
 	std::srand(static_cast<unsigned int>(std::time(nullptr)));
@@ -304,26 +305,31 @@ BrokerApp::BrokerApp(int &argc, char **argv, AppCliOptions *cli_opts)
 		udp_socket->bind(static_cast<quint16>(m_cliOptions->discoveryPort()), QUdpSocket::ShareAddress);
 		logBrokerDiscoveryM() << "shvbrokerDiscovery listen on UDP port:" << m_cliOptions->discoveryPort();
 		connect(udp_socket, &QUdpSocket::readyRead, this, [this, udp_socket]() {
-			QByteArray datagram;
-			QHostAddress address;
-			quint16 port;
-			while (udp_socket->hasPendingDatagrams()) {
-				datagram.resize(int(udp_socket->pendingDatagramSize()));
-				udp_socket->readDatagram(datagram.data(), datagram.size(), &address, &port);
+			try {
+				QByteArray datagram;
+				QHostAddress address;
+				quint16 port;
+				while (udp_socket->hasPendingDatagrams()) {
+					datagram.resize(int(udp_socket->pendingDatagramSize()));
+					udp_socket->readDatagram(datagram.data(), datagram.size(), &address, &port);
 
-				std::string rq_cpon(datagram.constData(), static_cast<size_t>(datagram.length()));
-				shv::chainpack::RpcValue rv = shv::chainpack::RpcValue::fromCpon(rq_cpon);
-				shv::chainpack::RpcRequest rq(rv);
-				if (rq.method() == "shvbrokerDiscovery") {
-					logBrokerDiscoveryM() << "Received broadcast request shvbrokerDiscovery:" << rq.toPrettyString();
-					shv::chainpack::RpcResponse resp = rq.makeResponse();
-					QString ipv4 = shv::iotqt::utils::Network::primaryIPv4Address().toString();
-					shv::chainpack::RpcValue response = shv::chainpack::RpcValue::Map { {"brokerId", m_brokerId}, {"brokerIPv4", ipv4.toStdString()}, {"brokerPort", m_cliOptions->serverPort() } };
-					resp.setResult(response);
-					QByteArray response_datagram(resp.toCpon().c_str(), static_cast<int>(resp.toCpon().length()));
-					udp_socket->writeDatagram(response_datagram, address, port);
-					logBrokerDiscoveryM() << "Send response on broadcast shvbrokerDiscovery:" << resp.toPrettyString();
+					std::string rq_cpon(datagram.constData(), static_cast<size_t>(datagram.length()));
+					shv::chainpack::RpcValue rv = shv::chainpack::RpcValue::fromCpon(rq_cpon);
+					shv::chainpack::RpcRequest rq(rv);
+					if (rq.method() == "shvbrokerDiscovery") {
+						logBrokerDiscoveryM() << "Received broadcast request shvbrokerDiscovery:" << rq.toPrettyString();
+						shv::chainpack::RpcResponse resp = rq.makeResponse();
+						QString ipv4 = shv::iotqt::utils::Network::primaryIPv4Address().toString();
+						shv::chainpack::RpcValue response = shv::chainpack::RpcValue::Map { {"brokerId", m_brokerId}, {"brokerIPv4", ipv4.toStdString()}, {"brokerPort", m_cliOptions->serverPort() } };
+						resp.setResult(response);
+						QByteArray response_datagram(resp.toCpon().c_str(), static_cast<int>(resp.toCpon().length()));
+						udp_socket->writeDatagram(response_datagram, address, port);
+						logBrokerDiscoveryM() << "Send response on broadcast shvbrokerDiscovery:" << resp.toPrettyString();
+					}
 				}
+			}
+			catch (const std::exception &e) {
+				logBrokerDiscoveryW() << "BrokerDiscovery error:" << e.what();
 			}
 		});
 	}
@@ -1456,7 +1462,7 @@ void BrokerApp::addSubscription(int client_id, const std::string &shv_path, cons
 	else {
 		/// check slave broker connections
 		/// whether this subsciption should be propagated to them
-		/// skip service providers subscriptions, since it does not make ense to send them downstream
+		/// skip service providers subscriptions, since it does not make sense to send them downstream
 		for (int connection_id : clientConnectionIds()) {
 			rpc::ClientConnectionOnBroker *conn = clientConnectionById(connection_id);
 			if(conn->isSlaveBrokerConnection()) {
