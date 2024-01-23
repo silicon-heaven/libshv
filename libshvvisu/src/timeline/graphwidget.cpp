@@ -115,7 +115,6 @@ bool GraphWidget::event(QEvent *ev)
 							.arg(tr("Name:"), channel_info.name, tr("Path:"), channel_info.shvPath);
 				}
 
-
 				QToolTip::showText(help_event->globalPos(), tooltip, this, {}, 2000);
 				help_event->accept();
 				return true;

@@ -1371,7 +1371,7 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 		QString text = elidedText(chi.name, font, name_rect);
 		painter->drawText(name_rect, text);
 
-		font.setPointSize(static_cast<int>(std::round(m_style.font().pointSize() * 0.7)));
+		font.setPointSizeF(m_style.font().pointSizeF() * 0.7);
 		painter->setFont(font);
 		pen.setColor(c.darker(140));
 		painter->setPen(pen);
