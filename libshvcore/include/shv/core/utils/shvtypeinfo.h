@@ -241,7 +241,7 @@ public:
 	shv::chainpack::RpcValue applyTypeDescription(const shv::chainpack::RpcValue &val, const ShvTypeDescr &type_descr, bool translate_enums = true) const;
 
 	void forEachDeviceProperty(const std::string &device_type, std::function<void (const ShvPropertyDescr &)> fn) const;
-	void forEachProperty(std::function<void (const std::string &shv_path, const ShvPropertyDescr &node_descr)> fn) const;
+	void forEachProperty(std::function<void (const std::string &shv_path, const ShvPropertyDescr &property_descr)> fn) const;
 private:
 	static ShvTypeInfo fromNodesTree(const chainpack::RpcValue &v);
 	void fromNodesTree_helper(const shv::chainpack::RpcValue::Map &node_types,
