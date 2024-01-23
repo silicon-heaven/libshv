@@ -274,7 +274,7 @@ protected:
 	void makeYAxis(qsizetype channel);
 
 	void moveSouthFloatingBarBottom(int bottom);
-	QString truncString(const QString &text, const QFont &font, int max_width);
+	QString elidedText(const QString &text, const QFont &font, const QRect &rect);
 protected:
 	QVariantMap toolTipValues(const QPoint &pos) const;
 protected:

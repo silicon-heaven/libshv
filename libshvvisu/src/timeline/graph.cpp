@@ -811,23 +811,21 @@ void Graph::moveSouthFloatingBarBottom(int bottom)
 	m_layout.cornerCellRect.moveBottom(m_layout.miniMapRect.bottom());
 }
 
-QString Graph::truncString(const QString &text, const QFont &font, int max_width)
+QString Graph::elidedText(const QString &text, const QFont &font, const QRect &rect)
 {
-	const QString ellipsis("...");
+	QString res;
 	QFontMetrics fm(font);
 	int text_width = fm.horizontalAdvance(text);
 
-	if (text_width < max_width) {
-		return text;
+	if (text_width < rect.width()) {
+		res = text;
 	}
 	else {
-		double char_width = text_width / text.size();
-		if (char_width > 0) {
-			int start_pos = std::ceil((text_width + fm.horizontalAdvance(ellipsis) - max_width) / char_width);
-			return ellipsis + text.mid(start_pos);
-		}
-		return text;
+		int row_count = static_cast<int>(rect.height() / fm.height());
+		res = fm.elidedText(text, Qt::TextElideMode::ElideLeft, row_count * rect.width() - fm.averageCharWidth());
 	}
+
+	return res;
 }
 
 std::pair<Sample, int> Graph::posToSample(const QPoint &pos) const
@@ -1345,9 +1343,7 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 	painter->setPen(pen);
 
 	GraphModel::ChannelInfo chi = channelInfo(channel);
-	QString name = chi.name;
 
-	QFont font = m_style.font();
 	painter->save();
 	painter->fillRect(ch->m_layout.verticalHeaderRect, bc);
 
@@ -1358,6 +1354,7 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 		painter->fillRect(r, ch->m_effectiveStyle.color());
 	}
 
+	QFont font = m_style.font();
 	font.setBold(true);
 	painter->setFont(font);
 
@@ -1370,25 +1367,19 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 		int row_height = QFontMetrics(font).height();
 		int row_count = text_rect.height() / row_height;
 
-		QTextOption name_text_option;
-		name_text_option.setWrapMode(QTextOption::NoWrap);
-
 		QRect name_rect(text_rect.left(), text_rect.top(), text_rect.width(), (row_count - 1) * row_height);
-		QString text = truncString(chi.name, font, name_rect.width());
-		painter->drawText(name_rect, text, name_text_option);
+		QString text = elidedText(chi.name, font, name_rect);
+		painter->drawText(name_rect, text);
 
 		font.setPointSize(static_cast<int>(std::round(m_style.font().pointSize() * 0.7)));
 		painter->setFont(font);
 		pen.setColor(c.darker(140));
 		painter->setPen(pen);
 
-		QTextOption path_row_text_option;
-		path_row_text_option.setAlignment(Qt::AlignBottom);
+		QTextOption path_row_text_option(Qt::AlignmentFlag::AlignBottom);
 		path_row_text_option.setWrapMode(QTextOption::NoWrap);
-
 		QRect path_rect(text_rect.left(), text_rect.bottom() - row_height, text_rect.width(), row_height);
-
-		text = truncString(chi.shvPath, font, path_rect.width());
+		text = elidedText(chi.shvPath, font, path_rect);
 		painter->drawText(path_rect, text, path_row_text_option);
 	}
 
