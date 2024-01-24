@@ -811,6 +811,23 @@ void Graph::moveSouthFloatingBarBottom(int bottom)
 	m_layout.cornerCellRect.moveBottom(m_layout.miniMapRect.bottom());
 }
 
+QString Graph::elidedText(const QString &text, const QFont &font, const QRect &rect)
+{
+	QString res;
+	QFontMetrics fm(font);
+	int text_width = fm.horizontalAdvance(text);
+
+	if (text_width < rect.width()) {
+		res = text;
+	}
+	else {
+		int row_count = static_cast<int>(rect.height() / fm.height());
+		res = fm.elidedText(text, Qt::TextElideMode::ElideLeft, row_count * rect.width() - fm.averageCharWidth());
+	}
+
+	return res;
+}
+
 std::pair<Sample, int> Graph::posToSample(const QPoint &pos) const
 {
 	auto ch_ix = posToChannel(pos);
@@ -1311,17 +1328,10 @@ void Graph::drawMiniMap(QPainter *painter)
 	painter->restore();
 }
 
-QString Graph::channelName(qsizetype channel) const
+const GraphModel::ChannelInfo& Graph::channelInfo(qsizetype channel) const
 {
 	const GraphChannel *ch = channelAt(channel);
-	const GraphModel::ChannelInfo& chi = model()->channelInfo(ch->modelIndex());
-	QString name = chi.name;
-	QString shv_path = chi.shvPath;
-	if(name.isEmpty())
-		name = shv_path;
-	if(name.isEmpty())
-		name = tr("<no name>");
-	return name;
+	return model()->channelInfo(ch->modelIndex());
 }
 
 void Graph::drawVerticalHeader(QPainter *painter, int channel)
@@ -1334,8 +1344,8 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 	pen.setColor(c);
 	painter->setPen(pen);
 
-	QString name = channelName(channel);
-	QFont font = m_style.font();
+	GraphModel::ChannelInfo chi = channelInfo(channel);
+
 	painter->save();
 	painter->fillRect(ch->m_layout.verticalHeaderRect, bc);
 
@@ -1346,10 +1356,34 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 		painter->fillRect(r, ch->m_effectiveStyle.color());
 	}
 
+	QFont font = m_style.font();
 	font.setBold(true);
 	painter->setFont(font);
+
 	QRect text_rect = ch->m_layout.verticalHeaderRect.adjusted(2*header_inset, header_inset, -header_inset, -header_inset);
-	painter->drawText(text_rect, name);
+
+	if (chi.name.isEmpty()) {
+		painter->drawText(text_rect, chi.shvPath);
+	}
+	else {
+		int row_height = QFontMetrics(font).height();
+		int row_count = text_rect.height() / row_height;
+
+		QRect name_rect(text_rect.left(), text_rect.top(), text_rect.width(), (row_count - 1) * row_height);
+		QString text = elidedText(chi.name, font, name_rect);
+		painter->drawText(name_rect, text);
+
+		font.setPointSizeF(m_style.font().pointSizeF() * 0.7);
+		painter->setFont(font);
+		pen.setColor(c.darker(140));
+		painter->setPen(pen);
+
+		QTextOption path_row_text_option(Qt::AlignmentFlag::AlignBottom);
+		path_row_text_option.setWrapMode(QTextOption::NoWrap);
+		QRect path_rect(text_rect.left(), text_rect.bottom() - row_height, text_rect.width(), row_height);
+		text = elidedText(chi.shvPath, font, path_rect);
+		painter->drawText(path_rect, text, path_row_text_option);
+	}
 
 	painter->restore();
 }
