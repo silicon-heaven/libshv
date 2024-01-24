@@ -1,4 +1,4 @@
-#include "shvgetlogparams.h"
+#include <shv/core/utils/shvgetlogparams.h>
 
 namespace cp = shv::chainpack;
 
@@ -62,7 +62,7 @@ ShvGetLogParams ShvGetLogParams::fromRpcValue(const chainpack::RpcValue &v)
 	ret.domainPattern = m.value(KEY_DOMAIN_PATTERN).toString();
 
 	//for compatibility with legacy devices
-	ret.recordCountLimit = m.value(KEY_RECORD_COUNT_LIMIT, m.value(KEY_MAX_RECORD_COUNT_DEPRECATED, DEFAULT_RECORD_COUNT_LIMIT)).toInt();
+	ret.recordCountLimit = m.value(KEY_RECORD_COUNT_LIMIT, m.value(KEY_MAX_RECORD_COUNT_DEPRECATED, ShvJournalCommon::DEFAULT_GET_LOG_RECORD_COUNT_LIMIT)).toInt();
 	if(m.hasKey(KEY_HEADER_OPTIONS_DEPRECATED)) {
 		unsigned flags = m.value(KEY_HEADER_OPTIONS_DEPRECATED).toUInt();
 		ret.withTypeInfo = flags & HeaderOptions::TypeInfo;

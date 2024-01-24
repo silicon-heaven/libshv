@@ -1,10 +1,11 @@
-#include "clientconnection.h"
+#include <shv/iotqt/rpc/clientconnection.h>
 
-#include "clientappclioptions.h"
-#include "socket.h"
-#include "socketrpcconnection.h"
-#include "../utils.h"
-#include "websocket.h"
+#include <shv/iotqt/rpc/clientappclioptions.h>
+#include <shv/iotqt/rpc/socket.h>
+#include <shv/iotqt/rpc/socketrpcconnection.h>
+#include <shv/iotqt/rpc/websocket.h>
+
+#include <shv/iotqt/utils.h>
 
 #include <shv/coreqt/log.h>
 
@@ -23,7 +24,7 @@
 #include <QCryptographicHash>
 #include <QThread>
 #ifdef QT_SERIALPORT_LIB
-#include "serialportsocket.h"
+#include <shv/iotqt/rpc/serialportsocket.h>
 #include <QSerialPort>
 #endif
 
@@ -32,6 +33,7 @@
 #endif
 
 #include <fstream>
+#include <regex>
 
 namespace cp = shv::chainpack;
 using namespace std;
@@ -400,7 +402,7 @@ void ClientConnection::whenBrokerConnectedChanged(bool b)
 						restartIfAutoConnect();
 					}
 					else {
-						m_connectionState.pingRqId = callShvMethod(".broker/app", cp::Rpc::METH_PING);
+						m_connectionState.pingRqId = callShvMethod(pingShvPath(), cp::Rpc::METH_PING);
 					}
 				});
 			}
@@ -446,10 +448,17 @@ chainpack::RpcValue ClientConnection::createLoginParams(const chainpack::RpcValu
 	if(loginType() == chainpack::IRpcConnection::LoginType::Sha1) {
 		std::string server_nonce = server_hello.asMap().value("nonce").toString();
 		std::string pwd = password();
-		if(pwd.size() == 40)
-			shvWarning() << "Using shadowed password directly by client is unsecure and it will be disabled in future SHV versions";
-		else
-			pwd = utils::sha1Hex(pwd); /// SHA1 password must be 40 chars long, it is considered to be plain if shorter
+		do {
+			if(pwd.size() == 40) {
+				// sha1passwd
+				std::regex re(R"([0-9a-f]{40})");
+				if(std::regex_match(pwd, re)) {
+					/// SHA1 password
+					break;
+				}
+			}
+			pwd = utils::sha1Hex(pwd);
+		} while(false);
 		std::string pn = server_nonce + pwd;
 		QCryptographicHash hash(QCryptographicHash::Algorithm::Sha1);
 #if QT_VERSION_MAJOR >= 6 && QT_VERSION_MINOR >= 3
@@ -515,6 +524,18 @@ void ClientConnection::restartIfAutoConnect()
 		setState(State::ConnectionError);
 	else
 		close();
+}
+
+const string &ClientConnection::pingShvPath() const
+{
+	if(m_shvApiVersion == ShvApiVersion::V3) {
+		static std::string s = ".app";
+		return s;
+	}
+	else {
+		static std::string s = ".broker/app";
+		return s;
+	}
 }
 
 ClientConnection::State ClientConnection::state() const

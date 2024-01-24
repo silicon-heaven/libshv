@@ -16,6 +16,7 @@ decltype(&::ldap_next_entry) ldap_next_entry = nullptr;
 decltype(&::ldap_sasl_bind_s) ldap_sasl_bind_s = nullptr;
 decltype(&::ldap_search_ext_s) ldap_search_ext_s = nullptr;
 decltype(&::ldap_set_option) ldap_set_option = nullptr;
+decltype(&::ldap_set_rebind_proc) ldap_set_rebind_proc = nullptr;
 decltype(&::ldap_value_free_len) ldap_value_free_len = nullptr;
 // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 }

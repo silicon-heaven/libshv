@@ -1,4 +1,4 @@
-#include "errorlogmodel.h"
+#include <shv/visu/errorlogmodel.h>
 
 #include <necrolog.h>
 

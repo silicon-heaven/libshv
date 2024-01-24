@@ -1,5 +1,6 @@
 add_library(libshvvisu
 	images/images.qrc
+	src/logview/dataviewwidget.cpp
 	src/logview/dlgloginspector.cpp
 	src/logview/logmodel.cpp
 	src/logview/logsortfilterproxymodel.cpp
@@ -27,11 +28,48 @@ add_library(libshvvisu
 	src/timeline/graphwidget.cpp
 	src/timeline/sample.cpp
 	src/widgets/timezonecombobox.cpp
+
+	include/shv/visu/logview/dataviewwidget.h
+	include/shv/visu/logview/dlgloginspector.h
+	include/shv/visu/logview/logsortfilterproxymodel.h
+	include/shv/visu/logview/logmodel.h
+	include/shv/visu/timeline/sample.h
+	include/shv/visu/timeline/graphview.h
+	include/shv/visu/timeline/channelprobe.h
+	include/shv/visu/timeline/graphwidget.h
+	include/shv/visu/timeline/graph.h
+	include/shv/visu/timeline/channelprobewidget.h
+	include/shv/visu/timeline/graphmodel.h
+	include/shv/visu/timeline/channelfiltermodel.h
+	include/shv/visu/timeline/fulltextfilter.h
+	include/shv/visu/timeline/channelfilterdialog.h
+	include/shv/visu/timeline/graphbuttonbox.h
+	include/shv/visu/timeline/graphchannel.h
+	include/shv/visu/timeline/channelfilter.h
+	include/shv/visu/shvvisuglobal.h
+	include/shv/visu/logtablemodelbase.h
+	include/shv/visu/logwidget.h
+	include/shv/visu/timezonecombobox.h
+	include/shv/visu/svgscene/visucontroller.h
+	include/shv/visu/svgscene/graphicsview.h
+	include/shv/visu/svgscene/types.h
+	include/shv/visu/svgscene/saxhandler.h
+	include/shv/visu/svgscene/simpletextitem.h
+	include/shv/visu/svgscene/groupitem.h
+	include/shv/visu/errorlogmodel.h
 	)
+add_library(libshv::libshvvisu ALIAS libshvvisu)
 
 target_link_libraries(libshvvisu PUBLIC Qt::Widgets libshviotqt)
 target_include_directories(libshvvisu PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(libshvvisu PUBLIC include)
+target_include_directories(libshvvisu PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+	$<INSTALL_INTERFACE:include>
+	)
 target_compile_definitions(libshvvisu PRIVATE SHVVISU_BUILD_DLL)
 
-install(TARGETS libshvvisu)
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/shv" TYPE INCLUDE)
+
+install(TARGETS libshvvisu EXPORT libshvConfig)
+export(TARGETS libshvvisu NAMESPACE libshv:: FILE "${CMAKE_CURRENT_BINARY_DIR}/libshvConfig.cmake")
+install(EXPORT libshvConfig DESTINATION share/libshv/cmake NAMESPACE libshv::)

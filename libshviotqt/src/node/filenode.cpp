@@ -1,4 +1,4 @@
-#include "filenode.h"
+#include <shv/iotqt/node/filenode.h>
 
 #include <shv/chainpack/rpcmessage.h>
 #include <shv/chainpack/metamethod.h>

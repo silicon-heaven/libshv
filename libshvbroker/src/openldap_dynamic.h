@@ -15,6 +15,7 @@ namespace shv::ldap::OpenLDAP {
 	extern decltype(&ldap_sasl_bind_s) ldap_sasl_bind_s;
 	extern decltype(&ldap_search_ext_s) ldap_search_ext_s;
 	extern decltype(&ldap_set_option) ldap_set_option;
+	extern decltype(&ldap_set_rebind_proc) ldap_set_rebind_proc;
 	extern decltype(&ldap_value_free_len) ldap_value_free_len;
 	// NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 }

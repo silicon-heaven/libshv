@@ -1,4 +1,4 @@
-#include "graphmodel.h"
+#include <shv/visu/timeline/graphmodel.h>
 
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/coreqt/log.h>
@@ -320,6 +320,16 @@ qsizetype GraphModel::channelCount() const
 const GraphModel::ChannelInfo& GraphModel::channelInfo(qsizetype channel_ix) const
 {
 	return m_channelsInfo.at(channel_ix);
+}
+
+void GraphModel::setChannelName(qsizetype channel_ix, const QString &name)
+{
+	if (channel_ix < m_channelsInfo.count()) {
+		m_channelsInfo[channel_ix].name = name;
+	}
+	else {
+		shvWarning() << "Cannot find channel with index" << channel_ix;
+	}
 }
 
 QString GraphModel::typeDescrFieldName(const shv::core::utils::ShvTypeDescr &type_descr, int field_index)

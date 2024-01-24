@@ -1,4 +1,4 @@
-#include "socket.h"
+#include <shv/iotqt/rpc/socket.h>
 
 #include <shv/coreqt/log.h>
 #include <shv/chainpack/irpcconnection.h>
@@ -9,6 +9,7 @@
 #include <QTcpSocket>
 #include <QLocalSocket>
 #include <QTimer>
+#include <QUrl>
 
 namespace shv::iotqt::rpc {
 

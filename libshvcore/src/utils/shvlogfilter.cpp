@@ -1,4 +1,4 @@
-#include "shvlogfilter.h"
+#include <shv/core/utils/shvlogfilter.h>
 
 namespace shv::core::utils {
 

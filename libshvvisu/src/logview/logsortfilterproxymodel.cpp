@@ -1,4 +1,4 @@
-#include "logsortfilterproxymodel.h"
+#include <shv/visu/logview/logsortfilterproxymodel.h>
 
 #include <shv/core/utils/shvpath.h>
 #include <shv/core/log.h>
@@ -11,7 +11,7 @@ LogSortFilterProxyModel::LogSortFilterProxyModel(QObject *parent) :
 
 }
 
-void LogSortFilterProxyModel::setChannelFilter(const shv::visu::timeline::ChannelFilter &filter)
+void LogSortFilterProxyModel::setChannelFilter(const std::optional<shv::visu::timeline::ChannelFilter> &filter)
 {
 	m_channelFilter = filter;
 	invalidateFilter();
@@ -50,33 +50,24 @@ bool startsWithPath(const QStringView &str, const QStringView &path)
 
 bool LogSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
-	bool row_accepted = false;
+	bool is_row_accepted = true;
+
 	if (m_shvPathColumn >= 0) {
 		QModelIndex ix = sourceModel()->index(source_row, m_shvPathColumn, source_parent);
-		row_accepted = !m_channelFilter.isValid();
-		if (!row_accepted) {
-			for (const QString &selected_path : m_channelFilter.matchingPaths()) {
-				auto row_path = sourceModel()->data(ix).toString();
-				if (selected_path.startsWith(row_path)) {
-					row_accepted = true;
-					break;
-				}
+		is_row_accepted = (m_channelFilter) ? m_channelFilter.value().isPathPermitted(sourceModel()->data(ix).toString()) : true;
+
+		if (is_row_accepted && !m_fulltextFilter.pattern().isEmpty()) {
+			bool is_fulltext_filter_matched = m_fulltextFilter.matches(sourceModel()->data(ix).toString());
+
+			if (m_valueColumn >= 0) {
+				ix = sourceModel()->index(source_row, m_valueColumn, source_parent);
+				is_fulltext_filter_matched = is_fulltext_filter_matched || m_fulltextFilter.matches(sourceModel()->data(ix).toString());
 			}
+			is_row_accepted = is_row_accepted && is_fulltext_filter_matched;
 		}
 	}
-	if (row_accepted && !m_fulltextFilter.pattern().isEmpty()) {
-		bool fulltext_match = false;
-		{
-			QModelIndex ix = sourceModel()->index(source_row, m_shvPathColumn, source_parent);
-			fulltext_match = fulltext_match || m_fulltextFilter.matches(sourceModel()->data(ix).toString());
-		}
-		if (m_valueColumn >= 0) {
-			QModelIndex ix = sourceModel()->index(source_row, m_valueColumn, source_parent);
-			fulltext_match = fulltext_match || m_fulltextFilter.matches(sourceModel()->data(ix).toString());
-		}
-		row_accepted = fulltext_match;
-	}
-	return row_accepted;
+
+	return is_row_accepted;
 }
 
 }

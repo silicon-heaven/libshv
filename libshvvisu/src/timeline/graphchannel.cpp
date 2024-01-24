@@ -1,6 +1,6 @@
-#include "graphchannel.h"
-#include "graph.h"
-#include "graphmodel.h"
+#include <shv/visu/timeline/graphchannel.h>
+#include <shv/visu/timeline/graph.h>
+#include <shv/visu/timeline/graphmodel.h>
 
 #include <shv/coreqt/log.h>
 
@@ -18,11 +18,8 @@ GraphChannel::Style::Style(const QVariantMap &o)
 
 GraphChannel::GraphChannel(Graph *graph)
 	: QObject(graph)
-	, m_buttonBox(new GraphButtonBox({GraphButtonBox::ButtonId::Hide, GraphButtonBox::ButtonId::Menu}, this))
 {
-	static int n = 0;
-	m_buttonBox->setObjectName(QString("channelButtonBox_%1").arg(++n));
-	connect(m_buttonBox, &GraphButtonBox::buttonClicked, this, &GraphChannel::onButtonBoxClicked);
+
 }
 
 qsizetype GraphChannel::modelIndex() const
@@ -100,16 +97,6 @@ double GraphChannel::posToValue(int y) const
 	return pos2val? pos2val(y): 0;
 }
 
-const GraphButtonBox *GraphChannel::buttonBox() const
-{
-	return m_buttonBox;
-}
-
-GraphButtonBox *GraphChannel::buttonBox()
-{
-	return m_buttonBox;
-}
-
 bool GraphChannel::isMaximized() const
 {
 	return m_state.isMaximized;
@@ -123,18 +110,6 @@ void GraphChannel::setMaximized(bool b)
 Graph *GraphChannel::graph() const
 {
 	return qobject_cast<Graph*>(parent());
-}
-
-void GraphChannel::onButtonBoxClicked(int button_id)
-{
-	shvLogFuncFrame();
-	if(button_id == static_cast<int>(GraphButtonBox::ButtonId::Menu)) {
-		QPoint pos = buttonBox()->buttonRect(static_cast<GraphButtonBox::ButtonId>(button_id)).center();
-		graph()->emitChannelContextMenuRequest(graphChannelIndex(), pos);
-	}
-	else if(button_id == static_cast<int>(GraphButtonBox::ButtonId::Hide)) {
-		graph()->setChannelVisible(graphChannelIndex(), false);
-	}
 }
 
 int GraphChannel::graphChannelIndex() const

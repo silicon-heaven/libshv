@@ -1,4 +1,4 @@
-#include "utils.h"
+#include <shv/iotqt/utils.h>
 
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/coreqt/utils.h>

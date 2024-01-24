@@ -1,5 +1,5 @@
-#include "shvalarm.h"
-#include "shvtypeinfo.h"
+#include <shv/core/utils/shvalarm.h>
+#include <shv/core/utils/shvtypeinfo.h>
 
 #include <shv/chainpack/rpcvalue.h>
 #include <necrolog.h>

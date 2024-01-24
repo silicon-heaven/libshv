@@ -1,6 +1,6 @@
-#include "channelprobe.h"
-#include "graphwidget.h"
-#include "graphmodel.h"
+#include <shv/visu/timeline/channelprobe.h>
+#include <shv/visu/timeline/graphwidget.h>
+#include <shv/visu/timeline/graphmodel.h>
 
 #include <shv/core/exception.h>
 #include <shv/coreqt/log.h>
@@ -18,11 +18,11 @@
 
 #include <cmath>
 
+namespace shv::visu::timeline {
+
 static const QString USER_PROFILES_KEY = QStringLiteral("userProfiles");
 static const QString SITES_KEY = QStringLiteral("sites");
 static const QString VIEWS_KEY = QStringLiteral("channelViews");
-
-namespace shv::visu::timeline {
 
 const QString Graph::DEFAULT_USER_PROFILE = QStringLiteral("default");
 
@@ -55,11 +55,8 @@ bool Graph::DataRect::isValid() const
 
 Graph::Graph(QObject *parent)
 	: QObject(parent)
-	, m_cornerCellButtonBox(new GraphButtonBox({GraphButtonBox::ButtonId::Menu}, this))
 {
-	m_cornerCellButtonBox->setObjectName("cornerCellButtonBox");
-	m_cornerCellButtonBox->setAutoRaise(false);
-	connect(m_cornerCellButtonBox, &GraphButtonBox::buttonClicked, this, &Graph::onButtonBoxClicked);
+
 }
 
 Graph::~Graph()
@@ -103,58 +100,12 @@ QTimeZone Graph::timeZone() const
 }
 #endif
 
-bool Graph::isInitialView() const
-{
-	if (m_channelFilter.isValid()) {
-		return false;
-	}
-	GraphChannel::Style default_style;
-
-	QMap<QString, qsizetype> path_to_model_index;
-	for (qsizetype i = 0; i < m_model->channelCount(); ++i) {
-		QString shv_path = m_model->channelShvPath(i);
-		path_to_model_index[shv_path] = i;
-	}
-	QString previous_shv_path;
-	for (GraphChannel *channel : m_channels) {
-		if (channel->style().heightMax() != default_style.heightMax()) {
-			return false;
-		}
-		QString channel_shv_path = m_model->channelShvPath(channel->modelIndex());
-		if (channel_shv_path < previous_shv_path) {
-			return false;
-		}
-		previous_shv_path = channel_shv_path;
-	}
-	return true;
-}
-
-void Graph::reset()
-{
-	createChannelsFromModel();
-	m_channelFilter = ChannelFilter();
-	Q_EMIT layoutChanged();
-	Q_EMIT channelFilterChanged();
-}
-
 void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sorted)
 {
-	static QVector<QColor> colors {
-		Qt::magenta,
-		Qt::cyan,
-		Qt::blue,
-		QColor(0xe6, 0x3c, 0x33), //red
-		QColor("orange"),
-		QColor(0x6d, 0xa1, 0x3a), // green
-	};
-	QMap<QString, GraphChannel::Style> orig_styles;
-	for (int i = 0; i < channelCount(); ++i) {
-		auto *ch = channelAt(i);
-		orig_styles[ch->shvPath()] = ch->style();
-	}
 	clearChannels();
 	if(!m_model)
 		return;
+
 	QList<qsizetype> model_ixs;
 	if(sorted == SortChannels::Yes) {
 		// sort channels alphabetically
@@ -172,17 +123,11 @@ void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sor
 	}
 	for(auto model_ix : model_ixs) {
 		GraphChannel *ch = appendChannel(model_ix);
-		auto channel_ix = channelCount() - 1;
-		if (orig_styles.contains(ch->shvPath())) {
-			ch->setStyle(orig_styles[ch->shvPath()]);
-		}
-		else {
-			GraphChannel::Style style = ch->style();
-			style.setColor(colors.value(channel_ix % colors.count()));
-			ch->setStyle(style);
-		}
+		applyCustomChannelStyle(ch);
 	}
+
 	resetChannelsRanges();
+	setChannelFilter(std::nullopt);
 }
 
 void Graph::resetChannelsRanges()
@@ -275,38 +220,32 @@ void Graph::moveChannel(qsizetype channel, qsizetype new_pos)
 
 void Graph::showAllChannels()
 {
-	m_channelFilter.setMatchingPaths(channelPaths());
-
-	emit layoutChanged();
-	emit channelFilterChanged();
+	setChannelFilter(std::nullopt);
 }
 
-QStringList Graph::channelPaths()
+QSet<QString> Graph::channelPaths()
 {
-	QStringList shv_paths;
+	QSet<QString> ret;
 
 	for (int i = 0; i < m_channels.count(); ++i) {
-		shv_paths << m_channels[i]->shvPath();
+		ret.insert(m_channels[i]->shvPath());
 	}
 
-	return shv_paths;
+	return ret;
 }
 
-void Graph::hideFlatChannels()
+QSet<QString> Graph::flatChannels()
 {
-	QStringList matching_paths = (m_channelFilter.isValid()) ? m_channelFilter.matchingPaths() : channelPaths();
+	QSet<QString> ret;
 
 	for (qsizetype i = 0; i < m_channels.count(); ++i) {
 		GraphChannel *ch = m_channels[i];
 		if(isChannelFlat(ch)) {
-			matching_paths.removeOne(ch->shvPath());
+			ret.insert(ch->shvPath());
 		}
 	}
 
-	m_channelFilter.setMatchingPaths(matching_paths);
-
-	emit layoutChanged();
-	emit channelFilterChanged();
+	return ret;
 }
 
 bool Graph::isChannelFlat(GraphChannel *ch)
@@ -315,14 +254,15 @@ bool Graph::isChannelFlat(GraphChannel *ch)
 	return yrange.isEmpty();
 }
 
-void Graph::setChannelFilter(const ChannelFilter &filter)
+void Graph::setChannelFilter(const std::optional<shv::visu::timeline::ChannelFilter> &filter)
 {
 	m_channelFilter = filter;
+
 	emit layoutChanged();
 	emit channelFilterChanged();
 }
 
-const ChannelFilter& Graph::channelFilter() const
+const std::optional<ChannelFilter>& Graph::channelFilter() const
 {
 	return m_channelFilter;
 }
@@ -331,14 +271,17 @@ void Graph::setChannelVisible(qsizetype channel_ix, bool is_visible)
 {
 	GraphChannel *ch = channelAt(channel_ix);
 
-	if (!m_channelFilter.isValid()) {
-		m_channelFilter.setMatchingPaths(channelPaths());
+	if (!m_channelFilter && !is_visible) {
+		m_channelFilter = ChannelFilter(channelPaths());
 	}
-	if (is_visible) {
-		m_channelFilter.addMatchingPath(ch->shvPath());
-	}
-	else {
-		m_channelFilter.removeMatchingPath(ch->shvPath());
+
+	if (m_channelFilter) {
+		if (is_visible) {
+			m_channelFilter.value().addPermittedPath(ch->shvPath());
+		}
+		else {
+			m_channelFilter.value().removePermittedPath(ch->shvPath());
+		}
 	}
 
 	emit layoutChanged();
@@ -866,10 +809,23 @@ void Graph::moveSouthFloatingBarBottom(int bottom)
 	m_layout.miniMapRect.moveBottom(bottom);
 	m_layout.xAxisRect.moveBottom(m_layout.miniMapRect.top());
 	m_layout.cornerCellRect.moveBottom(m_layout.miniMapRect.bottom());
-	{
-		int inset = m_cornerCellButtonBox->buttonSpace();
-		m_cornerCellButtonBox->moveTopRight(m_layout.cornerCellRect.topRight() + QPoint(-inset, inset));
+}
+
+QString Graph::elidedText(const QString &text, const QFont &font, const QRect &rect)
+{
+	QString res;
+	QFontMetrics fm(font);
+	int text_width = fm.horizontalAdvance(text);
+
+	if (text_width < rect.width()) {
+		res = text;
 	}
+	else {
+		int row_count = static_cast<int>(rect.height() / fm.height());
+		res = fm.elidedText(text, Qt::TextElideMode::ElideLeft, row_count * rect.width() - fm.averageCharWidth());
+	}
+
+	return res;
 }
 
 std::pair<Sample, int> Graph::posToSample(const QPoint &pos) const
@@ -1001,9 +957,11 @@ QString Graph::durationToString(timemsec_t duration)
 	}
 }
 
-static QString rstr(const QRect &r)
+namespace {
+QString rstr(const QRect &r)
 {
 	return QStringLiteral("[%1, %2](%3, %4)").arg(r.x()).arg(r.y()).arg(r.width()).arg(r.height());
+}
 }
 
 void Graph::makeLayout(const QRect &pref_rect)
@@ -1034,13 +992,6 @@ void Graph::makeLayout(const QRect &pref_rect)
 	m_layout.cornerCellRect.setHeight(m_layout.cornerCellRect.height() + m_layout.miniMapRect.height());
 	m_layout.cornerCellRect.setLeft(u2px(m_style.leftMargin()));
 	m_layout.cornerCellRect.setWidth(m_layout.xAxisRect.left() - m_layout.cornerCellRect.left());
-
-	// hide clickable areas, visible channels will show them again
-	for (GraphChannel *ch : m_channels) {
-		ch->m_layout.verticalHeaderRect = QRect();
-		if(auto *bbx = ch->buttonBox())
-			bbx->hide();
-	}
 
 	// set height of all channels to 0
 	// if some channel is maximized, hidden channel must not interact with mouse
@@ -1116,12 +1067,6 @@ void Graph::makeLayout(const QRect &pref_rect)
 		int line_width = u2px(ch->m_effectiveStyle.lineWidth());
 		ch->m_layout.graphDataGridRect = ch->m_layout.graphAreaRect.adjusted(0, line_width, 0, -line_width);
 		shvDebug() << "channel:" << i << "graphDataGridRect:" << rstr(ch->m_layout.graphDataGridRect);
-		// place buttons
-		GraphButtonBox *bbx = ch->buttonBox();
-		if(bbx) {
-			int inset = bbx->buttonSpace();
-			bbx->moveTopRight(ch->m_layout.verticalHeaderRect.topRight() + QPoint(-inset, inset));
-		}
 	}
 
 	m_layout.xAxisRect.moveTop(widget_height);
@@ -1218,10 +1163,10 @@ QVector<int> Graph::visibleChannels() const
 	if (maximized_channel >= 0) {
 		visible_channels << maximized_channel;
 	}
-	else if(m_channelFilter.isValid()) {
+	else if (isChannelFilterValid()) {
 		for (int i = 0; i < m_channels.count(); ++i) {
 			QString shv_path = model()->channelInfo(m_channels[i]->modelIndex()).shvPath;
-			if(m_channelFilter.isPathMatch(shv_path)) {
+			if(m_channelFilter && m_channelFilter.value().isPathPermitted(shv_path)) {
 				visible_channels << i;
 			}
 		}
@@ -1234,31 +1179,24 @@ QVector<int> Graph::visibleChannels() const
 	return visible_channels;
 }
 
-void Graph::setVisualSettings(const VisualSettings &settings)
+void Graph::setVisualSettingsAndChannelFilter(const VisualSettings &settings)
 {
-	if (settings.isValid()) {
-		QStringList new_filter;
-		createChannelsFromModel();
-		for (int i = 0; i < settings.channels.count(); ++i) {
-			const VisualSettings::Channel &channel_settings = settings.channels[i];
-			for (int j = i; j < m_channels.count(); ++j) {
-				GraphChannel *channel = m_channels[j];
-				if (channel->shvPath() == channel_settings.shvPath) {
-					new_filter << channel_settings.shvPath;
-					channel->setStyle(channel_settings.style);
-					m_channels.insert(i, m_channels.takeAt(j));
-					break;
-				}
+	QSet<QString> permitted_paths;
+
+	for (int i = 0; i < settings.channels.count(); ++i) {
+		const VisualSettings::Channel &channel_settings = settings.channels[i];
+		for (int j = i; j < m_channels.count(); ++j) {
+			GraphChannel *channel = m_channels[j];
+			if (channel->shvPath() == channel_settings.shvPath) {
+				permitted_paths.insert(channel_settings.shvPath);
+				channel->setStyle(channel_settings.style);
+				m_channels.insert(i, m_channels.takeAt(j));
+				break;
 			}
 		}
+	}
 
-		m_channelFilter.setMatchingPaths(new_filter);
-		Q_EMIT layoutChanged();
-		Q_EMIT channelFilterChanged();
-	}
-	else {
-		reset();
-	}
+	setChannelFilter(ChannelFilter(permitted_paths, settings.name));
 }
 
 void Graph::resizeChannelHeight(qsizetype ix, int delta_px)
@@ -1274,7 +1212,7 @@ void Graph::resizeChannelHeight(qsizetype ix, int delta_px)
 			ch_style.setHeightMax(h);
 			ch_style.setHeightMin(h);
 			ch->setStyle(ch_style);
-			Q_EMIT layoutChanged();
+			emit layoutChanged();
 		}
 	}
 }
@@ -1285,20 +1223,19 @@ void Graph::resizeVerticalHeaderWidth(int delta_px)
 
 	if (w > MIN_VERTICAL_HEADER_WIDTH && w < MAX_VERTICAL_HEADER_WIDTH) {
 		m_style.setVerticalHeaderWidth(w);
-		Q_EMIT layoutChanged();
+		emit layoutChanged();
 	}
 }
 
 Graph::VisualSettings Graph::visualSettings() const
 {
-	VisualSettings view;
-	if (!isInitialView()) {
-		for (int ix : visibleChannels()) {
-			const GraphChannel *channel = channelAt(ix);
-			view.channels << VisualSettings::Channel{ channel->shvPath(), channel->style() };
-		}
+	VisualSettings visual_settings;
+	for (int ix : visibleChannels()) {
+		const GraphChannel *channel = channelAt(ix);
+		visual_settings.channels << VisualSettings::Channel{ channel->shvPath(), channel->style() };
 	}
-	return view;
+
+	return visual_settings;
 }
 
 int Graph::maximizedChannelIndex() const
@@ -1370,7 +1307,6 @@ void Graph::drawCornerCell(QPainter *painter)
 	pen.setColor(m_style.colorBackground());
 	painter->setPen(pen);
 	painter->drawRect(m_layout.cornerCellRect);
-	m_cornerCellButtonBox->draw(painter);
 }
 
 void Graph::drawMiniMap(QPainter *painter)
@@ -1423,17 +1359,10 @@ void Graph::drawMiniMap(QPainter *painter)
 	painter->restore();
 }
 
-QString Graph::channelName(qsizetype channel) const
+const GraphModel::ChannelInfo& Graph::channelInfo(qsizetype channel) const
 {
 	const GraphChannel *ch = channelAt(channel);
-	const GraphModel::ChannelInfo& chi = model()->channelInfo(ch->modelIndex());
-	QString name = chi.name;
-	QString shv_path = chi.shvPath;
-	if(name.isEmpty())
-		name = shv_path;
-	if(name.isEmpty())
-		name = tr("<no name>");
-	return name;
+	return model()->channelInfo(ch->modelIndex());
 }
 
 void Graph::drawVerticalHeader(QPainter *painter, int channel)
@@ -1446,8 +1375,8 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 	pen.setColor(c);
 	painter->setPen(pen);
 
-	QString name = channelName(channel);
-	QFont font = m_style.font();
+	GraphModel::ChannelInfo chi = channelInfo(channel);
+
 	painter->save();
 	painter->fillRect(ch->m_layout.verticalHeaderRect, bc);
 
@@ -1458,15 +1387,36 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 		painter->fillRect(r, ch->m_effectiveStyle.color());
 	}
 
+	QFont font = m_style.font();
 	font.setBold(true);
 	painter->setFont(font);
+
 	QRect text_rect = ch->m_layout.verticalHeaderRect.adjusted(2*header_inset, header_inset, -header_inset, -header_inset);
-	painter->drawText(text_rect, name);
+
+	if (chi.name.isEmpty()) {
+		painter->drawText(text_rect, chi.shvPath);
+	}
+	else {
+		int row_height = QFontMetrics(font).height();
+		int row_count = text_rect.height() / row_height;
+
+		QRect name_rect(text_rect.left(), text_rect.top(), text_rect.width(), (row_count - 1) * row_height);
+		QString text = elidedText(chi.name, font, name_rect);
+		painter->drawText(name_rect, text);
+
+		font.setPointSizeF(m_style.font().pointSizeF() * 0.7);
+		painter->setFont(font);
+		pen.setColor(c.darker(140));
+		painter->setPen(pen);
+
+		QTextOption path_row_text_option(Qt::AlignmentFlag::AlignBottom);
+		path_row_text_option.setWrapMode(QTextOption::NoWrap);
+		QRect path_rect(text_rect.left(), text_rect.bottom() - row_height, text_rect.width(), row_height);
+		text = elidedText(chi.shvPath, font, path_rect);
+		painter->drawText(path_rect, text, path_row_text_option);
+	}
 
 	painter->restore();
-	GraphButtonBox *bbx = ch->buttonBox();
-	if(bbx)
-		bbx->draw(painter);
 }
 
 void Graph::drawBackground(QPainter *painter, int channel)
@@ -1854,24 +1804,6 @@ std::function<double (int)> Graph::posToValueFn(const Graph::WidgetRange &src, c
 	return [d1, d2, to, bo](int y) {
 		return d1 + (y - bo) * (d2 - d1) / (to - bo);
 	};
-}
-
-void Graph::processEvent(QEvent *ev)
-{
-	if(ev->type() == QEvent::MouseMove
-			|| ev->type() == QEvent::MouseButtonPress
-			|| ev->type() == QEvent::MouseButtonRelease) {
-		if(m_cornerCellButtonBox->processEvent(ev))
-			return;
-		for (int i = 0; i < channelCount(); ++i) {
-			GraphChannel *ch = channelAt(i);
-			GraphButtonBox *bbx = ch->buttonBox();
-			if(bbx) {
-				if(bbx->processEvent(ev))
-					break;
-			}
-		}
-	}
 }
 
 void Graph::emitPresentationDirty(const QRect &rect)
@@ -2352,6 +2284,13 @@ void Graph::drawCurrentTimeMarker(QPainter *painter, time_t time)
 	drawCenterTopText(painter, p1, text, m_style.font(), color.darker(400), color);
 }
 
+void Graph::applyCustomChannelStyle(GraphChannel *channel)
+{
+	GraphChannel::Style style = channel->style();
+	style.setColor(Qt::cyan);
+	channel->setStyle(style);
+}
+
 QString Graph::timeToStringTZ(timemsec_t time) const
 {
 	QDateTime dt = QDateTime::fromMSecsSinceEpoch(time);
@@ -2361,15 +2300,6 @@ QString Graph::timeToStringTZ(timemsec_t time) const
 #endif
 	QString text = dt.toString(Qt::ISODate);
 	return text;
-}
-
-void Graph::onButtonBoxClicked(int button_id)
-{
-	shvLogFuncFrame();
-	if(button_id == static_cast<int>(GraphButtonBox::ButtonId::Menu)) {
-		QPoint pos = m_cornerCellButtonBox->buttonRect(static_cast<GraphButtonBox::ButtonId>(button_id)).center();
-		emit graphContextMenuRequest(pos);
-	}
 }
 
 void Graph::saveVisualSettings(const QString &settings_id, const QString &name) const
@@ -2385,14 +2315,20 @@ void Graph::saveVisualSettings(const QString &settings_id, const QString &name) 
 
 void Graph::loadVisualSettings(const QString &settings_id, const QString &name)
 {
-	VisualSettings graph_view;
 	QSettings settings;
 	settings.beginGroup(USER_PROFILES_KEY);
 	settings.beginGroup(m_settingsUserName);
 	settings.beginGroup(SITES_KEY);
 	settings.beginGroup(settings_id);
 	settings.beginGroup(VIEWS_KEY);
-	setVisualSettings(VisualSettings::fromJson(settings.value(name).toString()));
+	VisualSettings vs = VisualSettings::fromJson(settings.value(name).toString());
+	vs.name = settings_id;
+	setVisualSettingsAndChannelFilter(vs);
+}
+
+bool Graph::isChannelFilterValid() const
+{
+	return (m_channelFilter != std::nullopt);
 }
 
 void Graph::deleteVisualSettings(const QString &settings_id, const QString &name) const
@@ -2419,19 +2355,15 @@ QStringList Graph::savedVisualSettingsNames(const QString &settings_id) const
 
 QString Graph::VisualSettings::toJson() const
 {
-	if (isValid()) {
-		QJsonArray settings;
+	QJsonArray settings;
 
-		for (int i = 0; i < channels.count(); ++i) {
-			settings << QJsonObject {
-							{ "shvPath", channels[i].shvPath },
-							{ "style", QJsonObject::fromVariantMap(channels[i].style) }
-						};
+	for (int i = 0; i < channels.count(); ++i) {
+		settings << QJsonObject {
+						{ "shvPath", channels[i].shvPath },
+						{ "style", QJsonObject::fromVariantMap(channels[i].style) }
+					};
 		}
-		return QJsonDocument(QJsonObject{{ "channels", settings }}).toJson(QJsonDocument::Compact);
-	}
-
-	return QString();
+	return QJsonDocument(QJsonObject{{ "channels", settings }}).toJson(QJsonDocument::Compact);
 }
 
 Graph::VisualSettings Graph::VisualSettings::fromJson(const QString &json)
@@ -2454,12 +2386,8 @@ Graph::VisualSettings Graph::VisualSettings::fromJson(const QString &json)
 			shvWarning() << "Error on parsing user settings" << parse_error.errorString();
 		}
 	}
-	return settings;
-}
 
-bool Graph::VisualSettings::isValid() const
-{
-	return channels.count();
+	return settings;
 }
 
 Graph::XAxis::XAxis() = default;

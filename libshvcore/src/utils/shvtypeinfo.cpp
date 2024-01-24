@@ -1,8 +1,8 @@
-#include "shvtypeinfo.h"
-#include "shvpath.h"
-#include "../string.h"
-#include "../utils.h"
-#include "../log.h"
+#include <shv/core/utils/shvtypeinfo.h>
+#include <shv/core/utils/shvpath.h>
+#include <shv/core/string.h>
+#include <shv/core/utils.h>
+#include <shv/core/log.h>
 
 #include<shv/chainpack/metamethod.h>
 
@@ -1244,7 +1244,7 @@ void ShvTypeInfo::forEachDeviceProperty(const std::string &device_type, std::fun
 	};
 }
 
-void ShvTypeInfo::forEachProperty(std::function<void (const std::string &shv_path, const ShvPropertyDescr &node_descr)> fn) const
+void ShvTypeInfo::forEachProperty(std::function<void (const std::string &shv_path, const ShvPropertyDescr &)> fn) const
 {
 	for(const auto& [device_path, device_type] : m_devicePaths) {
 		if(auto it = m_deviceDescriptions.find(device_type); it != m_deviceDescriptions.end()) {

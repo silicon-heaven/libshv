@@ -1,7 +1,7 @@
-#include "shvlogrpcvaluereader.h"
+#include <shv/core/utils/shvlogrpcvaluereader.h>
 
-#include "../exception.h"
-#include "../log.h"
+#include <shv/core/exception.h>
+#include <shv/core/log.h>
 
 #define logWShvJournal() shvCWarning("ShvJournal")
 #define logIShvJournal() shvCInfo("ShvJournal")

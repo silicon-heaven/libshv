@@ -1,9 +1,9 @@
-#include "shvjournalfilereader.h"
-#include "shvfilejournal.h"
+#include <shv/core/utils/shvjournalfilereader.h>
+#include <shv/core/utils/shvfilejournal.h>
 
-#include "../exception.h"
-#include "../log.h"
-#include "../string.h"
+#include <shv/core/exception.h>
+#include <shv/core/log.h>
+#include <shv/core/string.h>
 
 #define logWShvJournal() shvCWarning("ShvJournal")
 #define logIShvJournal() shvCInfo("ShvJournal")
@@ -98,7 +98,7 @@ bool ShvJournalFileReader::next()
 				std::string err;
 				m_currentEntry.value = cp::RpcValue::fromCpon(std::string{fld}, &err);
 				if(!err.empty()) {
-					logWShvJournal() << "Invalid CPON value:" << fld;
+					logWShvJournal().nospace() << "Invalid CPON value: '" << fld << '\'';
 					goto next_line;
 				}
 				break;

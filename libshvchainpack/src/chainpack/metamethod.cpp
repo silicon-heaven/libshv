@@ -1,4 +1,4 @@
-#include "metamethod.h"
+#include <shv/chainpack/metamethod.h>
 
 #include <array>
 
@@ -139,7 +139,10 @@ RpcValue MetaMethod::toIMap() const
 MetaMethod MetaMethod::fromRpcValue(const RpcValue &rv)
 {
 	MetaMethod ret;
-	if(rv.isList()) {
+	if(rv.isString()) {
+		ret.m_name = rv.asString();
+	}
+	else if(rv.isList()) {
 		const auto &lst = rv.asList();
 		ret.m_name = lst.value(0).asString();
 		ret.m_signature = static_cast<Signature>(lst.value(1).toUInt());
@@ -151,6 +154,9 @@ MetaMethod MetaMethod::fromRpcValue(const RpcValue &rv)
 	}
 	else if(rv.isMap()) {
 		ret.applyAttributesMap(rv.asMap());
+	}
+	else if(rv.isIMap()) {
+		ret.applyAttributesIMap(rv.asIMap());
 	}
 	return ret;
 }
@@ -175,6 +181,24 @@ void MetaMethod::applyAttributesMap(const RpcValue::Map &attr_map)
 	if(auto rv = map.take(KEY_DESCRIPTION); rv.isString())
 		m_description = rv.asString();
 	m_tags = map;
+}
+
+void MetaMethod::applyAttributesIMap(const RpcValue::IMap &attr_map)
+{
+	enum {
+		IKEY_NAME = 1,
+		IKEY_FLAGS = 2,
+		IKEY_PARAM = 3,
+		IKEY_RESULT = 4,
+		IKEY_ACCESS = 5,
+	};
+
+	if(auto rv = attr_map.value(IKEY_NAME); rv.isString())
+		m_name = rv.asString();
+	if(auto rv = attr_map.value(IKEY_FLAGS); rv.isValid())
+		m_flags = rv.toInt();
+	if(auto rv = attr_map.value(IKEY_ACCESS); rv.isString())
+		m_accessGrant = rv.asString();
 }
 
 MetaMethod::Signature MetaMethod::signatureFromString(const std::string &sigstr)

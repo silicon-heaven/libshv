@@ -65,7 +65,7 @@
           <date>
            <year>1999</year>
            <month>12</month>
-           <day>20</day>
+           <day>17</day>
           </date>
          </property>
          <property name="displayFormat">
@@ -116,7 +116,7 @@
           <date>
            <year>1999</year>
            <month>12</month>
-           <day>19</day>
+           <day>16</day>
           </date>
          </property>
          <property name="displayFormat">
@@ -427,47 +427,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="lblViews">
-        <property name="text">
-         <string>Saved views:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="cbViews">
-        <property name="editable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pbSaveView">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../../images/images.qrc">
-          <normaloff>:/shv/visu/images/file-save.svg</normaloff>:/shv/visu/images/file-save.svg</iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pbDeleteView">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../../images/images.qrc">
-          <normaloff>:/shv/visu/images/delete.svg</normaloff>:/shv/visu/images/delete.svg</iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pbChannelsFilter">
-        <property name="text">
-         <string>Channels filter</string>
-        </property>
-       </widget>
+       <widget class="shv::visu::logview::DataViewWidget" name="wDataView" native="true"/>
       </item>
      </layout>
     </widget>
@@ -505,7 +465,7 @@
             <x>0</x>
             <y>0</y>
             <width>1152</width>
-            <height>368</height>
+            <height>354</height>
            </rect>
           </property>
          </widget>
@@ -599,15 +559,21 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>shv::visu::TimeZoneComboBox</class>
+   <extends>QComboBox</extends>
+   <header>shv/visu/timezonecombobox.h</header>
+  </customwidget>
+  <customwidget>
    <class>shv::visu::timeline::GraphView</class>
    <extends>QScrollArea</extends>
-   <header>src/timeline/graphview.h</header>
+   <header location="global">shv/visu/timeline/graphview.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>shv::visu::TimeZoneComboBox</class>
-   <extends>QComboBox</extends>
-   <header>src/widgets/timezonecombobox.h</header>
+   <class>shv::visu::logview::DataViewWidget</class>
+   <extends>QWidget</extends>
+   <header>shv/visu/logview/dataviewwidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -1,10 +1,12 @@
-#include "localfsnode.h"
+#include <shv/iotqt/node/localfsnode.h>
 
 #include <shv/chainpack/rpcmessage.h>
 #include <shv/chainpack/metamethod.h>
 #include <shv/core/exception.h>
 #include <shv/core/stringview.h>
 #include <shv/coreqt/log.h>
+
+#include <QDateTime>
 
 using namespace shv::chainpack;
 
@@ -355,8 +357,7 @@ RpcValue LocalFSNode::ndLsDir(const QString &path, const chainpack::RpcValue &me
 		return lst;
 	}
 
-	SHV_EXCEPTION("Path " + path.toStdString() + " is not dir.");
-	return {};
+	return RpcValue::List{};
 }
 
 } // namespace shv

@@ -1,4 +1,4 @@
-#include "irpcconnection.h"
+#include <shv/chainpack/irpcconnection.h>
 
 #include <necrolog.h>
 
@@ -123,13 +123,25 @@ int IRpcConnection::callMethodSubscribe(const std::string &shv_path, std::string
 int IRpcConnection::callMethodSubscribe(int rq_id, const std::string &shv_path, std::string method)
 {
 	logSubscriptionsD() << "call subscribe for connection id:" << connectionId() << "path:" << shv_path << "method:" << method;
-	return callShvMethod(rq_id
-						 , Rpc::DIR_BROKER_APP
-						 , Rpc::METH_SUBSCRIBE
-						 , RpcValue::Map{
-							 {Rpc::PAR_PATH, shv_path},
-							 {Rpc::PAR_METHOD, std::move(method)},
-						 });
+	if(m_shvApiVersion == ShvApiVersion::V3) {
+		auto path = shv_path + "/**";
+		return callShvMethod(rq_id
+							 , Rpc::DIR_APP_BROKER_CURRENTCLIENT
+							 , Rpc::METH_SUBSCRIBE
+							 , RpcValue::Map{
+								 {Rpc::PAR_PATHS, path},
+								 {Rpc::PAR_METHODS, method},
+							 });
+	}
+	else {
+		return callShvMethod(rq_id
+							 , Rpc::DIR_BROKER_APP
+							 , Rpc::METH_SUBSCRIBE
+							 , RpcValue::Map{
+								 {Rpc::PAR_PATH, shv_path},
+								 {Rpc::PAR_METHOD, std::move(method)},
+							 });
+	}
 }
 
 int IRpcConnection::callMethodUnsubscribe(const std::string &shv_path, std::string method)
@@ -141,13 +153,25 @@ int IRpcConnection::callMethodUnsubscribe(const std::string &shv_path, std::stri
 int IRpcConnection::callMethodUnsubscribe(int rq_id, const std::string &shv_path, std::string method)
 {
 	logSubscriptionsD() << "call unsubscribe for connection id:" << connectionId() << "path:" << shv_path << "method:" << method;
-	return callShvMethod(rq_id
-						 , Rpc::DIR_BROKER_APP
-						 , Rpc::METH_UNSUBSCRIBE
-						 , RpcValue::Map{
-							 {Rpc::PAR_PATH, shv_path},
-							 {Rpc::PAR_METHOD, std::move(method)},
-						 });
+	if(m_shvApiVersion == ShvApiVersion::V3) {
+		auto path = shv_path + "/**";
+		return callShvMethod(rq_id
+							 , Rpc::DIR_APP_BROKER_CURRENTCLIENT
+							 , Rpc::METH_UNSUBSCRIBE
+							 , RpcValue::Map{
+								 {Rpc::PAR_PATHS, path},
+								 {Rpc::PAR_METHODS, method},
+							 });
+	}
+	else {
+		return callShvMethod(rq_id
+							 , Rpc::DIR_BROKER_APP
+							 , Rpc::METH_UNSUBSCRIBE
+							 , RpcValue::Map{
+								 {Rpc::PAR_PATH, shv_path},
+								 {Rpc::PAR_METHOD, std::move(method)},
+							 });
+	}
 }
 
 } // namespace shv

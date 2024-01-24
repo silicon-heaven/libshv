@@ -1,4 +1,4 @@
-#include "logmodel.h"
+#include <shv/visu/logview/logmodel.h>
 
 #include <shv/core/utils/shvfilejournal.h>
 #include <shv/core/log.h>
@@ -88,8 +88,7 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
 			}
 			if(index.column() == ColPath) {
 				if ((val.type() == cp::RpcValue::Type::UInt) || (val.type() == cp::RpcValue::Type::Int)) {
-					static std::string KEY_PATHS_DICT = shv::core::utils::ShvFileJournal::KEY_PATHS_DICT;
-					const chainpack::RpcValue::IMap &dict = m_log.metaData().valref(KEY_PATHS_DICT).asIMap();
+					const chainpack::RpcValue::IMap &dict = m_log.metaData().valref(core::utils::ShvJournalCommon::KEY_PATHS_DICT).asIMap();
 					auto it = dict.find(val.toInt());
 					if(it != dict.end())
 						val = it->second;

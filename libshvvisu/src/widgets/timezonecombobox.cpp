@@ -1,4 +1,4 @@
-#include "timezonecombobox.h"
+#include <shv/visu/timezonecombobox.h>
 
 #include <QKeyEvent>
 #include <QLineEdit>

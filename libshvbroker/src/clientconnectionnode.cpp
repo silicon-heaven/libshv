@@ -1,6 +1,6 @@
-#include "clientconnectionnode.h"
-#include "brokerapp.h"
 #include "rpc/clientconnectiononbroker.h"
+#include <shv/broker/clientconnectionnode.h>
+#include <shv/broker/brokerapp.h>
 
 #include <shv/chainpack/metamethod.h>
 #include <shv/chainpack/rpc.h>

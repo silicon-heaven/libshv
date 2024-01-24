@@ -1,6 +1,10 @@
 # vim: sw=2
 name: Test
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [ "master" ]
@@ -74,6 +78,8 @@ jobs:
       - name: Build and test
         uses: ./.github/actions/build-and-test
   nix:
+    # FIXME: disable until submodules get fixed
+    if: false
     name: Qt 6.5.0 / NixOS
     runs-on: ubuntu-22.04
     steps:

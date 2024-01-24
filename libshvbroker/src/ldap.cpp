@@ -1,10 +1,14 @@
 #include "openldap_dynamic.h"
 
 #include <shv/broker/ldap/ldap.h>
+#include <shv/core/log.h>
 
 #include <QScopeGuard>
 #include <QString>
 #include <QStringLiteral>
+
+#define ldapI() shvCInfo("ldap")
+#define ldapE() shvCError("ldap")
 
 namespace shv::ldap {
 std::vector<std::string> getGroupsForUser(const std::unique_ptr<shv::ldap::Ldap>& my_ldap, const std::string_view& base_dn, const std::vector<std::string>& field_names, const std::string_view& user_name) {
@@ -61,6 +65,7 @@ LdapError::LdapError(const std::string& err_string, int code)
 	: std::runtime_error(err_string)
 	, m_code(code)
 {
+	ldapE() << err_string;
 }
 
 int LdapError::code() const
@@ -68,9 +73,28 @@ int LdapError::code() const
 	return m_code;
 }
 
+namespace {
+int rebind_proc(LDAP* /*ld*/, const char* /*url*/, ber_tag_t /*request*/, ber_int_t /*msgid*/, void* user_data)
+{
+	auto ldap = static_cast<Ldap*>(user_data);
+	try {
+		ldap->bindWithLastCreds();
+	} catch (LdapError& ex) {
+		return ex.code();
+	} catch (std::exception& ex) {
+		ldapE() << ex.what();
+		return LDAP_OTHER;
+	}
+
+	return LDAP_SUCCESS;
+}
+}
+
 Ldap::Ldap(LDAP* conn)
 	: m_conn(conn, OpenLDAP::ldap_destroy)
 {
+	auto ret = OpenLDAP::ldap_set_rebind_proc(m_conn.get(), rebind_proc, this);
+	throwIfError(ret, "Couldn't set rebind procedure");
 }
 
 std::unique_ptr<Ldap> Ldap::create(const std::string_view& hostname)
@@ -103,10 +127,28 @@ void Ldap::bindSasl(const std::string_view& bind_dn, const std::string_view& bin
 	};
 	auto ret = OpenLDAP::ldap_sasl_bind_s(m_conn.get(), bind_dn.data(), LDAP_SASL_SIMPLE, &cred, nullptr, nullptr, nullptr);
 	throwIfError(ret, "Couldn't authenticate to the LDAP server");
+
+	m_lastBindDn = bind_dn;
+	m_lastBindPw = bind_pw;
+}
+
+void Ldap::bindWithLastCreds()
+{
+	if (!m_lastBindDn.has_value() || !m_lastBindPw.has_value()) {
+		throw std::runtime_error("bindWithLastCreds called with no last creds");
+	}
+	bindSasl(m_lastBindDn.value(), m_lastBindPw.value());
 }
 
 std::vector<Entry> Ldap::search(const std::string_view& base_dn, const std::string_view& filter, const std::vector<std::string> requested_attr)
 {
+	ldapI() << "search, base_dn:" << base_dn << "filter:" << filter << "requested_attr:" << [&requested_attr] {
+		std::string res;
+		for (const auto& attr : requested_attr) {
+			res += attr + ", ";
+		}
+		return res;
+	}();
 	// I can't think of a better way of doing this while keeping the input arguments the same.
 	// NOLINTNEXTLINE(modernize-avoid-c-arrays) - we have to make an array for the C api
 	auto attr_array = std::make_unique<char*[]>(requested_attr.size() + 1);

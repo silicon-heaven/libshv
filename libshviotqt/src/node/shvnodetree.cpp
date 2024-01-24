@@ -1,4 +1,4 @@
-#include "shvnodetree.h"
+#include <shv/iotqt/node/shvnodetree.h>
 
 #include <shv/core/utils/shvfilejournal.h>
 #include <shv/chainpack/rpcvalue.h>
@@ -111,6 +111,22 @@ bool ShvNodeTree::mount(const ShvNode::String &path, ShvNode *node)
 	node->setParentNode(parent_nd);
 	node->setNodeId(std::string{last_id});
 	return true;
+}
+
+chainpack::RpcValue ShvNodeTree::invokeMethod(const std::string &shv_path, const std::string &method, const chainpack::RpcValue &params, const chainpack::RpcValue &user_id)
+{
+	chainpack::RpcRequest rq;
+	rq.setShvPath(shv_path);
+	rq.setMethod(method);
+	rq.setParams(params);
+	rq.setUserId(user_id);
+	if(auto *root_nd = root()) {
+		return root_nd->handleRpcRequestImpl(rq);
+	}
+	else {
+		shvError() << "Root node is NULL";
+		return {};
+	}
 }
 
 static std::string dump_node(ShvNode *parent, int indent)

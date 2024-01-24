@@ -1,4 +1,4 @@
-#include "shvjournalcommon.h"
+#include <shv/core/utils/shvjournalcommon.h>
 
 namespace shv::core::utils {
 

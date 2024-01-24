@@ -1,5 +1,5 @@
-#include "socketrpcdriver.h"
-#include "utils.h"
+#include <shv/chainpack/socketrpcdriver.h>
+#include <shv/chainpack/utils.h>
 
 #include <necrolog.h>
 

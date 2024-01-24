@@ -1,8 +1,8 @@
-#include "patternmatcher.h"
+#include <shv/core/utils/patternmatcher.h>
+#include <shv/core/utils/shvpath.h>
 
-#include "../log.h"
-#include "../utils.h"
-#include "shvpath.h"
+#include <shv/core/log.h>
+#include <shv/core/utils.h>
 
 #define logWShvJournal() shvCWarning("ShvJournal")
 

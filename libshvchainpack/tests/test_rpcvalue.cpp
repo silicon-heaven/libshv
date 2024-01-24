@@ -92,13 +92,10 @@ DOCTEST_TEST_CASE("RpcValue::DateTime")
 	using Parts = RpcValue::DateTime::Parts;
 	DOCTEST_SUBCASE("RpcValue::DateTime::toParts()")
 	{
-		const auto make_case = [](const string &s, const Parts &p) {
-			return tuple<string, Parts>(s, p);
-		};
 		for(const auto &[dt_str, dt_parts] : {
-			make_case("2022-01-01T00:00:00Z"s, Parts(2022, 1, 1)),
-			make_case("2023-01-23T01:02:03Z"s, Parts(2023, 1, 23, 1, 2, 3)),
-			make_case("2024-02-29T01:02:03Z"s, Parts(2024, 2, 29, 1, 2, 3)),
+			std::make_tuple("2022-01-01T00:00:00Z"s, Parts(2022, 1, 1)),
+			std::make_tuple("2023-01-23T01:02:03Z"s, Parts(2023, 1, 23, 1, 2, 3)),
+			std::make_tuple("2024-02-29T01:02:03Z"s, Parts(2024, 2, 29, 1, 2, 3)),
 		}) {
 			auto dt1 = RpcValue::DateTime::fromUtcString(dt_str);
 			auto dt2 = RpcValue::DateTime::fromParts(dt_parts);
@@ -110,4 +107,10 @@ DOCTEST_TEST_CASE("RpcValue::DateTime")
 			REQUIRE(dt1.toParts() == dt_parts);
 		}
 	}
+}
+
+DOCTEST_TEST_CASE("RpcValue::Decimal")
+{
+	REQUIRE(RpcValue(RpcValue::Decimal(45, 2186)).toInt() == std::numeric_limits<RpcValue::Int>::max());
+	REQUIRE(RpcValue(RpcValue(-2.41785e+306)).toInt() == std::numeric_limits<RpcValue::Int>::min());
 }

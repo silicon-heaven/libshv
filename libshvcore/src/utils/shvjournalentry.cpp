@@ -1,5 +1,5 @@
-#include "shvjournalentry.h"
-#include "shvlogheader.h"
+#include <shv/core/utils/shvjournalentry.h>
+#include <shv/core/utils/shvlogheader.h>
 
 namespace shv::core::utils {
 
