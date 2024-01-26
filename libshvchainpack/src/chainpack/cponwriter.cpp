@@ -436,8 +436,7 @@ CponWriter &CponWriter::write_p(const RpcValue::IMap &values, const RpcValue::Me
 CponWriter &CponWriter::write_p(const RpcValue::List &values)
 {
 	writeContainerBegin(RpcValue::Type::List, is_oneline_list(values));
-	for (size_t ix = 0; ix < values.size(); ix++) {
-		const RpcValue &value = values[ix];
+	for (const auto& value : values) {
 		writeListElement(value);
 	}
 	writeContainerEnd();

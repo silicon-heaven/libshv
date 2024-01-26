@@ -234,8 +234,7 @@ std::string Utils::simplifyPath(const std::string &p)
 {
 	StringViewList ret;
 	StringViewList lst = utils::split(p, '/');
-	for (size_t i = 0; i < lst.size(); ++i) {
-		const StringView &s = lst[i];
+	for (auto s : lst) {
 		if(s == ".")
 			continue;
 		if(s == "..") {
