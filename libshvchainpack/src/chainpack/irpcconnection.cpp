@@ -133,15 +133,14 @@ int IRpcConnection::callMethodSubscribe(int rq_id, const std::string &shv_path, 
 								 {Rpc::PAR_METHODS, method},
 							 });
 	}
-	else {
-		return callShvMethod(rq_id
-							 , Rpc::DIR_BROKER_APP
-							 , Rpc::METH_SUBSCRIBE
-							 , RpcValue::Map{
-								 {Rpc::PAR_PATH, shv_path},
-								 {Rpc::PAR_METHOD, std::move(method)},
-							 });
-	}
+
+	return callShvMethod(rq_id
+						 , Rpc::DIR_BROKER_APP
+						 , Rpc::METH_SUBSCRIBE
+						 , RpcValue::Map{
+							 {Rpc::PAR_PATH, shv_path},
+							 {Rpc::PAR_METHOD, std::move(method)},
+						 });
 }
 
 int IRpcConnection::callMethodUnsubscribe(const std::string &shv_path, std::string method)
@@ -163,15 +162,14 @@ int IRpcConnection::callMethodUnsubscribe(int rq_id, const std::string &shv_path
 								 {Rpc::PAR_METHODS, method},
 							 });
 	}
-	else {
-		return callShvMethod(rq_id
-							 , Rpc::DIR_BROKER_APP
-							 , Rpc::METH_UNSUBSCRIBE
-							 , RpcValue::Map{
-								 {Rpc::PAR_PATH, shv_path},
-								 {Rpc::PAR_METHOD, std::move(method)},
-							 });
-	}
+
+	return callShvMethod(rq_id
+						 , Rpc::DIR_BROKER_APP
+						 , Rpc::METH_UNSUBSCRIBE
+						 , RpcValue::Map{
+							 {Rpc::PAR_PATH, shv_path},
+							 {Rpc::PAR_METHOD, std::move(method)},
+						 });
 }
 
 } // namespace shv
