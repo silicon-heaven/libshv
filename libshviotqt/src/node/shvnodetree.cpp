@@ -29,7 +29,12 @@ ShvNodeTree::ShvNodeTree(ShvNode *root, QObject *parent)
 
 ShvNodeTree::~ShvNodeTree() = default;
 
-ShvNode* ShvNodeTree::root() const
+ShvNode* ShvNodeTree::root()
+{
+	return m_root;
+}
+
+const ShvNode* ShvNodeTree::root() const
 {
 	return m_root;
 }
