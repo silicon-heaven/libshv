@@ -1111,6 +1111,28 @@ void Graph::drawCenterTopText(QPainter *painter, const QPoint &top_center, const
 	drawRectText(painter, br, text, font, color, background, inset);
 }
 
+void Graph::drawLeftBottomText(QPainter *painter, const QPoint &left_bottom, const QString &text, const QFont &font, const QColor &color, const QColor &background)
+{
+	QFontMetrics fm(font);
+	QRect br = fm.boundingRect(text);
+	int inset = u2px(0.2)*2;
+	br.adjust(-inset, 0, inset, 0);
+	br.moveLeft(left_bottom.x());
+	br.moveBottom(left_bottom.y());
+	drawRectText(painter, br, text, font, color, background, inset);
+}
+
+void Graph::drawRightBottomText(QPainter *painter, const QPoint &right_bottom, const QString &text, const QFont &font, const QColor &color, const QColor &background)
+{
+	QFontMetrics fm(font);
+	QRect br = fm.boundingRect(text);
+	int inset = u2px(0.2)*2;
+	br.adjust(-inset, 0, inset, 0);
+	br.moveRight(right_bottom.x());
+	br.moveBottom(right_bottom.y());
+	drawRectText(painter, br, text, font, color, background, inset);
+}
+
 void Graph::drawCenterBottomText(QPainter *painter, const QPoint &top_center, const QString &text, const QFont &font, const QColor &color, const QColor &background)
 {
 	QFontMetrics fm(font);
@@ -1239,7 +1261,7 @@ void Graph::draw(QPainter *painter, const QRect &dirty_rect, const QRect &view_r
 			drawGrid(painter, i);
 			drawSamples(painter, i);
 			drawProbes(painter, i);
-			drawCrossHair(painter, i);
+			//drawCrossHair(painter, i);
 			draw_cross_hair_time_marker = true;
 			drawCurrentTime(painter, i);
 		}
@@ -1248,6 +1270,15 @@ void Graph::draw(QPainter *painter, const QRect &dirty_rect, const QRect &view_r
 		if(dirty_rect.intersects(ch->yAxisRect()))
 			drawYAxis(painter, i);
 	}
+
+	//Info bubble must be rendered only after all channels have been rendered
+	for (int i : visibleChannels()) {
+		const GraphChannel *ch = channelAt(i);
+		if(dirty_rect.intersects(ch->graphAreaRect())) {
+			drawCrossHair(painter, i);
+		}
+	}
+
 	if(draw_cross_hair_time_marker)
 		drawCrossHairTimeMarker(painter);
 	int minimap_bottom = view_rect.height() + view_rect.y();
@@ -2014,7 +2045,20 @@ void Graph::drawCrossHairTimeMarker(QPainter *painter)
 	p1.setY(p1.y() - tick_len);
 	auto c_text = color;
 	auto c_background = effectiveStyle().colorBackground();
-	drawCenterBottomText(painter, p1 - QPoint{0, tick_len / 2}, text, m_style.font(), c_text, c_background);
+
+	QFontMetrics fm(m_style.font());
+	QRect br = fm.boundingRect(text);
+	int inset = u2px(0.2) * 2;
+	br.adjust(-inset, 0, inset, 0);
+	if (p1.x() + br.width() / 2 > m_layout.xAxisRect.right()) {
+		drawRightBottomText(painter, QPoint{m_layout.xAxisRect.right() - 1, p1.y() - tick_len / 2}, text, m_style.font(), c_text, c_background);
+	}
+	else if (p1.x() - br.width() / 2 < m_layout.xAxisRect.left()) {
+		drawLeftBottomText(painter, QPoint{m_layout.xAxisRect.left(), p1.y() - tick_len / 2}, text, m_style.font(), c_text, c_background);
+	}
+	else {
+		drawCenterBottomText(painter, p1 - QPoint{0, tick_len / 2}, text, m_style.font(), c_text, c_background);
+	}
 }
 
 void Graph::drawCrossHair(QPainter *painter, int channel_ix)
@@ -2054,6 +2098,30 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 		/// draw bulls-eye
 		painter->setPen(pen_solid);
 		painter->drawRect(bulls_eye_rect);
+
+		{
+			/// draw Y-marker
+			int tick_len = u2px(m_state.xAxis.tickLen)*2;
+			{
+				QRect r{0, 0, tick_len, 2 * tick_len};
+				r.moveCenter(p1);
+				r.moveLeft(p1.x());
+
+				QPainterPath pp;
+				pp.moveTo(r.bottomRight());
+				pp.lineTo(r.topRight());
+				pp.lineTo(r.left(), r.center().y());
+				pp.lineTo(r.bottomRight());
+				painter->fillPath(pp, color);
+			}
+			/// draw Y value
+			auto val = ch->posToValue(p1.y());
+			auto c_text = color;
+			auto c_background = effectiveStyle().colorBackground();
+			c_background.setAlphaF(0.5);
+			drawLeftCenterText(painter, p1 + QPoint{tick_len, 0}, QString::number(val), m_style.font(), c_text, c_background);
+		}
+
 		{
 			/// draw info
 			QString info_text;
@@ -2102,31 +2170,22 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 				auto r2 = info_rect.adjusted(-offset, 0, offset, 0);
 				auto c = effectiveStyle().colorBackground();
 				c.setAlphaF(0.5);
+
+				if (r2.bottomRight().x() > m_layout.xAxisRect.right()) {
+					r2.moveRight(m_layout.xAxisRect.right() - 1);
+					info_rect.moveRight(m_layout.xAxisRect.right() - 1);
+				}
+
+				auto top = m_layout.xAxisRect.top() - m_layout.xAxisRect.height() - 2;
+				if (r2.bottomRight().y() > top) {
+					r2.moveBottom(top);
+					info_rect.moveBottom(top);
+				}
+
 				painter->fillRect(r2, c);
 				painter->drawText(info_rect, info_text);
 				painter->drawRect(r2);
 			}
-		}
-		{
-			/// draw Y-marker
-			int tick_len = u2px(m_state.xAxis.tickLen)*2;
-			{
-				QRect r{0, 0, tick_len, 2 * tick_len};
-				r.moveCenter(p1);
-				r.moveLeft(p1.x());
-				QPainterPath pp;
-				pp.moveTo(r.bottomRight());
-				pp.lineTo(r.topRight());
-				pp.lineTo(r.left(), r.center().y());
-				pp.lineTo(r.bottomRight());
-				painter->fillPath(pp, color);
-			}
-			/// draw Y value
-			auto val = ch->posToValue(p1.y());
-			auto c_text = color;
-			auto c_background = effectiveStyle().colorBackground();
-			c_background.setAlphaF(0.5);
-			drawLeftCenterText(painter, p1 + QPoint{tick_len, 0}, QString::number(val), m_style.font(), c_text, c_background);
 		}
 		{
 			/// draw point on current value graph
