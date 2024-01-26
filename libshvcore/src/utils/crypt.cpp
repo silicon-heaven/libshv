@@ -36,7 +36,8 @@ void Crypt::setGenerator(Generator gen)
 	m_generator = gen;
 }
 
-static std::string code_byte(uint8_t b)
+namespace {
+std::string code_byte(uint8_t b)
 {
 	std::string ret;
 	std::array<char, 3> buff{0,0,0};
@@ -51,6 +52,7 @@ static std::string code_byte(uint8_t b)
 		ret.append(buff.data());
 	}
 	return ret;
+}
 }
 
 std::string Crypt::encrypt(const std::string &data, size_t min_length) const
@@ -89,7 +91,8 @@ std::string Crypt::encrypt(const std::string &data, size_t min_length) const
 	return dest;
 }
 
-static uint8_t take_byte(const std::string &ba, size_t &i)
+namespace {
+uint8_t take_byte(const std::string &ba, size_t &i)
 {
 	uint8_t b = (static_cast<uint8_t>(ba[i++]));
 	if((b>='A' && b<='Z') || (b>='a' && b<='z')) {
@@ -107,6 +110,7 @@ static uint8_t take_byte(const std::string &ba, size_t &i)
 		}
 	}
 	return b;
+}
 }
 
 std::string Crypt::decodeArray(const std::string &ba) const

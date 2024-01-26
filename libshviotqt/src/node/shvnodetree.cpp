@@ -134,7 +134,8 @@ chainpack::RpcValue ShvNodeTree::invokeMethod(const std::string &shv_path, const
 	return {};
 }
 
-static std::string dump_node(ShvNode *parent, int indent)
+namespace {
+std::string dump_node(ShvNode *parent, int indent)
 {
 	std::string ret;
 	for(const std::string &pn : parent->childNames()) {
@@ -145,6 +146,7 @@ static std::string dump_node(ShvNode *parent, int indent)
 		}
 	}
 	return ret;
+}
 }
 
 std::string ShvNodeTree::dumpTree()

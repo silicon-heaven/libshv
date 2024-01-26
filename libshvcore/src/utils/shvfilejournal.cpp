@@ -36,7 +36,8 @@ void handle_error_code(const std::string_view& func_name, const std::error_code&
 }
 }
 
-static bool is_dir(const std::string &dir_name)
+namespace {
+bool is_dir(const std::string &dir_name)
 {
 	std::error_code code;
 	auto ret = std::filesystem::is_directory(dir_name, code);
@@ -44,7 +45,7 @@ static bool is_dir(const std::string &dir_name)
 	return ret;
 }
 
-static bool mkpath(const std::string &dir_name)
+bool mkpath(const std::string &dir_name)
 {
 	std::error_code code;
 	auto ret = std::filesystem::create_directories(dir_name, code);
@@ -52,7 +53,7 @@ static bool mkpath(const std::string &dir_name)
 	return ret;
 }
 
-static int64_t file_size(const std::string &file_name)
+int64_t file_size(const std::string &file_name)
 {
 	std::error_code code;
 	auto ret =  std::filesystem::file_size(file_name, code);
@@ -60,7 +61,7 @@ static int64_t file_size(const std::string &file_name)
 	return ret;
 }
 
-static int64_t rm_file(const std::string &file_name)
+int64_t rm_file(const std::string &file_name)
 {
 	int64_t sz = file_size(file_name);
 	std::error_code code;
@@ -72,7 +73,7 @@ static int64_t rm_file(const std::string &file_name)
 	return 0;
 }
 
-static bool path_exists(const std::string &path)
+bool path_exists(const std::string &path)
 {
 	std::error_code code;
 	auto ret =  std::filesystem::exists(path, code);
@@ -80,7 +81,7 @@ static bool path_exists(const std::string &path)
 	return ret;
 }
 
-static int64_t str_to_size(const std::string &str)
+int64_t str_to_size(const std::string &str)
 {
 	std::istringstream is(str);
 	int64_t n;
@@ -94,6 +95,7 @@ static int64_t str_to_size(const std::string &str)
 	if(n < 1024)
 		n = 1024;
 	return n;
+}
 }
 
 const std::string ShvFileJournal::FILE_EXT = ".log2";

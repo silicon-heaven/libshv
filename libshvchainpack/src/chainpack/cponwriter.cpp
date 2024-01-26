@@ -49,7 +49,8 @@ CponWriterOptions& CponWriterOptions::setJsonFormat(bool b)
 	m_jsonFormat = b; return *this;
 }
 
-static bool is_oneline_list(const RpcValue::List &lst)
+namespace {
+bool is_oneline_list(const RpcValue::List &lst)
 {
 	if(lst.size() > 10)
 		return false;
@@ -67,7 +68,7 @@ static bool is_oneline_list(const RpcValue::List &lst)
 }
 
 template<typename T>
-static bool is_oneline_map(const T &map)
+bool is_oneline_map(const T &map)
 {
 	if(map.size() > 5)
 		return false;
@@ -84,7 +85,7 @@ static bool is_oneline_map(const T &map)
 	return true;
 }
 
-static bool is_oneline_meta(const RpcValue::MetaData &meta)
+bool is_oneline_meta(const RpcValue::MetaData &meta)
 {
 	if(meta.size() > 5)
 		return false;
@@ -109,6 +110,7 @@ static bool is_oneline_meta(const RpcValue::MetaData &meta)
 		}
 	}
 	return true;
+}
 }
 
 CponWriter::CponWriter(std::ostream &out)

@@ -4,7 +4,8 @@
 
 namespace shv::chainpack {
 
-static bool str_eq(const std::string &s1, const char *s2)
+namespace {
+bool str_eq(const std::string &s1, const char *s2)
 {
 	size_t i;
 	for (i = 0; i < s1.size(); ++i) {
@@ -15,6 +16,7 @@ static bool str_eq(const std::string &s1, const char *s2)
 			return false;
 	}
 	return s2[i] == 0;
+}
 }
 
 //================================================================

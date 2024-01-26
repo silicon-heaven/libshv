@@ -139,7 +139,8 @@ void AclManagerSqlite::createAclSqlTables()
 			)kkt").arg(TBL_ACL_ACCESS));
 }
 
-static QString join_str_vec(const std::vector<std::string> &lst)
+namespace {
+QString join_str_vec(const std::vector<std::string> &lst)
 {
 	QStringList qlst;
 	for(const std::string &s : lst)
@@ -147,7 +148,7 @@ static QString join_str_vec(const std::vector<std::string> &lst)
 	return qlst.join(',');
 }
 
-static std::vector<std::string> split_str_vec(const QString &ss)
+std::vector<std::string> split_str_vec(const QString &ss)
 {
 	std::vector<std::string> ret;
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
@@ -158,6 +159,7 @@ static std::vector<std::string> split_str_vec(const QString &ss)
 		ret.push_back(s.trimmed().toStdString());
 #endif
 	return ret;
+}
 }
 
 void AclManagerSqlite::importAclConfigFiles()
