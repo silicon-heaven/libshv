@@ -26,8 +26,8 @@ public:
 	bool isSlaveBrokerConnection() const override;
 	bool isMasterBrokerConnection() const override;
 
-	void sendFrame(shv::chainpack::RpcFrame &&frame) override;
-	void sendMessage(const shv::chainpack::RpcMessage &rpc_msg) override;
+	void sendRpcFrame(shv::chainpack::RpcFrame &&frame) override;
+	void sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg) override;
 
 	Subscription createSubscription(const std::string &shv_path, const std::string &method) override;
 	std::string toSubscribedPath(const Subscription &subs, const std::string &signal_path) const override;

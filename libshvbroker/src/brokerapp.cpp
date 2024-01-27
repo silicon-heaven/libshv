@@ -1159,7 +1159,7 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 							logServiceProvidersM() << "forwarded shv path:" << resolved_local_path;
 							cp::RpcRequest::setShvPath(frame.meta, resolved_local_path);
 							cp::RpcMessage::pushCallerId(frame.meta, connection_id);
-							master_broker->sendFrame(std::move(frame));
+							master_broker->sendRpcFrame(std::move(frame));
 							return;
 						}
 					}
@@ -1247,7 +1247,7 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 				rsp.setError(cp::RpcResponse::Error::create(
 								 cp::RpcResponse::Error::MethodCallException
 								 , e.what()));
-				connection_handle->sendMessage(rsp);
+				connection_handle->sendRpcMessage(rsp);
 			}
 		}
 	}
@@ -1285,7 +1285,7 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 					rpc::CommonRpcClientHandle *cch = commonClientConnectionById(connection_id);
 					if(cch) {
 						logTunnelD() << "Sending FindTunnelResponse:" << msg.toPrettyString();
-						cch->sendMessage(msg);
+						cch->sendRpcMessage(msg);
 					}
 					return;
 				}
@@ -1294,7 +1294,7 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 			}
 			rpc::CommonRpcClientHandle *cch = commonClientConnectionById(caller_id);
 			if(cch) {
-				cch->sendFrame(std::move(frame));
+				cch->sendRpcFrame(std::move(frame));
 			}
 			else {
 				shvWarning() << "Got RPC response for not-exists connection, may be it was closed meanwhile. Connection id:" << caller_id;
@@ -1332,7 +1332,7 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 									   { cp::Rpc::PAR_PATH, sig_shv_path},
 									   { cp::Rpc::PAR_METHOD, cp::RpcMessage::method(frame.meta).toString()}})
 						.setShvPath(cp::Rpc::DIR_BROKER_APP);
-				client_connection->sendMessage(rq);
+				client_connection->sendRpcMessage(rq);
 			}
 		}
 	}
@@ -1352,7 +1352,7 @@ void BrokerApp::onRootNodeSendRpcMesage(const shv::chainpack::RpcMessage &msg)
 		shv::chainpack::RpcValue::Int connection_id = resp.popCallerId();
 		rpc::CommonRpcClientHandle *conn = commonClientConnectionById(connection_id);
 		if(conn)
-			conn->sendMessage(resp);
+			conn->sendRpcMessage(resp);
 		else
 			shvError() << "Cannot find connection for ID:" << connection_id;
 		return;
@@ -1405,12 +1405,12 @@ bool BrokerApp::sendNotifyToSubscribers(const chainpack::RpcFrame &frame)
 				const rpc::ClientConnectionOnBroker::Subscription &subs = conn->subscriptionAt(static_cast<size_t>(subs_ix));
 				std::string new_path = conn->toSubscribedPath(subs, shv_path.asString());
 				if(new_path == shv_path.asString()) {
-					conn->sendFrame(chainpack::RpcFrame(frame));
+					conn->sendRpcFrame(chainpack::RpcFrame(frame));
 				}
 				else {
 					auto frame2 = frame;
 					cp::RpcMessage::setShvPath(frame2.meta, new_path);
-					conn->sendFrame(std::move(frame2));
+					conn->sendRpcFrame(std::move(frame2));
 				}
 				subs_sent = true;
 			}
@@ -1434,7 +1434,7 @@ void BrokerApp::sendNotifyToSubscribers(const std::string &shv_path, const std::
 				std::string new_path = conn->toSubscribedPath(subs, shv_path);
 				if(new_path != shv_path)
 					sig.setShvPath(new_path);
-				conn->sendMessage(sig);
+				conn->sendRpcMessage(sig);
 			}
 		}
 	}

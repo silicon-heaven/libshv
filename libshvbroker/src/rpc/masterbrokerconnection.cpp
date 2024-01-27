@@ -85,7 +85,7 @@ bool MasterBrokerConnection::isMasterBrokerConnection() const
 	return true;
 }
 
-void MasterBrokerConnection::sendFrame(chainpack::RpcFrame &&frame)
+void MasterBrokerConnection::sendRpcFrame(chainpack::RpcFrame &&frame)
 {
 	logRpcMsg() << SND_LOG_ARROW
 				<< "client id:" << connectionId()
@@ -93,9 +93,9 @@ void MasterBrokerConnection::sendFrame(chainpack::RpcFrame &&frame)
 	Super::sendRpcFrame(std::move(frame));
 }
 
-void MasterBrokerConnection::sendMessage(const shv::chainpack::RpcMessage &rpc_msg)
+void MasterBrokerConnection::sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg)
 {
-	Super::sendMessage(rpc_msg);
+	Super::sendRpcMessage(rpc_msg);
 }
 
 CommonRpcClientHandle::Subscription MasterBrokerConnection::createSubscription(const std::string &shv_path, const std::string &method)

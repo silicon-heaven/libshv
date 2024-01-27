@@ -46,8 +46,8 @@ public:
 
 	void setIdleWatchDogTimeOut(int sec);
 
-	void sendMessage(const shv::chainpack::RpcMessage &rpc_msg) override;
-	void sendFrame(shv::chainpack::RpcFrame &&frame) override;
+	void sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg) override;
+	void sendRpcFrame(shv::chainpack::RpcFrame &&frame) override;
 
 	Subscription createSubscription(const std::string &shv_path, const std::string &method) override;
 	std::string toSubscribedPath(const Subscription &subs, const std::string &signal_path) const override;

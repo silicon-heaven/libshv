@@ -59,7 +59,7 @@ DOCTEST_TEST_CASE("Send")
 		rq.setParams(p);
 		serial->clearWrittenData();
 		rec_msg = {};
-		conn.sendMessage(rq);
+                conn.sendRpcMessage(rq);
 		auto data = serial->writtenData();
 
 		vector<string> rubbish1 = {
@@ -103,7 +103,7 @@ DOCTEST_TEST_CASE("Test CRC error")
 	rq.setParams(123);
 
 	serial->clearWrittenData();
-	conn.sendMessage(rq);
+        conn.sendRpcMessage(rq);
 	auto data = serial->writtenData();
 	data[5] = ~data[5];
 

@@ -25,7 +25,7 @@ void IRpcConnection::sendShvSignal(const std::string &shv_path, std::string meth
 		rq.setShvPath(shv_path);
 	rq.setMethod(std::move(method));
 	rq.setParams(params);
-	sendMessage(rq);
+	sendRpcMessage(rq);
 }
 
 [[deprecated("Use sendSignal instead")]] void IRpcConnection::sendNotify(std::string method, const shv::chainpack::RpcValue &params)
@@ -43,7 +43,7 @@ void IRpcConnection::sendResponse(const RpcValue &request_id, const RpcValue &re
 	RpcResponse resp;
 	resp.setRequestId(request_id);
 	resp.setResult(result);
-	sendMessage(resp);
+	sendRpcMessage(resp);
 }
 
 void IRpcConnection::sendError(const RpcValue &request_id, const RpcResponse::Error &error)
@@ -51,7 +51,7 @@ void IRpcConnection::sendError(const RpcValue &request_id, const RpcResponse::Er
 	RpcResponse resp;
 	resp.setRequestId(request_id);
 	resp.setError(error);
-	sendMessage(resp);
+	sendRpcMessage(resp);
 }
 
 int IRpcConnection::nextRequestId()
@@ -79,7 +79,7 @@ int IRpcConnection::callMethod(const RpcRequest &rq)
 		id = nextRequestId();
 		_rq.setRequestId(id);
 	}
-	sendMessage(rq);
+	sendRpcMessage(rq);
 	return id;
 }
 
@@ -110,7 +110,7 @@ int IRpcConnection::callShvMethod(int rq_id, const std::string &shv_path, std::s
 		rq.setUserId(user_id);
 	if(!shv_path.empty())
 		rq.setShvPath(shv_path);
-	sendMessage(rq);
+	sendRpcMessage(rq);
 	return rq_id;
 }
 

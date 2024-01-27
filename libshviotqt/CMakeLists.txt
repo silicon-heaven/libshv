@@ -83,7 +83,7 @@ endfunction(add_shviotqt_serialportsocket_test)
 if(BUILD_TESTING)
 	add_shviotqt_serialportsocket_test(serialportsocket)
 	file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test_serialportsocket")
-	set_property(TEST test_iotqt_serialportsocket APPEND PROPERTY ENVIRONMENT "TESTS_DIR=${CMAKE_CURRENT_BINARY_DIR}/test_serialportsocket")
+	target_compile_definitions(test_iotqt_serialportsocket PRIVATE TESTS_DIR="${CMAKE_CURRENT_BINARY_DIR}/test_serialportsocket")
 endif()
 
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/shv" TYPE INCLUDE)

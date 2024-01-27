@@ -171,7 +171,7 @@ void ServerConnection::setLoginResult(const chainpack::UserLoginResult &result)
 																			 + " reason: " + result.loginError
 																			 + " at: " + connectionName()));
 	}
-	sendMessage(resp);
+	sendRpcMessage(resp);
 }
 
 }

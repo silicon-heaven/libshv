@@ -163,7 +163,7 @@ void ClientConnectionOnBroker::setIdleWatchDogTimeOut(int sec)
 	m_idleWatchDogTimer->start(sec * 1000);
 }
 
-void ClientConnectionOnBroker::sendMessage(const shv::chainpack::RpcMessage &rpc_msg)
+void ClientConnectionOnBroker::sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg)
 {
 	logRpcMsg() << SND_LOG_ARROW
 				<< "client id:" << connectionId()
@@ -171,7 +171,7 @@ void ClientConnectionOnBroker::sendMessage(const shv::chainpack::RpcMessage &rpc
 	chainpack::RpcDriver::sendRpcMessage(rpc_msg);
 }
 
-void ClientConnectionOnBroker::sendFrame(chainpack::RpcFrame &&frame)
+void ClientConnectionOnBroker::sendRpcFrame(chainpack::RpcFrame &&frame)
 {
 	logRpcMsg() << SND_LOG_ARROW
 				<< "client id:" << connectionId()

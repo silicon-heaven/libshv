@@ -17,11 +17,6 @@ void MockRpcConnection::abort()
 	socket()->abort();
 }
 
-void MockRpcConnection::sendMessage(const shv::chainpack::RpcMessage &rpc_msg)
-{
-	sendMessage(rpc_msg.value());
-}
-
 void MockRpcConnection::onRpcMessageReceived(const shv::chainpack::RpcMessage &msg)
 {
 	emit rpcMessageReceived(msg);

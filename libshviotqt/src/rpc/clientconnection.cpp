@@ -272,7 +272,7 @@ bool ClientConnection::isBrokerConnected() const
 static constexpr std::string_view::size_type MAX_LOG_LEN = 1024;
 static const auto TOPIC_RPC_MSG = "RpcMsg";
 
-void ClientConnection::sendMessage(const cp::RpcMessage &rpc_msg)
+void ClientConnection::sendRpcMessage(const cp::RpcMessage &rpc_msg)
 {
 	if(NecroLog::shouldLog(NecroLog::Level::Message, NecroLog::LogContext(__FILE__, __LINE__, TOPIC_RPC_MSG))) {
 		if(isShvPathMutedInLog(rpc_msg.shvPath().asString(), rpc_msg.method().asString())) {

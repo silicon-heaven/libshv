@@ -49,7 +49,7 @@ void ClientShvNode::handleRpcFrame(chainpack::RpcFrame &&frame)
 {
 	rpc::ClientConnectionOnBroker *conn = connection();
 	if(conn)
-		conn->sendFrame(std::move(frame));
+		conn->sendRpcFrame(std::move(frame));
 }
 
 shv::chainpack::RpcValue ClientShvNode::hasChildren(const StringViewList &shv_path)

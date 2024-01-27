@@ -42,8 +42,8 @@ public:
 	virtual bool isSlaveBrokerConnection() const = 0;
 	virtual bool isMasterBrokerConnection() const = 0;
 
-	virtual void sendFrame(chainpack::RpcFrame &&frame) = 0;
-	virtual void sendMessage(const shv::chainpack::RpcMessage &rpc_msg) = 0;
+	virtual void sendRpcFrame(chainpack::RpcFrame &&frame) = 0;
+	virtual void sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg) = 0;
 protected:
 	std::vector<Subscription> m_subscriptions;
 };
