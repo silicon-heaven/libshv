@@ -27,15 +27,13 @@ public:
 
 	void setSocket(Socket *socket);
 	bool hasSocket() const;
-	void setProtocolTypeAsInt(int v);
 
 	void connectToHost(const QUrl &url);
 
-	Q_SLOT void sendRpcValue(const shv::chainpack::RpcValue &rpc_val);
+	void sendRpcMessage(const chainpack::RpcMessage &rpc_msg);
 
 	void closeSocket();
 	void abortSocket();
-	void clearSendBuffers() override;
 
 	bool isSocketConnected() const;
 	Q_SIGNAL void socketConnectedChanged(bool is_connected);
@@ -49,9 +47,7 @@ public:
 protected:
 	// RpcDriver interface
 	bool isOpen() Q_DECL_OVERRIDE;
-	int64_t writeBytes(const char *bytes, size_t length) Q_DECL_OVERRIDE;
-	void writeMessageBegin() override;
-	void writeMessageEnd() override;
+	int64_t writeFrameData(std::string &&frame_data) override;
 
 	Socket* socket();
 	void onReadyRead();

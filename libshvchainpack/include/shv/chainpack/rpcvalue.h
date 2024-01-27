@@ -411,6 +411,7 @@ public:
 	void append(const RpcValue &val);
 
 	RpcValue metaStripped() const;
+	MetaData stripMeta();
 
 	std::string toPrettyString(const std::string &indent = std::string()) const;
 	std::string toStdString() const;

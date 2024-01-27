@@ -1,5 +1,6 @@
 #pragma once
 
+#include "shv/chainpack/rpcdriver.h"
 #ifdef USE_SHV_PATHS_GRANTS_CACHE
 #include <string>
 
@@ -68,7 +69,7 @@ public:
 	void onClientLogin(int connection_id);
 	void onConnectedToMasterBrokerChanged(int connection_id, bool is_connected);
 
-	void onRpcDataReceived(int connection_id, shv::chainpack::Rpc::ProtocolType protocol_type, shv::chainpack::RpcValue::MetaData &&meta, std::string &&data);
+	void onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &&frame);
 
 	rpc::MasterBrokerConnection* masterBrokerConnectionForClient(int client_id);
 
@@ -134,7 +135,7 @@ private:
 	void onClientConnected(int client_id);
 
 	void sendNotifyToSubscribers(const std::string &shv_path, const std::string &method, const shv::chainpack::RpcValue &params);
-	bool sendNotifyToSubscribers(const shv::chainpack::RpcValue::MetaData &meta_data, const std::string &data);
+	bool sendNotifyToSubscribers(const shv::chainpack::RpcFrame &frame);
 
 	static std::string brokerClientDirPath(int client_id);
 	static std::string brokerClientAppPath(int client_id);

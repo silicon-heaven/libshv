@@ -70,17 +70,12 @@ void SocketRpcConnection::setSocket(Socket *socket)
 		shvDebug() << this << "Socket disconnected!!!";
 		emit socketConnectedChanged(false);
 	});
-	connect(socket, &Socket::socketReset, this, &SocketRpcConnection::clearSendBuffers);
+	//connect(socket, &Socket::socketReset, this, &SocketRpcConnection::clearSendBuffers);
 }
 
 bool SocketRpcConnection::hasSocket() const
 {
 	return m_socket != nullptr;
-}
-
-void SocketRpcConnection::setProtocolTypeAsInt(int v)
-{
-	shv::chainpack::RpcDriver::setProtocolType(static_cast<shv::chainpack::Rpc::ProtocolType>(v));
 }
 
 Socket *SocketRpcConnection::socket()
@@ -115,13 +110,12 @@ void SocketRpcConnection::onReadyRead()
 		f->flush();
 	}
 #endif
-	onBytesRead(ba.toStdString());
+	onFrameDataRead(ba.toStdString());
 }
 
 void SocketRpcConnection::onBytesWritten()
 {
 	logRpcData() << "onBytesWritten()";
-	enqueueDataToSend(MessageData());
 }
 
 void SocketRpcConnection::onParseDataException(const chainpack::ParseException &e)
@@ -135,31 +129,14 @@ bool SocketRpcConnection::isOpen()
 	return isSocketConnected();
 }
 
-int64_t SocketRpcConnection::writeBytes(const char *bytes, size_t length)
+int64_t SocketRpcConnection::writeFrameData(std::string &&frame_data)
 {
-	return socket()->write(bytes, static_cast<qint64>(length));
+	return socket()->write(frame_data.data(), frame_data.size());
 }
 
-void SocketRpcConnection::writeMessageBegin()
+void SocketRpcConnection::sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg)
 {
-	if(m_socket)
-		m_socket->writeMessageBegin();
-}
-
-void SocketRpcConnection::writeMessageEnd()
-{
-	if(m_socket)
-		m_socket->writeMessageEnd();
-}
-
-Q_SLOT void SocketRpcConnection::sendRpcValue(const shv::chainpack::RpcValue &rpc_val)
-{
-	shv::chainpack::RpcDriver::sendRpcValue(rpc_val);
-}
-
-void SocketRpcConnection::clearSendBuffers()
-{
-	shv::chainpack::RpcDriver::clearSendBuffers();
+	shv::chainpack::RpcDriver::sendRpcMessage(rpc_msg);
 }
 
 void SocketRpcConnection::closeSocket()

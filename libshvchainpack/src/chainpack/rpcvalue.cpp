@@ -11,12 +11,10 @@
 
 #include <necrolog.h>
 
-#include <cassert>
 #include <cmath>
 #include <cstdlib>
 #include <cstdio>
 #include <ctime>
-#include <iostream>
 #include <chrono>
 
 #ifdef DEBUG_RPCVAL
@@ -65,7 +63,7 @@ public:
 	virtual void append(const RpcValue &);
 
 	virtual std::string toStdString() const = 0;
-	virtual void stripMeta() = 0;
+	virtual RpcValue::MetaData stripMeta() = 0;
 
 	virtual AbstractValueData* copy() = 0;
 };
@@ -154,10 +152,15 @@ protected:
 		return tmp;
 	}
 
-	void stripMeta() override
+	RpcValue::MetaData stripMeta() override
 	{
-		delete m_metaData;
-		m_metaData = nullptr;
+		if (m_metaData) {
+			auto ret = *m_metaData;
+			delete m_metaData;
+			m_metaData = nullptr;
+			return ret;
+		}
+		return {};
 	}
 
 protected:
@@ -728,6 +731,11 @@ RpcValue RpcValue::metaStripped() const
 	RpcValue ret = *this;
 	ret.m_ptr->stripMeta();
 	return ret;
+}
+
+RpcValue::MetaData RpcValue::stripMeta()
+{
+	return m_ptr->stripMeta();
 }
 
 std::string RpcValue::toPrettyString(const std::string &indent) const

@@ -73,7 +73,7 @@ public:
 protected:
 	bool isShvPathMutedInLog(const std::string &shv_path, const std::string &method) const;
 public:
-	/// AbstractRpcConnection interface implementation
+	/// IRpcConnection interface implementation
 	void sendMessage(const shv::chainpack::RpcMessage &rpc_msg) override;
 	void onRpcMessageReceived(const shv::chainpack::RpcMessage &msg) override;
 	static QUrl connectionUrlFromString(const QString &url_str);

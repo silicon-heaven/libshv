@@ -5,7 +5,6 @@
 MockRpcConnection::MockRpcConnection(QObject *parent)
 	: shv::iotqt::rpc::SocketRpcConnection{parent}
 {
-	setProtocolType(shv::chainpack::Rpc::ProtocolType::ChainPack);
 }
 
 void MockRpcConnection::close()
@@ -20,7 +19,7 @@ void MockRpcConnection::abort()
 
 void MockRpcConnection::sendMessage(const shv::chainpack::RpcMessage &rpc_msg)
 {
-	sendRpcValue(rpc_msg.value());
+	sendMessage(rpc_msg.value());
 }
 
 void MockRpcConnection::onRpcMessageReceived(const shv::chainpack::RpcMessage &msg)

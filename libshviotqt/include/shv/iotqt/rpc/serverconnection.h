@@ -46,10 +46,9 @@ public:
 
 	Q_SIGNAL void rpcMessageReceived(const shv::chainpack::RpcMessage &msg);
 
-	void sendMessage(const shv::chainpack::RpcMessage &rpc_msg) override;
 	void onRpcMessageReceived(const shv::chainpack::RpcMessage &msg) override;
 protected:
-	void onRpcDataReceived(shv::chainpack::Rpc::ProtocolType protocol_type, shv::chainpack::RpcValue::MetaData &&md, std::string &&msg_data) override;
+	void onRpcFrameReceived(chainpack::RpcFrame &&frame) override;
 
 	bool isLoginPhase() const;
 	void processLoginPhase(const chainpack::RpcMessage &msg);

@@ -93,21 +93,14 @@ bool ServerConnection::isSlaveBrokerConnection() const
 	return m_connectionOptions.asMap().hasKey(cp::Rpc::KEY_BROKER);
 }
 
-void ServerConnection::sendMessage(const chainpack::RpcMessage &rpc_msg)
-{
-	sendRpcValue(rpc_msg.value());
-}
-
-void ServerConnection::onRpcDataReceived(shv::chainpack::Rpc::ProtocolType protocol_type, shv::chainpack::RpcValue::MetaData &&md, std::string &&msg_data)
+void ServerConnection::onRpcFrameReceived(chainpack::RpcFrame &&frame)
 {
 	if(isLoginPhase()) {
-		shv::chainpack::RpcValue rpc_val = decodeData(protocol_type, msg_data, 0);
-		rpc_val.setMetaData(std::move(md));
-		cp::RpcMessage msg(rpc_val);
+		auto msg = frame.toRpcMessage();
 		processLoginPhase(msg);
 		return;
 	}
-	Super::onRpcDataReceived(protocol_type, std::move(md), std::move(msg_data));
+	Super::onRpcFrameReceived(std::move(frame));
 }
 
 void ServerConnection::onRpcMessageReceived(const chainpack::RpcMessage &msg)

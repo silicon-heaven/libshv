@@ -44,8 +44,6 @@ ClientConnection::ClientConnection(QObject *parent)
 	: Super(parent)
 	, m_loginType(IRpcConnection::LoginType::Sha1)
 {
-	setProtocolType(shv::chainpack::Rpc::ProtocolType::ChainPack);
-
 	connect(this, &SocketRpcConnection::socketConnectedChanged, this, &ClientConnection::onSocketConnectedChanged);
 
 	m_checkBrokerConnectedTimer = new QTimer(this);
@@ -160,14 +158,6 @@ void ClientConnection::setCliOptions(const ClientAppCliOptions *cli_opts)
 		cp::RpcDriver::setDefaultRpcTimeoutMsec(cli_opts->rpcTimeout() * 1000);
 		shvInfo() << "Default RPC timeout set to:" << cp::RpcDriver::defaultRpcTimeoutMsec() << "msec.";
 	}
-
-	const std::string pv = cli_opts->protocolType();
-	if(pv == "cpon")
-		setProtocolType(shv::chainpack::Rpc::ProtocolType::Cpon);
-	else if(pv == "jsonrpc")
-		setProtocolType(shv::chainpack::Rpc::ProtocolType::JsonRpc);
-	else
-		setProtocolType(shv::chainpack::Rpc::ProtocolType::ChainPack);
 
 	setConnectionString(QString::fromStdString(cli_opts->serverHost()));
 	setPeerVerify(cli_opts->serverPeerVerify());
@@ -297,11 +287,10 @@ void ClientConnection::sendMessage(const cp::RpcMessage &rpc_msg)
 			NecroLog::create(NecroLog::Level::Message, NecroLog::LogContext(__FILE__, __LINE__, TOPIC_RPC_MSG))
 				<< SND_LOG_ARROW
 				<< "client id:" << connectionId()
-				<< "protocol_type:" << static_cast<int>(protocolType()) << shv::chainpack::Rpc::protocolTypeToString(protocolType())
 				<< std::string_view(m_rawRpcMessageLog? rpc_msg.toCpon(): rpc_msg.toPrettyString()).substr(0, MAX_LOG_LEN);
 		}
 	}
-	sendRpcValue(rpc_msg.value());
+	sendRpcMessage(rpc_msg);
 }
 
 void ClientConnection::onRpcMessageReceived(const chainpack::RpcMessage &rpc_msg)
@@ -333,7 +322,6 @@ void ClientConnection::onRpcMessageReceived(const chainpack::RpcMessage &rpc_msg
 			NecroLog::create(NecroLog::Level::Message, NecroLog::LogContext(__FILE__, __LINE__, TOPIC_RPC_MSG))
 				<< cp::RpcDriver::RCV_LOG_ARROW
 				<< "client id:" << connectionId()
-				<< "protocol_type:" << static_cast<int>(protocolType()) << shv::chainpack::Rpc::protocolTypeToString(protocolType())
 				<< std::string_view(m_rawRpcMessageLog? rpc_msg.toCpon(): rpc_msg.toPrettyString()).substr(0, MAX_LOG_LEN);
 		}
 	}
@@ -425,7 +413,6 @@ void ClientConnection::onSocketConnectedChanged(bool is_connected)
 		shvInfo() << objectName() << "connection id:" << connectionId() << "Socket connected to RPC server";
 		shvInfo() << "peer:" << peerAddress() << "port:" << peerPort();
 		setState(State::SocketConnected);
-		clearSendBuffers();
 		if(loginType() == LoginType::None) {
 			shvInfo() << "Connection scheme:" << connectionUrl().scheme() << " is skipping login phase.";
 			setState(State::BrokerConnected);

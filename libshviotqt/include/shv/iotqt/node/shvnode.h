@@ -63,7 +63,7 @@ public:
 
 	bool isRootNode() const;
 
-	virtual void handleRawRpcRequest(chainpack::RpcValue::MetaData &&meta, std::string &&data);
+	virtual void handleRpcFrame(chainpack::RpcFrame &&frame);
 	virtual void handleRpcRequest(const chainpack::RpcRequest &rq);
 	virtual chainpack::RpcValue handleRpcRequestImpl(const chainpack::RpcRequest &rq);
 	virtual chainpack::RpcValue processRpcRequest(const shv::chainpack::RpcRequest &rq);

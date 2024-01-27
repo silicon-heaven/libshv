@@ -13,6 +13,21 @@ namespace chainpack {
 
 class AbstractStreamWriter;
 class TunnelCtl;
+class RpcMessage;
+
+struct SHVCHAINPACK_DECL_EXPORT RpcFrame
+{
+	Rpc::ProtocolType protocol = Rpc::ProtocolType::ChainPack;
+	RpcValue::MetaData meta;
+	std::string data;
+
+	RpcFrame() = default;
+	RpcFrame(RpcValue::MetaData &&meta, std::string &&data) : meta(std::move(meta)), data(std::move(data)) {}
+	bool isValid() const { return !meta.isEmpty() && !data.empty(); }
+	RpcMessage toRpcMessage(std::string *errmsg = nullptr) const;
+	std::string toChainPack() const;
+	static RpcFrame fromChainPack(std::string &&frame_data);
+};
 
 class SHVCHAINPACK_DECL_EXPORT RpcMessage
 {
@@ -23,14 +38,14 @@ public:
 	public:
 		enum {ID = meta::GlobalNS::MetaTypeId::ChainPackRpcMessage};
 		struct Tag { enum Enum {RequestId = meta::Tag::USER, // 8
-								ShvPath, // 9
-								Method,  // 10
-								CallerIds, // 11
-								ProtocolType, //needed when dest client is using different version than source one to translate raw message data to correct format
-								RevCallerIds,
-								AccessGrant,
-								TunnelCtl,
-								UserId,
+								ShvPath = 9, // 9
+								Method = 10,  // 10
+								CallerIds = 11, // 11
+								//ProtocolType, //needed when dest client is using different version than source one to translate raw message data to correct format
+								RevCallerIds = 13,
+								AccessGrant = 14,
+								TunnelCtl = 15,
+								UserId = 16,
 								MAX};};
 		struct Key { enum Enum {Params = 1, Result, Error, MAX};};
 
@@ -111,13 +126,16 @@ public:
 	static RpcValue userId(RpcValue::MetaData &meta);
 	static void setUserId(RpcValue::MetaData &meta, const RpcValue &user_id);
 
-	static Rpc::ProtocolType protocolType(const RpcValue::MetaData &meta);
-	static void setProtocolType(RpcValue::MetaData &meta, shv::chainpack::Rpc::ProtocolType ver);
-	Rpc::ProtocolType protocolType() const;
-	void setProtocolType(shv::chainpack::Rpc::ProtocolType ver);
+	//static Rpc::ProtocolType protocolType(const RpcValue::MetaData &meta);
+	//static void setProtocolType(RpcValue::MetaData &meta, shv::chainpack::Rpc::ProtocolType ver);
+	//Rpc::ProtocolType protocolType() const;
+	//void setProtocolType(shv::chainpack::Rpc::ProtocolType ver);
 
 	std::string toPrettyString() const;
 	std::string toCpon() const;
+	std::string toChainPack() const;
+
+	RpcFrame toToRpcFrame() const;
 
 	const RpcValue::MetaData& metaData() const;
 	RpcValue metaValue(RpcValue::Int key) const;
