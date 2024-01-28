@@ -24,6 +24,7 @@
 #include <QTimer>
 #include <QCryptographicHash>
 #include <QThread>
+#include <QUrlQuery>
 #ifdef QT_SERIALPORT_LIB
 #include <shv/iotqt/rpc/serialportsocket.h>
 #include <QSerialPort>
@@ -64,11 +65,19 @@ QUrl ClientConnection::connectionUrl() const
 
 void ClientConnection::setConnectionUrl(const QUrl &url)
 {
+	auto query = QUrlQuery(url.query());
 	m_connectionUrl = url;
+	m_connectionUrl.setQuery(QUrlQuery());
 	if(auto user = m_connectionUrl.userName(); !user.isEmpty()) {
 		setUser(user.toStdString());
 	}
+	if(auto user = query.queryItemValue("user"); !user.isEmpty()) {
+		setUser(user.toStdString());
+	}
 	if(auto password = m_connectionUrl.password(); !password.isEmpty()) {
+		setPassword(password.toStdString());
+	}
+	if(auto password = query.queryItemValue("password"); !password.isEmpty()) {
 		setPassword(password.toStdString());
 	}
 	m_connectionUrl.setUserInfo({});
@@ -88,11 +97,12 @@ QUrl ClientConnection::connectionUrlFromString(const QString &url_str)
 {
 	static QVector<QString> known_schemes {
 		Socket::schemeToString(Socket::Scheme::Tcp),
-				Socket::schemeToString(Socket::Scheme::Ssl),
-				Socket::schemeToString(Socket::Scheme::WebSocket),
-				Socket::schemeToString(Socket::Scheme::WebSocketSecure),
-				Socket::schemeToString(Socket::Scheme::SerialPort),
-				Socket::schemeToString(Socket::Scheme::LocalSocket),
+		Socket::schemeToString(Socket::Scheme::Ssl),
+		Socket::schemeToString(Socket::Scheme::WebSocket),
+		Socket::schemeToString(Socket::Scheme::WebSocketSecure),
+		Socket::schemeToString(Socket::Scheme::SerialPort),
+		Socket::schemeToString(Socket::Scheme::LocalSocket),
+		Socket::schemeToString(Socket::Scheme::LocalSocketSerial),
 	};
 	QUrl url(url_str);
 	if(!known_schemes.contains(url.scheme())) {
