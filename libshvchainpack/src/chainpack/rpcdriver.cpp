@@ -93,11 +93,9 @@ std::string RpcDriver::frameToPrettyCpon(const RpcFrame &frame)
 		auto msg = frame.toRpcMessage(&errmsg);
 		return msg.toCpon();
 	}
-	else {
-		auto s = frame.meta.toPrettyString();
-		s += " ... " + std::to_string(frame.data.size()) + " bytes of data ... ";
-		return s;
-	}
+	auto s = frame.meta.toPrettyString();
+	s += " ... " + std::to_string(frame.data.size()) + " bytes of data ... ";
+	return s;
 }
 
 } // namespace shv

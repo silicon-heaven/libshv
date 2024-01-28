@@ -532,10 +532,8 @@ const string &ClientConnection::pingShvPath() const
 		static std::string s = ".app";
 		return s;
 	}
-	else {
-		static std::string s = ".broker/app";
-		return s;
-	}
+	static std::string s = ".broker/app";
+	return s;
 }
 
 ClientConnection::State ClientConnection::state() const

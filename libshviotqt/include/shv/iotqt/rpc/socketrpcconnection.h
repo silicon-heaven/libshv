@@ -30,7 +30,7 @@ public:
 
 	void connectToHost(const QUrl &url);
 
-	void sendRpcMessage(const chainpack::RpcMessage &rpc_msg);
+	void sendRpcMessage(const chainpack::RpcMessage &rpc_msg) override;
 
 	void closeSocket();
 	void abortSocket();

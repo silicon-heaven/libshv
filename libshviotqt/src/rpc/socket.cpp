@@ -28,17 +28,17 @@ void StreamFrameReader::addData(std::string_view data)
 			// not enough data
 			break;
 		}
-		else if(err_code != CCPCP_RC_OK) {
+		if(err_code != CCPCP_RC_OK) {
 			throw std::runtime_error("Read RPC message length error.");
 		}
 		auto len = in.tellg();
 		if (len <= 0) {
 			throw std::runtime_error("Read RPC message length data error.");
 		}
-		size_t consumed_len = static_cast<size_t>(len);
+		auto consumed_len = static_cast<size_t>(len);
 		if (consumed_len + frame_size <= m_readBuffer.size()) {
 			auto frame = std::string(m_readBuffer, consumed_len, frame_size);
-			m_readBuffer = std::string(std::move(m_readBuffer), consumed_len + frame_size);
+			m_readBuffer = std::string(m_readBuffer, consumed_len + frame_size);
 			m_frames.push_back(std::move(frame));
 		}
 	}
@@ -59,7 +59,7 @@ void StreamFrameWriter::addFrame(std::string &&frame_data)
 	QByteArray data(len_data.data(), len_data.size());
 	data += static_cast<char>(Rpc::ProtocolType::ChainPack);
 	data.append(std::move(frame_data));
-	m_messagesToWrite.append(std::move(data));
+	m_messagesToWrite.append(data);
 }
 
 //======================================================

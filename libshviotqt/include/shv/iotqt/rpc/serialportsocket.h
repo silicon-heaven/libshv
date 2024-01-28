@@ -13,11 +13,12 @@ namespace shv::iotqt::rpc {
 
 class SerialFrameReader : public FrameReader {
 public:
+	enum class ReadState {WaitingForStx, WaitingForEtx, WaitingForCrc};
+public:
 	~SerialFrameReader() override = default;
 
 	void addData(std::string_view data) override;
-private:
-	enum class ReadState {WaitingForStx, WaitingForEtx, WaitingForCrc};
+	ReadState readState() const { return m_readState; }
 private:
 	bool inEscape() const;
 	void setState(ReadState state);

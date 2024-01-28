@@ -60,7 +60,7 @@ void SocketRpcDriver::writeFrameData(std::string &&frame_data)
 		return;
 	}
 	if (m_writeBuffer.size() + frame_data.size() < m_maxWriteBufferLength) {
-		m_writeBuffer += std::move(frame_data);
+		m_writeBuffer += frame_data;
 		flush();
 	}
 }
@@ -186,9 +186,9 @@ void SocketRpcDriver::exec()
 							// not enough data
 							break;
 						}
-						else if(err_code == CCPCP_RC_OK) {
+						if(err_code == CCPCP_RC_OK) {
 							auto consumed_len = in2.tellg();
-							m_readBuffer = std::string(std::move(m_readBuffer), consumed_len);
+							m_readBuffer = std::string(m_readBuffer, consumed_len);
 							m_readFrameSize = frame_size;
 						}
 						else {
@@ -200,7 +200,7 @@ void SocketRpcDriver::exec()
 					}
 					if (m_readFrameSize > 0 && m_readFrameSize <= m_readBuffer.size()) {
 						auto frame = std::string(m_readBuffer, 0, m_readFrameSize);
-						m_readBuffer = std::string(std::move(m_readBuffer), m_readFrameSize);
+						m_readBuffer = std::string(m_readBuffer, m_readFrameSize);
 						onFrameDataRead(std::move(frame));
 					}
 					if (m_readFrameSize == 0  || m_readFrameSize > m_readBuffer.size()) {

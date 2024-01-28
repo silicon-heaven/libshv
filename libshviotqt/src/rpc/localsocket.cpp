@@ -5,9 +5,7 @@
 #include <QLocalSocket>
 #include <QUrl>
 
-namespace shv {
-namespace iotqt {
-namespace rpc {
+namespace shv::iotqt::rpc {
 
 //======================================================
 // LocalSocket
@@ -171,6 +169,6 @@ void LocalSocket::flushWriteBuffer()
 }
 
 
-} // namespace rpc
-} // namespace iotqt
-} // namespace shv
+} // namespace shv::iotqt::rpc
+
+

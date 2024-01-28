@@ -234,9 +234,9 @@ void SerialPortSocket::setReceiveTimeout(int millis)
 			m_readDataTimeout = new QTimer(this);
 			m_readDataTimeout->setSingleShot(true);
 			connect(m_readDataTimeout, &QTimer::timeout, this, [this]() {
-				//if(m_readMessageState != ReadMessageState::WaitingForStx) {
-				//	setReadMessageError(ReadMessageError::ErrorTimeout);
-				//}
+				if(m_frameReader.readState() != SerialFrameReader::ReadState::WaitingForStx) {
+					reset();
+				}
 			});
 		}
 		m_readDataTimeout->setInterval(millis);
@@ -276,7 +276,7 @@ void SerialPortSocket::abort()
 
 void SerialPortSocket::reset()
 {
-	writeFrameData({});
+	//TODO: reset will be implemented when it will be finished in documentation
 }
 
 QAbstractSocket::SocketState SerialPortSocket::state() const
