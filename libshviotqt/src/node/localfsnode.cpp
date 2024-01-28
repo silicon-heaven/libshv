@@ -11,15 +11,15 @@
 using namespace shv::chainpack;
 
 namespace shv::iotqt::node {
+namespace {
+const auto M_WRITE = "write";
+const auto M_DELETE = "delete";
+const auto M_MKFILE = "mkfile";
+const auto M_MKDIR = "mkdir";
+const auto M_RMDIR = "rmdir";
+const auto M_LS_FILES = "lsfiles";
 
-static const auto M_WRITE = "write";
-static const auto M_DELETE = "delete";
-static const auto M_MKFILE = "mkfile";
-static const auto M_MKDIR = "mkdir";
-static const auto M_RMDIR = "rmdir";
-static const auto M_LS_FILES = "lsfiles";
-
-static const std::vector<MetaMethod> meta_methods_dir {
+const std::vector<MetaMethod> meta_methods_dir {
 	{Rpc::METH_DIR, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_BROWSE},
 	{Rpc::METH_LS, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_BROWSE},
 	{M_LS_FILES, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_READ},
@@ -28,16 +28,16 @@ static const std::vector<MetaMethod> meta_methods_dir {
 	{M_RMDIR, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_SERVICE}
 };
 
-static const std::vector<MetaMethod> meta_methods_dir_write_file {
+const std::vector<MetaMethod> meta_methods_dir_write_file {
 	{M_WRITE, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_WRITE},
 };
 
-static const std::vector<MetaMethod> meta_methods_file_modificable {
+const std::vector<MetaMethod> meta_methods_file_modificable {
 	{M_WRITE, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_WRITE},
 	{M_DELETE, MetaMethod::Signature::RetVoid, 0, Rpc::ROLE_SERVICE}
 };
 
-static const std::vector<MetaMethod> & get_meta_methods_file()
+const std::vector<MetaMethod> & get_meta_methods_file()
 {
 	static std::vector<MetaMethod> meta_methods;
 	if (meta_methods.empty()) {
@@ -46,6 +46,7 @@ static const std::vector<MetaMethod> & get_meta_methods_file()
 	}
 	return meta_methods;
 
+}
 }
 
 LocalFSNode::LocalFSNode(const QString &root_path, ShvNode *parent)

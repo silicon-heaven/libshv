@@ -142,7 +142,8 @@ std::map<int, MetaNameSpace*>& registered_ns() {
 
 }
 
-static void initMetaTypes()
+namespace {
+void initMetaTypes()
 {
 	static bool is_init = false;
 	if(!is_init) {
@@ -156,6 +157,7 @@ static void initMetaTypes()
 			registerNameSpace(ElesysNS::ID, &def);
 		}
 	}
+}
 }
 
 void registerNameSpace(int ns_id, MetaNameSpace *ns)

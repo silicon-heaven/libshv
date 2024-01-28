@@ -49,13 +49,15 @@ AclAccessRule AclAccessRule::fromRpcValue(const RpcValue &rpcval)
 	return ret;
 }
 
-static bool is_wild_card_pattern(const string path)
+namespace {
+bool is_wild_card_pattern(const string path)
 {
 	static const string ASTERISKS = "**";
 	static const string SLASH_ASTERISKS = "/**";
 	if(path == ASTERISKS)
 		return true;
 	return shv::core::String::endsWith(path, SLASH_ASTERISKS);
+}
 }
 
 bool AclAccessRule::isValid() const

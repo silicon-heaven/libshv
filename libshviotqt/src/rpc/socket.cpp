@@ -133,7 +133,8 @@ void TcpSocket::ignoreSslErrors()
 //======================================================
 // LocalSocket
 //======================================================
-static QAbstractSocket::SocketState LocalSocket_convertState(QLocalSocket::LocalSocketState state)
+namespace {
+QAbstractSocket::SocketState LocalSocket_convertState(QLocalSocket::LocalSocketState state)
 {
 	switch (state) {
 	case QLocalSocket::UnconnectedState:
@@ -146,6 +147,7 @@ static QAbstractSocket::SocketState LocalSocket_convertState(QLocalSocket::Local
 		return QAbstractSocket::ClosingState;
 	}
 	return QAbstractSocket::UnconnectedState;
+}
 }
 
 LocalSocket::LocalSocket(QLocalSocket *socket, QObject *parent)

@@ -385,11 +385,13 @@ public:
 	ChainPackNull() : ValueData({}) {}
 };
 
-static const RpcValue::String & static_empty_string() { static const RpcValue::String s{}; return s; }
-static const RpcValue::Blob & static_empty_blob() { static const RpcValue::Blob s{}; return s; }
-static const RpcValue::List & static_empty_list() { static const RpcValue::List s{}; return s; }
-static const RpcValue::Map & static_empty_map() { static const RpcValue::Map s{}; return s; }
-static const RpcValue::IMap & static_empty_imap() { static const RpcValue::IMap s{}; return s; }
+namespace {
+const RpcValue::String & static_empty_string() { static const RpcValue::String s{}; return s; }
+const RpcValue::Blob & static_empty_blob() { static const RpcValue::Blob s{}; return s; }
+const RpcValue::List & static_empty_list() { static const RpcValue::List s{}; return s; }
+const RpcValue::Map & static_empty_map() { static const RpcValue::Map s{}; return s; }
+const RpcValue::IMap & static_empty_imap() { static const RpcValue::IMap s{}; return s; }
+}
 
 /* * * * * * * * * * * * * * * * * * * *
  * Constructors
@@ -965,7 +967,8 @@ void ChainPackIMap::setI(RpcValue::Int key, const RpcValue &val)
 		m_value.erase(key);
 }
 
-static long long parse_ISO_DateTime(const std::string &s, std::tm &tm, int &msec, int64_t &msec_since_epoch, int &minutes_from_utc)
+namespace {
+long long parse_ISO_DateTime(const std::string &s, std::tm &tm, int &msec, int64_t &msec_since_epoch, int &minutes_from_utc)
 {
 	ccpcp_unpack_context ctx;
 	ccpcp_unpack_context_init(&ctx, s.data(), s.size(), nullptr, nullptr);
@@ -975,6 +978,7 @@ static long long parse_ISO_DateTime(const std::string &s, std::tm &tm, int &msec
 		return ctx.current - ctx.start;
 	}
 	return 0;
+}
 }
 
 RpcValue::DateTime::DateTime()

@@ -217,8 +217,7 @@ ChainPackWriter &ChainPackWriter::write_p(const RpcValue::IMap &values)
 ChainPackWriter &ChainPackWriter::write_p(const RpcValue::List &values)
 {
 	writeContainerBegin(RpcValue::Type::List);
-	for (size_t ix = 0; ix < values.size(); ix++) {
-		const RpcValue &value = values[ix];
+	for (const auto& value : values) {
 		writeListElement(value);
 	}
 	writeContainerEnd();

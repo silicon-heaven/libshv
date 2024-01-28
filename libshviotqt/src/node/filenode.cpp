@@ -49,7 +49,8 @@ enum class CompressionType {
 	QCompress,
 };
 
-static CompressionType compression_type_from_string(const std::string &type_str, CompressionType default_type)
+namespace {
+CompressionType compression_type_from_string(const std::string &type_str, CompressionType default_type)
 {
 	if (type_str.empty())
 		return default_type;
@@ -59,6 +60,7 @@ static CompressionType compression_type_from_string(const std::string &type_str,
 		return CompressionType::QCompress;
 
 	return CompressionType::Invalid;
+}
 }
 
 FileNode::FileNode(const std::string &node_id, shv::iotqt::node::FileNode::Super *parent)

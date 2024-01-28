@@ -511,10 +511,12 @@ void RpcDriver::onRpcValueReceived(const RpcValue &rpc_val)
 
 }
 
+namespace {
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
-static int lock_cnt = 0;
+int lock_cnt = 0;
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
-static int logged_lock_cnt = 0;
+int logged_lock_cnt = 0;
+}
 void RpcDriver::lockSendQueueGuard()
 {
 	lock_cnt++;

@@ -294,7 +294,7 @@ void CLIOptions::parse(int argc, char* argv[])
 {
 	StringList args;
 	for(int i=0; i<argc; i++)
-		args.push_back(argv[i]);
+		args.emplace_back(argv[i]);
 	parse(args);
 }
 

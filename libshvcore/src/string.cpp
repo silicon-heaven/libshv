@@ -285,7 +285,8 @@ double String::toDouble(const std::string &str, bool *ok)
 	return ret;
 }
 
-static size_t find_str(const std::string &haystack, size_t begin_pos, size_t end_pos, const std::string &needle)
+namespace {
+size_t find_str(const std::string &haystack, size_t begin_pos, size_t end_pos, const std::string &needle)
 {
 	using namespace std;
 	if(needle.empty())
@@ -311,6 +312,7 @@ static size_t find_str(const std::string &haystack, size_t begin_pos, size_t end
 		++pos1;
 	}
 	return string::npos;
+}
 }
 
 std::pair<size_t, size_t> String::indexOfBrackets(const std::string &haystack, size_t begin_pos, size_t end_pos, const std::string &open_bracket, const std::string &close_bracket)

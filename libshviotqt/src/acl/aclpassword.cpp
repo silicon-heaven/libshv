@@ -13,7 +13,8 @@ AclPassword::AclPassword(std::string password_, Format format_)
 {
 }
 
-static bool str_eq(const std::string &s1, const char *s2)
+namespace {
+bool str_eq(const std::string &s1, const char *s2)
 {
 	size_t i;
 	for (i = 0; i < s1.size(); ++i) {
@@ -24,6 +25,7 @@ static bool str_eq(const std::string &s1, const char *s2)
 			return false;
 	}
 	return s2[i] == 0;
+}
 }
 
 shv::chainpack::RpcValue AclPassword::toRpcValue() const
