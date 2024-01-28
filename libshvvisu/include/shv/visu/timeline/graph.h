@@ -3,6 +3,7 @@
 #include "channelfilter.h"
 #include "channelprobe.h"
 #include "graphchannel.h"
+#include "graphmodel.h"
 #include "sample.h"
 #include "../shvvisuglobal.h"
 
@@ -25,8 +26,6 @@
 namespace shv {
 namespace visu {
 namespace timeline {
-
-class GraphModel;
 
 class SHVVISU_DECL_EXPORT Graph : public QObject
 {
@@ -62,7 +61,7 @@ public:
 		SHV_VARIANTMAP_FIELD2(double, x, setX, AxisHeight, 1.5) // units
 		SHV_VARIANTMAP_FIELD2(double, y, setY, AxisWidth, 2.5) // units
 		SHV_VARIANTMAP_FIELD2(double, m, setM, iniMapHeight, 2) // units
-		SHV_VARIANTMAP_FIELD2(double, v, setV, erticalHeaderWidth, MIN_VERTICAL_HEADER_WIDTH) // units
+		SHV_VARIANTMAP_FIELD2(double, v, setV, erticalHeaderWidth, 15) // units
 		SHV_VARIANTMAP_FIELD2(bool, s, setS, eparateChannels, true)
 		SHV_VARIANTMAP_FIELD2(bool, y, setY, AxisVisible, true)
 
@@ -123,7 +122,7 @@ public:
 	const GraphChannel* channelAt(qsizetype ix, bool throw_exc = shv::core::Exception::Throw) const;
 	core::utils::ShvTypeDescr::Type channelTypeId(qsizetype ix) const;
 	void moveChannel(qsizetype channel, qsizetype new_pos);
-	QString channelName(qsizetype channel) const;
+	const GraphModel::ChannelInfo& channelInfo(qsizetype channel) const;
 
 	void showAllChannels();
 	QSet<QString> channelPaths();
@@ -242,6 +241,8 @@ protected:
 	void drawCenterTopText(QPainter *painter, const QPoint &top_center, const QString &text, const QFont &font, const QColor &color, const QColor &background = QColor());
 	void drawCenterBottomText(QPainter *painter, const QPoint &top_center, const QString &text, const QFont &font, const QColor &color, const QColor &background = QColor());
 	void drawLeftCenterText(QPainter *painter, const QPoint &left_center, const QString &text, const QFont &font, const QColor &color, const QColor &background = QColor());
+        void drawLeftBottomText(QPainter *painter, const QPoint &left_bottom, const QString &text, const QFont &font, const QColor &color, const QColor &background);
+        void drawRightBottomText(QPainter *painter, const QPoint &right_bottom, const QString &text, const QFont &font, const QColor &color, const QColor &background);
 
 	QVector<int> visibleChannels() const;
 	int maximizedChannelIndex() const;
@@ -275,6 +276,7 @@ protected:
 	void makeYAxis(qsizetype channel);
 
 	void moveSouthFloatingBarBottom(int bottom);
+	QString elidedText(const QString &text, const QFont &font, const QRect &rect);
 protected:
 	QVariantMap toolTipValues(const QPoint &pos) const;
 protected:

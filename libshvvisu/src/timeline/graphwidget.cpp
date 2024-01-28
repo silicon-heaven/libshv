@@ -104,8 +104,18 @@ bool GraphWidget::event(QEvent *ev)
 			auto channel_ix = gr->posToChannelHeader(help_event->pos());
 
 			if (channel_ix > -1) {
-				const GraphChannel *ch = gr->channelAt(channel_ix);
-				QToolTip::showText(help_event->globalPos(), ch->shvPath(), this, {}, 2000);
+				GraphModel::ChannelInfo channel_info = gr->channelInfo(channel_ix);
+				QString tooltip;
+
+				if (channel_info.name.isEmpty()) {
+					tooltip = QString("<p style='white-space:pre'><b>%1</b> %2</p>").arg(tr("Path:"), channel_info.shvPath);
+				}
+				else {
+					tooltip = QString("<p style='white-space:pre'><b>%1</b> %2 <br><b>%3</b> %4</p>")
+							.arg(tr("Name:"), channel_info.name, tr("Path:"), channel_info.shvPath);
+				}
+
+				QToolTip::showText(help_event->globalPos(), tooltip, this, {}, 2000);
 				help_event->accept();
 				return true;
 			}

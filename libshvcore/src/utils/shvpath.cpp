@@ -109,7 +109,8 @@ ShvPath ShvPath::joinDirs(const StringViewList &dirs)
 	return joinDirs(dirs.cbegin(), dirs.cend());
 }
 
-static bool need_quotes(const StringView &dir)
+namespace {
+bool need_quotes(const StringView &dir)
 {
 	if(dir.find(ShvPath::SHV_PATH_DELIM) != std::string_view::npos) {
 		if(dir.size() >= 2 && dir.at(0) == ShvPath::SHV_PATH_QUOTE && dir.at(dir.size() - 1) == ShvPath::SHV_PATH_QUOTE)
@@ -117,6 +118,7 @@ static bool need_quotes(const StringView &dir)
 		return true;
 	}
 	return false;
+}
 }
 
 ShvPath ShvPath::joinDirs(std::vector<StringView>::const_iterator first, std::vector<StringView>::const_iterator last)

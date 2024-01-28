@@ -1,6 +1,7 @@
 #include <shv/iotqt/node/shvnodetree.h>
 
 #include <shv/core/utils/shvfilejournal.h>
+#include <shv/chainpack/metamethod.h>
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/core/exception.h>
 #include <shv/core/stringview.h>
@@ -28,7 +29,12 @@ ShvNodeTree::ShvNodeTree(ShvNode *root, QObject *parent)
 
 ShvNodeTree::~ShvNodeTree() = default;
 
-ShvNode* ShvNodeTree::root() const
+ShvNode* ShvNodeTree::root()
+{
+	return m_root;
+}
+
+const ShvNode* ShvNodeTree::root() const
 {
 	return m_root;
 }
@@ -120,16 +126,21 @@ chainpack::RpcValue ShvNodeTree::invokeMethod(const std::string &shv_path, const
 	rq.setMethod(method);
 	rq.setParams(params);
 	rq.setUserId(user_id);
+	rq.setAccessGrant(chainpack::MetaMethod::accessLevelToString(chainpack::MetaMethod::AccessLevel::Service));
 	if(auto *root_nd = root()) {
-		return root_nd->handleRpcRequestImpl(rq);
+		try {
+			return root_nd->handleRpcRequestImpl(rq);
+		}
+		catch (const std::exception &e) {
+			shvError().nospace() << "Method call exception: " << shv_path << ":" << method << " - " << e.what();
+		}
 	}
-	else {
-		shvError() << "Root node is NULL";
-		return {};
-	}
+	shvError() << "Root node is NULL";
+	return {};
 }
 
-static std::string dump_node(ShvNode *parent, int indent)
+namespace {
+std::string dump_node(ShvNode *parent, int indent)
 {
 	std::string ret;
 	for(const std::string &pn : parent->childNames()) {
@@ -140,6 +151,7 @@ static std::string dump_node(ShvNode *parent, int indent)
 		}
 	}
 	return ret;
+}
 }
 
 std::string ShvNodeTree::dumpTree()

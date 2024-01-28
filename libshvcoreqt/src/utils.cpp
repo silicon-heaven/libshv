@@ -95,7 +95,8 @@ bool Utils::isDefaultQVariantValue(const QVariant &val)
 	}
 }
 
-static uint32_t crc32_checksum(const uint8_t *data, int size)
+namespace {
+uint32_t crc32_checksum(const uint8_t *data, int size)
 {
 	uint32_t crc = 0xFFFFFFFF;
 
@@ -111,6 +112,7 @@ static uint32_t crc32_checksum(const uint8_t *data, int size)
 	}
 
 	return ~crc;
+}
 }
 
 std::vector<uint8_t> Utils::compressGZip(const std::vector<uint8_t> &data)

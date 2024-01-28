@@ -1,13 +1,14 @@
 #pragma once
 
-#include "graph.h"
 #include "sample.h"
+#include "../shvvisuglobal.h"
 
 #include <QObject>
 #include <QVariant>
 #include <QVector>
 
 #include <shv/core/utils/shvlogtypeinfo.h>
+#include <shv/coreqt/utils.h>
 
 namespace shv {
 namespace visu {
@@ -41,6 +42,7 @@ public:
 public:
 	virtual qsizetype channelCount() const;
 	const ChannelInfo& channelInfo(qsizetype channel_ix) const;
+	void setChannelName(qsizetype channel_ix, const QString &name);
 	QString typeDescrFieldName( const shv::core::utils::ShvTypeDescr &type_descr, int field_index);
 	const shv::core::utils::ShvTypeInfo &typeInfo() const;
 	void setTypeInfo(const shv::core::utils::ShvTypeInfo &type_info);

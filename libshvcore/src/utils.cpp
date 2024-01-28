@@ -86,7 +86,8 @@ std::string Utils::toHex(const std::basic_string<uint8_t> &bytes)
 	return ret;
 }
 
-static inline char unhex_char(char c)
+namespace {
+inline char unhex_char(char c)
 {
 	if(c >= '0' && c <= '9')
 		return c - '0';
@@ -95,6 +96,7 @@ static inline char unhex_char(char c)
 	if(c >= 'A' && c <= 'F')
 		return static_cast<char>(c - 'A' + 10);
 	return char(0);
+}
 }
 
 std::string Utils::fromHex(const std::string &bytes)
@@ -110,7 +112,8 @@ std::string Utils::fromHex(const std::string &bytes)
 	return ret;
 }
 
-static void create_key_val(RpcValue &map, const StringViewList &path, const RpcValue &val)
+namespace {
+void create_key_val(RpcValue &map, const StringViewList &path, const RpcValue &val)
 {
 	if(path.empty())
 		return;
@@ -125,6 +128,7 @@ static void create_key_val(RpcValue &map, const StringViewList &path, const RpcV
 		create_key_val(mval, path.mid(1), val);
 		map.set(key, mval);
 	}
+}
 }
 
 RpcValue Utils::foldMap(const chainpack::RpcValue::Map &plain_map, char key_delimiter)
@@ -234,8 +238,7 @@ std::string Utils::simplifyPath(const std::string &p)
 {
 	StringViewList ret;
 	StringViewList lst = utils::split(p, '/');
-	for (size_t i = 0; i < lst.size(); ++i) {
-		const StringView &s = lst[i];
+	for (auto s : lst) {
 		if(s == ".")
 			continue;
 		if(s == "..") {

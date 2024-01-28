@@ -1,4 +1,5 @@
-﻿#include "log.h"
+﻿// NOLINTBEGIN we don't care about this file, we don't want to maintain it
+#include "log.h"
 
 #include <shv/visu/svgscene/saxhandler.h>
 
@@ -1438,3 +1439,4 @@ void SaxHandler::addItem(QGraphicsItem *it)
 }
 
 }
+// NOLINTEND

@@ -14,7 +14,8 @@ namespace cp = shv::chainpack;
 
 namespace shv::core::utils {
 
-static std::string getLine(std::istream &in, char sep)
+namespace {
+std::string getLine(std::istream &in, char sep)
 {
 	std::string line;
 	while(in) {
@@ -28,6 +29,7 @@ static std::string getLine(std::istream &in, char sep)
 		line += std::char_traits<char>::to_char_type(c);
 	}
 	return line;
+}
 }
 
 ShvJournalFileReader::ShvJournalFileReader(const std::string &file_name)

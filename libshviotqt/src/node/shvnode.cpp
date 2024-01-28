@@ -581,12 +581,12 @@ const shv::chainpack::MetaMethod *MethodsTableNode::metaMethod(const shv::iotqt:
 //===========================================================
 // RpcValueMapNode
 //===========================================================
-static const std::vector<MetaMethod> meta_methods_value_map_root_node {
+const std::vector<MetaMethod> meta_methods_value_map_root_node {
 	{Rpc::METH_DIR, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_CONFIG},
 	{Rpc::METH_LS, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_CONFIG},
 };
 
-static const std::vector<MetaMethod> meta_methods_value_map_node {
+const std::vector<MetaMethod> meta_methods_value_map_node {
 	{Rpc::METH_DIR, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_READ},
 	{Rpc::METH_LS, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_READ},
 	{Rpc::METH_GET, MetaMethod::Signature::RetVoid, MetaMethod::Flag::IsGetter, Rpc::ROLE_READ},
@@ -761,7 +761,8 @@ bool RpcValueMapNode::isDir(const shv::iotqt::node::ShvNode::StringViewList &shv
 //===========================================================
 // RpcValueConfigNode
 //===========================================================
-static RpcValue mergeMaps(const RpcValue &template_val, const RpcValue &user_val)
+namespace {
+RpcValue mergeMaps(const RpcValue &template_val, const RpcValue &user_val)
 {
 	if(template_val.isMap() && user_val.isMap()) {
 		const shv::chainpack::RpcValue::Map &template_map = template_val.asMap();
@@ -780,7 +781,7 @@ static RpcValue mergeMaps(const RpcValue &template_val, const RpcValue &user_val
 	return user_val;
 }
 
-static RpcValue mergeTemplateMaps(const RpcValue &template_base, const RpcValue &template_over)
+RpcValue mergeTemplateMaps(const RpcValue &template_base, const RpcValue &template_over)
 {
 	if(template_over.isMap() && template_base.isMap()) {
 		const shv::chainpack::RpcValue::Map &map_base = template_base.asMap();
@@ -794,7 +795,7 @@ static RpcValue mergeTemplateMaps(const RpcValue &template_base, const RpcValue 
 	return template_over;
 }
 
-static RpcValue diffMaps(const RpcValue &template_vals, const RpcValue &vals)
+RpcValue diffMaps(const RpcValue &template_vals, const RpcValue &vals)
 {
 	if(template_vals.isMap() && vals.isMap()) {
 		const shv::chainpack::RpcValue::Map &templ_map = template_vals.asMap();
@@ -812,10 +813,10 @@ static RpcValue diffMaps(const RpcValue &template_vals, const RpcValue &vals)
 	return vals;
 }
 
-static const auto METH_ORIG_VALUE = "origValue";
-static const auto METH_RESET_TO_ORIG_VALUE = "resetValue";
+const auto METH_ORIG_VALUE = "origValue";
+const auto METH_RESET_TO_ORIG_VALUE = "resetValue";
 
-static const std::vector<MetaMethod> meta_methods_root_node {
+const std::vector<MetaMethod> meta_methods_root_node {
 	{Rpc::METH_DIR, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_CONFIG},
 	{Rpc::METH_LS, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_CONFIG},
 	{shv::iotqt::node::RpcValueMapNode::M_LOAD, MetaMethod::Signature::RetVoid, 0, Rpc::ROLE_SERVICE},
@@ -823,7 +824,7 @@ static const std::vector<MetaMethod> meta_methods_root_node {
 	{shv::iotqt::node::RpcValueMapNode::M_COMMIT, MetaMethod::Signature::RetVoid, 0, Rpc::ROLE_ADMIN},
 };
 
-static const std::vector<MetaMethod> meta_methods_node {
+const std::vector<MetaMethod> meta_methods_node {
 	{Rpc::METH_DIR, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_CONFIG},
 	{Rpc::METH_LS, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_CONFIG},
 	{Rpc::METH_GET, MetaMethod::Signature::RetVoid, MetaMethod::Flag::IsGetter, Rpc::ROLE_CONFIG},
@@ -831,6 +832,7 @@ static const std::vector<MetaMethod> meta_methods_node {
 	{METH_ORIG_VALUE, MetaMethod::Signature::RetVoid, MetaMethod::Flag::IsGetter, Rpc::ROLE_READ},
 	{METH_RESET_TO_ORIG_VALUE, MetaMethod::Signature::RetVoid, MetaMethod::Flag::None, Rpc::ROLE_WRITE},
 };
+}
 
 RpcValueConfigNode::RpcValueConfigNode(const std::string &node_id, ShvNode *parent)
 	: Super(node_id, parent)

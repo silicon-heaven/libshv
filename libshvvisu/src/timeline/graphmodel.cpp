@@ -81,7 +81,8 @@ YRange GraphModel::yRange(qsizetype channel_ix) const
 	return ret;
 }
 
-static shv::core::utils::ShvTypeDescr::Type qt_to_shv_type(int meta_type_id)
+namespace {
+shv::core::utils::ShvTypeDescr::Type qt_to_shv_type(int meta_type_id)
 {
 	using Type = shv::core::utils::ShvTypeDescr::Type;
 	switch (meta_type_id) {
@@ -100,6 +101,7 @@ static shv::core::utils::ShvTypeDescr::Type qt_to_shv_type(int meta_type_id)
 		return Type::String;
 	}
 	return Type::Invalid;
+}
 }
 
 double GraphModel::valueToDouble(const QVariant v, shv::core::utils::ShvTypeDescr::Type type_id, bool *ok)
@@ -320,6 +322,16 @@ qsizetype GraphModel::channelCount() const
 const GraphModel::ChannelInfo& GraphModel::channelInfo(qsizetype channel_ix) const
 {
 	return m_channelsInfo.at(channel_ix);
+}
+
+void GraphModel::setChannelName(qsizetype channel_ix, const QString &name)
+{
+	if (channel_ix < m_channelsInfo.count()) {
+		m_channelsInfo[channel_ix].name = name;
+	}
+	else {
+		shvWarning() << "Cannot find channel with index" << channel_ix;
+	}
 }
 
 QString GraphModel::typeDescrFieldName(const shv::core::utils::ShvTypeDescr &type_descr, int field_index)

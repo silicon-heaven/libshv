@@ -184,7 +184,6 @@ void TcpSocket::onDataReadyRead()
 	if (!m_frameReader.isEmpty()) {
 		emit readyRead();
 	}
-
 }
 
 void TcpSocket::flushWriteBuffer()

@@ -1,6 +1,5 @@
 #include <shv/coreqt/log.h>
 
-#include <QString>
 #include <QByteArray>
 #include <QMetaType>
 #include <QString>

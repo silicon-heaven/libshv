@@ -5,7 +5,8 @@
 #include <QFile>
 #include <QDir>
 
-static QList<QSslCertificate> load_ssl_certificate_chain(const QString &cert_file_name)
+namespace {
+QList<QSslCertificate> load_ssl_certificate_chain(const QString &cert_file_name)
 {
 	QFile cert_file(cert_file_name);
 	if(!cert_file.open(QIODevice::ReadOnly)) {
@@ -17,6 +18,7 @@ static QList<QSslCertificate> load_ssl_certificate_chain(const QString &cert_fil
 		shvDebug() << "CERT:" << cert.toText();
 	}
 	return certificate_chain;
+}
 }
 
 QSslConfiguration load_ssl_configuration(shv::broker::AppCliOptions *opts)
