@@ -12,9 +12,7 @@
 
 #include <string>
 
-namespace shv {
-namespace iotqt {
-namespace rpc {
+namespace shv::iotqt::rpc {
 
 class Socket;
 
@@ -67,5 +65,5 @@ protected:
 	shv::chainpack::RpcValue m_connectionOptions;
 };
 
-}}}
+}
 

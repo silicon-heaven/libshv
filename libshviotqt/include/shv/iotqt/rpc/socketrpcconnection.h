@@ -11,9 +11,7 @@ class QSslError;
 class QTcpSocket;
 class QThread;
 
-namespace shv {
-namespace iotqt {
-namespace rpc {
+namespace shv::iotqt::rpc {
 
 class Socket;
 
@@ -57,5 +55,5 @@ protected:
 	Socket *m_socket = nullptr;
 };
 
-}}}
+}
 

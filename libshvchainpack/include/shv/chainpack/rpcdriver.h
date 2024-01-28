@@ -6,8 +6,7 @@
 
 #include <string>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class ParseException;
 
@@ -41,5 +40,4 @@ private:
 	static int s_defaultRpcTimeoutMsec;
 };
 
-} // namespace chainpack
-} // namespace shv
+}

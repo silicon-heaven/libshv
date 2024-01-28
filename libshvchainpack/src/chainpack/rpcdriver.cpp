@@ -8,11 +8,6 @@
 
 #include <necrolog.h>
 
-#include <sstream>
-#include <iostream>
-#include <cassert>
-#include <algorithm>
-
 #define logRpcRawMsg() nCMessage("RpcRawMsg")
 #define logRpcData() nCMessage("RpcData")
 #define logRpcDataW() nCWarning("RpcData")

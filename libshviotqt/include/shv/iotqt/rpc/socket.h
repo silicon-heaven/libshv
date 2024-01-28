@@ -15,9 +15,7 @@ class QSerialPort;
 
 namespace shv::chainpack { class ParseException; }
 
-namespace shv {
-namespace iotqt {
-namespace rpc {
+namespace shv::iotqt::rpc {
 
 class FrameReader {
 public:
@@ -156,6 +154,6 @@ protected:
 	QSslSocket::PeerVerifyMode m_peerVerifyMode;
 };
 #endif
-} // namespace rpc
-} // namespace iotqt
-} // namespace shv
+} // namespace shv::iotqt::rpc
+
+

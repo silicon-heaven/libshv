@@ -5,9 +5,7 @@
 
 class QWebSocket;
 
-namespace shv {
-namespace iotqt {
-namespace rpc {
+namespace shv::iotqt::rpc {
 
 class SHVIOTQT_DECL_EXPORT WebSocket : public Socket
 {
@@ -39,8 +37,8 @@ private:
 	StreamFrameWriter m_frameWriter;
 };
 
-} // namespace rpc
-} // namespace iotqt
-} // namespace shv
+} // namespace shv::iotqt::rpc
+
+
 
 #endif // SHV_IOTQT_RPC_WEBSOCKET_H

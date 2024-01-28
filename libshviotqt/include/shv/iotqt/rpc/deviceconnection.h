@@ -2,9 +2,7 @@
 
 #include "clientconnection.h"
 
-namespace shv {
-namespace iotqt {
-namespace rpc {
+namespace shv::iotqt::rpc {
 
 class DeviceAppCliOptions;
 
@@ -21,6 +19,6 @@ public:
 	void setCliOptions(const DeviceAppCliOptions *cli_opts);
 };
 
-} // namespace rpc
-} // namespace iotqt
-} // namespace shv
+} // namespace shv::iotqt::rpc
+
+

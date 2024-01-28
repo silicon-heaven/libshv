@@ -3,9 +3,7 @@
 
 #include "socket.h"
 
-namespace shv {
-namespace iotqt {
-namespace rpc {
+namespace shv::iotqt::rpc {
 
 class SHVIOTQT_DECL_EXPORT LocalSocket : public Socket
 {
@@ -37,8 +35,8 @@ protected:
 	FrameWriter *m_frameWriter;
 };
 
-} // namespace rpc
-} // namespace iotqt
-} // namespace shv
+} // namespace shv::iotqt::rpc
+
+
 
 #endif // SHV_IOTQT_RPC_LOCALSOCKET_H

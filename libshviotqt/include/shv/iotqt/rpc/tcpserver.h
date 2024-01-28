@@ -7,11 +7,9 @@
 
 #include <QTcpServer>
 
-namespace shv { namespace chainpack { class RpcMessage; }}
+namespace shv::chainpack { class RpcMessage; }
 
-namespace shv {
-namespace iotqt {
-namespace rpc {
+namespace shv::iotqt::rpc {
 
 class ServerConnection;
 
@@ -36,5 +34,5 @@ protected:
 	std::map<int, ServerConnection*> m_connections;
 };
 
-}}}
+}
 
