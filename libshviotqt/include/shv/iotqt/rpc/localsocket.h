@@ -1,21 +1,21 @@
-#ifndef SHV_IOTQT_RPC_WEBSOCKET_H
-#define SHV_IOTQT_RPC_WEBSOCKET_H
+#ifndef SHV_IOTQT_RPC_LOCALSOCKET_H
+#define SHV_IOTQT_RPC_LOCALSOCKET_H
 
 #include "socket.h"
-
-class QWebSocket;
 
 namespace shv {
 namespace iotqt {
 namespace rpc {
 
-class SHVIOTQT_DECL_EXPORT WebSocket : public Socket
+class SHVIOTQT_DECL_EXPORT LocalSocket : public Socket
 {
 	Q_OBJECT
 
 	using Super = Socket;
 public:
-	WebSocket(QWebSocket *socket, QObject *parent = nullptr);
+	enum class Protocol {Stream, Serial};
+	LocalSocket(QLocalSocket *socket, Protocol protocol, QObject *parent = nullptr);
+	~LocalSocket() override;
 
 	std::string readFrameData() override;
 	void writeFrameData(std::string &&frame_data) override;
@@ -28,19 +28,17 @@ public:
 	QHostAddress peerAddress() const override;
 	quint16 peerPort() const override;
 	void ignoreSslErrors() override;
-private:
+protected:
+	void onDataReadyRead();
 	void flushWriteBuffer();
-	void onTextMessageReceived(const QString &message);
-	void onBinaryMessageReceived(const QByteArray &message);
-private:
-	QWebSocket *m_socket = nullptr;
-
-	StreamFrameReader m_frameReader;
-	StreamFrameWriter m_frameWriter;
+protected:
+	QLocalSocket *m_socket = nullptr;
+	FrameReader *m_frameReader;
+	FrameWriter *m_frameWriter;
 };
 
 } // namespace rpc
 } // namespace iotqt
 } // namespace shv
 
-#endif // SHV_IOTQT_RPC_WEBSOCKET_H
+#endif // SHV_IOTQT_RPC_LOCALSOCKET_H

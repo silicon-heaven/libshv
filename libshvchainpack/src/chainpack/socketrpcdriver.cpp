@@ -53,20 +53,16 @@ void SocketRpcDriver::idleTaskOnSelectTimeout()
 {
 }
 
-int64_t SocketRpcDriver::writeFrameData(std::string &&frame_data)
+void SocketRpcDriver::writeFrameData(std::string &&frame_data)
 {
 	if(!isOpen()) {
 		nInfo() << "Write to closed socket";
-		return 0;
+		return;
 	}
-	flush();
 	if (m_writeBuffer.size() + frame_data.size() < m_maxWriteBufferLength) {
-		auto sz = frame_data.size();
 		m_writeBuffer += std::move(frame_data);
 		flush();
-		return sz;
 	}
-	return -1;
 }
 
 bool SocketRpcDriver::flush()

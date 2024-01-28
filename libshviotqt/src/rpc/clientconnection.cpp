@@ -2,6 +2,7 @@
 
 #include <shv/iotqt/rpc/clientappclioptions.h>
 #include <shv/iotqt/rpc/socket.h>
+#include <shv/iotqt/rpc/localsocket.h>
 #include <shv/iotqt/rpc/socketrpcconnection.h>
 #include <shv/iotqt/rpc/websocket.h>
 
@@ -207,9 +208,11 @@ void ClientConnection::open()
 #endif
 		}
 		else if(scheme == Socket::Scheme::LocalSocket) {
-			socket = new LocalSocket(new QLocalSocket());
+			socket = new LocalSocket(new QLocalSocket(), LocalSocket::Protocol::Stream);
 		}
-
+		else if(scheme == Socket::Scheme::LocalSocketSerial) {
+			socket = new LocalSocket(new QLocalSocket(), LocalSocket::Protocol::Serial);
+		}
 #ifdef QT_SERIALPORT_LIB
 		else if(scheme == Socket::Scheme::SerialPort) {
 			socket = new SerialPortSocket(new QSerialPort());
@@ -290,7 +293,7 @@ void ClientConnection::sendRpcMessage(const cp::RpcMessage &rpc_msg)
 				<< std::string_view(m_rawRpcMessageLog? rpc_msg.toCpon(): rpc_msg.toPrettyString()).substr(0, MAX_LOG_LEN);
 		}
 	}
-	sendRpcMessage(rpc_msg);
+	Super::sendRpcMessage(rpc_msg);
 }
 
 void ClientConnection::onRpcMessageReceived(const chainpack::RpcMessage &rpc_msg)

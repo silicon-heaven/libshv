@@ -73,6 +73,10 @@ std::string RpcFrame::toChainPack() const
 RpcFrame RpcFrame::fromChainPack(std::string &&frame_data)
 {
 	std::istringstream in(frame_data);
+	auto protocol = in.get();
+	if (protocol != static_cast<int>(Rpc::ProtocolType::ChainPack)) {
+		throw std::runtime_error("Invalid protocol type");
+	}
 	ChainPackReader rd(in);
 	RpcValue::MetaData meta;
 	rd.read(meta);

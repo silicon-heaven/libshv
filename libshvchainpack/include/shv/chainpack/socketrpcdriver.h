@@ -21,7 +21,7 @@ public:
 	void sendNotify(std::string &&method, const RpcValue &result);
 protected:
 	bool isOpen() override;
-	int64_t writeFrameData(std::string &&frame_data) override;
+	void writeFrameData(std::string &&frame_data) override;
 
 	virtual void idleTaskOnSelectTimeout();
 private:

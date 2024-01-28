@@ -16,7 +16,6 @@ WebSocket::WebSocket(QWebSocket *socket, QObject *parent)
 	connect(m_socket, &QWebSocket::disconnected, this, &Socket::disconnected);
 	connect(m_socket, &QWebSocket::textMessageReceived, this, &WebSocket::onTextMessageReceived);
 	connect(m_socket, &QWebSocket::binaryMessageReceived, this, &WebSocket::onBinaryMessageReceived);
-	connect(m_socket, &QWebSocket::bytesWritten, this, &Socket::bytesWritten);
 	connect(m_socket, &QWebSocket::stateChanged, this, &Socket::stateChanged);
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
 	connect(m_socket, &QWebSocket::errorOccurred, this, &Socket::error);
@@ -64,33 +63,17 @@ quint16 WebSocket::peerPort() const
 	return m_socket->peerPort();
 }
 
-QByteArray WebSocket::readAll()
+std::string WebSocket::readFrameData()
 {
-	QByteArray ret = m_readBuffer;
-	m_readBuffer.clear();
-	return ret;
+	if(m_frameReader.isEmpty())
+		return {};
+	return m_frameReader.getFrame();
 }
 
-qint64 WebSocket::write(const char *data, qint64 data_size)
+void WebSocket::writeFrameData(std::string &&frame_data)
 {
-	QByteArray ba(data, static_cast<int>(data_size));
-	m_writeBuffer.append(ba);
-	return data_size;
-}
-
-void WebSocket::writeMessageBegin()
-{
-	shvDebug() << __FUNCTION__;
-	m_writeBuffer.clear();
-}
-
-void WebSocket::writeMessageEnd()
-{
-	shvDebug() << __FUNCTION__ << "message len:" << m_writeBuffer.size() << "\n" << m_writeBuffer;
-	qint64 n = m_socket->sendBinaryMessage(m_writeBuffer);
-	if(n < m_writeBuffer.size())
-		shvError() << "Send message error, only" << n << "bytes written.";
-	m_socket->flush();
+	m_frameWriter.addFrame(std::move(frame_data));
+	flushWriteBuffer();
 }
 
 void WebSocket::ignoreSslErrors()
@@ -100,18 +83,37 @@ void WebSocket::ignoreSslErrors()
 #endif
 }
 
+void WebSocket::flushWriteBuffer()
+{
+	while (true) {
+		auto data = m_frameWriter.getMessageDataToWrite();
+		if (data.isEmpty())
+			break;
+		auto n = m_socket->sendBinaryMessage(data);
+		if (n < data.size()) {
+			shvError() << "WebSocket message partialy sent, only" << n << "of" << data.size() << "bytes.";
+		}
+	}
+	m_socket->flush();
+}
+
 void WebSocket::onTextMessageReceived(const QString &message)
 {
 	shvDebug() << "text message received:" << message;
-	m_readBuffer.append(message.toUtf8());
-	emit readyRead();
+	auto ba = message.toUtf8();
+	m_frameReader.addData(std::string_view(ba.constData(), ba.size()));
+	if (!m_frameReader.isEmpty()) {
+		emit readyRead();
+	}
 }
 
 void WebSocket::onBinaryMessageReceived(const QByteArray &message)
 {
 	shvDebug() << "binary message received:" << message;
-	m_readBuffer.append(message);
-	emit readyRead();
+	m_frameReader.addData(std::string_view(message.constData(), message.size()));
+	if (!m_frameReader.isEmpty()) {
+		emit readyRead();
+	}
 }
 
 } // namespace shv

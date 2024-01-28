@@ -56,9 +56,6 @@ void SocketRpcConnection::setSocket(Socket *socket)
 	bool is_test_run = QCoreApplication::instance() == nullptr;
 	connect(socket, &Socket::readyRead, this, &SocketRpcConnection::onReadyRead, is_test_run? Qt::AutoConnection: Qt::QueuedConnection);
 	connect(socket, &Socket::readyRead, this, &SocketRpcConnection::socketDataReadyRead, is_test_run? Qt::AutoConnection: Qt::QueuedConnection);
-	// queued connection here is to write data in next event loop, not directly when previous chunk is written
-	// possibly not needed, its my feeling to do it this way
-	connect(socket, &Socket::bytesWritten, this, &SocketRpcConnection::onBytesWritten, is_test_run? Qt::AutoConnection: Qt::QueuedConnection);
 	connect(socket, &Socket::connected, this, [this]() {
 		shvDebug() << this << "Socket connected!!!";
 		emit socketConnectedChanged(true);
@@ -102,7 +99,7 @@ void SocketRpcConnection::connectToHost(const QUrl &url)
 
 void SocketRpcConnection::onReadyRead()
 {
-	QByteArray ba = socket()->readAll();
+	auto frame_data = socket()->readFrameData();
 #ifdef DUMP_DATA_FILE
 	QFile *f = findChild<QFile*>("DUMP_DATA_FILE");
 	if(f) {
@@ -110,12 +107,7 @@ void SocketRpcConnection::onReadyRead()
 		f->flush();
 	}
 #endif
-	onFrameDataRead(ba.toStdString());
-}
-
-void SocketRpcConnection::onBytesWritten()
-{
-	logRpcData() << "onBytesWritten()";
+	onFrameDataRead(std::move(frame_data));
 }
 
 void SocketRpcConnection::onParseDataException(const chainpack::ParseException &e)
@@ -129,9 +121,9 @@ bool SocketRpcConnection::isOpen()
 	return isSocketConnected();
 }
 
-int64_t SocketRpcConnection::writeFrameData(std::string &&frame_data)
+void SocketRpcConnection::writeFrameData(std::string &&frame_data)
 {
-	return socket()->write(frame_data.data(), frame_data.size());
+	socket()->writeFrameData(std::move(frame_data));
 }
 
 void SocketRpcConnection::sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg)

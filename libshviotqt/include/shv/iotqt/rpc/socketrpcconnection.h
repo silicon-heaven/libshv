@@ -47,11 +47,10 @@ public:
 protected:
 	// RpcDriver interface
 	bool isOpen() Q_DECL_OVERRIDE;
-	int64_t writeFrameData(std::string &&frame_data) override;
+	void writeFrameData(std::string &&frame_data) override;
 
 	Socket* socket();
 	void onReadyRead();
-	void onBytesWritten();
 
 	void onParseDataException(const shv::chainpack::ParseException &e) override;
 protected:

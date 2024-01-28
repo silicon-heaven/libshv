@@ -52,8 +52,21 @@ void RpcDriver::sendRpcFrame(RpcFrame &&frame)
 
 void RpcDriver::onFrameDataRead(std::string &&frame_data)
 {
-	logRpcData().nospace() << __FUNCTION__ << " " << frame_data.length() << " bytes of data read:\n" << shv::chainpack::Utils::hexDump(frame_data);
-	processReadFrameData(std::move(frame_data));
+	logRpcData() << __PRETTY_FUNCTION__ << "+++++++++++++++++++++++++++++++++";
+	logRpcData().nospace() << "FRAME DATA " << frame_data.size() << " bytes of data read:\n" << shv::chainpack::Utils::hexDump(frame_data);
+	try {
+		auto frame = RpcFrame::fromChainPack(std::move(frame_data));
+		onRpcFrameReceived(std::move(frame));
+	}
+	catch (const ParseException &e) {
+		logRpcDataW() << "ERROR - Rpc frame data corrupted:" << e.msg();
+		//logRpcDataW() << "The error occured in data:\n" << shv::chainpack::utils::hexDump(m_readData.data(), 1024);
+		onParseDataException(e);
+		return;
+	}
+	catch (const std::exception &e) {
+		nError() << "ERROR - Rpc frame process error:" << e.what();
+	}
 }
 
 int RpcDriver::defaultRpcTimeoutMsec()
@@ -64,27 +77,6 @@ int RpcDriver::defaultRpcTimeoutMsec()
 void RpcDriver::setDefaultRpcTimeoutMsec(int msec)
 {
 	s_defaultRpcTimeoutMsec = msec;
-}
-
-void RpcDriver::processReadFrameData(std::string &&frame_data)
-{
-	logRpcData() << __PRETTY_FUNCTION__ << "+++++++++++++++++++++++++++++++++";
-	using namespace shv::chainpack;
-
-	logRpcData().nospace() << "READ DATA " << frame_data.size() << " bytes of data read:\n" << shv::chainpack::Utils::hexDump(frame_data);
-	try {
-		auto frame = RpcFrame::fromChainPack(std::move(frame_data));
-		onRpcFrameReceived(std::move(frame));
-	}
-	catch (const ParseException &e) {
-		logRpcDataW() << "ERROR - RpcMessage header corrupted:" << e.msg();
-		//logRpcDataW() << "The error occured in data:\n" << shv::chainpack::utils::hexDump(m_readData.data(), 1024);
-		onParseDataException(e);
-		return;
-	}
-	catch (const std::exception &e) {
-		nError() << "processReadFrameData exception:" << e.what();
-	}
 }
 
 void RpcDriver::onRpcFrameReceived(RpcFrame &&frame)

@@ -15,6 +15,7 @@ qt_add_library(libshviotqt
 	src/rpc/rpcresponsecallback.cpp
 	src/rpc/serverconnection.cpp
 	src/rpc/socket.cpp
+	src/rpc/localsocket.cpp
 	src/rpc/socketrpcconnection.cpp
 	src/rpc/tcpserver.cpp
 	src/utils.cpp
@@ -34,6 +35,7 @@ qt_add_library(libshviotqt
 	include/shv/iotqt/rpc/tcpserver.h
 	include/shv/iotqt/rpc/rpcresponsecallback.h
 	include/shv/iotqt/rpc/socket.h
+	include/shv/iotqt/rpc/localsocket.h
 	include/shv/iotqt/rpc/clientconnection.h
 	include/shv/iotqt/rpc/serverconnection.h
 	include/shv/iotqt/rpc/serialportsocket.h
