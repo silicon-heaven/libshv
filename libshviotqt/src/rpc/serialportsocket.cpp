@@ -136,7 +136,7 @@ void SerialFrameReader::finishFrame()
 			return;
 		}
 	}
-	auto protocol = static_cast<uint8_t>(shv::chainpack::Rpc::ProtocolType::ChainPack);
+	auto protocol = static_cast<char>(shv::chainpack::Rpc::ProtocolType::ChainPack);
 	if (m_readBuffer.empty() || m_readBuffer[0] != protocol) {
 		logSerialPortSocketD() << "Protocol type Error";
 		setState(ReadState::WaitingForStx);
@@ -149,7 +149,7 @@ void SerialFrameReader::finishFrame()
 //======================================================
 // SerialFrameWriter
 //======================================================
-void SerialFrameWriter::addFrame(std::string &&frame_data)
+void SerialFrameWriter::addFrame(QByteArrayView frame_data)
 {
 	QByteArray data_to_write;
 	auto write_escaped = [&data_to_write](uint8_t b) {

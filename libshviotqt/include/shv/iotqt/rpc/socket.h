@@ -38,7 +38,7 @@ protected:
 class FrameWriter {
 public:
 	virtual ~FrameWriter() = default;
-	virtual void addFrame(std::string &&frame_data) = 0;
+	virtual void addFrame(QByteArrayView frame_data) = 0;
 	void flushToDevice(QIODevice *device);
 #ifdef WITH_SHV_WEBSOCKETS
 	void flushToWebSocket(QWebSocket *socket);
@@ -60,7 +60,7 @@ class StreamFrameWriter : public FrameWriter {
 public:
 	~StreamFrameWriter() override = default;
 
-	void addFrame(std::string &&frame_data) override;
+	void addFrame(QByteArrayView frame_data) override;
 };
 
 /// wrapper class for QTcpSocket and QWebSocket

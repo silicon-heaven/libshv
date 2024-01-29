@@ -36,7 +36,7 @@ class SerialFrameWriter : public FrameWriter {
 public:
 	~SerialFrameWriter() override = default;
 
-	void addFrame(std::string &&frame_data) override;
+	void addFrame(QByteArrayView frame_data) override;
 public:
 	bool m_withCrcCheck = true;
 };

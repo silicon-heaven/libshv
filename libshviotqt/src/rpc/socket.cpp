@@ -86,7 +86,7 @@ void StreamFrameReader::addData(std::string_view data)
 //======================================================
 // StreamFrameWriter
 //======================================================
-void StreamFrameWriter::addFrame(std::string &&frame_data)
+void StreamFrameWriter::addFrame(QByteArrayView frame_data)
 {
 	using namespace shv::chainpack;
 	std::ostringstream out;
