@@ -73,6 +73,7 @@ public:
 protected:
 	bool isShvPathMutedInLog(const std::string &shv_path, const std::string &method) const;
 public:
+	[[deprecated]] void sendMessage(const shv::chainpack::RpcMessage &rpc_msg) { sendRpcMessage(rpc_msg); }
 	/// IRpcConnection interface implementation
 	void sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg) override;
 	void onRpcMessageReceived(const shv::chainpack::RpcMessage &msg) override;

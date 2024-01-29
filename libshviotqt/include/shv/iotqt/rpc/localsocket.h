@@ -18,7 +18,7 @@ public:
 	~LocalSocket() override;
 
 	std::string readFrameData() override;
-	void writeFrameData(std::string &&frame_data) override;
+	void writeFrameData(const std::string &frame_data) override;
 
 	void connectToHost(const QUrl &url) override;
 	void close() override;

@@ -149,7 +149,7 @@ void SerialFrameReader::finishFrame()
 //======================================================
 // SerialFrameWriter
 //======================================================
-void SerialFrameWriter::addFrame(QByteArrayView frame_data)
+void SerialFrameWriter::addFrame(const std::string &frame_data)
 {
 	QByteArray data_to_write;
 	auto write_escaped = [&data_to_write](uint8_t b) {
@@ -318,9 +318,9 @@ std::string SerialPortSocket::readFrameData()
 	return m_frameReader.getFrame();
 }
 
-void SerialPortSocket::writeFrameData(std::string &&frame_data)
+void SerialPortSocket::writeFrameData(const std::string &frame_data)
 {
-	m_frameWriter.addFrame(std::move(frame_data));
+	m_frameWriter.addFrame(frame_data);
 	flushWriteBuffer();
 }
 

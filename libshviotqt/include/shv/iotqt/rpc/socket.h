@@ -10,6 +10,7 @@
 #include <deque>
 
 class QTcpSocket;
+
 #ifdef WITH_SHV_WEBSOCKETS
 class QWebSocket;
 #endif
@@ -35,10 +36,11 @@ protected:
 	std::deque<std::string> m_frames;
 };
 
-class FrameWriter {
+class FrameWriter
+{
 public:
 	virtual ~FrameWriter() = default;
-	virtual void addFrame(QByteArrayView frame_data) = 0;
+	virtual void addFrame(const std::string &frame_data) = 0;
 	void flushToDevice(QIODevice *device);
 #ifdef WITH_SHV_WEBSOCKETS
 	void flushToWebSocket(QWebSocket *socket);
@@ -47,7 +49,8 @@ protected:
 	QList<QByteArray> m_messageDataToWrite;
 };
 
-class StreamFrameReader : public FrameReader {
+class StreamFrameReader : public FrameReader
+{
 public:
 	~StreamFrameReader() override = default;
 
@@ -56,11 +59,12 @@ private:
 	std::string m_readBuffer;
 };
 
-class StreamFrameWriter : public FrameWriter {
+class StreamFrameWriter : public FrameWriter
+{
 public:
 	~StreamFrameWriter() override = default;
 
-	void addFrame(QByteArrayView frame_data) override;
+	void addFrame(const std::string &frame_data) override;
 };
 
 /// wrapper class for QTcpSocket and QWebSocket
@@ -88,7 +92,7 @@ public:
 	virtual quint16 peerPort() const = 0;
 
 	virtual std::string readFrameData() = 0;
-	virtual void writeFrameData(std::string &&frame_data) = 0;
+	virtual void writeFrameData(const std::string &frame_data) = 0;
 
 	virtual void ignoreSslErrors() = 0;
 
@@ -115,7 +119,7 @@ public:
 	TcpSocket(QTcpSocket *socket, QObject *parent = nullptr);
 
 	std::string readFrameData() override;
-	void writeFrameData(std::string &&frame_data) override;
+	void writeFrameData(const std::string &frame_data) override;
 
 	void connectToHost(const QUrl &url) override;
 	void close() override;

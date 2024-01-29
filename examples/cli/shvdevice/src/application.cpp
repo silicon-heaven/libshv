@@ -87,7 +87,7 @@ Application::Application(int &argc, char **argv, AppCliOptions* cli_opts)
 
 	auto root = new AppRootNode();
 	m_shvTree = new si::node::ShvNodeTree(root, this);
-	connect(m_shvTree->root(), &si::node::ShvRootNode::sendRpcMessage, m_rpcConnection, &si::rpc::ClientConnection::sendMessage);
+	connect(m_shvTree->root(), &si::node::ShvRootNode::sendRpcMessage, m_rpcConnection, &si::rpc::ClientConnection::sendRpcMessage);
 	//m_shvTree->mkdir("sys/rproc");
 
 	QTimer::singleShot(0, m_rpcConnection, &si::rpc::ClientConnection::open);

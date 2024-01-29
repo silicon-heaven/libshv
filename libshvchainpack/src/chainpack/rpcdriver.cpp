@@ -31,7 +31,7 @@ void RpcDriver::sendRpcMessage(const RpcMessage &msg)
 	logRpcRawMsg() << SND_LOG_ARROW << msg.toPrettyString();
 	auto frame_data = msg.toChainPack();
 	logRpcData() << "SEND data:" << Utils::toHex(frame_data, 0, 250);
-	writeFrameData(std::move(frame_data));
+	writeFrameData(frame_data);
 }
 
 void RpcDriver::sendRpcFrame(RpcFrame &&frame)
@@ -42,7 +42,7 @@ void RpcDriver::sendRpcFrame(RpcFrame &&frame)
 				   << Utils::toHex(frame.data, 0, 250);
 	auto frame_data = frame.toChainPack();
 	logRpcData() << "SEND data:" << Utils::toHex(frame_data, 0, 250);
-	writeFrameData(std::move(frame_data));
+	writeFrameData(frame_data);
 }
 
 void RpcDriver::onFrameDataRead(std::string &&frame_data)

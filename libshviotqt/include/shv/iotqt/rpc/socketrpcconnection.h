@@ -45,7 +45,7 @@ public:
 protected:
 	// RpcDriver interface
 	bool isOpen() Q_DECL_OVERRIDE;
-	void writeFrameData(std::string &&frame_data) override;
+	void writeFrameData(const std::string &frame_data) override;
 
 	Socket* socket();
 	void onReadyRead();

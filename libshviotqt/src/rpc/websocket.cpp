@@ -70,9 +70,9 @@ std::string WebSocket::readFrameData()
 	return m_frameReader.getFrame();
 }
 
-void WebSocket::writeFrameData(std::string &&frame_data)
+void WebSocket::writeFrameData(const std::string &frame_data)
 {
-	m_frameWriter.addFrame(std::move(frame_data));
+	m_frameWriter.addFrame(frame_data);
 	flushWriteBuffer();
 }
 

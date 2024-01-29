@@ -11,7 +11,8 @@ class QTimer;
 
 namespace shv::iotqt::rpc {
 
-class SerialFrameReader : public FrameReader {
+class SerialFrameReader : public FrameReader
+{
 public:
 	enum class ReadState {WaitingForStx, WaitingForEtx, WaitingForCrc};
 public:
@@ -32,12 +33,13 @@ private:
 	bool m_withCrcCheck = true;
 };
 
-class SerialFrameWriter : public FrameWriter {
+class SerialFrameWriter : public FrameWriter
+{
 public:
 	~SerialFrameWriter() override = default;
 
-	void addFrame(QByteArrayView frame_data) override;
-public:
+	void addFrame(const std::string &frame_data) override;
+private:
 	bool m_withCrcCheck = true;
 };
 
@@ -50,7 +52,7 @@ public:
 	SerialPortSocket(QSerialPort *port, QObject *parent = nullptr);
 
 	std::string readFrameData() override;
-	void writeFrameData(std::string &&frame_data) override;
+	void writeFrameData(const std::string &frame_data) override;
 
 	void setReceiveTimeout(int millis);
 

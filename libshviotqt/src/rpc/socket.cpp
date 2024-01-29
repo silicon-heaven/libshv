@@ -86,7 +86,7 @@ void StreamFrameReader::addData(std::string_view data)
 //======================================================
 // StreamFrameWriter
 //======================================================
-void StreamFrameWriter::addFrame(QByteArrayView frame_data)
+void StreamFrameWriter::addFrame(const std::string &frame_data)
 {
 	using namespace shv::chainpack;
 	std::ostringstream out;
@@ -97,7 +97,7 @@ void StreamFrameWriter::addFrame(QByteArrayView frame_data)
 	auto len_data = out.str();
 	QByteArray data(len_data.data(), len_data.size());
 	data += static_cast<char>(Rpc::ProtocolType::ChainPack);
-	data.append(frame_data);
+	data.append(frame_data.data(), frame_data.size());
 	m_messageDataToWrite.append(data);
 }
 
@@ -205,9 +205,9 @@ std::string TcpSocket::readFrameData()
 	return m_frameReader.getFrame();
 }
 
-void TcpSocket::writeFrameData(std::string &&frame_data)
+void TcpSocket::writeFrameData(const std::string &frame_data)
 {
-	m_frameWriter.addFrame(std::move(frame_data));
+	m_frameWriter.addFrame(frame_data);
 	flushWriteBuffer();
 }
 

@@ -53,7 +53,7 @@ void SocketRpcDriver::idleTaskOnSelectTimeout()
 {
 }
 
-void SocketRpcDriver::writeFrameData(std::string &&frame_data)
+void SocketRpcDriver::writeFrameData(const std::string &frame_data)
 {
 	if(!isOpen()) {
 		nInfo() << "Write to closed socket";
