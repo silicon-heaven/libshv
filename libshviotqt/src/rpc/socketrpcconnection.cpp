@@ -55,7 +55,6 @@ void SocketRpcConnection::setSocket(Socket *socket)
 	});
 	bool is_test_run = QCoreApplication::instance() == nullptr;
 	connect(socket, &Socket::readyRead, this, &SocketRpcConnection::onReadyRead, is_test_run? Qt::AutoConnection: Qt::QueuedConnection);
-	connect(socket, &Socket::readyRead, this, &SocketRpcConnection::socketDataReadyRead, is_test_run? Qt::AutoConnection: Qt::QueuedConnection);
 	connect(socket, &Socket::connected, this, [this]() {
 		shvDebug() << this << "Socket connected!!!";
 		emit socketConnectedChanged(true);
@@ -99,15 +98,20 @@ void SocketRpcConnection::connectToHost(const QUrl &url)
 
 void SocketRpcConnection::onReadyRead()
 {
-	auto frame_data = socket()->readFrameData();
-#ifdef DUMP_DATA_FILE
-	QFile *f = findChild<QFile*>("DUMP_DATA_FILE");
-	if(f) {
-		f->write(ba.constData(), ba.length());
-		f->flush();
-	}
-#endif
-	onFrameDataRead(std::move(frame_data));
+	while (true) {
+		auto frame_data = socket()->readFrameData();
+		if (frame_data.empty())
+			break;
+	#ifdef DUMP_DATA_FILE
+		QFile *f = findChild<QFile*>("DUMP_DATA_FILE");
+		if(f) {
+			f->write(ba.constData(), ba.length());
+			f->flush();
+		}
+	#endif
+		onFrameDataRead(std::move(frame_data));
+	};
+	emit socketDataReadyRead();
 }
 
 void SocketRpcConnection::onParseDataException(const chainpack::ParseException &e)
