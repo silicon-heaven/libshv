@@ -1,5 +1,6 @@
 #include <shv/iotqt/rpc/serialportsocket.h>
 
+#include <shv/chainpack/rpc.h>
 #include <shv/chainpack/utils.h>
 
 #include <QHostAddress>
@@ -32,7 +33,6 @@ enum EscCodes: uint8_t {
 void SerialFrameReader::addData(std::string_view data)
 {
 	auto add_byte = [this](string &buff, uint8_t b) {
-		m_crcDigest.add(b);
 		if (inEscape()) {
 			switch (b) {
 			case ESTX: buff += static_cast<char>(STX); break;
@@ -77,6 +77,7 @@ void SerialFrameReader::addData(std::string_view data)
 				}
 				continue;
 			}
+			m_crcDigest.add(b);
 			add_byte(m_readBuffer, b);
 			m_recentByte = b;
 			continue;
@@ -107,6 +108,7 @@ void SerialFrameReader::setState(ReadState state)
 	}
 	case ReadState::WaitingForEtx: {
 		m_readBuffer = {};
+		m_crcDigest.reset();
 		break;
 	}
 	case ReadState::WaitingForCrc: {
@@ -126,13 +128,21 @@ void SerialFrameReader::finishFrame()
 			msg_crc += bb;
 		}
 		//logSerialPortSocketD() << "crc data:" << m_crcBuffer.toHex().toStdString();
-		logSerialPortSocketD() << "crc received:" << shv::chainpack::utils::intToHex(msg_crc);
-		logSerialPortSocketD() << "crc computed:" << shv::chainpack::utils::intToHex(m_crcDigest.remainder());
+		//logSerialPortSocketD() << "crc received:" << shv::chainpack::utils::intToHex(msg_crc);
+		//logSerialPortSocketD() << "crc computed:" << shv::chainpack::utils::intToHex(m_crcDigest.remainder());
 		if(m_crcDigest.remainder() != msg_crc) {
-			logSerialPortSocketD() << "crc OK";
+			logSerialPortSocketD() << "crc Error";
+			setState(ReadState::WaitingForStx);
+			return;
 		}
 	}
-	m_frames.push_back(std::move(m_readBuffer));
+	auto protocol = static_cast<uint8_t>(shv::chainpack::Rpc::ProtocolType::ChainPack);
+	if (m_readBuffer.empty() || m_readBuffer[0] != protocol) {
+		logSerialPortSocketD() << "Protocol type Error";
+		setState(ReadState::WaitingForStx);
+		return;
+	}
+	m_frames.emplace_back(m_readBuffer.data(), m_readBuffer.size());
 	setState(ReadState::WaitingForStx);
 }
 
@@ -151,20 +161,22 @@ void SerialFrameWriter::addFrame(std::string &&frame_data)
 		default: data_to_write += static_cast<char>(b); break;
 		}
 	};
+	auto protocol = static_cast<uint8_t>(shv::chainpack::Rpc::ProtocolType::ChainPack);
 	data_to_write += static_cast<char>(STX);
+	write_escaped(protocol);
 	for(uint8_t b : frame_data) {
 		write_escaped(b);
 	}
 	data_to_write += static_cast<char>(ETX);
 	if (m_withCrcCheck) {
-		shv::chainpack::Crc32Posix crc_digest;
-		crc_digest.add(frame_data.data(), frame_data.size());
+		shv::chainpack::Crc32Shv3 crc_digest;
+		crc_digest.add(data_to_write.constData() + 1, data_to_write.size() - 2);
 		auto crc = crc_digest.remainder();
 		for (int i = 0; i < 4; ++i) {
-			write_escaped((crc >> (3 - i)) & 0xff);
+			write_escaped((crc >> ((3 - i) * 8)) & 0xff);
 		}
 	}
-	m_messagesToWrite << data_to_write;
+	m_messageDataToWrite << data_to_write;
 }
 
 //======================================================
@@ -324,16 +336,7 @@ void SerialPortSocket::onDataReadyRead()
 
 void SerialPortSocket::flushWriteBuffer()
 {
-	while (true) {
-		auto data = m_frameWriter.getMessageDataToWrite();
-		if (data.isEmpty())
-			break;
-		auto n = m_port->write(data);
-		if (n > 0 && n < data.size()) {
-			data = data.mid(n);
-			m_frameWriter.pushUnwrittenMessageData(data);
-		}
-	}
+	m_frameWriter.flushToDevice(m_port);
 	m_port->flush();
 }
 

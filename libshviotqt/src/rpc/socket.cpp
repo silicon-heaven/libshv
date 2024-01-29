@@ -11,8 +11,47 @@
 #include <QTcpSocket>
 #include <QTimer>
 #include <QUrl>
+#ifdef WITH_SHV_WEBSOCKETS
+#include <QWebSocket>
+#endif
 
 namespace shv::iotqt::rpc {
+
+//======================================================
+// FrameWriter
+//======================================================
+void FrameWriter::flushToDevice(QIODevice *device)
+{
+	while (!m_messageDataToWrite.isEmpty()) {
+		auto data = m_messageDataToWrite[0];
+		auto n = device->write(data);
+		if (n <= 0) {
+			shvWarning() << "Write data error.";
+			break;
+		}
+		if (n < data.size()) {
+			data = data.mid(n);
+			m_messageDataToWrite[0] = data;
+		}
+		else {
+			m_messageDataToWrite.takeFirst();
+		}
+	}
+}
+#ifdef WITH_SHV_WEBSOCKETS
+void FrameWriter::flushToWebSocket(QWebSocket *socket)
+{
+	while (!m_messageDataToWrite.isEmpty()) {
+		auto data = m_messageDataToWrite[0];
+		auto n = socket->sendBinaryMessage(data);
+		if (n != data.size()) {
+			shvWarning() << "Write data error.";
+			break;
+		}
+		m_messageDataToWrite.takeFirst();
+	}
+}
+#endif
 
 //======================================================
 // StreamFrameReader
@@ -58,8 +97,8 @@ void StreamFrameWriter::addFrame(std::string &&frame_data)
 	auto len_data = out.str();
 	QByteArray data(len_data.data(), len_data.size());
 	data += static_cast<char>(Rpc::ProtocolType::ChainPack);
-	data.append(std::move(frame_data));
-	m_messagesToWrite.append(data);
+	data.append(frame_data);
+	m_messageDataToWrite.append(data);
 }
 
 //======================================================
@@ -188,16 +227,7 @@ void TcpSocket::onDataReadyRead()
 
 void TcpSocket::flushWriteBuffer()
 {
-	while (true) {
-		auto data = m_frameWriter.getMessageDataToWrite();
-		if (data.isEmpty())
-			break;
-		auto n = m_socket->write(data);
-		if (n > 0 && n < data.size()) {
-			data = data.mid(n);
-			m_frameWriter.pushUnwrittenMessageData(data);
-		}
-	}
+	m_frameWriter.flushToDevice(m_socket);
 	m_socket->flush();
 }
 

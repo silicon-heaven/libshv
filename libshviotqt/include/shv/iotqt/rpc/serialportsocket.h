@@ -28,7 +28,7 @@ private:
 	uint8_t m_recentByte = 0;
 	std::string m_readBuffer;
 	std::string m_crcBuffer;
-	shv::chainpack::Crc32Posix m_crcDigest;
+	shv::chainpack::Crc32Shv3 m_crcDigest;
 	bool m_withCrcCheck = true;
 };
 

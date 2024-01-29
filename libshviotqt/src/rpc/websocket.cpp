@@ -85,15 +85,7 @@ void WebSocket::ignoreSslErrors()
 
 void WebSocket::flushWriteBuffer()
 {
-	while (true) {
-		auto data = m_frameWriter.getMessageDataToWrite();
-		if (data.isEmpty())
-			break;
-		auto n = m_socket->sendBinaryMessage(data);
-		if (n < data.size()) {
-			shvError() << "WebSocket message partialy sent, only" << n << "of" << data.size() << "bytes.";
-		}
-	}
+	m_frameWriter.flushToWebSocket(m_socket);
 	m_socket->flush();
 }
 

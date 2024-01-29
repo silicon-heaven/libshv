@@ -10,8 +10,9 @@
 #include <deque>
 
 class QTcpSocket;
-class QLocalSocket;
-class QSerialPort;
+#ifdef WITH_SHV_WEBSOCKETS
+class QWebSocket;
+#endif
 
 namespace shv::chainpack { class ParseException; }
 
@@ -38,17 +39,12 @@ class FrameWriter {
 public:
 	virtual ~FrameWriter() = default;
 	virtual void addFrame(std::string &&frame_data) = 0;
-	QByteArray getMessageDataToWrite() {
-		if (!m_messagesToWrite.empty()) {
-			return m_messagesToWrite.takeFirst();
-		}
-		return {};
-	}
-	void pushUnwrittenMessageData(QByteArray data) {
-		m_messagesToWrite.insert(0, data);
-	}
+	void flushToDevice(QIODevice *device);
+#ifdef WITH_SHV_WEBSOCKETS
+	void flushToWebSocket(QWebSocket *socket);
+#endif
 protected:
-	QList<QByteArray> m_messagesToWrite;
+	QList<QByteArray> m_messageDataToWrite;
 };
 
 class StreamFrameReader : public FrameReader {

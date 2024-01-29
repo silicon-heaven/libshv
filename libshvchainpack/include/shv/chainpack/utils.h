@@ -16,6 +16,7 @@ class RpcValue;
 
 namespace utils {
 
+SHVCHAINPACK_DECL_EXPORT std::string hexArray(const char *bytes, size_t n);
 SHVCHAINPACK_DECL_EXPORT std::string hexDump(const char *bytes, size_t n);
 SHVCHAINPACK_DECL_EXPORT std::string byteToHex( uint8_t i );
 SHVCHAINPACK_DECL_EXPORT void byteToHex( std::array<char, 2> &arr, uint8_t i );

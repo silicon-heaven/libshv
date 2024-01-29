@@ -3,6 +3,8 @@
 
 #include "socket.h"
 
+class QLocalSocket;
+
 namespace shv::iotqt::rpc {
 
 class SHVIOTQT_DECL_EXPORT LocalSocket : public Socket

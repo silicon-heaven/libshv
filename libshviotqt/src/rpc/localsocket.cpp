@@ -155,16 +155,7 @@ void LocalSocket::onDataReadyRead()
 
 void LocalSocket::flushWriteBuffer()
 {
-	while (true) {
-		auto data = m_frameWriter->getMessageDataToWrite();
-		if (data.isEmpty())
-			break;
-		auto n = m_socket->write(data);
-		if (n > 0 && n < data.size()) {
-			data = data.mid(n);
-			m_frameWriter->pushUnwrittenMessageData(data);
-		}
-	}
+	m_frameWriter->flushToDevice(m_socket);
 	m_socket->flush();
 }
 

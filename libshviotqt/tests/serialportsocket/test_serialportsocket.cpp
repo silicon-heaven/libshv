@@ -1,6 +1,7 @@
 #include "mockserialport.h"
 #include "mockrpcconnection.h"
 
+#include <shv/chainpack/utils.h>
 #include <shv/iotqt/rpc/serialportsocket.h>
 #include <shv/iotqt/rpc/socket.h>
 
@@ -12,6 +13,10 @@
 
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <doctest/doctest.h>
+
+#define logSerialPortSocketD() nCDebug("SerialPortSocket")
+#define logSerialPortSocketM() nCMessage("SerialPortSocket")
+#define logSerialPortSocketW() nCWarning("SerialPortSocket")
 
 using namespace shv::iotqt::rpc;
 using namespace shv::chainpack;
@@ -58,9 +63,10 @@ DOCTEST_TEST_CASE("Send")
 	for(const auto &p : params) {
 		rq.setParams(p);
 		serial->clearWrittenData();
-		rec_msg = {};
-                conn.sendRpcMessage(rq);
+		conn.sendRpcMessage(rq);
 		auto data = serial->writtenData();
+		//logSerialPortSocketD() << "msg:" << rq.toCpon();
+		//logSerialPortSocketD() << "data:" << utils::hexArray(data.constData(), data.size());
 
 		vector<string> rubbish1 = {
 			"",
@@ -83,8 +89,11 @@ DOCTEST_TEST_CASE("Send")
 				// add some rubbish
 				auto data2 = data1 +  QByteArray::fromStdString(extra_rubbish);
 				rec_msg = {};
+				//logSerialPortSocketD().nospace() << "data to send:\n" << utils::hexDump(data2.constData(), data2.size());
 				serial->setDataToReceive(data2);
 				//REQUIRE(socket->readMessageError() == SerialPortSocket::ReadMessageError::Ok);
+				//logSerialPortSocketD() << "rec msg:" << rec_msg.value().toCpon();
+				//logSerialPortSocketD() << "rq  msg:" << rq.value().toCpon();
 				REQUIRE(rec_msg.value() == rq.value());
 			}
 		}
