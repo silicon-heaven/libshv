@@ -31,8 +31,8 @@ LocalSocket::LocalSocket(QLocalSocket *socket, Protocol protocol, QObject *paren
 	, m_socket(socket)
 {
 	if (protocol == Protocol::Serial) {
-		m_frameReader = new SerialFrameReader();
-		m_frameWriter = new SerialFrameWriter();
+		m_frameReader = new SerialFrameReader(SerialFrameReader::CrcCheck::No);
+		m_frameWriter = new SerialFrameWriter(SerialFrameWriter::CrcCheck::No);
 	}
 	else {
 		m_frameReader = new StreamFrameReader();
@@ -118,6 +118,12 @@ void LocalSocket::close()
 void LocalSocket::abort()
 {
 	m_socket->abort();
+}
+
+void LocalSocket::resetCommunication()
+{
+	m_frameWriter->resetCommunication();
+	flushWriteBuffer();
 }
 
 QAbstractSocket::SocketState LocalSocket::state() const

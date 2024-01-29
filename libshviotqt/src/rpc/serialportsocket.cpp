@@ -30,8 +30,15 @@ enum EscCodes: uint8_t {
 	EESC = 0x0A,
 };
 
+SerialFrameReader::SerialFrameReader(CrcCheck crc)
+	: m_withCrcCheck(crc == CrcCheck::Yes)
+{
+
+}
+
 void SerialFrameReader::addData(std::string_view data)
 {
+	shvDebug() << "===> received:" << data.size() << "bytes:" << chainpack::utils::hexArray(data.data(), data.size());
 	auto add_byte = [this](string &buff, uint8_t b) {
 		if (inEscape()) {
 			switch (b) {
@@ -142,6 +149,7 @@ void SerialFrameReader::finishFrame()
 		setState(ReadState::WaitingForStx);
 		return;
 	}
+	shvDebug() << "ADD FRAME:" << chainpack::utils::hexArray(m_readBuffer.data(), m_readBuffer.size());
 	m_frames.emplace_back(m_readBuffer.data(), m_readBuffer.size());
 	setState(ReadState::WaitingForStx);
 }
@@ -149,6 +157,11 @@ void SerialFrameReader::finishFrame()
 //======================================================
 // SerialFrameWriter
 //======================================================
+SerialFrameWriter::SerialFrameWriter(CrcCheck crc)
+	: m_withCrcCheck(crc == CrcCheck::Yes)
+{
+}
+
 void SerialFrameWriter::addFrame(const std::string &frame_data)
 {
 	QByteArray data_to_write;
@@ -179,12 +192,23 @@ void SerialFrameWriter::addFrame(const std::string &frame_data)
 	m_messageDataToWrite << data_to_write;
 }
 
+void SerialFrameWriter::resetCommunication()
+{
+	QByteArray ba;
+	ba.append(static_cast<char>(STX));
+	ba.append(static_cast<char>(ETX));
+	ba.append('\0');
+	m_messageDataToWrite << ba;
+}
+
 //======================================================
 // SerialPortSocket
 //======================================================
 SerialPortSocket::SerialPortSocket(QSerialPort *port, QObject *parent)
 	: Super(parent)
 	, m_port(port)
+	, m_frameReader(SerialFrameReader::CrcCheck::Yes)
+	, m_frameWriter(SerialFrameWriter::CrcCheck::Yes)
 {
 	m_port->setParent(this);
 
@@ -247,7 +271,7 @@ void SerialPortSocket::setReceiveTimeout(int millis)
 			m_readDataTimeout->setSingleShot(true);
 			connect(m_readDataTimeout, &QTimer::timeout, this, [this]() {
 				if(m_frameReader.readState() != SerialFrameReader::ReadState::WaitingForStx) {
-					reset();
+					resetCommunication();
 				}
 			});
 		}
@@ -263,7 +287,7 @@ void SerialPortSocket::connectToHost(const QUrl &url)
 	shvInfo() << "opening serial port:" << m_port->portName();
 	if(m_port->open(QIODevice::ReadWrite)) {
 		shvInfo() << "Ok";
-		reset();
+		resetCommunication();
 		setState(QAbstractSocket::ConnectedState);
 	}
 	else {
@@ -286,9 +310,9 @@ void SerialPortSocket::abort()
 	close();
 }
 
-void SerialPortSocket::reset()
+void SerialPortSocket::resetCommunication()
 {
-	//TODO: reset will be implemented when it will be finished in documentation
+	m_frameWriter.resetCommunication();
 }
 
 QAbstractSocket::SocketState SerialPortSocket::state() const

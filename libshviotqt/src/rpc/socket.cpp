@@ -1,6 +1,7 @@
 #include <shv/iotqt/rpc/socket.h>
 
 #include <shv/coreqt/log.h>
+#include <shv/chainpack/utils.h>
 #include <shv/chainpack/chainpackreader.h>
 #include <shv/chainpack/chainpackwriter.h>
 #include <shv/chainpack/irpcconnection.h>
@@ -25,6 +26,7 @@ void FrameWriter::flushToDevice(QIODevice *device)
 	while (!m_messageDataToWrite.isEmpty()) {
 		auto data = m_messageDataToWrite[0];
 		auto n = device->write(data);
+		shvDebug() << "<=== sending:" << data.size() << "bytes:" << chainpack::utils::hexArray(data.constData(), data.size());
 		if (n <= 0) {
 			shvWarning() << "Write data error.";
 			break;
@@ -218,8 +220,8 @@ void TcpSocket::ignoreSslErrors()
 void TcpSocket::onDataReadyRead()
 {
 	auto ba = m_socket->readAll();
-	std::string_view escaped_data(ba.constData(), ba.size());
-	m_frameReader.addData(escaped_data);
+	std::string_view data(ba.constData(), ba.size());
+	m_frameReader.addData(data);
 	if (!m_frameReader.isEmpty()) {
 		emit readyRead();
 	}

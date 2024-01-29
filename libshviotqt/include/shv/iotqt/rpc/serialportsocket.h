@@ -15,7 +15,9 @@ class SerialFrameReader : public FrameReader
 {
 public:
 	enum class ReadState {WaitingForStx, WaitingForEtx, WaitingForCrc};
+	enum class CrcCheck {No, Yes};
 public:
+	SerialFrameReader(CrcCheck crc);
 	~SerialFrameReader() override = default;
 
 	void addData(std::string_view data) override;
@@ -36,9 +38,13 @@ private:
 class SerialFrameWriter : public FrameWriter
 {
 public:
+	enum class CrcCheck {No, Yes};
+public:
+	SerialFrameWriter(CrcCheck crc);
 	~SerialFrameWriter() override = default;
 
 	void addFrame(const std::string &frame_data) override;
+	void resetCommunication() override;
 private:
 	bool m_withCrcCheck = true;
 };
@@ -59,7 +65,7 @@ public:
 	void connectToHost(const QUrl &url) override;
 	void close() override;
 	void abort() override;
-	void reset();
+	void resetCommunication() override;
 	QAbstractSocket::SocketState state() const override;
 	QString errorString() const override;
 	QHostAddress peerAddress() const override;

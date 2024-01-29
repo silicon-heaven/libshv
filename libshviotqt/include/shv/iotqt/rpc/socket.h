@@ -41,6 +41,7 @@ class FrameWriter
 public:
 	virtual ~FrameWriter() = default;
 	virtual void addFrame(const std::string &frame_data) = 0;
+	virtual void resetCommunication() {}
 	void flushToDevice(QIODevice *device);
 #ifdef WITH_SHV_WEBSOCKETS
 	void flushToWebSocket(QWebSocket *socket);
@@ -84,6 +85,7 @@ public:
 
 	virtual void close() = 0;
 	virtual void abort() = 0;
+	virtual void resetCommunication() {}
 
 	virtual QAbstractSocket::SocketState state() const = 0;
 	virtual QString errorString() const = 0;
@@ -103,7 +105,7 @@ public:
 	Q_SIGNAL void readyRead();
 	//Q_SIGNAL void bytesWritten(qint64 bytes);
 
-	Q_SIGNAL void socketReset();
+	//Q_SIGNAL void socketReset();
 
 	Q_SIGNAL void stateChanged(QAbstractSocket::SocketState state);
 	Q_SIGNAL void error(QAbstractSocket::SocketError socket_error);

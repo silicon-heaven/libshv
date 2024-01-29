@@ -426,6 +426,7 @@ void ClientConnection::onSocketConnectedChanged(bool is_connected)
 		shvInfo() << objectName() << "connection id:" << connectionId() << "Socket connected to RPC server";
 		shvInfo() << "peer:" << peerAddress() << "port:" << peerPort();
 		setState(State::SocketConnected);
+		socket()->resetCommunication();
 		if(loginType() == LoginType::None) {
 			shvInfo() << "Connection scheme:" << connectionUrl().scheme() << " is skipping login phase.";
 			setState(State::BrokerConnected);

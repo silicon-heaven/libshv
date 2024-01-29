@@ -23,6 +23,9 @@ public:
 	void connectToHost(const QUrl &url) override;
 	void close() override;
 	void abort() override;
+
+	void resetCommunication() override;
+
 	QAbstractSocket::SocketState state() const override;
 	QString errorString() const override;
 	QHostAddress peerAddress() const override;
