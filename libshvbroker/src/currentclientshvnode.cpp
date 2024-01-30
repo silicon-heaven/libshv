@@ -150,41 +150,54 @@ shv::chainpack::RpcValue CurrentClientShvNode::callMethodRq(const shv::chainpack
 		}
 		if(method == M_CHANGE_PASSWORD) {
 			shv::chainpack::RpcValue params = rq.params();
-			const shv::chainpack::RpcValue::List &param_lst = params.asList();
-			if(param_lst.size() == 2) {
-				string old_password_sha1 = param_lst[0].toString();
-				string new_password_sha1 = param_lst[1].toString();
-				if(!old_password_sha1.empty() && !new_password_sha1.empty()) {
-					int client_id = rq.peekCallerId();
-					auto *app = shv::broker::BrokerApp::instance();
-					auto *cli = app->clientById(client_id);
-					if(cli) {
-						shv::broker::AclManager *acl = app->aclManager();
-						const string user_name = cli->userName();
-						acl::AclUser acl_user = acl->user(user_name);
-						string current_password_sha1 = acl_user.password.password;
-						if(acl_user.password.format == acl::AclPassword::Format::Plain) {
-							current_password_sha1 = sha1_hex(current_password_sha1);
-						}
-						if(old_password_sha1.size() != current_password_sha1.size()) {
-							old_password_sha1 = sha1_hex(old_password_sha1);
-						}
-						if(old_password_sha1 != current_password_sha1) {
-							SHV_EXCEPTION("Old password does not match.");
-						}
-						if(new_password_sha1.size() != current_password_sha1.size()) {
-							new_password_sha1 = sha1_hex(new_password_sha1);
-						}
-						acl_user.password.password = new_password_sha1;
-						acl_user.password.format = acl::AclPassword::Format::Sha1;
-						acl->setUser(user_name, acl_user);
-						return true;
-					}
-					SHV_EXCEPTION("Invalid client ID");
-				}
+			auto throw_wrong_format = [] {
+				SHV_EXCEPTION("Params must have format: [\"old_pwd\",\"new_pwd\"]");
+			};
+			if (!rq.params().isList()) {
+				throw_wrong_format();
 			}
-			SHV_EXCEPTION("Params must have format: [\"old_pwd\",\"new_pwd\"]");
-			return nullptr;
+			const shv::chainpack::RpcValue::List &param_lst = params.asList();
+			if (!param_lst[0].isString() || !param_lst[1].isString()) {
+				throw_wrong_format();
+			}
+			string old_password_sha1 = param_lst[0].toString();
+			string new_password_sha1 = param_lst[1].toString();
+			if(old_password_sha1.empty() || new_password_sha1.empty()) {
+				SHV_EXCEPTION("Both old and new password mustn't be empty");
+			}
+
+			int client_id = rq.peekCallerId();
+			auto *app = shv::broker::BrokerApp::instance();
+			auto *cli = app->clientById(client_id);
+			if(!cli) {
+				SHV_EXCEPTION("Invalid client ID");
+			}
+			shv::broker::AclManager *acl = app->aclManager();
+			const string user_name = cli->userName();
+			if (user_name.starts_with("ldap:")) {
+				SHV_EXCEPTION("Can't change password, because you are logged in over LDAP");
+			}
+			if (user_name.starts_with("azure:")) {
+				SHV_EXCEPTION("Can't change password, because you are logged in over Azure");
+			}
+			acl::AclUser acl_user = acl->user(user_name);
+			string current_password_sha1 = acl_user.password.password;
+			if(acl_user.password.format == acl::AclPassword::Format::Plain) {
+				current_password_sha1 = sha1_hex(current_password_sha1);
+			}
+			if(old_password_sha1.size() != current_password_sha1.size()) {
+				old_password_sha1 = sha1_hex(old_password_sha1);
+			}
+			if(old_password_sha1 != current_password_sha1) {
+				SHV_EXCEPTION("Old password does not match.");
+			}
+			if(new_password_sha1.size() != current_password_sha1.size()) {
+				new_password_sha1 = sha1_hex(new_password_sha1);
+			}
+			acl_user.password.password = new_password_sha1;
+			acl_user.password.format = acl::AclPassword::Format::Sha1;
+			acl->setUser(user_name, acl_user);
+			return true;
 		}
 	}
 	return Super::callMethodRq(rq);
