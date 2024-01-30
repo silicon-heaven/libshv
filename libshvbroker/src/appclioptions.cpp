@@ -39,14 +39,12 @@ AppCliOptions::AppCliOptions()
 	addOption("masters.connections").setType(cp::RpcValue::Type::Map).setComment("Can be used from config file only.");
 	addOption("masters.enabled").setType(cp::RpcValue::Type::Bool).setNames("--mce", "--master-connections-enabled").setComment("Enable slave connections to master broker.");
 
-#ifdef WITH_SHV_LDAP
 	addOption("ldap.username").setType(cp::RpcValue::Type::String).setNames("--ldap-username").setComment("Set the LDAP username for the broker to use");
 	addOption("ldap.password").setType(cp::RpcValue::Type::String).setNames("--ldap-password").setComment("Set the LDAP password for the broker to use");
 	addOption("ldap.hostname").setType(cp::RpcValue::Type::String).setNames("--ldap-host").setComment("Set the LDAP server hostname");
 	addOption("ldap.searchBaseDN").setType(cp::RpcValue::Type::String).setNames("--ldap-search-base-dn").setComment("Set the base DN for LDAP searches (the DN where user entries live)");
 	addOption("ldap.searchAttrs").setType(cp::RpcValue::Type::List).setNames("--ldap-search-attrs").setComment("Set the LDAP attributes containing the login name for LDAP user entries");
 	addOption("ldap.groupMapping").setType(cp::RpcValue::Type::List).setComment("Set the mapping of LDAP groups to shv groups as an ordered list of pairs");
-#endif
 	addOption("azure.groupMapping").setType(cp::RpcValue::Type::List).setComment("Set the mapping of Azure groups to shv groups as an ordered list of pairs");
 }
 }

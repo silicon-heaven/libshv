@@ -334,8 +334,8 @@ BrokerApp::BrokerApp(int &argc, char **argv, AppCliOptions *cli_opts)
 		});
 	}
 
-#ifdef WITH_SHV_LDAP
 	if (cli_opts->ldapHostname_isset()) {
+#ifdef WITH_SHV_LDAP
 		m_ldapLib = {dlopen(LDAP_LIBNAME, RTLD_LAZY), [] (void* handle) {
 			if (dlclose(handle)) {
 				shvError() << "Couldn't close OpenLDAP library:" << dlerror();
@@ -393,8 +393,10 @@ BrokerApp::BrokerApp(int &argc, char **argv, AppCliOptions *cli_opts)
 			.groupMapping = transform_cli_group_mapping(cli_opts->ldapGroupMapping())
 		};
 		new LdapAclNode(*m_ldapConfig, etc_acl_root_node);
-	}
+#else
+		shvWarning() << "LDAP has been configured, but this broker wasn't compiled with LDAP support. LDAP will NOT be enabled.";
 #endif
+	}
 	if (cli_opts->azureGroupMapping_isset()) {
 		m_azureConfig = AzureConfig {
 			.groupMapping = transform_cli_group_mapping(cli_opts->azureGroupMapping())
