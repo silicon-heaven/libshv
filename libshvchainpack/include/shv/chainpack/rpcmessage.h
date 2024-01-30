@@ -41,7 +41,6 @@ public:
 								ShvPath = 9, // 9
 								Method = 10,  // 10
 								CallerIds = 11, // 11
-								//ProtocolType, //needed when dest client is using different version than source one to translate raw message data to correct format
 								RevCallerIds = 13,
 								AccessGrant = 14,
 								TunnelCtl = 15,
@@ -125,11 +124,6 @@ public:
 	void setUserId(const RpcValue &user_id);
 	static RpcValue userId(RpcValue::MetaData &meta);
 	static void setUserId(RpcValue::MetaData &meta, const RpcValue &user_id);
-
-	//static Rpc::ProtocolType protocolType(const RpcValue::MetaData &meta);
-	//static void setProtocolType(RpcValue::MetaData &meta, shv::chainpack::Rpc::ProtocolType ver);
-	//Rpc::ProtocolType protocolType() const;
-	//void setProtocolType(shv::chainpack::Rpc::ProtocolType ver);
 
 	std::string toPrettyString() const;
 	std::string toCpon() const;

@@ -728,14 +728,7 @@ void RpcValue::append(const RpcValue &val)
 		m_ptr->append(val);
 }
 
-RpcValue RpcValue::metaStripped() const
-{
-	RpcValue ret = *this;
-	ret.m_ptr->stripMeta();
-	return ret;
-}
-
-RpcValue::MetaData RpcValue::stripMeta()
+RpcValue::MetaData RpcValue::takeMeta()
 {
 	return m_ptr->stripMeta();
 }

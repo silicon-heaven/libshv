@@ -26,7 +26,6 @@ RpcMessage::MetaType::MetaType()
 		{static_cast<int>(Tag::ShvPath), {static_cast<int>(Tag::ShvPath), Rpc::PAR_PATH}},
 		{static_cast<int>(Tag::Method), {static_cast<int>(Tag::Method), Rpc::PAR_METHOD}},
 		{static_cast<int>(Tag::CallerIds), {static_cast<int>(Tag::CallerIds), "cid"}},
-		//{static_cast<int>(Tag::ProtocolType), {static_cast<int>(Tag::ProtocolType), "protocol"}},
 		{static_cast<int>(Tag::RevCallerIds), {static_cast<int>(Tag::RevCallerIds), "rcid"}},
 		{static_cast<int>(Tag::AccessGrant), {static_cast<int>(Tag::AccessGrant), "grant"}},
 		{static_cast<int>(Tag::TunnelCtl), {static_cast<int>(Tag::TunnelCtl), "tctl"}},
@@ -471,27 +470,7 @@ void RpcMessage::setUserId(RpcValue::MetaData &meta, const RpcValue &user_id)
 {
 	meta.setValue(RpcMessage::MetaType::Tag::UserId, user_id);
 }
-/*
-Rpc::ProtocolType RpcMessage::protocolType(const RpcValue::MetaData &meta)
-{
-	return static_cast<Rpc::ProtocolType>(meta.value(RpcMessage::MetaType::Tag::ProtocolType).toUInt());
-}
 
-void RpcMessage::setProtocolType(RpcValue::MetaData &meta, Rpc::ProtocolType ver)
-{
-	meta.setValue(RpcMessage::MetaType::Tag::ProtocolType, ver == Rpc::ProtocolType::Invalid? RpcValue(): RpcValue(static_cast<unsigned>(ver)));
-}
-
-Rpc::ProtocolType RpcMessage::protocolType() const
-{
-	return static_cast<Rpc::ProtocolType>(metaValue(RpcMessage::MetaType::Tag::ProtocolType).toUInt());
-}
-
-void RpcMessage::setProtocolType(Rpc::ProtocolType ver)
-{
-	setMetaValue(RpcMessage::MetaType::Tag::ProtocolType, ver == Rpc::ProtocolType::Invalid? RpcValue(): RpcValue(static_cast<unsigned>(ver)));
-}
-*/
 void RpcMessage::write(AbstractStreamWriter &wr) const
 {
 	assert(m_value.isValid());
@@ -534,7 +513,7 @@ std::string RpcMessage::toChainPack() const
 RpcFrame RpcMessage::toToRpcFrame() const
 {
 	auto val = m_value;
-	auto meta = val.stripMeta();
+	auto meta = val.takeMeta();
 	auto data = val.toChainPack();
 	return RpcFrame {std::move(meta), std::move(data)};
 }
@@ -858,6 +837,5 @@ RpcResponse& RpcResponse::setRequestId(const RpcValue &id)
 	Super::setRequestId(id);
 	return *this;
 }
-
 
 } // namespace shv

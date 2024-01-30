@@ -6,8 +6,6 @@
 
 #include <doctest/doctest.h>
 
-#include <optional>
-
 using namespace shv::chainpack;
 using namespace std;
 using namespace std::string_literals;
@@ -72,13 +70,14 @@ DOCTEST_TEST_CASE("RpcValue")
 		REQUIRE(rpcval.metaValue(2) == RpcValue(42));
 		REQUIRE(rv1.metaValue(2) == RpcValue(12));
 	}
-	DOCTEST_SUBCASE("strip Meta test")
+	DOCTEST_SUBCASE("take Meta test")
 	{
-		nDebug() << "================================= stripMeta Test =====================================";
+		nDebug() << "================================= takeMeta Test =====================================";
 		auto rpcval = RpcValue::fromCpon(R"(<1:2,2:12,8:"foo",9:[1,2,3],"bar":"baz",>{"META":17,"18":19})");
 		auto rv1 = rpcval;
 		auto rv2 = rv1;
-		auto rv3 = rv1.metaStripped();
+		auto rv3 = rv1;
+		rv3.takeMeta();
 		REQUIRE(rpcval.refCnt() == 3);
 		REQUIRE(rv3.refCnt() == 1);
 		REQUIRE(rv1.metaData().isEmpty() == false);
