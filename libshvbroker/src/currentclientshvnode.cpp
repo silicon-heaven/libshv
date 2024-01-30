@@ -174,6 +174,12 @@ shv::chainpack::RpcValue CurrentClientShvNode::callMethodRq(const shv::chainpack
 			}
 			shv::broker::AclManager *acl = app->aclManager();
 			const string user_name = cli->userName();
+			if (user_name.starts_with("ldap:")) {
+				SHV_EXCEPTION("Can't change password, because you are logged in over LDAP");
+			}
+			if (user_name.starts_with("azure:")) {
+				SHV_EXCEPTION("Can't change password, because you are logged in over Azure");
+			}
 			acl::AclUser acl_user = acl->user(user_name);
 			string current_password_sha1 = acl_user.password.password;
 			if(acl_user.password.format == acl::AclPassword::Format::Plain) {
