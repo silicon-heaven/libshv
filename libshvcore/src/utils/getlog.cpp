@@ -4,8 +4,9 @@
 #include <shv/core/utils/patternmatcher.h>
 #include <shv/core/utils/shvlogheader.h>
 
+#include <concepts>
 #include <functional>
-#include <ranges>
+#include <optional>
 
 #define logWGetLog() shvCWarning("GetLog")
 #define logIGetLog() shvCInfo("GetLog")
