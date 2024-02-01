@@ -51,7 +51,7 @@ public:
 	static std::string toHex(const std::basic_string<uint8_t> &bytes);
 	static char fromHex(char c);
 	static std::string fromHex(const std::string &bytes);
-	static std::string hexDump(const std::string &bytes);
+	static std::string hexDump(const std::string_view &bytes);
 
 	template <typename I>
 	static std::string toString(I n)

@@ -152,7 +152,7 @@ std::string Utils::fromHex(const std::string &bytes)
 	return ret;
 }
 
-std::string Utils::hexDump(const std::string &bytes)
+std::string Utils::hexDump(const std::string_view &bytes)
 {
 	return utils::hexDump(bytes.data(), bytes.size());
 }
