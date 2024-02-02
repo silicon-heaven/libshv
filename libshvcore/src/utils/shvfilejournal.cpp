@@ -594,9 +594,9 @@ chainpack::RpcValue ShvFileJournal::getLog(const ShvGetLogParams &params, Ignore
 	std::vector<std::function<ShvJournalFileReader()>> readers;
 	{
 		JournalContext ctx = checkJournalContext();
-		for (const auto file_ms : ctx.files) {
-			readers.emplace_back([file_path = ctx.fileMsecToFilePath(file_ms)] {
-				return ShvJournalFileReader{file_path};
+		for (auto it = shv::core::utils::newestMatchingFileIt(ctx.files, params); it != ctx.files.cend(); ++it) {
+			readers.emplace_back([full_file_name = ctx.fileMsecToFilePath(*it)] {
+				return shv::core::utils::ShvJournalFileReader(full_file_name);
 			});
 		}
 	}
