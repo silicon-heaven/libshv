@@ -615,3 +615,63 @@ DOCTEST_TEST_CASE("getLog")
 		REQUIRE(log.logHeader().untilCRef() == expected_until);
 	}
 }
+
+DOCTEST_TEST_CASE("newestMatchingFileIt")
+{
+	DOCTEST_SUBCASE("no timestamps")
+	{
+		std::vector<int64_t> timestamps;
+		shv::core::utils::ShvGetLogParams params;
+		REQUIRE(shv::core::utils::newestMatchingFileIt(timestamps, params) == timestamps.end());
+	}
+
+	DOCTEST_SUBCASE("some timestamps")
+	{
+		std::vector<int64_t> timestamps {
+			10, 20, 30, 40, 50
+		};
+
+		int64_t expected_timestamp;
+		shv::core::utils::ShvGetLogParams params;
+
+		DOCTEST_SUBCASE("no since")
+		{
+			expected_timestamp = 10;
+		}
+
+		DOCTEST_SUBCASE("since before first")
+		{
+			params.since = RpcValue::DateTime::fromMSecsSinceEpoch(5);
+			expected_timestamp = 10;
+		}
+
+		DOCTEST_SUBCASE("since between two timestamps")
+		{
+			params.since = RpcValue::DateTime::fromMSecsSinceEpoch(25);
+			expected_timestamp = 20;
+		}
+
+		DOCTEST_SUBCASE("since on the last")
+		{
+			params.since = RpcValue::DateTime::fromMSecsSinceEpoch(50);
+			expected_timestamp = 50;
+		}
+
+		DOCTEST_SUBCASE("since after last")
+		{
+			// Last file could have at least some of data for our since param.
+			params.since = RpcValue::DateTime::fromMSecsSinceEpoch(60);
+			expected_timestamp = 50;
+		}
+
+		DOCTEST_SUBCASE("since == last")
+		{
+			params.since = "last";
+			expected_timestamp = 50;
+		}
+
+		auto it = shv::core::utils::newestMatchingFileIt(timestamps, params);
+		REQUIRE(it != timestamps.end());
+		REQUIRE(*it == expected_timestamp);
+	}
+}

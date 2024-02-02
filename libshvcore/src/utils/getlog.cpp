@@ -294,4 +294,37 @@ exit_nested_loop:
 	readers.emplace_back([&entries] { return ShvLogVectorReader(entries); });
 	return impl_get_log(readers, params, ignore_record_count_limit);
 }
+
+std::vector<int64_t>::const_iterator newestMatchingFileIt(const std::vector<int64_t>& files, const ShvGetLogParams& params)
+{
+	// If there's no since param, return everything.
+	if ((!params.since.isDateTime() && !params.isSinceLast()) || files.begin() == files.end()) {
+		return files.begin();
+	}
+
+	// For since == last, we need to take the last file.
+	if (params.isSinceLast()) {
+		// There's at least one file, so we'll just return the last file.
+		return std::prev(files.end());
+	}
+
+	// If the first file is newer than since, than just return it.
+	auto since_param_ms = params.since.toDateTime().msecsSinceEpoch();
+	if (*files.begin() >= since_param_ms) {
+		return files.begin();
+	}
+
+	// Otherwise the first file is older than since.
+	// Try to find files that are newer, but still older than since.
+	auto last_matching_it = files.begin();
+	for (auto it = files.begin(); it != files.end(); ++it) {
+		if (*it > since_param_ms) {
+			break;
+		}
+
+		last_matching_it = it;
+	}
+
+	return last_matching_it;
+}
 }
