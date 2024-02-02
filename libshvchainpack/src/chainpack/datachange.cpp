@@ -106,7 +106,8 @@ DataChange DataChange::fromRpcValue(const RpcValue &val)
 			}
 		}
 		{
-			RpcValue raw_val = val.metaStripped();
+			auto raw_val = val;
+			raw_val.takeMeta();
 			ret.setValue(raw_val);
 		}
 set_meta_data:

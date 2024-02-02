@@ -6,9 +6,7 @@
 
 class QHostAddress;
 
-namespace shv {
-namespace iotqt {
-namespace utils {
+namespace shv::iotqt::utils {
 
 class SHVIOTQT_DECL_EXPORT Network
 {
@@ -20,5 +18,5 @@ public:
 	static QHostAddress primaryIPv4Address();
 };
 
-}}}
+}
 

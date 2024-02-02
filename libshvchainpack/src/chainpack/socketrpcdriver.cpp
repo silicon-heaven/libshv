@@ -1,4 +1,6 @@
 #include <shv/chainpack/socketrpcdriver.h>
+
+#include <shv/chainpack/chainpackreader.h>
 #include <shv/chainpack/utils.h>
 
 #include <necrolog.h>
@@ -47,31 +49,20 @@ bool SocketRpcDriver::isOpen()
 	return isOpenImpl();
 }
 
-void SocketRpcDriver::writeMessageBegin()
-{
-}
-
-void SocketRpcDriver::writeMessageEnd()
-{
-	flush();
-}
-
 void SocketRpcDriver::idleTaskOnSelectTimeout()
 {
 }
 
-int64_t SocketRpcDriver::writeBytes(const char *bytes, size_t length)
+void SocketRpcDriver::writeFrameData(const std::string &frame_data)
 {
 	if(!isOpen()) {
 		nInfo() << "Write to closed socket";
-		return 0;
+		return;
 	}
-	flush();
-	auto bytes_to_write_len = static_cast<ssize_t>((m_writeBuffer.size() + length > m_maxWriteBufferLength)? m_maxWriteBufferLength - m_writeBuffer.size(): length);
-	if(bytes_to_write_len > 0)
-		m_writeBuffer += std::string(bytes, static_cast<size_t>(bytes_to_write_len));
-	flush();
-	return bytes_to_write_len;
+	if (m_writeBuffer.size() + frame_data.size() < m_maxWriteBufferLength) {
+		m_writeBuffer += frame_data;
+		flush();
+	}
 }
 
 bool SocketRpcDriver::flush()
@@ -139,7 +130,7 @@ void SocketRpcDriver::exec()
 	fd_set read_flags,write_flags; // the flag sets to be used
 	struct timeval waitd;
 
-	static constexpr size_t BUFF_LEN = 255;
+	static constexpr size_t BUFF_LEN = 1024;
 	std::array<char, BUFF_LEN> in;
 	std::array<char, BUFF_LEN> out;
 	memset(in.data(), 0, BUFF_LEN);
@@ -183,14 +174,47 @@ void SocketRpcDriver::exec()
 				closeConnection();
 				return;
 			}
-			onBytesRead(std::string(in.data(), static_cast<size_t>(n)));
+			{
+				m_readBuffer += std::string(in.data(), n);
+				while (true) {
+					if (m_readFrameSize == 0) {
+						// read length
+						std::istringstream in2(m_readBuffer);
+						int err_code;
+						uint64_t frame_size = ChainPackReader::readUIntData(in2, &err_code);
+						if(err_code == CCPCP_RC_BUFFER_UNDERFLOW) {
+							// not enough data
+							break;
+						}
+						if(err_code == CCPCP_RC_OK) {
+							auto consumed_len = in2.tellg();
+							m_readBuffer = std::string(m_readBuffer, consumed_len);
+							m_readFrameSize = frame_size;
+						}
+						else {
+							nWarning() << "Read RPC message length error.";
+							m_readBuffer.clear();
+							m_readFrameSize = 0;
+							break;
+						}
+					}
+					if (m_readFrameSize > 0 && m_readFrameSize <= m_readBuffer.size()) {
+						auto frame = std::string(m_readBuffer, 0, m_readFrameSize);
+						m_readBuffer = std::string(m_readBuffer, m_readFrameSize);
+						onFrameDataRead(std::move(frame));
+					}
+					if (m_readFrameSize == 0  || m_readFrameSize > m_readBuffer.size()) {
+						break;
+					}
+				}
+			}
 		}
 
 		//socket ready for writing
 		if(FD_ISSET(m_socket, &write_flags)) {
 			nInfo() << "\t write fd is set";
 			FD_CLR(m_socket, &write_flags);
-			enqueueDataToSend(MessageData());
+			flush(); // trigger write next frame in driver
 		}
 	}
 }
@@ -201,7 +225,7 @@ void SocketRpcDriver::sendResponse(int request_id, const cp::RpcValue &result)
 	resp.setRequestId(request_id);
 	resp.setResult(result);
 	nInfo() << "sending response:" << resp.toCpon();
-	sendRpcValue(resp.value());
+	sendRpcMessage(resp.value());
 }
 
 void SocketRpcDriver::sendNotify(std::string &&method, const cp::RpcValue &result)
@@ -210,7 +234,7 @@ void SocketRpcDriver::sendNotify(std::string &&method, const cp::RpcValue &resul
 	cp::RpcSignal ntf;
 	ntf.setMethod(std::move(method));
 	ntf.setParams(result);
-	sendRpcValue(ntf.value());
+	sendRpcMessage(ntf.value());
 }
 
 }

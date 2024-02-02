@@ -55,10 +55,6 @@ void SocketRpcConnection::setSocket(Socket *socket)
 	});
 	bool is_test_run = QCoreApplication::instance() == nullptr;
 	connect(socket, &Socket::readyRead, this, &SocketRpcConnection::onReadyRead, is_test_run? Qt::AutoConnection: Qt::QueuedConnection);
-	connect(socket, &Socket::readyRead, this, &SocketRpcConnection::socketDataReadyRead, is_test_run? Qt::AutoConnection: Qt::QueuedConnection);
-	// queued connection here is to write data in next event loop, not directly when previous chunk is written
-	// possibly not needed, its my feeling to do it this way
-	connect(socket, &Socket::bytesWritten, this, &SocketRpcConnection::onBytesWritten, is_test_run? Qt::AutoConnection: Qt::QueuedConnection);
 	connect(socket, &Socket::connected, this, [this]() {
 		shvDebug() << this << "Socket connected!!!";
 		emit socketConnectedChanged(true);
@@ -70,17 +66,12 @@ void SocketRpcConnection::setSocket(Socket *socket)
 		shvDebug() << this << "Socket disconnected!!!";
 		emit socketConnectedChanged(false);
 	});
-	connect(socket, &Socket::socketReset, this, &SocketRpcConnection::clearSendBuffers);
+	//connect(socket, &Socket::socketReset, this, &SocketRpcConnection::clearSendBuffers);
 }
 
 bool SocketRpcConnection::hasSocket() const
 {
 	return m_socket != nullptr;
-}
-
-void SocketRpcConnection::setProtocolTypeAsInt(int v)
-{
-	shv::chainpack::RpcDriver::setProtocolType(static_cast<shv::chainpack::Rpc::ProtocolType>(v));
 }
 
 Socket *SocketRpcConnection::socket()
@@ -107,21 +98,20 @@ void SocketRpcConnection::connectToHost(const QUrl &url)
 
 void SocketRpcConnection::onReadyRead()
 {
-	QByteArray ba = socket()->readAll();
-#ifdef DUMP_DATA_FILE
-	QFile *f = findChild<QFile*>("DUMP_DATA_FILE");
-	if(f) {
-		f->write(ba.constData(), ba.length());
-		f->flush();
-	}
-#endif
-	onBytesRead(ba.toStdString());
-}
-
-void SocketRpcConnection::onBytesWritten()
-{
-	logRpcData() << "onBytesWritten()";
-	enqueueDataToSend(MessageData());
+	while (true) {
+		auto frame_data = socket()->readFrameData();
+		if (frame_data.empty())
+			break;
+	#ifdef DUMP_DATA_FILE
+		QFile *f = findChild<QFile*>("DUMP_DATA_FILE");
+		if(f) {
+			f->write(ba.constData(), ba.length());
+			f->flush();
+		}
+	#endif
+		onFrameDataRead(std::move(frame_data));
+	};
+	emit socketDataReadyRead();
 }
 
 void SocketRpcConnection::onParseDataException(const chainpack::ParseException &e)
@@ -135,31 +125,14 @@ bool SocketRpcConnection::isOpen()
 	return isSocketConnected();
 }
 
-int64_t SocketRpcConnection::writeBytes(const char *bytes, size_t length)
+void SocketRpcConnection::writeFrameData(const std::string &frame_data)
 {
-	return socket()->write(bytes, static_cast<qint64>(length));
+	socket()->writeFrameData(frame_data);
 }
 
-void SocketRpcConnection::writeMessageBegin()
+void SocketRpcConnection::sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg)
 {
-	if(m_socket)
-		m_socket->writeMessageBegin();
-}
-
-void SocketRpcConnection::writeMessageEnd()
-{
-	if(m_socket)
-		m_socket->writeMessageEnd();
-}
-
-Q_SLOT void SocketRpcConnection::sendRpcValue(const shv::chainpack::RpcValue &rpc_val)
-{
-	shv::chainpack::RpcDriver::sendRpcValue(rpc_val);
-}
-
-void SocketRpcConnection::clearSendBuffers()
-{
-	shv::chainpack::RpcDriver::clearSendBuffers();
+	shv::chainpack::RpcDriver::sendRpcMessage(rpc_msg);
 }
 
 void SocketRpcConnection::closeSocket()

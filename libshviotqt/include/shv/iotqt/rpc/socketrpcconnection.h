@@ -11,9 +11,7 @@ class QSslError;
 class QTcpSocket;
 class QThread;
 
-namespace shv {
-namespace iotqt {
-namespace rpc {
+namespace shv::iotqt::rpc {
 
 class Socket;
 
@@ -27,15 +25,13 @@ public:
 
 	void setSocket(Socket *socket);
 	bool hasSocket() const;
-	void setProtocolTypeAsInt(int v);
 
 	void connectToHost(const QUrl &url);
 
-	Q_SLOT void sendRpcValue(const shv::chainpack::RpcValue &rpc_val);
+	void sendRpcMessage(const chainpack::RpcMessage &rpc_msg) override;
 
 	void closeSocket();
 	void abortSocket();
-	void clearSendBuffers() override;
 
 	bool isSocketConnected() const;
 	Q_SIGNAL void socketConnectedChanged(bool is_connected);
@@ -49,18 +45,15 @@ public:
 protected:
 	// RpcDriver interface
 	bool isOpen() Q_DECL_OVERRIDE;
-	int64_t writeBytes(const char *bytes, size_t length) Q_DECL_OVERRIDE;
-	void writeMessageBegin() override;
-	void writeMessageEnd() override;
+	void writeFrameData(const std::string &frame_data) override;
 
 	Socket* socket();
 	void onReadyRead();
-	void onBytesWritten();
 
 	void onParseDataException(const shv::chainpack::ParseException &e) override;
 protected:
 	Socket *m_socket = nullptr;
 };
 
-}}}
+}
 

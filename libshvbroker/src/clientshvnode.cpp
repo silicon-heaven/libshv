@@ -45,11 +45,11 @@ void ClientShvNode::removeConnection(rpc::ClientConnectionOnBroker *conn)
 		deleteLater();
 }
 
-void ClientShvNode::handleRawRpcRequest(shv::chainpack::RpcValue::MetaData &&meta, std::string &&data)
+void ClientShvNode::handleRpcFrame(chainpack::RpcFrame &&frame)
 {
 	rpc::ClientConnectionOnBroker *conn = connection();
 	if(conn)
-		conn->sendRawData(meta, std::move(data));
+		conn->sendRpcFrame(std::move(frame));
 }
 
 shv::chainpack::RpcValue ClientShvNode::hasChildren(const StringViewList &shv_path)

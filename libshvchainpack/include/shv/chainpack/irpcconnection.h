@@ -26,7 +26,7 @@ public:
 	virtual void close() = 0;
 	virtual void abort() = 0;
 
-	virtual void sendMessage(const shv::chainpack::RpcMessage &rpc_msg) = 0;
+	virtual void sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg) = 0;
 	virtual void onRpcMessageReceived(const shv::chainpack::RpcMessage &msg) = 0;
 
 	int nextRequestId();

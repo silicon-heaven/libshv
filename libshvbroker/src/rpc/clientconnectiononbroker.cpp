@@ -163,22 +163,20 @@ void ClientConnectionOnBroker::setIdleWatchDogTimeOut(int sec)
 	m_idleWatchDogTimer->start(sec * 1000);
 }
 
-void ClientConnectionOnBroker::sendMessage(const shv::chainpack::RpcMessage &rpc_msg)
+void ClientConnectionOnBroker::sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg)
 {
 	logRpcMsg() << SND_LOG_ARROW
 				<< "client id:" << connectionId()
-				<< "protocol_type:" << static_cast<int>(protocolType()) << shv::chainpack::Rpc::protocolTypeToString(protocolType())
 				<< rpc_msg.toPrettyString();
-	Super::sendMessage(rpc_msg);
+	chainpack::RpcDriver::sendRpcMessage(rpc_msg);
 }
 
-void ClientConnectionOnBroker::sendRawData(const shv::chainpack::RpcValue::MetaData &meta_data, std::string &&data)
+void ClientConnectionOnBroker::sendRpcFrame(chainpack::RpcFrame &&frame)
 {
 	logRpcMsg() << SND_LOG_ARROW
 				<< "client id:" << connectionId()
-				<< "protocol_type:" << static_cast<int>(protocolType()) << shv::chainpack::Rpc::protocolTypeToString(protocolType())
-				<< RpcDriver::dataToPrettyCpon(shv::chainpack::RpcMessage::protocolType(meta_data), meta_data, data);
-	Super::sendRawData(meta_data, std::move(data));
+				<< RpcDriver::frameToPrettyCpon(frame);
+	chainpack::RpcDriver::sendRpcFrame(std::move(frame));
 }
 
 ClientConnectionOnBroker::Subscription ClientConnectionOnBroker::createSubscription(const std::string &shv_path, const std::string &method)
@@ -269,20 +267,19 @@ string ClientConnectionOnBroker::toSubscribedPath(const CommonRpcClientHandle::S
 	return signal_path;
 }
 
-void ClientConnectionOnBroker::onRpcDataReceived(shv::chainpack::Rpc::ProtocolType protocol_type, shv::chainpack::RpcValue::MetaData &&md, string &&msg_data)
+void ClientConnectionOnBroker::onRpcFrameReceived(chainpack::RpcFrame &&frame)
 {
 	logRpcMsg() << RCV_LOG_ARROW
 				<< "client id:" << connectionId()
-				<< "protocol_type:" << static_cast<int>(protocol_type) << shv::chainpack::Rpc::protocolTypeToString(protocol_type)
-				<< RpcDriver::dataToPrettyCpon(protocol_type, md, msg_data, 0, msg_data.size());
+				<< RpcDriver::frameToPrettyCpon(frame);
 	try {
 		if(isLoginPhase()) {
-			Super::onRpcDataReceived(protocol_type, std::move(md), std::move(msg_data));
+			Super::onRpcFrameReceived(std::move(frame));
 			return;
 		}
 		if(m_idleWatchDogTimer)
 			m_idleWatchDogTimer->start();
-		BrokerApp::instance()->onRpcDataReceived(connectionId(), protocol_type, std::move(md), std::move(msg_data));
+		BrokerApp::instance()->onRpcFrameReceived(connectionId(), std::move(frame));
 	}
 	catch (std::exception &e) {
 		shvError() << e.what();

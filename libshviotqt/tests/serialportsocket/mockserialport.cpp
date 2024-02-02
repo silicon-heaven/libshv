@@ -18,7 +18,7 @@ bool MockSerialPort::open(OpenMode mode)
 	Q_UNUSED(mode);
 	close();
 	{
-		const auto tests_dir = getenv("TESTS_DIR");
+		const auto tests_dir = TESTS_DIR;
 		if (!tests_dir) {
 			throw std::runtime_error("TESTS_DIR not set");
 		}

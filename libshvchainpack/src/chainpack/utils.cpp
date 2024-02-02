@@ -2,7 +2,6 @@
 #include <shv/chainpack/rpcvalue.h>
 
 #include <regex>
-#include <iomanip>
 
 using namespace std;
 
@@ -57,6 +56,25 @@ string hexDump(const char *bytes, size_t n)
 		ret += num_l + ' ' + hex_l + rest_l + str_l;
 	}
 	return ret;
+}
+
+string hexArray(const char *bytes, size_t n)
+{
+	std::string ret = "[";
+	for (size_t i = 0; i < n; ++i) {
+		auto c = bytes[i];
+		std::string s = "0x";
+		s += byteToHex(static_cast<uint8_t>(c));
+		if (i > 0)
+			ret += ',';
+		ret += s;
+	}
+	return ret + ']';
+}
+
+string hexDump(const std::string_view &bytes)
+{
+	return utils::hexDump(bytes.data(), bytes.size());
 }
 
 }
@@ -137,11 +155,6 @@ std::string Utils::fromHex(const std::string &bytes)
 		ret.push_back(static_cast<char>(u));
 	}
 	return ret;
-}
-
-std::string Utils::hexDump(const std::string &bytes)
-{
-	return utils::hexDump(bytes.data(), bytes.size());
 }
 
 RpcValue Utils::mergeMaps(const RpcValue &value_base, const RpcValue &value_over)

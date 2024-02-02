@@ -46,8 +46,8 @@ public:
 
 	void setIdleWatchDogTimeOut(int sec);
 
-	void sendMessage(const shv::chainpack::RpcMessage &rpc_msg) override;
-	void sendRawData(const shv::chainpack::RpcValue::MetaData &meta_data, std::string &&data) override;
+	void sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg) override;
+	void sendRpcFrame(shv::chainpack::RpcFrame &&frame) override;
 
 	Subscription createSubscription(const std::string &shv_path, const std::string &method) override;
 	std::string toSubscribedPath(const Subscription &subs, const std::string &signal_path) const override;
@@ -56,7 +56,7 @@ public:
 	void setLoginResult(const chainpack::UserLoginResult &result) override;
 private:
 	void onSocketConnectedChanged(bool is_connected);
-	void onRpcDataReceived(shv::chainpack::Rpc::ProtocolType protocol_type, shv::chainpack::RpcValue::MetaData &&md, std::string &&msg_data) override;
+	void onRpcFrameReceived(chainpack::RpcFrame &&frame) override;
 	bool checkTunnelSecret(const std::string &s);
 	QVector<int> callerIdsToList(const shv::chainpack::RpcValue &caller_ids);
 

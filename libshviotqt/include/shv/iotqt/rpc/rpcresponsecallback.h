@@ -19,8 +19,7 @@ namespace shv {
 
 namespace chainpack { class RpcMessage; class RpcResponse; class RpcError; }
 
-namespace iotqt {
-namespace rpc {
+namespace iotqt::rpc {
 
 class ClientConnection;
 
@@ -90,6 +89,6 @@ private:
 	int m_requestId = 0;
 };
 
-} // namespace rpc
-} // namespace iotqt
+} // namespace iotqt::rpc
+
 } // namespace shv

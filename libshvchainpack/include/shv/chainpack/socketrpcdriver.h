@@ -21,9 +21,7 @@ public:
 	void sendNotify(std::string &&method, const RpcValue &result);
 protected:
 	bool isOpen() override;
-	void writeMessageBegin() override;
-	void writeMessageEnd() override;
-	int64_t writeBytes(const char *bytes, size_t length) override;
+	void writeFrameData(const std::string &frame_data) override;
 
 	virtual void idleTaskOnSelectTimeout();
 private:
@@ -33,6 +31,8 @@ private:
 	int m_socket = -1;
 	std::string m_writeBuffer;
 	size_t m_maxWriteBufferLength = 1024;
+	std::string m_readBuffer;
+	size_t m_readFrameSize = 0;
 };
 
 }}

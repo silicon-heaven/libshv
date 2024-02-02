@@ -126,18 +126,18 @@ bool ShvNode::isRootNode() const
 	return m_isRootNode;
 }
 
-void ShvNode::handleRawRpcRequest(RpcValue::MetaData &&meta, std::string &&data)
+void ShvNode::handleRpcFrame(RpcFrame &&frame)
 {
-	shvLogFuncFrame() << "node:" << nodeId() << "meta:" << meta.toPrettyString();
+	shvLogFuncFrame() << "node:" << nodeId() << "meta:" << frame.meta.toPrettyString();
 	using ShvPath = shv::core::utils::ShvPath;
 	using namespace std;
 	using namespace shv::core::utils;
-	const chainpack::RpcValue::String method = RpcMessage::method(meta).toString();
-	const chainpack::RpcValue::String shv_path_str = RpcMessage::shvPath(meta).toString();
-	ShvUrl shv_url(RpcMessage::shvPath(meta).asString());
+	const chainpack::RpcValue::String method = RpcMessage::method(frame.meta).toString();
+	const chainpack::RpcValue::String shv_path_str = RpcMessage::shvPath(frame.meta).toString();
+	ShvUrl shv_url(RpcMessage::shvPath(frame.meta).asString());
 	core::StringViewList shv_path = ShvPath::split(shv_url.pathPart());
-	const bool ls_hook = meta.hasKey(ADD_LOCAL_TO_LS_RESULT_HACK_META_KEY);
-	RpcResponse resp = RpcResponse::forRequest(meta);
+	const bool ls_hook = frame.meta.hasKey(ADD_LOCAL_TO_LS_RESULT_HACK_META_KEY);
+	RpcResponse resp = RpcResponse::forRequest(frame.meta);
 	try {
 		if(!shv_path.empty()) {
 			ShvNode *nd = childNode(std::string{shv_path.at(0)}, !shv::core::Exception::Throw);
@@ -147,8 +147,8 @@ void ShvNode::handleRawRpcRequest(RpcValue::MetaData &&meta, std::string &&data)
 																shv_url.service(),
 																shv_url.fullBrokerId(),
 																ShvPath::joinDirs(++shv_path.begin(), shv_path.end()));
-				RpcMessage::setShvPath(meta, new_path);
-				nd->handleRawRpcRequest(std::move(meta), std::move(data));
+				RpcMessage::setShvPath(frame.meta, new_path);
+				nd->handleRpcFrame(std::move(frame));
 				return;
 			}
 		}
@@ -156,7 +156,7 @@ void ShvNode::handleRawRpcRequest(RpcValue::MetaData &&meta, std::string &&data)
 		if(mm) {
 			shvDebug() << "Metamethod:" << method << "on path:" << ShvPath::joinDirs(shv_path) << "FOUND";
 			std::string errmsg;
-			RpcMessage rpc_msg = RpcDriver::composeRpcMessage(std::move(meta), data, &errmsg);
+			RpcMessage rpc_msg = frame.toRpcMessage(&errmsg);
 			if(!errmsg.empty())
 				SHV_EXCEPTION(errmsg);
 

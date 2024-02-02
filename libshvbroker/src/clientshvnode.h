@@ -22,7 +22,7 @@ public:
 	void addConnection(rpc::ClientConnectionOnBroker *conn);
 	void removeConnection(rpc::ClientConnectionOnBroker *conn);
 
-	void handleRawRpcRequest(shv::chainpack::RpcValue::MetaData &&meta, std::string &&data) override;
+	void handleRpcFrame(chainpack::RpcFrame &&frame) override;
 	shv::chainpack::RpcValue hasChildren(const StringViewList &shv_path) override;
 private:
 	QList<rpc::ClientConnectionOnBroker *> m_connections;

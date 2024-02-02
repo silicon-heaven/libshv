@@ -85,18 +85,17 @@ bool MasterBrokerConnection::isMasterBrokerConnection() const
 	return true;
 }
 
-void MasterBrokerConnection::sendRawData(const shv::chainpack::RpcValue::MetaData &meta_data, std::string &&data)
+void MasterBrokerConnection::sendRpcFrame(chainpack::RpcFrame &&frame)
 {
 	logRpcMsg() << SND_LOG_ARROW
 				<< "client id:" << connectionId()
-				<< "protocol_type:" << static_cast<int>(protocolType()) << shv::chainpack::Rpc::protocolTypeToString(protocolType())
-				<< RpcDriver::dataToPrettyCpon(shv::chainpack::RpcMessage::protocolType(meta_data), meta_data, data, 0);
-	Super::sendRawData(meta_data, std::move(data));
+				<< RpcDriver::frameToPrettyCpon(frame);
+	Super::sendRpcFrame(std::move(frame));
 }
 
-void MasterBrokerConnection::sendMessage(const shv::chainpack::RpcMessage &rpc_msg)
+void MasterBrokerConnection::sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg)
 {
-	Super::sendMessage(rpc_msg);
+	Super::sendRpcMessage(rpc_msg);
 }
 
 CommonRpcClientHandle::Subscription MasterBrokerConnection::createSubscription(const std::string &shv_path, const std::string &method)
@@ -145,27 +144,26 @@ const std::string& MasterBrokerConnection::exportedShvPath() const
 	return m_exportedShvPath;
 }
 
-void MasterBrokerConnection::onRpcDataReceived(shv::chainpack::Rpc::ProtocolType protocol_type, shv::chainpack::RpcValue::MetaData &&md, std::string &&msg_data)
+void MasterBrokerConnection::onRpcFrameReceived(chainpack::RpcFrame &&frame)
 {
 	logRpcMsg() << RpcDriver::RCV_LOG_ARROW
 				<< "client id:" << connectionId()
-				<< "protocol_type:" << static_cast<int>(protocol_type) << shv::chainpack::Rpc::protocolTypeToString(protocol_type)
-				<< RpcDriver::dataToPrettyCpon(protocol_type, md, msg_data, 0, msg_data.size());
+				<< RpcDriver::frameToPrettyCpon(frame);
 	try {
 		if(isLoginPhase()) {
-			Super::onRpcDataReceived(protocol_type, std::move(md), std::move(msg_data));
+			Super::onRpcFrameReceived(std::move(frame));
 			return;
 		}
-		if(cp::RpcMessage::isRequest(md)) {
+		if(cp::RpcMessage::isRequest(frame.meta)) {
 		}
-		else if(cp::RpcMessage::isResponse(md)) {
-			int rq_id = cp::RpcMessage::requestId(md).toInt();
+		else if(cp::RpcMessage::isResponse(frame.meta)) {
+			int rq_id = cp::RpcMessage::requestId(frame.meta).toInt();
 			if(rq_id == m_connectionState.pingRqId) {
 				m_connectionState.pingRqId = 0;
 				return;
 			}
 		}
-		BrokerApp::instance()->onRpcDataReceived(connectionId(), protocol_type, std::move(md), std::move(msg_data));
+		BrokerApp::instance()->onRpcFrameReceived(connectionId(), std::move(frame));
 	}
 	catch (std::exception &e) {
 		shvError() << e.what();

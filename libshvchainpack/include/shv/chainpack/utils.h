@@ -16,7 +16,9 @@ class RpcValue;
 
 namespace utils {
 
+SHVCHAINPACK_DECL_EXPORT std::string hexArray(const char *bytes, size_t n);
 SHVCHAINPACK_DECL_EXPORT std::string hexDump(const char *bytes, size_t n);
+SHVCHAINPACK_DECL_EXPORT std::string hexDump(const std::string_view &bytes);
 SHVCHAINPACK_DECL_EXPORT std::string byteToHex( uint8_t i );
 SHVCHAINPACK_DECL_EXPORT void byteToHex( std::array<char, 2> &arr, uint8_t i );
 
@@ -50,7 +52,6 @@ public:
 	static std::string toHex(const std::basic_string<uint8_t> &bytes);
 	static char fromHex(char c);
 	static std::string fromHex(const std::string &bytes);
-	static std::string hexDump(const std::string &bytes);
 
 	template <typename I>
 	static std::string toString(I n)

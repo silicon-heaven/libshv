@@ -15,6 +15,7 @@ qt_add_library(libshviotqt
 	src/rpc/rpcresponsecallback.cpp
 	src/rpc/serverconnection.cpp
 	src/rpc/socket.cpp
+	src/rpc/localsocket.cpp
 	src/rpc/socketrpcconnection.cpp
 	src/rpc/tcpserver.cpp
 	src/utils.cpp
@@ -34,6 +35,7 @@ qt_add_library(libshviotqt
 	include/shv/iotqt/rpc/tcpserver.h
 	include/shv/iotqt/rpc/rpcresponsecallback.h
 	include/shv/iotqt/rpc/socket.h
+	include/shv/iotqt/rpc/localsocket.h
 	include/shv/iotqt/rpc/clientconnection.h
 	include/shv/iotqt/rpc/serverconnection.h
 	include/shv/iotqt/rpc/serialportsocket.h
@@ -83,7 +85,7 @@ endfunction(add_shviotqt_serialportsocket_test)
 if(BUILD_TESTING)
 	add_shviotqt_serialportsocket_test(serialportsocket)
 	file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test_serialportsocket")
-	set_property(TEST test_iotqt_serialportsocket APPEND PROPERTY ENVIRONMENT "TESTS_DIR=${CMAKE_CURRENT_BINARY_DIR}/test_serialportsocket")
+	target_compile_definitions(test_iotqt_serialportsocket PRIVATE TESTS_DIR="${CMAKE_CURRENT_BINARY_DIR}/test_serialportsocket")
 endif()
 
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/shv" TYPE INCLUDE)

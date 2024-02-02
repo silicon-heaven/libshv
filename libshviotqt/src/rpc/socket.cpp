@@ -1,17 +1,111 @@
 #include <shv/iotqt/rpc/socket.h>
 
 #include <shv/coreqt/log.h>
+#include <shv/chainpack/utils.h>
+#include <shv/chainpack/chainpackreader.h>
+#include <shv/chainpack/chainpackwriter.h>
 #include <shv/chainpack/irpcconnection.h>
 
 #include <QHostAddress>
 #include <QSslConfiguration>
 #include <QSslError>
 #include <QTcpSocket>
-#include <QLocalSocket>
 #include <QTimer>
 #include <QUrl>
+#ifdef WITH_SHV_WEBSOCKETS
+#include <QWebSocket>
+#endif
 
 namespace shv::iotqt::rpc {
+
+//======================================================
+// FrameWriter
+//======================================================
+void FrameWriter::flushToDevice(QIODevice *device)
+{
+	while (!m_messageDataToWrite.isEmpty()) {
+		auto data = m_messageDataToWrite[0];
+		auto n = device->write(data);
+		shvDebug() << "<=== sending:" << data.size() << "bytes:" << chainpack::utils::hexArray(data.constData(), data.size());
+		if (n <= 0) {
+			shvWarning() << "Write data error.";
+			break;
+		}
+		if (n < data.size()) {
+			data = data.mid(n);
+			m_messageDataToWrite[0] = data;
+		}
+		else {
+			m_messageDataToWrite.takeFirst();
+		}
+	}
+}
+#ifdef WITH_SHV_WEBSOCKETS
+void FrameWriter::flushToWebSocket(QWebSocket *socket)
+{
+	while (!m_messageDataToWrite.isEmpty()) {
+		auto data = m_messageDataToWrite[0];
+		auto n = socket->sendBinaryMessage(data);
+		if (n != data.size()) {
+			shvWarning() << "Write data error.";
+			break;
+		}
+		m_messageDataToWrite.takeFirst();
+	}
+}
+#endif
+
+//======================================================
+// StreamFrameReader
+//======================================================
+void StreamFrameReader::addData(std::string_view data)
+{
+	m_readBuffer += data;
+	shvDebug() << "received:\n" << chainpack::utils::hexDump(data);
+	while (true) {
+		std::istringstream in(m_readBuffer);
+		int err_code;
+		size_t frame_size = chainpack::ChainPackReader::readUIntData(in, &err_code);
+		if(err_code == CCPCP_RC_BUFFER_UNDERFLOW) {
+			// not enough data
+			break;
+		}
+		if(err_code != CCPCP_RC_OK) {
+			throw std::runtime_error("Read RPC message length error.");
+		}
+		auto len = in.tellg();
+		if (len <= 0) {
+			throw std::runtime_error("Read RPC message length data error.");
+		}
+		auto consumed_len = static_cast<size_t>(len);
+		if (consumed_len + frame_size <= m_readBuffer.size()) {
+			auto frame = std::string(m_readBuffer, consumed_len, frame_size);
+			m_readBuffer = std::string(m_readBuffer, consumed_len + frame_size);
+			m_frames.push_back(std::move(frame));
+		}
+		else {
+			break;
+		}
+	}
+}
+
+//======================================================
+// StreamFrameWriter
+//======================================================
+void StreamFrameWriter::addFrame(const std::string &frame_data)
+{
+	using namespace shv::chainpack;
+	std::ostringstream out;
+	{
+		ChainPackWriter wr(out);
+		wr.writeUIntData(frame_data.size() + 1);
+	}
+	auto len_data = out.str();
+	QByteArray data(len_data.data(), len_data.size());
+	data += static_cast<char>(Rpc::ProtocolType::ChainPack);
+	data.append(frame_data.data(), frame_data.size());
+	m_messageDataToWrite.append(data);
+}
 
 //======================================================
 // Socket
@@ -29,8 +123,9 @@ const char * Socket::schemeToString(Scheme schema)
 	case Scheme::Ssl: return "ssl";
 	case Scheme::WebSocket: return "ws";
 	case Scheme::WebSocketSecure: return "wss";
-	case Scheme::SerialPort: return "serialport";
-	case Scheme::LocalSocket: return "localsocket";
+	case Scheme::SerialPort: return "serial";
+	case Scheme::LocalSocket: return "unix";
+	case Scheme::LocalSocketSerial: return "unixs";
 	}
 	return "";
 }
@@ -41,8 +136,9 @@ Socket::Scheme Socket::schemeFromString(const std::string &schema)
 	if(schema == "ssl") return Scheme::Ssl;
 	if(schema == "ws") return Scheme::WebSocket;
 	if(schema == "wss") return Scheme::WebSocketSecure;
-	if(schema == "serialport") return Scheme::SerialPort;
-	if(schema == "localsocket") return Scheme::LocalSocket;
+	if(schema == "serialport" || schema == "serial") return Scheme::SerialPort;
+	if(schema == "localsocket" || schema == "unix") return Scheme::LocalSocket;
+	if(schema == "unixs") return Scheme::LocalSocketSerial;
 	return Scheme::Tcp;
 }
 
@@ -62,8 +158,8 @@ TcpSocket::TcpSocket(QTcpSocket *socket, QObject *parent)
 
 	connect(m_socket, &QTcpSocket::connected, this, &Socket::connected);
 	connect(m_socket, &QTcpSocket::disconnected, this, &Socket::disconnected);
-	connect(m_socket, &QTcpSocket::readyRead, this, &Socket::readyRead);
-	connect(m_socket, &QTcpSocket::bytesWritten, this, &Socket::bytesWritten);
+	connect(m_socket, &QTcpSocket::readyRead, this, &TcpSocket::onDataReadyRead);
+	connect(m_socket, &QTcpSocket::bytesWritten, this, &TcpSocket::flushWriteBuffer);
 	connect(m_socket, &QTcpSocket::stateChanged, this, &Socket::stateChanged);
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 	connect(m_socket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error), this, &Socket::error);
@@ -108,155 +204,37 @@ quint16 TcpSocket::peerPort() const
 	return m_socket->peerPort();
 }
 
-QByteArray TcpSocket::readAll()
+std::string TcpSocket::readFrameData()
 {
-	return m_socket->readAll();
+	if(m_frameReader.isEmpty())
+		return {};
+	return m_frameReader.getFrame();
 }
 
-qint64 TcpSocket::write(const char *data, qint64 max_size)
+void TcpSocket::writeFrameData(const std::string &frame_data)
 {
-	return m_socket->write(data, max_size);
-}
-
-void TcpSocket::writeMessageBegin()
-{
-}
-
-void TcpSocket::writeMessageEnd()
-{
+	m_frameWriter.addFrame(frame_data);
+	flushWriteBuffer();
 }
 
 void TcpSocket::ignoreSslErrors()
 {
 }
 
-//======================================================
-// LocalSocket
-//======================================================
-namespace {
-QAbstractSocket::SocketState LocalSocket_convertState(QLocalSocket::LocalSocketState state)
+void TcpSocket::onDataReadyRead()
 {
-	switch (state) {
-	case QLocalSocket::UnconnectedState:
-		return QAbstractSocket::UnconnectedState;
-	case QLocalSocket::ConnectingState:
-		return QAbstractSocket::ConnectingState;
-	case QLocalSocket::ConnectedState:
-		return QAbstractSocket::ConnectedState;
-	case QLocalSocket::ClosingState:
-		return QAbstractSocket::ClosingState;
+	auto ba = m_socket->readAll();
+	std::string_view data(ba.constData(), ba.size());
+	m_frameReader.addData(data);
+	if (!m_frameReader.isEmpty()) {
+		emit readyRead();
 	}
-	return QAbstractSocket::UnconnectedState;
-}
 }
 
-LocalSocket::LocalSocket(QLocalSocket *socket, QObject *parent)
-	: Super(parent)
-	, m_socket(socket)
+void TcpSocket::flushWriteBuffer()
 {
-	m_socket->setParent(this);
-
-	connect(m_socket, &QLocalSocket::connected, this, &Socket::connected);
-	connect(m_socket, &QLocalSocket::disconnected, this, &Socket::disconnected);
-	connect(m_socket, &QLocalSocket::readyRead, this, &Socket::readyRead);
-	connect(m_socket, &QLocalSocket::bytesWritten, this, &Socket::bytesWritten);
-	connect(m_socket, &QLocalSocket::stateChanged, this, [this](QLocalSocket::LocalSocketState state) {
-		emit stateChanged(LocalSocket_convertState(state));
-	});
-	connect(m_socket, &QLocalSocket::errorOccurred, this, [this](QLocalSocket::LocalSocketError socket_error) {
-		switch (socket_error) {
-		case QLocalSocket::ConnectionRefusedError:
-			emit error(QAbstractSocket::ConnectionRefusedError);
-			break;
-		case QLocalSocket::PeerClosedError:
-			emit error(QAbstractSocket::RemoteHostClosedError);
-			break;
-		case QLocalSocket::ServerNotFoundError:
-			emit error(QAbstractSocket::HostNotFoundError);
-			break;
-		case QLocalSocket::SocketAccessError:
-			emit error(QAbstractSocket::SocketAddressNotAvailableError);
-			break;
-		case QLocalSocket::SocketResourceError:
-			emit error(QAbstractSocket::SocketResourceError);
-			break;
-		case QLocalSocket::SocketTimeoutError:
-			emit error(QAbstractSocket::SocketTimeoutError);
-			break;
-		case QLocalSocket::DatagramTooLargeError:
-			emit error(QAbstractSocket::DatagramTooLargeError);
-			break;
-		case QLocalSocket::ConnectionError:
-			emit error(QAbstractSocket::NetworkError);
-			break;
-		case QLocalSocket::UnsupportedSocketOperationError:
-			emit error(QAbstractSocket::UnsupportedSocketOperationError);
-			break;
-		case QLocalSocket::UnknownSocketError:
-			emit error(QAbstractSocket::UnknownSocketError);
-			break;
-		case QLocalSocket::OperationError:
-			emit error(QAbstractSocket::OperationError);
-			break;
-		}
-	});
-}
-
-void LocalSocket::connectToHost(const QUrl &url)
-{
-	m_socket->connectToServer(url.path());
-}
-
-void LocalSocket::close()
-{
-	m_socket->close();
-}
-
-void LocalSocket::abort()
-{
-	m_socket->abort();
-}
-
-QAbstractSocket::SocketState LocalSocket::state() const
-{
-	return LocalSocket_convertState(m_socket->state());
-}
-
-QString LocalSocket::errorString() const
-{
-	return m_socket->errorString();
-}
-
-QHostAddress LocalSocket::peerAddress() const
-{
-	return QHostAddress(m_socket->serverName());
-}
-
-quint16 LocalSocket::peerPort() const
-{
-	return 0;
-}
-
-QByteArray LocalSocket::readAll()
-{
-	return m_socket->readAll();
-}
-
-qint64 LocalSocket::write(const char *data, qint64 max_size)
-{
-	return m_socket->write(data, max_size);
-}
-
-void LocalSocket::writeMessageBegin()
-{
-}
-
-void LocalSocket::writeMessageEnd()
-{
-}
-
-void LocalSocket::ignoreSslErrors()
-{
+	m_frameWriter.flushToDevice(m_socket);
+	m_socket->flush();
 }
 
 //======================================================

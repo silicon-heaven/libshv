@@ -2,6 +2,7 @@
 
 #include <shv/iotqt/rpc/clientappclioptions.h>
 #include <shv/iotqt/rpc/socket.h>
+#include <shv/iotqt/rpc/localsocket.h>
 #include <shv/iotqt/rpc/socketrpcconnection.h>
 #include <shv/iotqt/rpc/websocket.h>
 
@@ -23,6 +24,7 @@
 #include <QTimer>
 #include <QCryptographicHash>
 #include <QThread>
+#include <QUrlQuery>
 #ifdef QT_SERIALPORT_LIB
 #include <shv/iotqt/rpc/serialportsocket.h>
 #include <QSerialPort>
@@ -44,8 +46,6 @@ ClientConnection::ClientConnection(QObject *parent)
 	: Super(parent)
 	, m_loginType(IRpcConnection::LoginType::Sha1)
 {
-	setProtocolType(shv::chainpack::Rpc::ProtocolType::ChainPack);
-
 	connect(this, &SocketRpcConnection::socketConnectedChanged, this, &ClientConnection::onSocketConnectedChanged);
 
 	m_checkBrokerConnectedTimer = new QTimer(this);
@@ -65,11 +65,19 @@ QUrl ClientConnection::connectionUrl() const
 
 void ClientConnection::setConnectionUrl(const QUrl &url)
 {
+	auto query = QUrlQuery(url.query());
 	m_connectionUrl = url;
+	m_connectionUrl.setQuery(QUrlQuery());
 	if(auto user = m_connectionUrl.userName(); !user.isEmpty()) {
 		setUser(user.toStdString());
 	}
+	if(auto user = query.queryItemValue("user"); !user.isEmpty()) {
+		setUser(user.toStdString());
+	}
 	if(auto password = m_connectionUrl.password(); !password.isEmpty()) {
+		setPassword(password.toStdString());
+	}
+	if(auto password = query.queryItemValue("password"); !password.isEmpty()) {
 		setPassword(password.toStdString());
 	}
 	m_connectionUrl.setUserInfo({});
@@ -89,11 +97,12 @@ QUrl ClientConnection::connectionUrlFromString(const QString &url_str)
 {
 	static QVector<QString> known_schemes {
 		Socket::schemeToString(Socket::Scheme::Tcp),
-				Socket::schemeToString(Socket::Scheme::Ssl),
-				Socket::schemeToString(Socket::Scheme::WebSocket),
-				Socket::schemeToString(Socket::Scheme::WebSocketSecure),
-				Socket::schemeToString(Socket::Scheme::SerialPort),
-				Socket::schemeToString(Socket::Scheme::LocalSocket),
+		Socket::schemeToString(Socket::Scheme::Ssl),
+		Socket::schemeToString(Socket::Scheme::WebSocket),
+		Socket::schemeToString(Socket::Scheme::WebSocketSecure),
+		Socket::schemeToString(Socket::Scheme::SerialPort),
+		Socket::schemeToString(Socket::Scheme::LocalSocket),
+		Socket::schemeToString(Socket::Scheme::LocalSocketSerial),
 	};
 	QUrl url(url_str);
 	if(!known_schemes.contains(url.scheme())) {
@@ -161,14 +170,6 @@ void ClientConnection::setCliOptions(const ClientAppCliOptions *cli_opts)
 		shvInfo() << "Default RPC timeout set to:" << cp::RpcDriver::defaultRpcTimeoutMsec() << "msec.";
 	}
 
-	const std::string pv = cli_opts->protocolType();
-	if(pv == "cpon")
-		setProtocolType(shv::chainpack::Rpc::ProtocolType::Cpon);
-	else if(pv == "jsonrpc")
-		setProtocolType(shv::chainpack::Rpc::ProtocolType::JsonRpc);
-	else
-		setProtocolType(shv::chainpack::Rpc::ProtocolType::ChainPack);
-
 	setConnectionString(QString::fromStdString(cli_opts->serverHost()));
 	setPeerVerify(cli_opts->serverPeerVerify());
 	if(cli_opts->user_isset())
@@ -217,9 +218,11 @@ void ClientConnection::open()
 #endif
 		}
 		else if(scheme == Socket::Scheme::LocalSocket) {
-			socket = new LocalSocket(new QLocalSocket());
+			socket = new LocalSocket(new QLocalSocket(), LocalSocket::Protocol::Stream);
 		}
-
+		else if(scheme == Socket::Scheme::LocalSocketSerial) {
+			socket = new LocalSocket(new QLocalSocket(), LocalSocket::Protocol::Serial);
+		}
 #ifdef QT_SERIALPORT_LIB
 		else if(scheme == Socket::Scheme::SerialPort) {
 			socket = new SerialPortSocket(new QSerialPort());
@@ -282,7 +285,7 @@ bool ClientConnection::isBrokerConnected() const
 static constexpr std::string_view::size_type MAX_LOG_LEN = 1024;
 static const auto TOPIC_RPC_MSG = "RpcMsg";
 
-void ClientConnection::sendMessage(const cp::RpcMessage &rpc_msg)
+void ClientConnection::sendRpcMessage(const cp::RpcMessage &rpc_msg)
 {
 	if(NecroLog::shouldLog(NecroLog::Level::Message, NecroLog::LogContext(__FILE__, __LINE__, TOPIC_RPC_MSG))) {
 		if(isShvPathMutedInLog(rpc_msg.shvPath().asString(), rpc_msg.method().asString())) {
@@ -297,11 +300,10 @@ void ClientConnection::sendMessage(const cp::RpcMessage &rpc_msg)
 			NecroLog::create(NecroLog::Level::Message, NecroLog::LogContext(__FILE__, __LINE__, TOPIC_RPC_MSG))
 				<< SND_LOG_ARROW
 				<< "client id:" << connectionId()
-				<< "protocol_type:" << static_cast<int>(protocolType()) << shv::chainpack::Rpc::protocolTypeToString(protocolType())
 				<< std::string_view(m_rawRpcMessageLog? rpc_msg.toCpon(): rpc_msg.toPrettyString()).substr(0, MAX_LOG_LEN);
 		}
 	}
-	sendRpcValue(rpc_msg.value());
+	Super::sendRpcMessage(rpc_msg);
 }
 
 void ClientConnection::onRpcMessageReceived(const chainpack::RpcMessage &rpc_msg)
@@ -333,7 +335,6 @@ void ClientConnection::onRpcMessageReceived(const chainpack::RpcMessage &rpc_msg
 			NecroLog::create(NecroLog::Level::Message, NecroLog::LogContext(__FILE__, __LINE__, TOPIC_RPC_MSG))
 				<< cp::RpcDriver::RCV_LOG_ARROW
 				<< "client id:" << connectionId()
-				<< "protocol_type:" << static_cast<int>(protocolType()) << shv::chainpack::Rpc::protocolTypeToString(protocolType())
 				<< std::string_view(m_rawRpcMessageLog? rpc_msg.toCpon(): rpc_msg.toPrettyString()).substr(0, MAX_LOG_LEN);
 		}
 	}
@@ -425,7 +426,7 @@ void ClientConnection::onSocketConnectedChanged(bool is_connected)
 		shvInfo() << objectName() << "connection id:" << connectionId() << "Socket connected to RPC server";
 		shvInfo() << "peer:" << peerAddress() << "port:" << peerPort();
 		setState(State::SocketConnected);
-		clearSendBuffers();
+		socket()->resetCommunication();
 		if(loginType() == LoginType::None) {
 			shvInfo() << "Connection scheme:" << connectionUrl().scheme() << " is skipping login phase.";
 			setState(State::BrokerConnected);
@@ -532,7 +533,6 @@ const string &ClientConnection::pingShvPath() const
 		static std::string s = ".app";
 		return s;
 	}
-
 	static std::string s = ".broker/app";
 	return s;
 }
