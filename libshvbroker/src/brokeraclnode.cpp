@@ -246,7 +246,6 @@ std::string MountsAclNode::saveConfigFile()
 //========================================================
 // RolesAclNode
 //========================================================
-static const std::string ACL_ROLE_WEIGHT = "weight";
 static const std::string ACL_ROLE_ROLES = "roles";
 static const std::string ACL_ROLE_PROFILE = "profile";
 
@@ -263,7 +262,7 @@ iotqt::node::ShvNode::StringList RolesAclNode::childNames(const iotqt::node::Shv
 		return mng->roles();
 	}
 	if(shv_path.size() == 1) {
-		return iotqt::node::ShvNode::StringList{ACL_ROLE_WEIGHT, ACL_ROLE_ROLES, ACL_ROLE_PROFILE};
+		return iotqt::node::ShvNode::StringList{ACL_ROLE_ROLES, ACL_ROLE_PROFILE};
 	}
 	return Super::childNames(shv_path);
 }
