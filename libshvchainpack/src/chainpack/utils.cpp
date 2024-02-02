@@ -72,6 +72,11 @@ string hexArray(const char *bytes, size_t n)
 	return ret + ']';
 }
 
+string hexDump(const std::string_view &bytes)
+{
+	return utils::hexDump(bytes.data(), bytes.size());
+}
+
 }
 std::string Utils::removeJsonComments(const std::string &json_str)
 {
@@ -150,11 +155,6 @@ std::string Utils::fromHex(const std::string &bytes)
 		ret.push_back(static_cast<char>(u));
 	}
 	return ret;
-}
-
-std::string Utils::hexDump(const std::string_view &bytes)
-{
-	return utils::hexDump(bytes.data(), bytes.size());
 }
 
 RpcValue Utils::mergeMaps(const RpcValue &value_base, const RpcValue &value_over)

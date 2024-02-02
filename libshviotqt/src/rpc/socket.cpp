@@ -61,6 +61,7 @@ void FrameWriter::flushToWebSocket(QWebSocket *socket)
 void StreamFrameReader::addData(std::string_view data)
 {
 	m_readBuffer += data;
+	shvDebug() << "received:\n" << chainpack::utils::hexDump(data);
 	while (true) {
 		std::istringstream in(m_readBuffer);
 		int err_code;
@@ -81,6 +82,9 @@ void StreamFrameReader::addData(std::string_view data)
 			auto frame = std::string(m_readBuffer, consumed_len, frame_size);
 			m_readBuffer = std::string(m_readBuffer, consumed_len + frame_size);
 			m_frames.push_back(std::move(frame));
+		}
+		else {
+			break;
 		}
 	}
 }
