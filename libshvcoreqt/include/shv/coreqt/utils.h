@@ -1,4 +1,3 @@
-#include <iostream>
 #pragma once
 
 #include <shv/coreqt/shvcoreqtglobal.h>

@@ -1,4 +1,3 @@
-#include <iostream>
 #pragma once
 
 #ifdef WITH_SHV_LDAP
