@@ -17,7 +17,7 @@
 #include <shv/core/utils/shvjournalentry.h>
 #include <shv/core/utils/shvlogrpcvaluereader.h>
 #include <shv/iotqt/rpc/clientconnection.h>
-#include <shv/iotqt/rpc/rpcresponsecallback.h>
+#include <shv/iotqt/rpc/rpccall.h>
 #include <shv/iotqt/utils.h>
 
 #include <QAction>
