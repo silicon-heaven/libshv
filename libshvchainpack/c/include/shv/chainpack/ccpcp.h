@@ -1,5 +1,4 @@
-#ifndef C_CPCP_H
-#define C_CPCP_H
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -204,5 +203,3 @@ const char *ccpcp_unpack_peek_byte(ccpcp_unpack_context* unpack_context);
 #ifdef __cplusplus
 }
 #endif
-
-#endif 

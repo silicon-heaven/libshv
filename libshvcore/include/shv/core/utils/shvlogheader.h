@@ -1,5 +1,4 @@
-#ifndef SHV_CORE_UTILS_SHVLOGHEADER_H
-#define SHV_CORE_UTILS_SHVLOGHEADER_H
+#pragma once
 
 #include "../shvcoreglobal.h"
 
@@ -70,5 +69,3 @@ private:
 } // namespace utils
 } // namespace core
 } // namespace shv
-
-#endif // SHV_CORE_UTILS_SHVLOGHEADER_H

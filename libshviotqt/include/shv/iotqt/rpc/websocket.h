@@ -1,5 +1,4 @@
-#ifndef SHV_IOTQT_RPC_WEBSOCKET_H
-#define SHV_IOTQT_RPC_WEBSOCKET_H
+#pragma once
 
 #include "socket.h"
 
@@ -38,7 +37,3 @@ private:
 };
 
 } // namespace shv::iotqt::rpc
-
-
-
-#endif // SHV_IOTQT_RPC_WEBSOCKET_H

@@ -1,5 +1,4 @@
-#ifndef C_CHAINPACK_H
-#define C_CHAINPACK_H
+#pragma once
 
 #include "ccpcp.h"
 
@@ -76,5 +75,3 @@ void cchainpack_unpack_next (ccpcp_unpack_context* unpack_context);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* C_CHAINPACK_H */

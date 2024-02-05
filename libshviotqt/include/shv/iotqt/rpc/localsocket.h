@@ -1,5 +1,4 @@
-#ifndef SHV_IOTQT_RPC_LOCALSOCKET_H
-#define SHV_IOTQT_RPC_LOCALSOCKET_H
+#pragma once
 
 #include "socket.h"
 
@@ -41,7 +40,3 @@ protected:
 };
 
 } // namespace shv::iotqt::rpc
-
-
-
-#endif // SHV_IOTQT_RPC_LOCALSOCKET_H

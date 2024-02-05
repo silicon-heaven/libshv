@@ -1,5 +1,4 @@
-#ifndef SHV_VISU_SVGSCENE_GROUPITEM_H
-#define SHV_VISU_SVGSCENE_GROUPITEM_H
+#pragma once
 
 #include "../shvvisuglobal.h"
 
@@ -21,5 +20,3 @@ public:
 } // namespace svgscene
 } // namespace visu
 } // namespace shv
-
-#endif // SHV_VISU_SVGSCENE_GROUPITEM_H

@@ -1,5 +1,4 @@
-#ifndef SHV_CORE_UTILS_SHVGETLOGPARAMS_H
-#define SHV_CORE_UTILS_SHVGETLOGPARAMS_H
+#pragma once
 
 #include "../shvcoreglobal.h"
 
@@ -55,5 +54,3 @@ struct SHVCORE_DECL_EXPORT ShvGetLogParams
 } // namespace utils
 } // namespace iotqt
 } // namespace shv
-
-#endif // SHV_IOTQT_UTILS_SHVGETLOGPARAMS_H

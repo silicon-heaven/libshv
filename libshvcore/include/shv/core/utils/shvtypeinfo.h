@@ -1,5 +1,4 @@
-#ifndef SHV_CORE_UTILS_SHVLOGTYPEDESCRIPTION_H
-#define SHV_CORE_UTILS_SHVLOGTYPEDESCRIPTION_H
+#pragma once
 
 #include "../shvcoreglobal.h"
 
@@ -274,5 +273,3 @@ using ShvLogTypeDescrField = ShvFieldDescr;
 } // namespace utils
 } // namespace core
 } // namespace shv
-
-#endif // SHV_CORE_UTILS_SHVLOGTYPEDESCRIPTION_H

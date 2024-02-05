@@ -1,5 +1,4 @@
-#ifndef SHV_BROKER_ACLMANAGERSQLITE_H
-#define SHV_BROKER_ACLMANAGERSQLITE_H
+#pragma once
 
 #include <shv/broker/aclmanager.h>
 
@@ -49,5 +48,3 @@ private:
 
 } // namespace broker
 } // namespace shv
-
-#endif // SHV_BROKER_ACLMANAGERSQLITE_H

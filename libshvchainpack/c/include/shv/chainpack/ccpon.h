@@ -1,5 +1,4 @@
-#ifndef C_CPON_H
-#define C_CPON_H
+#pragma once
 
 #include "ccpcp.h"
 
@@ -62,5 +61,3 @@ void ccpon_unpack_date_time(ccpcp_unpack_context *unpack_context, struct tm *tm,
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* C_CPON_H */

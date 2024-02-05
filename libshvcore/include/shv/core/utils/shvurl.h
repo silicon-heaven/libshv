@@ -1,5 +1,4 @@
-#ifndef SHV_CORE_UTILS_SHVURL_H
-#define SHV_CORE_UTILS_SHVURL_H
+#pragma once
 
 #include "../stringview.h"
 #include <optional>
@@ -53,5 +52,3 @@ private:
 } // namespace utils
 } // namespace core
 } // namespace shv
-
-#endif // SHV_CORE_UTILS_SHVURL_H
