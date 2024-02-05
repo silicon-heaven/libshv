@@ -260,14 +260,14 @@ private:
 };
 
 // backward compatibility
-using ShvLogMethodDescr = ShvMethodDescr;
-using ShvLogFieldDescr = ShvFieldDescr;
-using ShvLogTypeDescr = ShvTypeDescr;
-using ShvLogNodeDescr = ShvPropertyDescr;
-using ShvNodeDescr = ShvPropertyDescr;
-using ShvLogTypeInfo = ShvTypeInfo;
-using ShvLogPathDescr = ShvPropertyDescr;
-using ShvLogTypeDescrField = ShvFieldDescr;
+using ShvLogMethodDescr [[deprecated("ShvLogMethodDescr is deprecated, use ShvMethodDescr instead")]] = ShvMethodDescr;
+using ShvLogFieldDescr [[deprecated("ShvLogFieldDescr is deprecated, use ShvFieldDescr instead")]] = ShvFieldDescr;
+using ShvLogTypeDescr [[deprecated("ShvLogTypeDescr is deprecated, use ShvTypeDescr instead")]] = ShvTypeDescr;
+using ShvLogNodeDescr [[deprecated("ShvLogNodeDescr is deprecated, use ShvPropertyDescr instead")]] = ShvPropertyDescr;
+using ShvNodeDescr [[deprecated("ShvNodeDescr is deprecated, use ShvPropertyDescr instead")]] = ShvPropertyDescr;
+using ShvLogTypeInfo [[deprecated("ShvLogTypeInfo is deprecated, use ShvTypeInfo instead")]] = ShvTypeInfo;
+using ShvLogPathDescr [[deprecated("ShvLogPathDescr is deprecated, use ShvPropertyDescr instead")]] = ShvPropertyDescr;
+using ShvLogTypeDescrField [[deprecated("ShvLogTypeDescrField is deprecated, use ShvFieldDescr instead")]] = ShvFieldDescr;
 
 
 } // namespace utils

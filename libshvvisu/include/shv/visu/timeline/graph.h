@@ -9,7 +9,7 @@
 
 #include <shv/coreqt/utils.h>
 #include <shv/core/exception.h>
-#include <shv/core/utils/shvlogtypeinfo.h>
+#include <shv/core/utils/shvtypeinfo.h>
 
 #include <optional>
 #include <QObject>
