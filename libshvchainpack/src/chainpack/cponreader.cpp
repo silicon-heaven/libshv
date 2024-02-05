@@ -9,12 +9,12 @@
 
 namespace shv::chainpack {
 
-#define PARSE_EXCEPTION(msg) {\
+#define CPON_PARSE_EXCEPTION(msg) {\
 	std::array<char, 40> buff; \
 	auto err_pos = m_in.tellg(); \
 	auto l = m_in.readsome(buff.data(), buff.size() - 1); \
 	buff[l] = 0; \
-	if(exception_aborts) { \
+	if(cpon_exception_aborts) { \
 		std::clog << __FILE__ << ':' << __LINE__;  \
 		std::clog << ' ' << (msg) << " at pos: " << err_pos << " near to: " << buff.data() << std::endl; \
 		abort(); \
@@ -29,7 +29,7 @@ namespace shv::chainpack {
 }
 
 namespace {
-enum {exception_aborts = 0};
+enum {cpon_exception_aborts = 0};
 }
 
 CponReader::CponReader(std::istream &in)
@@ -53,7 +53,7 @@ void CponReader::unpackNext()
 {
 	ccpon_unpack_next(&m_inCtx);
 	if(m_inCtx.err_no != CCPCP_RC_OK)
-		PARSE_EXCEPTION("Parse error: " + std::to_string(m_inCtx.err_no) + " " + ccpcp_error_string(m_inCtx.err_no) + " - " + std::string(m_inCtx.err_msg));
+		CPON_PARSE_EXCEPTION("Parse error: " + std::to_string(m_inCtx.err_no) + " " + ccpcp_error_string(m_inCtx.err_no) + " - " + std::string(m_inCtx.err_msg));
 }
 
 void CponReader::read(RpcValue &val)
@@ -96,7 +96,7 @@ void CponReader::read(RpcValue &val)
 				break;
 			unpackNext();
 			if(m_inCtx.item.type != CCPCP_ITEM_BLOB)
-				PARSE_EXCEPTION("Unfinished blob key");
+				CPON_PARSE_EXCEPTION("Unfinished blob key");
 		}
 		val = RpcValue(blob);
 		break;
@@ -110,7 +110,7 @@ void CponReader::read(RpcValue &val)
 				break;
 			unpackNext();
 			if(m_inCtx.item.type != CCPCP_ITEM_STRING)
-				PARSE_EXCEPTION("Unfinished string key");
+				CPON_PARSE_EXCEPTION("Unfinished string key");
 		}
 		val = str;
 		break;
@@ -142,11 +142,11 @@ void CponReader::read(RpcValue &val)
 		break;
 	}
 	default:
-		PARSE_EXCEPTION("Invalid type.");
+		CPON_PARSE_EXCEPTION("Invalid type.");
 	}
 	if(!md.isEmpty()) {
 		if(!val.isValid())
-			PARSE_EXCEPTION(std::string("Attempt to set metadata to invalid RPC value. error - ") + m_inCtx.err_msg);
+			CPON_PARSE_EXCEPTION(std::string("Attempt to set metadata to invalid RPC value. error - ") + m_inCtx.err_msg);
 		val.setMetaData(std::move(md));
 	}
 }

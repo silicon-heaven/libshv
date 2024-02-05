@@ -799,7 +799,7 @@ const char* ccpon_unpack_skip_insignificant(ccpcp_unpack_context* unpack_context
 	}
 }
 
-static int unpack_int(ccpcp_unpack_context* unpack_context, int64_t *p_val)
+static int ccpon_unpack_int(ccpcp_unpack_context* unpack_context, int64_t *p_val)
 {
 	int64_t val = 0;
 	int neg = 0;
@@ -899,7 +899,7 @@ void ccpon_unpack_date_time(ccpcp_unpack_context *unpack_context, struct tm *tm,
 	const char *p;
 
 	int64_t val;
-	int n = unpack_int(unpack_context, &val);
+	int n = ccpon_unpack_int(unpack_context, &val);
 	if(n < 0) {
 		unpack_context->err_no = CCPCP_RC_MALFORMED_INPUT;
 		unpack_context->err_msg = "Malformed year in DateTime";
@@ -914,7 +914,7 @@ void ccpon_unpack_date_time(ccpcp_unpack_context *unpack_context, struct tm *tm,
 		return;
 	}
 
-	n = unpack_int(unpack_context, &val);
+	n = ccpon_unpack_int(unpack_context, &val);
 	if(n <= 0) {
 		unpack_context->err_no = CCPCP_RC_MALFORMED_INPUT;
 		unpack_context->err_msg = "Malformed month in DateTime";
@@ -929,7 +929,7 @@ void ccpon_unpack_date_time(ccpcp_unpack_context *unpack_context, struct tm *tm,
 		return;
 	}
 
-	n = unpack_int(unpack_context, &val);
+	n = ccpon_unpack_int(unpack_context, &val);
 	if(n <= 0) {
 		unpack_context->err_no = CCPCP_RC_MALFORMED_INPUT;
 		unpack_context->err_msg = "Malformed day in DateTime";
@@ -944,7 +944,7 @@ void ccpon_unpack_date_time(ccpcp_unpack_context *unpack_context, struct tm *tm,
 		return;
 	}
 
-	n = unpack_int(unpack_context, &val);
+	n = ccpon_unpack_int(unpack_context, &val);
 	if(n <= 0) {
 		unpack_context->err_no = CCPCP_RC_MALFORMED_INPUT;
 		unpack_context->err_msg = "Malformed hour in DateTime";
@@ -954,7 +954,7 @@ void ccpon_unpack_date_time(ccpcp_unpack_context *unpack_context, struct tm *tm,
 
 	UNPACK_TAKE_BYTE(p);
 
-	n = unpack_int(unpack_context, &val);
+	n = ccpon_unpack_int(unpack_context, &val);
 	if(n <= 0) {
 		unpack_context->err_no = CCPCP_RC_MALFORMED_INPUT;
 		unpack_context->err_msg = "Malformed minutes in DateTime";
@@ -964,7 +964,7 @@ void ccpon_unpack_date_time(ccpcp_unpack_context *unpack_context, struct tm *tm,
 
 	UNPACK_TAKE_BYTE(p);
 
-	n = unpack_int(unpack_context, &val);
+	n = ccpon_unpack_int(unpack_context, &val);
 	if(n <= 0) {
 		unpack_context->err_no = CCPCP_RC_MALFORMED_INPUT;
 		unpack_context->err_msg = "Malformed seconds in DateTime";
@@ -975,7 +975,7 @@ void ccpon_unpack_date_time(ccpcp_unpack_context *unpack_context, struct tm *tm,
 	p = ccpcp_unpack_take_byte(unpack_context);
 	if(p) {
 		if(*p == '.') {
-			n = unpack_int(unpack_context, &val);
+			n = ccpon_unpack_int(unpack_context, &val);
 			if(n < 0)
 				return;
 			*msec = (int)val;
@@ -988,7 +988,7 @@ void ccpon_unpack_date_time(ccpcp_unpack_context *unpack_context, struct tm *tm,
 			}
 			else if(b == '+' || b == '-') {
 				// UTC time
-				n = unpack_int(unpack_context, &val);
+				n = ccpon_unpack_int(unpack_context, &val);
 				if(!(n == 2 || n == 4))
 					UNPACK_ERROR(CCPCP_RC_MALFORMED_INPUT, "Malformed TS offset in DateTime.");
 				if(n == 2)
@@ -1336,7 +1336,7 @@ void ccpon_unpack_next (ccpcp_unpack_context* unpack_context)
 		flags.is_neg = *p == '-';
 		if(!flags.is_neg)
 			unpack_context->current--;
-		int n = unpack_int(unpack_context, &mantisa);
+		int n = ccpon_unpack_int(unpack_context, &mantisa);
 		if(n < 0)
 			UNPACK_ERROR(CCPCP_RC_MALFORMED_INPUT, "Malformed number.")
 		p = ccpcp_unpack_take_byte(unpack_context);
@@ -1347,7 +1347,7 @@ void ccpon_unpack_next (ccpcp_unpack_context* unpack_context)
 			}
 			if(*p == '.') {
 				flags.is_decimal = 1;
-				n = unpack_int(unpack_context, &decimals);
+				n = ccpon_unpack_int(unpack_context, &decimals);
 				if(n < 0)
 					UNPACK_ERROR(CCPCP_RC_MALFORMED_INPUT, "Malformed number decimal part.")
 				dec_cnt = n;
@@ -1357,7 +1357,7 @@ void ccpon_unpack_next (ccpcp_unpack_context* unpack_context)
 			}
 			if(*p == 'e' || *p == 'E') {
 				flags.is_decimal = 1;
-				n = unpack_int(unpack_context, &exponent);
+				n = ccpon_unpack_int(unpack_context, &exponent);
 				if(n < 0)
 					UNPACK_ERROR(CCPCP_RC_MALFORMED_INPUT, "Malformed number exponetional part.")
 				break;

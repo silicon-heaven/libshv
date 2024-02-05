@@ -8,13 +8,13 @@
 
 namespace shv::chainpack {
 
-#define PARSE_EXCEPTION(msg) {\
+#define CHAINPACK_PARSE_EXCEPTION(msg) {\
 	std::array<char, 40> buff; \
 	auto err_pos = m_in.tellg(); \
 	auto l = m_in.readsome(buff.data(), buff.size() - 1); \
 	buff[l] = 0; \
 	auto buff_data_hex = shv::chainpack::utils::hexDump(buff.data(), l); \
-	if(exception_aborts) { \
+	if(chainpack_exception_aborts) { \
 		std::clog << __FILE__ << ':' << __LINE__;  \
 		std::clog << ' ' << (msg) << " at pos: " << err_pos << " near to:\n" << buff_data_hex << std::endl; \
 		abort(); \
@@ -25,7 +25,7 @@ namespace shv::chainpack {
 }
 
 namespace {
-enum {exception_aborts = 0};
+enum {chainpack_exception_aborts = 0};
 }
 
 ChainPackReader::ChainPackReader(std::istream &in)
@@ -49,7 +49,7 @@ ChainPackReader::ItemType ChainPackReader::unpackNext()
 {
 	cchainpack_unpack_next(&m_inCtx);
 	if(m_inCtx.err_no != CCPCP_RC_OK)
-		PARSE_EXCEPTION("Parse error: " + std::string(m_inCtx.err_msg) + " error code: " + std::to_string(m_inCtx.err_no));
+		CHAINPACK_PARSE_EXCEPTION("Parse error: " + std::string(m_inCtx.err_msg) + " error code: " + std::to_string(m_inCtx.err_no));
 	return m_inCtx.item.type;
 }
 
@@ -62,7 +62,7 @@ ChainPackReader::ItemType ChainPackReader::peekNext()
 {
 	const char *p = ccpcp_unpack_peek_byte(&m_inCtx);
 	if(!p)
-		PARSE_EXCEPTION("Parse error: " + std::string(m_inCtx.err_msg) + " error code: " + std::to_string(m_inCtx.err_no));
+		CHAINPACK_PARSE_EXCEPTION("Parse error: " + std::string(m_inCtx.err_msg) + " error code: " + std::to_string(m_inCtx.err_no));
 	auto sch = static_cast<cchainpack_pack_packing_schema>(static_cast<uint8_t>(*p));
 	switch(sch) {
 	case CP_Null: return CCPCP_ITEM_NULL;
@@ -137,7 +137,7 @@ void ChainPackReader::read(RpcValue &val)
 				break;
 			unpackNext();
 			if(m_inCtx.item.type != CCPCP_ITEM_STRING)
-				PARSE_EXCEPTION("Unfinished string");
+				CHAINPACK_PARSE_EXCEPTION("Unfinished string");
 		}
 		val = str;
 		break;
@@ -151,7 +151,7 @@ void ChainPackReader::read(RpcValue &val)
 				break;
 			unpackNext();
 			if(m_inCtx.item.type != CCPCP_ITEM_BLOB)
-				PARSE_EXCEPTION("Unfinished blob");
+				CHAINPACK_PARSE_EXCEPTION("Unfinished blob");
 		}
 		val = blob;
 		break;
@@ -183,11 +183,11 @@ void ChainPackReader::read(RpcValue &val)
 		break;
 	}
 	default:
-		PARSE_EXCEPTION("Invalid type.");
+		CHAINPACK_PARSE_EXCEPTION("Invalid type.");
 	}
 	if(!md.isEmpty()) {
 		if(!val.isValid())
-			PARSE_EXCEPTION("Attempt to set metadata to invalid RPC value.");
+			CHAINPACK_PARSE_EXCEPTION("Attempt to set metadata to invalid RPC value.");
 		val.setMetaData(std::move(md));
 	}
 }

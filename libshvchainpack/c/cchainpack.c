@@ -458,7 +458,7 @@ static void unpack_uint(ccpcp_unpack_context* unpack_context, int *pbitlen)
 		*pbitlen = bitlen;
 }
 
-static void unpack_int(ccpcp_unpack_context* unpack_context, int64_t *pval)
+static void ccpcp_unpack_int(ccpcp_unpack_context* unpack_context, int64_t *pval)
 {
 	int64_t snum = 0;
 	int bitlen;
@@ -584,7 +584,7 @@ void cchainpack_unpack_next (ccpcp_unpack_context* unpack_context)
 		}
 		case CP_Int: {
 			int64_t n;
-			unpack_int(unpack_context, &n);
+			ccpcp_unpack_int(unpack_context, &n);
 			unpack_context->item.type = CCPCP_ITEM_INT;
 			unpack_context->item.as.Int = n;
 			break;
@@ -617,9 +617,9 @@ void cchainpack_unpack_next (ccpcp_unpack_context* unpack_context)
 		}
 		case CP_Decimal: {
 			int64_t mant;
-			unpack_int(unpack_context, &mant);
+			ccpcp_unpack_int(unpack_context, &mant);
 			int64_t exp;
-			unpack_int(unpack_context, &exp);
+			ccpcp_unpack_int(unpack_context, &exp);
 			unpack_context->item.type = CCPCP_ITEM_DECIMAL;
 			unpack_context->item.as.Decimal.mantisa = mant;
 			unpack_context->item.as.Decimal.exponent = (int)exp;
@@ -627,7 +627,7 @@ void cchainpack_unpack_next (ccpcp_unpack_context* unpack_context)
 		}
 		case CP_DateTime: {
 			int64_t d;
-			unpack_int(unpack_context, &d);
+			ccpcp_unpack_int(unpack_context, &d);
 			int8_t offset = 0;
 			bool has_tz_offset = d & 1;
 			bool has_not_msec = d & 2;

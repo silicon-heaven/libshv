@@ -306,7 +306,7 @@ double ccpcp_decimal_to_double(const int64_t mantisa, const int exponent)
 	return ccpcp_exponentional_to_double(mantisa, exponent, 10);
 }
 
-static size_t int_to_str(char *buff, size_t buff_len, int64_t val)
+static size_t ccpcp_int_to_str(char *buff, size_t buff_len, int64_t val)
 {
 	size_t n = 0;
 	bool neg = false;
@@ -356,7 +356,7 @@ size_t ccpcp_decimal_to_string(char *buff, size_t buff_len, int64_t mantisa, int
 		str++;
 		buff_len--;
 	}
-	size_t mantisa_str_len = int_to_str(str, buff_len, mantisa);
+	size_t mantisa_str_len = ccpcp_int_to_str(str, buff_len, mantisa);
 	if(mantisa_str_len == 0) {
 		return mantisa_str_len;
 	}
@@ -389,7 +389,7 @@ size_t ccpcp_decimal_to_string(char *buff, size_t buff_len, int64_t mantisa, int
 	}
 	else {
 		str[mantisa_str_len++] = 'e';
-		size_t n2 = int_to_str(str+mantisa_str_len, buff_len - mantisa_str_len, exponent);
+		size_t n2 = ccpcp_int_to_str(str+mantisa_str_len, buff_len - mantisa_str_len, exponent);
 		if(n2 == 0) {
 			return n2;
 		}
