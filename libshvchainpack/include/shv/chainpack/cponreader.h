@@ -31,6 +31,8 @@ private:
 	void parseMetaData(RpcValue::MetaData &meta_data);
 	void parseMap(RpcValue &val);
 	void parseIMap(RpcValue &val);
+
+	void throwParseException(const std::string &msg = {});
 };
 
 } // namespace chainpack

@@ -80,10 +80,10 @@ RpcFrame RpcFrame::fromChainPack(std::string &&frame_data)
 	RpcValue::MetaData meta;
 	rd.read(meta);
 	if(meta.isEmpty())
-		throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1);
+		throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
 	auto pos = in.tellg();
 	if(pos < 0)
-		throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1);
+		throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
 	auto data = std::string(frame_data, pos);
 	return RpcFrame(std::move(meta), std::move(data));
 }

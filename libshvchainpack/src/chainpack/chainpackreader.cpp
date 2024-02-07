@@ -3,34 +3,29 @@
 #include <shv/chainpack/cchainpack.h>
 
 #include <iostream>
-#include <cmath>
 #include <array>
 
 namespace shv::chainpack {
 
-#define PARSE_EXCEPTION(msg) {\
-	std::array<char, 40> buff; \
-	auto err_pos = m_in.tellg(); \
-	auto l = m_in.readsome(buff.data(), buff.size() - 1); \
-	buff[l] = 0; \
-	auto buff_data_hex = shv::chainpack::utils::hexDump(buff.data(), l); \
-	if(exception_aborts) { \
-		std::clog << __FILE__ << ':' << __LINE__;  \
-		std::clog << ' ' << (msg) << " at pos: " << err_pos << " near to:\n" << buff_data_hex << std::endl; \
-		abort(); \
-	} \
-	else { \
-		throw ParseException(m_inCtx.err_no, std::string("ChainPack ") + msg + std::string(" at pos: ") + std::to_string(err_pos) + " near to:\n" + buff_data_hex, err_pos); \
-	} \
-}
-
-namespace {
-enum {exception_aborts = 0};
-}
-
 ChainPackReader::ChainPackReader(std::istream &in)
 	: Super(in)
 {
+}
+
+void ChainPackReader::throwParseException(const std::string &msg)
+{
+	std::array<char, 64> buff;
+	auto err_pos = m_in.tellg();
+	auto l = m_in.readsome(buff.data(), buff.size() - 1);
+	buff[l] = 0;
+	auto dump = shv::chainpack::utils::hexDump(buff.data(), l);
+
+	std::string msg2 = m_inCtx.err_msg? m_inCtx.err_msg: "";
+	if (!msg2.empty() && !msg.empty())
+		msg2 += " - ";
+	msg2 += msg;
+
+	throw ParseException(m_inCtx.err_no, msg2, err_pos, dump);
 }
 
 ChainPackReader &ChainPackReader::operator >>(RpcValue &value)
@@ -49,7 +44,7 @@ ChainPackReader::ItemType ChainPackReader::unpackNext()
 {
 	cchainpack_unpack_next(&m_inCtx);
 	if(m_inCtx.err_no != CCPCP_RC_OK)
-		PARSE_EXCEPTION("Parse error: " + std::string(m_inCtx.err_msg) + " error code: " + std::to_string(m_inCtx.err_no));
+		throwParseException();
 	return m_inCtx.item.type;
 }
 
@@ -62,7 +57,7 @@ ChainPackReader::ItemType ChainPackReader::peekNext()
 {
 	const char *p = ccpcp_unpack_peek_byte(&m_inCtx);
 	if(!p)
-		PARSE_EXCEPTION("Parse error: " + std::string(m_inCtx.err_msg) + " error code: " + std::to_string(m_inCtx.err_no));
+		throwParseException();
 	auto sch = static_cast<cchainpack_pack_packing_schema>(static_cast<uint8_t>(*p));
 	switch(sch) {
 	case CP_Null: return CCPCP_ITEM_NULL;
@@ -137,7 +132,7 @@ void ChainPackReader::read(RpcValue &val)
 				break;
 			unpackNext();
 			if(m_inCtx.item.type != CCPCP_ITEM_STRING)
-				PARSE_EXCEPTION("Unfinished string");
+				throwParseException("Unfinished string");
 		}
 		val = str;
 		break;
@@ -151,7 +146,7 @@ void ChainPackReader::read(RpcValue &val)
 				break;
 			unpackNext();
 			if(m_inCtx.item.type != CCPCP_ITEM_BLOB)
-				PARSE_EXCEPTION("Unfinished blob");
+				throwParseException("Unfinished blob");
 		}
 		val = blob;
 		break;
@@ -183,11 +178,11 @@ void ChainPackReader::read(RpcValue &val)
 		break;
 	}
 	default:
-		PARSE_EXCEPTION("Invalid type.");
+		throwParseException("Invalid type.");
 	}
 	if(!md.isEmpty()) {
 		if(!val.isValid())
-			PARSE_EXCEPTION("Attempt to set metadata to invalid RPC value.");
+			throwParseException("Attempt to set metadata to invalid RPC value.");
 		val.setMetaData(std::move(md));
 	}
 }
