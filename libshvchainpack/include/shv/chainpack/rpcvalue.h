@@ -15,6 +15,7 @@
 #endif
 
 namespace shv::chainpack { class RpcValue; }
+template <class ...> static constexpr std::false_type not_implemented_for_type [[maybe_unused]] {};
 
 namespace shv {
 namespace chainpack {
@@ -397,6 +398,8 @@ public:
 			return toDecimal();
 		else if constexpr (std::is_same<T, RpcValue::List>())
 			return asList();
+		else
+			static_assert(not_implemented_for_type<T>, "RpcValue::to<T> is not implemented for this type (maybe you're missing an include?)");
 	}
 
 	size_t count() const;
