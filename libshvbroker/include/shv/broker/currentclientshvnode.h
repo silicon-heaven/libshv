@@ -1,5 +1,4 @@
-#ifndef CURRENTCLIENTSHVNODE_H
-#define CURRENTCLIENTSHVNODE_H
+#pragma once
 
 #include <shv/iotqt/node/shvnode.h>
 
@@ -16,5 +15,3 @@ public:
 private:
 	std::vector<shv::chainpack::MetaMethod> m_metaMethods;
 };
-
-#endif // CURRENTCLIENTSHVNODE_H

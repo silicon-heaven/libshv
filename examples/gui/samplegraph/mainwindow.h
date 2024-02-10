@@ -1,5 +1,4 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <QMainWindow>
 
@@ -27,4 +26,3 @@ private:
 	shv::visu::timeline::Graph *m_graph = nullptr;
 	shv::visu::timeline::GraphWidget *m_graphWidget = nullptr;
 };
-#endif // MAINWINDOW_H

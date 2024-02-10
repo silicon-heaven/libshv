@@ -1,5 +1,4 @@
-#ifndef C_CPCP_CONVERT_H
-#define C_CPCP_CONVERT_H
+#pragma once
 
 #include "ccpcp.h"
 
@@ -11,6 +10,4 @@ void ccpcp_convert(ccpcp_unpack_context* in_ctx, ccpcp_pack_format in_format, cc
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

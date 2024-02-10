@@ -1,5 +1,4 @@
-#ifndef C_CHAINPACK_DOUBLE_H
-#define C_CHAINPACK_DOUBLE_H
+#pragma once
 
 #include <stdint.h>
 
@@ -12,6 +11,4 @@ int wire_from_double(uint_least64_t *ponwire, double val);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

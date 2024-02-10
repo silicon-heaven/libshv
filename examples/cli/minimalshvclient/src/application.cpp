@@ -3,7 +3,7 @@
 #include <shv/chainpack/rpc.h>
 #include <shv/iotqt/rpc/clientconnection.h>
 #include <shv/iotqt/rpc/clientappclioptions.h>
-#include <shv/iotqt/rpc/rpcresponsecallback.h>
+#include <shv/iotqt/rpc/rpccall.h>
 #include <shv/coreqt/log.h>
 
 #include <QTimer>

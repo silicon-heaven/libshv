@@ -1,5 +1,4 @@
-#ifndef SHV_CORE_UTILS_SHVALARM_H
-#define SHV_CORE_UTILS_SHVALARM_H
+#pragma once
 
 #include "../shvcoreglobal.h"
 
@@ -64,5 +63,3 @@ protected:
 } // namespace utils
 } // namespace core
 } // namespace shv
-
-#endif // SHV_CORE_UTILS_SHVALARM_H

@@ -1,5 +1,4 @@
-#ifndef SHV_CORE_UTILS_FILESHVJOURNAL_H
-#define SHV_CORE_UTILS_FILESHVJOURNAL_H
+#pragma once
 
 #include "../shvcoreglobal.h"
 #include "abstractshvjournal.h"
@@ -108,5 +107,3 @@ private:
 } // namespace utils
 } // namespace core
 } // namespace shv
-
-#endif // SHV_CORE_UTILS_FILESHVJOURNAL_H

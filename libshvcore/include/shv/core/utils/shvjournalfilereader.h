@@ -1,5 +1,4 @@
-#ifndef SHV_CORE_UTILS_SHVJOURNALFILEREADER_H
-#define SHV_CORE_UTILS_SHVJOURNALFILEREADER_H
+#pragma once
 
 #include "../shvcoreglobal.h"
 #include "shvjournalentry.h"
@@ -39,5 +38,3 @@ private:
 } // namespace utils
 } // namespace core
 } // namespace shv
-
-#endif // SHV_CORE_UTILS_SHVJOURNALFILEREADER_H

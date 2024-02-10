@@ -7,7 +7,7 @@
 #include <QVariant>
 #include <QVector>
 
-#include <shv/core/utils/shvlogtypeinfo.h>
+#include <shv/core/utils/shvtypeinfo.h>
 #include <shv/coreqt/utils.h>
 
 namespace shv {

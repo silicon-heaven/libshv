@@ -1,5 +1,4 @@
-#ifndef SHV_CORE_UTILS_SHVLOGRPCVALUEREADER_H
-#define SHV_CORE_UTILS_SHVLOGRPCVALUEREADER_H
+#pragma once
 
 #include "shvlogheader.h"
 #include "shvjournalentry.h"
@@ -33,5 +32,3 @@ private:
 } // namespace utils
 } // namespace core
 } // namespace shv
-
-#endif // SHV_CORE_UTILS_SHVLOGRPCVALUEREADER_H

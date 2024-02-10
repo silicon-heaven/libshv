@@ -1,6 +1,6 @@
 #include <shv/core/utils/shvfilejournal.h>
 #include <shv/core/utils/shvlogheader.h>
-#include <shv/core/utils/shvlogtypeinfo.h>
+#include <shv/core/utils/shvtypeinfo.h>
 #include <shv/core/utils/shvjournalentry.h>
 #include <shv/core/utils/shvlogfilereader.h>
 #include <shv/core/utils/shvjournalfilewriter.h>
