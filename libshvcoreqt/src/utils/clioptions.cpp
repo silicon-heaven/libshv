@@ -395,8 +395,8 @@ chainpack::RpcValue CLIOptions::qVariantToRpcValue(const QVariant &v)
 ConfigCLIOptions::ConfigCLIOptions(QObject *parent)
 	: Super(parent)
 {
-	addOption("config").setType(QMetaType::Type::QString).setNames("--config").setComment("Application config name, it is loaded from {config}[.conf] if file exists in {config-dir}, deault value is {app-name}.conf");
-	addOption("configDir").setType(QMetaType::QString).setNames("--config-dir").setComment("Directory where application config fiels are searched, default value: {app-dir-path}.");
+	addOption("config").setType(QMetaType::Type::QString).setNames("--config").setComment("Application config name, it is loaded from {config}[.conf] if file exists in {config-dir}, default value is {app-name}.conf");
+	addOption("configDir").setType(QMetaType::QString).setNames("--config-dir").setComment("Directory where application config fields are searched, default value: {app-dir-path}.");
 }
 
 void ConfigCLIOptions::parse(const QStringList &cmd_line_args)
