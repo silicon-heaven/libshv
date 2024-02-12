@@ -204,11 +204,9 @@ quint16 TcpSocket::peerPort() const
 	return m_socket->peerPort();
 }
 
-std::string TcpSocket::readFrameData()
+std::vector<std::string> TcpSocket::takeFrames()
 {
-	if(m_frameReader.isEmpty())
-		return {};
-	return m_frameReader.getFrame();
+	return m_frameReader.takeFrames();
 }
 
 void TcpSocket::writeFrameData(const std::string &frame_data)

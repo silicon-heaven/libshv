@@ -45,12 +45,12 @@ void RpcDriver::sendRpcFrame(RpcFrame &&frame)
 	writeFrameData(frame_data);
 }
 
-void RpcDriver::onFrameDataRead(std::string &&frame_data)
+void RpcDriver::onFrameDataRead(const std::string &frame_data)
 {
 	logRpcData() << __PRETTY_FUNCTION__ << "+++++++++++++++++++++++++++++++++";
 	logRpcData().nospace() << "FRAME DATA " << frame_data.size() << " bytes of data read:\n" << shv::chainpack::utils::hexDump(frame_data);
 	try {
-		auto frame = RpcFrame::fromChainPack(std::move(frame_data));
+		auto frame = RpcFrame::fromChainPack(frame_data);
 		onRpcFrameReceived(std::move(frame));
 	}
 	catch (const ParseException &e) {

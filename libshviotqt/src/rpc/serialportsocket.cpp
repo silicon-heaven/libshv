@@ -335,11 +335,9 @@ quint16 SerialPortSocket::peerPort() const
 	return 0;
 }
 
-std::string SerialPortSocket::readFrameData()
+std::vector<std::string> SerialPortSocket::takeFrames()
 {
-	if(m_frameReader.isEmpty())
-		return {};
-	return m_frameReader.getFrame();
+	return m_frameReader.takeFrames();
 }
 
 void SerialPortSocket::writeFrameData(const std::string &frame_data)

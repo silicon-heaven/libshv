@@ -111,7 +111,7 @@ DOCTEST_TEST_CASE("Test CRC error")
 	data[5] = ~data[5];
 
 	serial->setDataToReceive(data);
-	REQUIRE(socket->readFrameData().empty());
+	REQUIRE(socket->takeFrames().empty());
 }
 /*
 DOCTEST_TEST_CASE("Test RESET message")

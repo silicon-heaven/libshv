@@ -83,11 +83,9 @@ void SocketRpcConnection::connectToHost(const QUrl &url)
 
 void SocketRpcConnection::onReadyRead()
 {
-	while (true) {
-		auto frame_data = socket()->readFrameData();
-		if (frame_data.empty())
-			break;
-		onFrameDataRead(std::move(frame_data));
+	auto frames = socket()->takeFrames();
+	for (const auto &frame : frames) {
+		onFrameDataRead(frame);
 	};
 	emit socketDataReadyRead();
 }

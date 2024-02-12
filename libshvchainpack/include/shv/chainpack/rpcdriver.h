@@ -31,7 +31,7 @@ protected:
 
 	virtual void writeFrameData(const std::string &frame_data) = 0;
 	/// call it when new data arrived
-	virtual void onFrameDataRead(std::string &&frame_data);
+	virtual void onFrameDataRead(const std::string &frame_data);
 
 	virtual void onRpcFrameReceived(RpcFrame &&frame);
 	virtual void onParseDataException(const shv::chainpack::ParseException &e) = 0;

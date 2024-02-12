@@ -26,7 +26,7 @@ struct SHVCHAINPACK_DECL_EXPORT RpcFrame
 	bool isValid() const { return !meta.isEmpty() && !data.empty(); }
 	RpcMessage toRpcMessage(std::string *errmsg = nullptr) const;
 	std::string toChainPack() const;
-	static RpcFrame fromChainPack(std::string &&frame_data);
+	static RpcFrame fromChainPack(const std::string &frame_data);
 };
 
 class SHVCHAINPACK_DECL_EXPORT RpcMessage
