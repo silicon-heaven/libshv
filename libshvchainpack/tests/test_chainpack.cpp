@@ -487,7 +487,6 @@ DOCTEST_TEST_CASE("ChainPack")
 	DOCTEST_SUBCASE("fuzzing tests")
 	{
 		std::array<uint8_t, 15> input{0x8b, 0x8b, 0x0, 0x8d, 0xf6, 0xff, 0xff, 0xff, 0xff, 0x0, 0x8b, 0x0, 0x8e, 0x0, 0x0};
-		REQUIRE_THROWS_WITH_AS(shv::chainpack::RpcValue::fromChainPack({reinterpret_cast<const char*>(input.data()), input.size()}), "ChainPack Parse error:  error code: 4 at pos: 15 near to:\n", ParseException);
+		REQUIRE_THROWS_WITH_AS(shv::chainpack::RpcValue::fromChainPack({reinterpret_cast<const char*>(input.data()), input.size()}), "Parse error: 3 BUFFER_UNDERFLOW at pos: -1 -  near to:\n", ParseException);
 	}
-
 }

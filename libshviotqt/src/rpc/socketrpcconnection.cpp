@@ -13,12 +13,6 @@
 #include <QHostAddress>
 #include <QCoreApplication>
 
-//#define DUMP_DATA_FILE
-
-#ifdef DUMP_DATA_FILE
-#include <QFile>
-#endif
-
 #define logRpcData() shvCMessage("RpcData")
 
 namespace shv::iotqt::rpc {
@@ -27,15 +21,6 @@ SocketRpcConnection::SocketRpcConnection(QObject *parent)
 	: QObject(parent)
 {
 	shv::coreqt::rpc::registerQtMetaTypes();
-#ifdef DUMP_DATA_FILE
-	QFile *f = new QFile("/tmp/rpc.dat", this);
-	f->setObjectName("DUMP_DATA_FILE");
-	if(!f->open(QFile::WriteOnly)) {
-		shvError() << "cannot open file" << f->fileName() << "for write";
-		delete f;
-	}
-	shvInfo() << "Dumping RPC stream to file:" << f->fileName();
-#endif
 }
 
 SocketRpcConnection::~SocketRpcConnection()

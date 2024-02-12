@@ -451,37 +451,43 @@ static void unpack_uint(ccpcp_unpack_context* unpack_context, int *pbitlen)
 		uint8_t r = (uint8_t)(*p);
 		num = (num << 8) + r;
 	};
-
-	unpack_context->item.as.UInt = num;
-	unpack_context->item.type = CCPCP_ITEM_UINT;
+	if (bitlen > 64) {
+		// numbers greater than 64 bits will be returned as UINT MAX
+		unpack_context->item.as.UInt = UINT64_MAX;
+		unpack_context->item.type = CCPCP_ITEM_UINT;
+	}
+	else {
+		unpack_context->item.as.UInt = num;
+		unpack_context->item.type = CCPCP_ITEM_UINT;
+	}
 	if(pbitlen)
 		*pbitlen = bitlen;
 }
 
-static void unpack_int(ccpcp_unpack_context* unpack_context, int64_t *pval)
+static void unpack_int(ccpcp_unpack_context* unpack_context)
 {
 	int64_t snum = 0;
 	int bitlen;
 	unpack_uint(unpack_context, &bitlen);
 
-	if (bitlen - 1 >= 64) {
-		unpack_context->err_no = CCPCP_RC_MALFORMED_INPUT;
-	}
-
 	if(unpack_context->err_no == CCPCP_RC_OK) {
-		const uint64_t sign_bit_mask = (uint64_t)1 << (bitlen - 1);
-		uint64_t num = unpack_context->item.as.UInt;
-		snum = (int64_t)num;
-
-		// Note: masked value assignment to bool variable would be undefined on some platforms.
-
-		if(num & sign_bit_mask) {
-			snum &= ~(int64_t)sign_bit_mask;
-			snum = -snum;
+		unpack_context->item.type = CCPCP_ITEM_INT;
+		if (bitlen > 64) {
+			// numbers greater than 64 bits (with sign) will be returned as INT MAX
+			unpack_context->item.as.Int = INT64_MAX;
+		}
+		else {
+			const uint64_t sign_bit_mask = (uint64_t)1 << (bitlen - 1);
+			uint64_t num = unpack_context->item.as.UInt;
+			snum = (int64_t)num;
+			// Note: masked value assignment to bool variable would be undefined on some platforms.
+			if(num & sign_bit_mask) {
+				snum &= ~(int64_t)sign_bit_mask;
+				snum = -snum;
+			}
+			unpack_context->item.as.Int = snum;
 		}
 	}
-	if(pval)
-		*pval = snum;
 }
 
 void unpack_string(ccpcp_unpack_context* unpack_context)
@@ -583,10 +589,7 @@ void cchainpack_unpack_next (ccpcp_unpack_context* unpack_context)
 			break;
 		}
 		case CP_Int: {
-			int64_t n;
-			unpack_int(unpack_context, &n);
-			unpack_context->item.type = CCPCP_ITEM_INT;
-			unpack_context->item.as.Int = n;
+			unpack_int(unpack_context);
 			break;
 		}
 		case CP_UInt: {
@@ -616,18 +619,18 @@ void cchainpack_unpack_next (ccpcp_unpack_context* unpack_context)
 			break;
 		}
 		case CP_Decimal: {
-			int64_t mant;
-			unpack_int(unpack_context, &mant);
-			int64_t exp;
-			unpack_int(unpack_context, &exp);
+			unpack_int(unpack_context);
+			int64_t mant = unpack_context->item.as.Int;
+			unpack_int(unpack_context);
+			int64_t exp = unpack_context->item.as.Int;
 			unpack_context->item.type = CCPCP_ITEM_DECIMAL;
 			unpack_context->item.as.Decimal.mantisa = mant;
 			unpack_context->item.as.Decimal.exponent = (int)exp;
 			break;
 		}
 		case CP_DateTime: {
-			int64_t d;
-			unpack_int(unpack_context, &d);
+			unpack_int(unpack_context);
+			int64_t d = unpack_context->item.as.Int;
 			int8_t offset = 0;
 			bool has_tz_offset = d & 1;
 			bool has_not_msec = d & 2;

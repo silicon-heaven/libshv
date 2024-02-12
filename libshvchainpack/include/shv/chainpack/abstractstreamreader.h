@@ -12,7 +12,7 @@ class SHVCHAINPACK_DECL_EXPORT ParseException : public std::exception
 {
 	using Super = std::exception;
 public:
-	ParseException(int err_code, const std::string msg, long long pos);
+	ParseException(int err_code, const std::string &msg, long long pos, const std::string &dump);
 
 	const char *what() const noexcept override;
 	int errCode() const;
