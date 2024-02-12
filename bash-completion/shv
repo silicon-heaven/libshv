@@ -1,0 +1,48 @@
+#!/bin/bash
+__shv_compl() {
+    local PROGRAM="$1"
+    local PROGRAM_HELP="$($PROGRAM --help)"
+    local CURRENT_WORD="$2"
+    local PREVIOUS_WORD="$3"
+
+    case "$PREVIOUS_WORD" in
+        --config|--password-file)
+            cur="$CURRENT_WORD" _filedir
+            return
+            ;;
+        --config-dir|--data-dir|--shvjournal-dir|--jd)
+            cur="$CURRENT_WORD" _filedir -d
+            return
+            ;;
+        --login-type|--shv-login-type)
+            readarray -t COMPREPLY < <(compgen -o bashdefault -W "none plain sha1 rsaoaep" -- "$CURRENT_WORD")
+            return
+            ;;
+        *)
+            ;;
+    esac
+
+    readarray -t PREVIOUS_WORD_OPTION_LINE < <(grep -e "^-" <<< "$PROGRAM_HELP" | grep -Ee "(${PREVIOUS_WORD}[, ])|(${PREVIOUS_WORD}$)")
+    if ((${#PREVIOUS_WORD_OPTION_LINE[@]})); then
+        local TYPE="bool"
+        local PARSED_TYPE
+        if PARSED_TYPE="$(grep -o -E "'string'|'int'" <<< "${PREVIOUS_WORD_OPTION_LINE[0]}")"; then
+            TYPE="${PARSED_TYPE//\'/}"
+        fi
+
+        if [[ "${TYPE}" != "bool" ]]; then
+            readarray -t COMPREPLY < <(compgen -o bashdefault -- "$CURRENT_WORD")
+            return
+        fi
+
+        readarray -O "${#COMPREPLY[@]}" -t COMPREPLY < <(compgen -W "true false" -- "$CURRENT_WORD")
+    fi
+
+    readarray -t OPTION_LINES < <(grep "^-" <<< "$PROGRAM_HELP")
+    local LINE
+    for LINE in "${OPTION_LINES[@]}"; do
+        readarray -O "${#COMPREPLY[@]}" -t COMPREPLY < <(IFS=$'\n' compgen -W "$(grep -Eoe '^-[^ ,]+|--[^ ,]+' <<< "$LINE")" -- "$CURRENT_WORD")
+    done
+}
+
+complete -F __shv_compl shvcall shvdevice minimalshvclient minimalshvbroker
