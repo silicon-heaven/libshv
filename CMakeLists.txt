@@ -98,6 +98,7 @@ check_shv_dep(libshviotqt WITH_IOTQT libshvcoreqt WITH_COREQT)
 check_shv_dep(libshvvisu WITH_VISU libshviotqt WITH_IOTQT)
 check_shv_dep(libshvbroker WITH_BROKER libshviotqt WITH_IOTQT)
 check_shv_dep(cli-examples WITH_CLI_EXAMPLES libshvbroker WITH_BROKER)
+check_shv_dep(gui-examples WITH_GUI_EXAMPLES libshvvisu WITH_VISU)
 
 if(WITH_CHAINPACK)
 	add_subdirectory(libshvchainpack/c)
