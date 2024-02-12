@@ -477,8 +477,8 @@ void CLIOptions::addParseError(const std::string& err)
 
 ConfigCLIOptions::ConfigCLIOptions()
 {
-	addOption("config").setType(RpcValue::Type::String).setNames("--config").setComment("Application config name, it is loaded from {config}[.conf] if file exists in {config-dir}, deault value is {app-name}.conf");
-	addOption("configDir").setType(RpcValue::Type::String).setNames("--config-dir").setComment("Directory where application config fiels are searched, default value: {app-dir-path}.");
+	addOption("config").setType(RpcValue::Type::String).setNames("--config").setComment("Application config name, it is loaded from {config}[.conf] if file exists in {config-dir}, default value is {app-name}.conf");
+	addOption("configDir").setType(RpcValue::Type::String).setNames("--config-dir").setComment("Directory where application config fields are searched, default value: {app-dir-path}.");
 }
 
 void ConfigCLIOptions::parse(const StringList &cmd_line_args)
