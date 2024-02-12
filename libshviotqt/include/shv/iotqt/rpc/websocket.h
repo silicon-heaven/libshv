@@ -14,7 +14,7 @@ class SHVIOTQT_DECL_EXPORT WebSocket : public Socket
 public:
 	WebSocket(QWebSocket *socket, QObject *parent = nullptr);
 
-	std::string readFrameData() override;
+	std::vector<std::string> takeFrames() override;
 	void writeFrameData(const std::string &frame_data) override;
 
 	void connectToHost(const QUrl &url) override;

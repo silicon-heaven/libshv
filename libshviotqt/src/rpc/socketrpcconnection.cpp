@@ -98,18 +98,9 @@ void SocketRpcConnection::connectToHost(const QUrl &url)
 
 void SocketRpcConnection::onReadyRead()
 {
-	while (true) {
-		auto frame_data = socket()->readFrameData();
-		if (frame_data.empty())
-			break;
-	#ifdef DUMP_DATA_FILE
-		QFile *f = findChild<QFile*>("DUMP_DATA_FILE");
-		if(f) {
-			f->write(ba.constData(), ba.length());
-			f->flush();
-		}
-	#endif
-		onFrameDataRead(std::move(frame_data));
+	auto frames = socket()->takeFrames();
+	for (const auto &frame : frames) {
+		onFrameDataRead(frame);
 	};
 	emit socketDataReadyRead();
 }

@@ -57,7 +57,7 @@ class SHVIOTQT_DECL_EXPORT SerialPortSocket : public Socket
 public:
 	SerialPortSocket(QSerialPort *port, QObject *parent = nullptr);
 
-	std::string readFrameData() override;
+	std::vector<std::string> takeFrames() override;
 	void writeFrameData(const std::string &frame_data) override;
 
 	void setReceiveTimeout(int millis);

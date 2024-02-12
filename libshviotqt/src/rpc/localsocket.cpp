@@ -92,11 +92,9 @@ LocalSocket::~LocalSocket()
 	delete m_frameWriter;
 }
 
-std::string LocalSocket::readFrameData()
+std::vector<std::string> LocalSocket::takeFrames()
 {
-	if(m_frameReader->isEmpty())
-		return {};
-	return m_frameReader->getFrame();
+	return m_frameReader->takeFrames();
 }
 
 void LocalSocket::writeFrameData(const std::string &frame_data)

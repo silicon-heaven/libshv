@@ -69,7 +69,7 @@ std::string RpcFrame::toChainPack() const
 	return ret;
 }
 
-RpcFrame RpcFrame::fromChainPack(std::string &&frame_data)
+RpcFrame RpcFrame::fromChainPack(const std::string &frame_data)
 {
 	std::istringstream in(frame_data);
 	auto protocol = in.get();

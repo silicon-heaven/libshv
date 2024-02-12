@@ -63,11 +63,9 @@ quint16 WebSocket::peerPort() const
 	return m_socket->peerPort();
 }
 
-std::string WebSocket::readFrameData()
+std::vector<std::string> WebSocket::takeFrames()
 {
-	if(m_frameReader.isEmpty())
-		return {};
-	return m_frameReader.getFrame();
+	return m_frameReader.takeFrames();
 }
 
 void WebSocket::writeFrameData(const std::string &frame_data)

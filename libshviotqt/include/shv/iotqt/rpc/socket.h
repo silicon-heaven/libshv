@@ -7,7 +7,7 @@
 #include <QSslSocket>
 #include <QSslError>
 
-#include <deque>
+#include <vector>
 
 class QTcpSocket;
 
@@ -24,16 +24,13 @@ public:
 	virtual ~FrameReader() = default;
 	virtual void addData(std::string_view data) = 0;
 	bool isEmpty() const { return m_frames.empty(); }
-	std::string getFrame() {
-		if (!m_frames.empty()) {
-			auto frame = m_frames.front();
-			m_frames.pop_front();
-			return frame;
-		}
-		return {};
+	std::vector<std::string> takeFrames() {
+		auto frames = std::move(m_frames);
+		m_frames = {};
+		return frames;
 	}
 protected:
-	std::deque<std::string> m_frames;
+	std::vector<std::string> m_frames;
 };
 
 class FrameWriter
@@ -93,7 +90,7 @@ public:
 	virtual QHostAddress peerAddress() const = 0;
 	virtual quint16 peerPort() const = 0;
 
-	virtual std::string readFrameData() = 0;
+	virtual std::vector<std::string> takeFrames() = 0;
 	virtual void writeFrameData(const std::string &frame_data) = 0;
 
 	virtual void ignoreSslErrors() = 0;
@@ -117,7 +114,7 @@ class SHVIOTQT_DECL_EXPORT TcpSocket : public Socket
 public:
 	TcpSocket(QTcpSocket *socket, QObject *parent = nullptr);
 
-	std::string readFrameData() override;
+	std::vector<std::string> takeFrames() override;
 	void writeFrameData(const std::string &frame_data) override;
 
 	void connectToHost(const QUrl &url) override;

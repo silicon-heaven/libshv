@@ -16,7 +16,7 @@ public:
 	LocalSocket(QLocalSocket *socket, Protocol protocol, QObject *parent = nullptr);
 	~LocalSocket() override;
 
-	std::string readFrameData() override;
+	std::vector<std::string> takeFrames() override;
 	void writeFrameData(const std::string &frame_data) override;
 
 	void connectToHost(const QUrl &url) override;
