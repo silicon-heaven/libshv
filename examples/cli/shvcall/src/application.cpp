@@ -45,6 +45,9 @@ void Application::onShvStateChanged()
 				if(m_cliOptions->isChainPackOutput()) {
 					std::cout << result.toChainPack();
 				}
+				else if (m_cliOptions->isCponOutput()) {
+					std::cout << cp::RpcValue::fromCpon(result.toString()).toCpon("\t") << "\n";
+				}
 				else {
 					std::cout << result.toCpon("\t") << "\n";
 				}

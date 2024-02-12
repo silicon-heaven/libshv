@@ -13,4 +13,5 @@ public:
 	CLIOPTION_GETTER_SETTER(std::string, m, setM, ethod)
 	CLIOPTION_GETTER_SETTER(std::string, p, setP, arams)
 	CLIOPTION_GETTER_SETTER(bool, isC, setC, hainPackOutput)
+	CLIOPTION_GETTER_SETTER(bool, isC, setC, ponOutput)
 };
