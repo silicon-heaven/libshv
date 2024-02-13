@@ -172,6 +172,7 @@ public:
 	 * Redefinition of properties in restricted device is not allowed.
 	 *
 	 * This property is not well designed and it will be deprecated.
+  	 * New properties 'documentType' and 'controllerType' will be used instead. 
 	 */
 	std::string restrictionOfDevice;
 	/*
