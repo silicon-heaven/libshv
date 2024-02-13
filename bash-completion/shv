@@ -1,6 +1,9 @@
 #!/bin/bash
 __shv_compl() {
     local PROGRAM="$1"
+    if [[ -x "$PROGRAM" ]]; then
+        return
+    fi
     local PROGRAM_HELP="$($PROGRAM --help)"
     local CURRENT_WORD="$2"
     local PREVIOUS_WORD="$3"

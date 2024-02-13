@@ -14,4 +14,6 @@ public:
 	CLIOPTION_GETTER_SETTER(std::string, p, setP, arams)
 	CLIOPTION_GETTER_SETTER(bool, isC, setC, hainPackOutput)
 	CLIOPTION_GETTER_SETTER(bool, isC, setC, ponOutput)
+	CLIOPTION_GETTER_SETTER(bool, s, setS, houldSubscribe)
+	CLIOPTION_GETTER_SETTER(std::string, s, setS, ubscribeFormat)
 };
