@@ -161,8 +161,22 @@ public:
 	using Properties = std::vector<ShvPropertyDescr>;
 
 	Properties properties;
-	//std::string deviceType;
+	/*
+	 * Restriction of device means, that current device has only subset o original device properties.
+	 * FL will create property sheet of original device and hide properties not existing in current device.
+	 * Also all localization phrases can be found in original device description
+	 *
+	 * FL uses restrictionOfDevice as device-type to create proper Document, Controller and PropertySheet.
+	 * restrictionOfDevice cannot be used recursivelly
+	 *
+	 * Redefinition of properties in restricted device is not allowed.
+	 *
+	 * This property is not well designed and it will be deprecated.
+	 */
 	std::string restrictionOfDevice;
+	/*
+	 * Generate site specific localization file for this site & device combination
+	 */
 	bool siteSpecificLocalization = false;
 
 	static ShvDeviceDescription fromRpcValue(const chainpack::RpcValue &v);
