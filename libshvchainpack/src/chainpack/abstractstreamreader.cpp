@@ -22,8 +22,10 @@ ParseException::ParseException(int err_code, const std::string &msg, long long p
 {
 	m_msg = std::string("Parse error: ")  + std::to_string(m_errCode) + " " + ccpcp_error_string(m_errCode)
 			+ " at pos: " + std::to_string(m_pos)
-			+ " - " + m_msg
-			+ " near to:\n" + dump;
+			+ " - " + m_msg;
+	if (!dump.empty()) {
+		m_msg += " near to:\n" + dump;
+	}
 }
 
 int ParseException::errCode() const
