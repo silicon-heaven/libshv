@@ -26,7 +26,7 @@ bool TcpServer::start(int port)
 		close();
 		return false;
 	}
-	shvInfo().nospace() << "RPC server is listenning on " << serverAddress().toString() << ":" << serverPort();
+	shvInfo().nospace() << "TCP RPC server is listenning on " << serverAddress().toString() << ":" << serverPort();
 	return true;
 }
 

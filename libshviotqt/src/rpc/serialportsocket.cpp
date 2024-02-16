@@ -174,9 +174,7 @@ void SerialFrameWriter::addFrame(const std::string &frame_data)
 		default: data_to_write += static_cast<char>(b); break;
 		}
 	};
-	auto protocol = static_cast<uint8_t>(shv::chainpack::Rpc::ProtocolType::ChainPack);
 	data_to_write += static_cast<char>(STX);
-	write_escaped(protocol);
 	for(uint8_t b : frame_data) {
 		write_escaped(b);
 	}

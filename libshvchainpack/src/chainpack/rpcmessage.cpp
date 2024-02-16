@@ -6,6 +6,8 @@
 #include <shv/chainpack/accessgrant.h>
 #include <shv/chainpack/abstractstreamwriter.h>
 #include <shv/chainpack/chainpackwriter.h>
+#include <shv/chainpack/cponwriter.h>
+#include <shv/chainpack/cponreader.h>
 #include <shv/chainpack/chainpackreader.h>
 
 #include <cassert>
@@ -48,44 +50,103 @@ void RpcMessage::MetaType::registerMetaType()
 //==================================================================
 RpcMessage RpcFrame::toRpcMessage(std::string *errmsg) const
 {
-	auto val = RpcValue::fromChainPack(data, errmsg);
-	if (!errmsg || (errmsg && errmsg->empty())) {
-		auto m = meta;
-		val.setMetaData(std::move(m));
-		return RpcMessage(val);
+	switch (protocol) {
+	case Rpc::ProtocolType::ChainPack: {
+		auto val = RpcValue::fromChainPack(data, errmsg);
+		if (!errmsg || (errmsg && errmsg->empty())) {
+			auto m = meta;
+			val.setMetaData(std::move(m));
+			return RpcMessage(val);
+		}
+		break;
+	}
+	case Rpc::ProtocolType::Cpon: {
+		auto val = RpcValue::fromCpon(data, errmsg);
+		if (!errmsg || (errmsg && errmsg->empty())) {
+			auto m = meta;
+			val.setMetaData(std::move(m));
+			return RpcMessage(val);
+		}
+		break;
+	}
+	default: {
+		if (errmsg) {
+			*errmsg = "Invalid protocol type";
+		}
+		return {};
+	}
 	}
 	return {};
 }
 
-std::string RpcFrame::toChainPack() const
+std::string RpcFrame::toFrameData() const
 {
-	std::ostringstream out;
-	{
-		ChainPackWriter wr(out);
-		wr << meta;
+	switch (protocol) {
+	case Rpc::ProtocolType::ChainPack: {
+		std::ostringstream out;
+		{
+			ChainPackWriter wr(out);
+			wr << meta;
+		}
+		auto ret = out.str();
+		ret = static_cast<char>(protocol) + ret;
+		ret += data;
+		return ret;
 	}
-	auto ret = out.str();
-	ret += data;
-	return ret;
-}
-
-RpcFrame RpcFrame::fromChainPack(const std::string &frame_data)
-{
-	std::istringstream in(frame_data);
-	auto protocol = in.get();
-	if (protocol != static_cast<int>(Rpc::ProtocolType::ChainPack)) {
+	case Rpc::ProtocolType::Cpon: {
+		std::ostringstream out;
+		{
+			CponWriter wr(out);
+			wr << meta;
+		}
+		auto ret = out.str();
+		ret = static_cast<char>(protocol) + ret;
+		ret += data;
+		return ret;
+	}
+	default: {
 		throw std::runtime_error("Invalid protocol type");
 	}
-	ChainPackReader rd(in);
-	RpcValue::MetaData meta;
-	rd.read(meta);
-	if(meta.isEmpty())
-		throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
-	auto pos = in.tellg();
-	if(pos < 0)
-		throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
-	auto data = std::string(frame_data, pos);
-	return RpcFrame(std::move(meta), std::move(data));
+	}
+}
+
+RpcFrame RpcFrame::fromFrameData(const std::string &frame_data)
+{
+	std::istringstream in(frame_data);
+	auto protocol = static_cast<Rpc::ProtocolType>(in.get());
+	switch (protocol) {
+	case Rpc::ProtocolType::ChainPack: {
+		ChainPackReader rd(in);
+		RpcValue::MetaData meta;
+		rd.read(meta);
+		if(meta.isEmpty())
+			throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
+		auto pos = in.tellg();
+		if(pos < 0)
+			throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
+		auto data = std::string(frame_data, pos);
+		RpcFrame frame(std::move(meta), std::move(data));
+		frame.protocol = protocol;
+		return frame;
+	}
+	case Rpc::ProtocolType::Cpon: {
+		CponReader rd(in);
+		RpcValue::MetaData meta;
+		rd.read(meta);
+		if(meta.isEmpty())
+			throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
+		auto pos = in.tellg();
+		if(pos < 0)
+			throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
+		auto data = std::string(frame_data, pos);
+		RpcFrame frame(std::move(meta), std::move(data));
+		frame.protocol = protocol;
+		return frame;
+	}
+	default:
+		throw std::runtime_error("Invalid protocol type");
+	}
+	return {};
 }
 
 //==================================================================
@@ -510,12 +571,24 @@ std::string RpcMessage::toChainPack() const
 	return m_value.toChainPack();
 }
 
-RpcFrame RpcMessage::toToRpcFrame() const
+RpcFrame RpcMessage::toToRpcFrame(Rpc::ProtocolType protocol) const
 {
 	auto val = m_value;
 	auto meta = val.takeMeta();
-	auto data = val.toChainPack();
-	return RpcFrame {std::move(meta), std::move(data)};
+	std::string data;
+	switch (protocol) {
+	case Rpc::ProtocolType::ChainPack:
+		data = val.toChainPack();
+		break;
+	case Rpc::ProtocolType::Cpon:
+		data = val.toCpon();
+		break;
+	default:
+		throw std::runtime_error("Invalid protocol type");
+	}
+	RpcFrame frame{std::move(meta), std::move(data)};
+	frame.protocol = protocol;
+	return frame;
 }
 
 //==================================================================

@@ -25,8 +25,8 @@ struct SHVCHAINPACK_DECL_EXPORT RpcFrame
 	RpcFrame(RpcValue::MetaData &&meta, std::string &&data) : meta(std::move(meta)), data(std::move(data)) {}
 	bool isValid() const { return !meta.isEmpty() && !data.empty(); }
 	RpcMessage toRpcMessage(std::string *errmsg = nullptr) const;
-	std::string toChainPack() const;
-	static RpcFrame fromChainPack(const std::string &frame_data);
+	std::string toFrameData() const;
+	static RpcFrame fromFrameData(const std::string &frame_data);
 };
 
 class SHVCHAINPACK_DECL_EXPORT RpcMessage
@@ -129,7 +129,7 @@ public:
 	std::string toCpon() const;
 	std::string toChainPack() const;
 
-	RpcFrame toToRpcFrame() const;
+	RpcFrame toToRpcFrame(Rpc::ProtocolType protocol = Rpc::ProtocolType::ChainPack) const;
 
 	const RpcValue::MetaData& metaData() const;
 	RpcValue metaValue(RpcValue::Int key) const;

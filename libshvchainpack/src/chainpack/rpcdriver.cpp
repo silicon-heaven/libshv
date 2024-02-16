@@ -27,11 +27,7 @@ RpcDriver::~RpcDriver() = default;
 
 void RpcDriver::sendRpcMessage(const RpcMessage &msg)
 {
-	using namespace std;
-	logRpcRawMsg() << SND_LOG_ARROW << msg.toPrettyString();
-	auto frame_data = msg.toChainPack();
-	logRpcData() << "SEND data:" << Utils::toHex(frame_data, 0, 250);
-	writeFrameData(frame_data);
+	RpcDriver::sendRpcFrame(msg.toToRpcFrame(m_clientProtocolType));
 }
 
 void RpcDriver::sendRpcFrame(RpcFrame &&frame)
@@ -40,17 +36,38 @@ void RpcDriver::sendRpcFrame(RpcFrame &&frame)
 				   << "protocol:"  << Rpc::protocolTypeToString(frame.protocol)
 				   << "send raw meta + data: " << frame.meta.toPrettyString()
 				   << Utils::toHex(frame.data, 0, 250);
-	auto frame_data = frame.toChainPack();
-	logRpcData() << "SEND data:" << Utils::toHex(frame_data, 0, 250);
-	writeFrameData(frame_data);
+	try {
+		if (frame.protocol != m_clientProtocolType) {
+			// convert chainpack to cpon if client needs it
+			// clients communicating with Cpon are deprecated
+			// and support will be ended in 2024
+			std::string errmsg;
+			auto msg = frame.toRpcMessage(&errmsg);
+			if (!errmsg.empty()) {
+				throw std::runtime_error("Cannot convert RPC frame to message: " + errmsg);
+			}
+			frame = msg.toToRpcFrame(m_clientProtocolType);
+		}
+		auto frame_data = frame.toFrameData();
+		logRpcData().nospace() << "FRAME DATA WRITE " << frame_data.size() << " bytes of data:\n" << shv::chainpack::utils::hexDump(frame_data);
+		writeFrameData(frame_data);
+	}
+	catch (const std::exception &e) {
+		nError() << "ERROR send frame:" << e.what();
+	}
 }
 
 void RpcDriver::onFrameDataRead(const std::string &frame_data)
 {
 	logRpcData() << __PRETTY_FUNCTION__ << "+++++++++++++++++++++++++++++++++";
-	logRpcData().nospace() << "FRAME DATA " << frame_data.size() << " bytes of data read:\n" << shv::chainpack::utils::hexDump(frame_data);
+	logRpcData().nospace() << "FRAME DATA READ " << frame_data.size() << " bytes of data read:\n" << shv::chainpack::utils::hexDump(frame_data);
 	try {
-		auto frame = RpcFrame::fromChainPack(frame_data);
+		auto frame = RpcFrame::fromFrameData(frame_data);
+
+		// set client protocol type according to protocol type received from it
+		// default protocol type is chainpack, this is needed just for legacy devices support
+		m_clientProtocolType = frame.protocol;
+
 		onRpcFrameReceived(std::move(frame));
 	}
 	catch (const ParseException &e) {

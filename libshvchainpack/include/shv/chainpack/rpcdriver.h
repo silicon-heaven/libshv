@@ -38,6 +38,7 @@ protected:
 	virtual void onRpcMessageReceived(const shv::chainpack::RpcMessage &msg) = 0;
 private:
 	static int s_defaultRpcTimeoutMsec;
+	Rpc::ProtocolType m_clientProtocolType = Rpc::ProtocolType::ChainPack;
 };
 
 }
