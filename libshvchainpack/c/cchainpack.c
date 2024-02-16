@@ -635,13 +635,16 @@ void cchainpack_unpack_next (ccpcp_unpack_context* unpack_context)
 			bool has_tz_offset = d & 1;
 			bool has_not_msec = d & 2;
 			d >>= 2;
-			if(has_tz_offset) {
+			if (has_tz_offset) {
 				offset = d & 0x7F;
 				offset = (int8_t)(offset << 1);
 				offset >>= 1; // sign extension
 				d >>= 7;
 			}
-			if(has_not_msec)
+			if (INT64_MAX / 1000 < d) {
+				UNPACK_ERROR(CCPCP_RC_MALFORMED_INPUT, "DateTime msec value overflow.");
+			}
+			if (has_not_msec)
 				d *= 1000;
 			d += SHV_EPOCH_MSEC;
 
