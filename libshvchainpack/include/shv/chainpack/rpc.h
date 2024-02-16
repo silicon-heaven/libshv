@@ -8,7 +8,7 @@ namespace chainpack {
 class SHVCHAINPACK_DECL_EXPORT Rpc
 {
 public:
-	enum class ProtocolType {Invalid = 0, ChainPack};
+	enum class ProtocolType {Invalid = 0, ChainPack, Cpon};
 	static const char* protocolTypeToString(ProtocolType pv);
 
 	static constexpr auto OPT_IDLE_WD_TIMEOUT = "idleWatchDogTimeOut";

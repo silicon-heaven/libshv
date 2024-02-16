@@ -98,11 +98,10 @@ void StreamFrameWriter::addFrame(const std::string &frame_data)
 	std::ostringstream out;
 	{
 		ChainPackWriter wr(out);
-		wr.writeUIntData(frame_data.size() + 1);
+		wr.writeUIntData(frame_data.size());
 	}
 	auto len_data = out.str();
 	QByteArray data(len_data.data(), len_data.size());
-	data += static_cast<char>(Rpc::ProtocolType::ChainPack);
 	data.append(frame_data.data(), frame_data.size());
 	m_messageDataToWrite.append(data);
 }
