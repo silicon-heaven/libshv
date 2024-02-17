@@ -87,14 +87,12 @@ DOCTEST_TEST_CASE("joinPath")
 DOCTEST_TEST_CASE("joinPath - variadic arguments")
 {
 	// The function takes any number of args.
-	REQUIRE(joinPath(std::string("a")) == "a");
 	REQUIRE(joinPath(std::string("a"), std::string("b")) == "a/b");
 	REQUIRE(joinPath(std::string("a"), std::string("b"), std::string("c")) == "a/b/c");
 	REQUIRE(joinPath(std::string("a"), std::string("b"), std::string("c"), std::string("d")) == "a/b/c/d");
 	REQUIRE(joinPath(std::string("a"), std::string("b"), std::string("c"), std::string("d"), std::string("e")) == "a/b/c/d/e");
 
 	// The function supports character literals.
-	REQUIRE(joinPath("a") == "a");
 	REQUIRE(joinPath("a", "b") == "a/b");
 	REQUIRE(joinPath(std::string("a"), "b") == "a/b");
 	REQUIRE(joinPath("a", std::string("b")) == "a/b");

@@ -134,17 +134,19 @@ SHVCORE_DECL_EXPORT StringView getToken(StringView strv, char delim = ' ', char 
 SHVCORE_DECL_EXPORT StringView slice(StringView s, int start, int end);
 
 SHVCORE_DECL_EXPORT std::string joinPath(const StringView &p1, const StringView &p2);
-SHVCORE_DECL_EXPORT std::string joinPath();
-template <typename StringType>
-StringType joinPath(const StringType& str)
+
+template <typename... Types>
+void joinPath(const Types& ...pack)
 {
-	return str;
+	static_assert(sizeof...(pack) >= 2, "Can't use joinPath with less than two paths.");
 }
 
-template <typename HeadStringType, typename... StringTypes>
-std::string joinPath(const HeadStringType& head, const StringTypes& ...rest)
+template <typename FirstStringType, typename SecondStringType, typename... RestStringTypes>
+std::string joinPath(const FirstStringType& head, const SecondStringType& second, const RestStringTypes& ...rest)
 {
-	return joinPath(StringView(head), StringView(joinPath(rest...)));
+	std::string res = joinPath(std::string_view(head), std::string_view(second));
+	((res = joinPath(std::string_view(res), std::string_view(rest))), ...);
+	return res;
 }
 
 template <typename Container>
