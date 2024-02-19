@@ -156,21 +156,6 @@ std::string Utils::joinPath(const StringView &p1, const StringView &p2)
 	return utils::joinPath(p1, p2);
 }
 
-std::string utils::joinPath(const StringView &p1, const StringView &p2)
-{
-	StringView sv1(p1);
-	while(sv1.ends_with('/'))
-		sv1 = sv1.substr(0, sv1.size() - 1);
-	StringView sv2(p2);
-	while(sv2.starts_with('/'))
-		sv2 = sv2.substr(1);
-	if(sv2.empty())
-		return std::string{sv1};
-	if(sv1.empty())
-		return std::string{sv2};
-	return std::string{sv1} + '/' + std::string{sv2};
-}
-
 StringView utils::getToken(StringView strv, char delim, char quote)
 {
 	if(strv.empty())

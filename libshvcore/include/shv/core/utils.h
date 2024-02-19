@@ -133,7 +133,23 @@ StringViewList split(std::string&& strv, char delim, char quote = '\0', SplitBeh
 SHVCORE_DECL_EXPORT StringView getToken(StringView strv, char delim = ' ', char quote = '\0');
 SHVCORE_DECL_EXPORT StringView slice(StringView s, int start, int end);
 
-SHVCORE_DECL_EXPORT std::string joinPath(const StringView &p1, const StringView &p2);
+const auto DEFAULT_SEPARATOR = '/';
+
+template<char SEPARATOR = DEFAULT_SEPARATOR>
+std::string joinPath(const StringView &p1, const StringView &p2)
+{
+	StringView sv1(p1);
+	while(sv1.ends_with(SEPARATOR))
+		sv1 = sv1.substr(0, sv1.size() - 1);
+	StringView sv2(p2);
+	while(sv2.starts_with(SEPARATOR))
+		sv2 = sv2.substr(1);
+	if(sv2.empty())
+		return std::string{sv1};
+	if(sv1.empty())
+		return std::string{sv2};
+	return std::string{sv1} + SEPARATOR + std::string{sv2};
+}
 
 template <typename... Types>
 void joinPath(const Types& ...pack)
@@ -141,11 +157,11 @@ void joinPath(const Types& ...pack)
 	static_assert(sizeof...(pack) >= 2, "Can't use joinPath with less than two paths.");
 }
 
-template <typename FirstStringType, typename SecondStringType, typename... RestStringTypes>
+template <auto SEPARATOR = DEFAULT_SEPARATOR, typename FirstStringType, typename SecondStringType, typename... RestStringTypes>
 std::string joinPath(const FirstStringType& head, const SecondStringType& second, const RestStringTypes& ...rest)
 {
-	std::string res = joinPath(std::string_view(head), std::string_view(second));
-	((res = joinPath(std::string_view(res), std::string_view(rest))), ...);
+	std::string res = joinPath<SEPARATOR>(std::string_view(head), std::string_view(second));
+	((res = joinPath<SEPARATOR>(std::string_view(res), std::string_view(rest))), ...);
 	return res;
 }
 
