@@ -142,20 +142,6 @@ RpcValue Utils::foldMap(const chainpack::RpcValue::Map &plain_map, char key_deli
 	return ret;
 }
 
-std::string Utils::joinPath(const StringViewList &p)
-{
-	string ret;
-	for(const StringView &path : p) {
-		ret = utils::joinPath(ret, path);
-	}
-	return ret;
-}
-
-std::string Utils::joinPath(const StringView &p1, const StringView &p2)
-{
-	return utils::joinPath(p1, p2);
-}
-
 StringView utils::getToken(StringView strv, char delim, char quote)
 {
 	if(strv.empty())

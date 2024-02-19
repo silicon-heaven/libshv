@@ -94,8 +94,6 @@ public:
 
 	static shv::chainpack::RpcValue foldMap(const shv::chainpack::RpcValue::Map &plain_map, char key_delimiter = '.');
 
-	[[deprecated("use shv::core::utils::joinPath")]] static std::string joinPath(const StringView &p1, const StringView &p2);
-	[[deprecated("use shv::core::utils::joinPath")]] static std::string joinPath(const StringViewList &p);
 	static std::string simplifyPath(const std::string &p);
 
 	static std::vector<char> readAllFd(int fd);
@@ -183,5 +181,6 @@ auto findLongestPrefix(const Container& cont, std::string value) -> typename std
 	return cont.end();
 }
 }
+
 }}
 
