@@ -201,7 +201,7 @@ void SocketRpcDriver::exec()
 					if (m_readFrameSize > 0 && m_readFrameSize <= m_readBuffer.size()) {
 						auto frame = std::string(m_readBuffer, 0, m_readFrameSize);
 						m_readBuffer = std::string(m_readBuffer, m_readFrameSize);
-						onFrameDataRead(std::move(frame));
+						onFrameDataRead(frame);
 					}
 					if (m_readFrameSize == 0  || m_readFrameSize > m_readBuffer.size()) {
 						break;
