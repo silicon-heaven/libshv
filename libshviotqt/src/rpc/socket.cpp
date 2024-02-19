@@ -141,9 +141,9 @@ Socket::Scheme Socket::schemeFromString(const std::string &schema)
 	return Scheme::Tcp;
 }
 
-void Socket::onParseDataException(const shv::chainpack::ParseException &)
+void Socket::onParseDataException(const shv::chainpack::ParseException& ex)
 {
-	abort();
+	shvWarning() << "Frame ParseException" << ex.what();
 }
 
 //======================================================
