@@ -30,3 +30,7 @@ Makefile*
 .idea
 .gdb_history
 profilegc.log
+
+compile_commands.json
+/build*
+/.cache
