@@ -17,7 +17,7 @@ __shv_compl() {
             cur="$CURRENT_WORD" _filedir -d
             return
             ;;
-        --login-type|--shv-login-type)
+        --lt|--login-type|--shv-login-type)
             readarray -t COMPREPLY < <(compgen -o bashdefault -W "none plain sha1 rsaoaep" -- "$CURRENT_WORD")
             return
             ;;
