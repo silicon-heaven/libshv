@@ -8,5 +8,5 @@ AppCliOptions::AppCliOptions()
 	addOption("isCponOutput").setType(shv::chainpack::RpcValue::Type::Bool).setNames("--cpon").setComment("Parse cpon output");
 	addOption("isChainPackOutput").setType(shv::chainpack::RpcValue::Type::Bool).setNames("-x", "--chainpack-output").setComment("ChainPack output");
 	addOption("shouldSubscribe").setType(shv::chainpack::RpcValue::Type::Bool).setNames("--subscribe").setComment("Whether shvcall should subscribe to a path and print events").setDefaultValue(false);
-	addOption("subscribeFormat").setType(shv::chainpack::RpcValue::Type::String).setNames("--subscribe-format").setComment("Set the format of events. Available placeholders: {TIME}, {PATH}, {METHOD}, {VALUE_CPON}. This option is only useful with --subscribe.").setDefaultValue(R"({"timestamp": "{TIME}", "path": "{PATH}", "method": "{METHOD}", "param": {VALUE}})");
+	addOption("subscribeFormat").setType(shv::chainpack::RpcValue::Type::String).setNames("--subscribe-format").setComment("Set the format of events. Available placeholders: {TIME}, {PATH}, {METHOD}, {VALUE}. This option is only useful with --subscribe.").setDefaultValue(R"({"timestamp": "{TIME}", "path": "{PATH}", "method": "{METHOD}", "param": {VALUE}})");
 }
