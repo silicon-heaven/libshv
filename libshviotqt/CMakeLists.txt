@@ -6,6 +6,7 @@ qt_add_library(libshviotqt
 	src/acl/acluser.cpp
 	src/node/filenode.cpp
 	src/node/localfsnode.cpp
+	src/node/propertynode.cpp
 	src/node/shvnode.cpp
 	src/node/shvnodetree.cpp
 	src/rpc/clientappclioptions.cpp
@@ -30,6 +31,7 @@ qt_add_library(libshviotqt
 	include/shv/iotqt/node/shvnode.h
 	include/shv/iotqt/node/localfsnode.h
 	include/shv/iotqt/node/filenode.h
+	include/shv/iotqt/node/propertynode.h
 	include/shv/iotqt/utils/network.h
 	include/shv/iotqt/rpc/deviceconnection.h
 	include/shv/iotqt/rpc/tcpserver.h

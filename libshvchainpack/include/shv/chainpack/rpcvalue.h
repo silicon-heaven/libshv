@@ -402,6 +402,26 @@ public:
 			static_assert(not_implemented_for_type<T>, "RpcValue::to<T> is not implemented for this type (maybe you're missing an include?)");
 	}
 
+	template<typename T> bool is() const
+	{
+		if constexpr (std::is_same<T, bool>())
+			return isBool();
+		else if constexpr (std::is_same<T, Int>())
+			return isInt();
+		else if constexpr (std::is_same<T, UInt>())
+			return isUInt();
+		else if constexpr (std::is_same<T, String>())
+			return isString();
+		else if constexpr (std::is_same<T, DateTime>())
+			return isDateTime();
+		else if constexpr (std::is_same<T, Decimal>())
+			return isDecimal();
+		else if constexpr (std::is_same<T, RpcValue::List>())
+			return isList();
+		else
+			static_assert(not_implemented_for_type<T>, "RpcValue::is<T> is not implemented for this type");
+	}
+
 	size_t count() const;
 	bool has(Int i) const;
 	bool has(const RpcValue::String &key) const;
@@ -451,6 +471,7 @@ template<> inline RpcValue::Type RpcValue::guessType<uint16_t>() { return Type::
 template<> inline RpcValue::Type RpcValue::guessType<bool>() { return Type::Bool; }
 template<> inline RpcValue::Type RpcValue::guessType<RpcValue::DateTime>() { return Type::DateTime; }
 template<> inline RpcValue::Type RpcValue::guessType<RpcValue::Decimal>() { return Type::Decimal; }
+template<> inline RpcValue::Type RpcValue::guessType<RpcValue::String>() { return Type::String; }
 
 template<typename T> inline RpcValue RpcValue::fromValue(const T &t) { return RpcValue{t}; }
 
