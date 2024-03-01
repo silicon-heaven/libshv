@@ -58,6 +58,9 @@ add_library(libshvvisu
 	include/shv/visu/svgscene/groupitem.h
 	include/shv/visu/errorlogmodel.h
 	)
+
+set_translations(libshvvisu "${PROJECT_TRANSLATIONS}")
+
 add_library(libshv::libshvvisu ALIAS libshvvisu)
 
 target_link_libraries(libshvvisu PUBLIC Qt::Widgets libshviotqt)
