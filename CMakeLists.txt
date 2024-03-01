@@ -30,6 +30,44 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_SHARED_LIBRARY_PREFIX "") # we don't want CMake to prepend "lib" to our libraries, we prefer adding that ourselves
 set(CMAKE_STATIC_LIBRARY_PREFIX "")
 
+if(DEFINED ENV{RUN_LUPDATE})
+	message(WARNING "RUN_LUPDATE env variable is set! Translation files will be refreshed.")
+endif()
+
+set(PROJECT_TRANSLATIONS
+	cs_CZ
+	fi_FI
+	hu_HU
+	it_IT
+	nl_BE
+	pl_PL
+	sr_RS
+	de_DE
+)
+
+function(set_translations component langs)
+	foreach(lang ${langs})
+		set(TS_FILES ${TS_FILES} "${component}.${lang}.ts")
+	endforeach()
+
+	if(DEFINED ENV{RUN_LUPDATE})
+		if(USE_QT6)
+			qt6_create_translation(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR} ${TS_FILES})
+		else()
+			qt5_create_translation(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR} ${TS_FILES})
+	endif()
+	else()
+		if(USE_QT6)
+			qt6_add_translation(QM_FILES ${TS_FILES})
+		else()
+			qt5_add_translation(QM_FILES ${TS_FILES})
+		endif()
+	endif()
+
+	target_sources(${component} PRIVATE ${QM_FILES})
+	install(FILES ${QM_FILES} DESTINATION ${CMAKE_INSTALL_BINDIR}/translations)
+endfunction()
+
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	set(SHV_WARNING_FLAGS "-Wall -Wextra -pedantic -Wcast-align -Wunused -Wpedantic -Wmisleading-indentation -Wdouble-promotion -Wformat=2 -Wimplicit-fallthrough")
 
@@ -114,15 +152,15 @@ if(WITH_COREQT)
 	if(USE_QT6)
 		message(STATUS "Enabling Qt6 support")
 		if(EMSCRIPTEN)
-			find_package(Qt6 COMPONENTS Core Network OPTIONAL_COMPONENTS WebSockets Widgets)
+			find_package(Qt6 COMPONENTS Core LinguistTools Network OPTIONAL_COMPONENTS WebSockets Widgets)
 		else()
-			find_package(Qt6 COMPONENTS Core Network Sql SerialPort OPTIONAL_COMPONENTS WebSockets Widgets)
+			find_package(Qt6 COMPONENTS Core LinguistTools Network Sql SerialPort OPTIONAL_COMPONENTS WebSockets Widgets)
 		endif()
 		set(QtWebSockets_FOUND ${Qt6WebSockets_FOUND})
 		set(Qt_FOUND ${Qt6_FOUND})
 		set(QtWidgets_FOUND ${Qt6Widgets_FOUND})
 	else()
-		find_package(Qt5 COMPONENTS Core Network Sql SerialPort OPTIONAL_COMPONENTS WebSockets Widgets)
+		find_package(Qt5 COMPONENTS Core LinguistTools Network Sql SerialPort OPTIONAL_COMPONENTS WebSockets Widgets)
 		set(QtWebSockets_FOUND ${Qt5WebSockets_FOUND})
 		set(Qt_FOUND ${Qt5_FOUND})
 		set(QtWidgets_FOUND ${Qt5Widgets_FOUND})
