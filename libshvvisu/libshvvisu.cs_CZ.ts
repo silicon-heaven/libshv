@@ -11,18 +11,18 @@
     <message>
         <location filename="src/timeline/channelfilterdialog.cpp" line="42"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit</translation>
     </message>
     <message>
         <location filename="src/timeline/channelfilterdialog.cpp" line="43"/>
         <location filename="src/timeline/channelfilterdialog.cpp" line="171"/>
         <source>Save as</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit jako</translation>
     </message>
     <message>
         <location filename="src/timeline/channelfilterdialog.cpp" line="44"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat</translation>
     </message>
     <message>
         <location filename="src/timeline/channelfilterdialog.cpp" line="45"/>
