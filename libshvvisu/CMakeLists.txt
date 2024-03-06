@@ -1,12 +1,15 @@
 add_library(libshvvisu
 	images/images.qrc
 	src/logview/dataviewwidget.cpp
+	src/logview/dataviewwidget.ui
 	src/logview/dlgloginspector.cpp
+	src/logview/dlgloginspector.ui
 	src/logview/logmodel.cpp
 	src/logview/logsortfilterproxymodel.cpp
 	src/logwidget/errorlogmodel.cpp
 	src/logwidget/logtablemodelbase.cpp
 	src/logwidget/logwidget.cpp
+	src/logwidget/logwidget.ui
 	src/svgscene/graphicsview.cpp
 	src/svgscene/groupitem.cpp
 	src/svgscene/saxhandler.cpp
@@ -15,10 +18,12 @@ add_library(libshvvisu
 	src/svgscene/visucontroller.cpp
 	src/timeline/channelfilter.cpp
 	src/timeline/channelfilterdialog.cpp
+	src/timeline/channelfilterdialog.ui
 	src/timeline/channelfiltermodel.cpp
 	src/timeline/channelfiltersortfilterproxymodel.cpp
 	src/timeline/channelprobe.cpp
 	src/timeline/channelprobewidget.cpp
+	src/timeline/channelprobewidget.ui
 	src/timeline/fulltextfilter.cpp
 	src/timeline/graph.cpp
 	src/timeline/graphbuttonbox.cpp
@@ -59,7 +64,7 @@ add_library(libshvvisu
 	include/shv/visu/errorlogmodel.h
 	)
 
-set_translations(libshvvisu "${PROJECT_TRANSLATIONS}")
+libshv_set_translations(libshvvisu "${LIBSHV_PROJECT_TRANSLATIONS}")
 
 add_library(libshv::libshvvisu ALIAS libshvvisu)
 

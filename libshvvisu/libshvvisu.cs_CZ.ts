@@ -2,340 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="cs_CZ">
 <context>
-    <name>ChannelFilterDialog</name>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="41"/>
-        <source>Discard changes</source>
-        <translation>Zahodit změny</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="42"/>
-        <source>Save</source>
-        <translation>Uložit</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="43"/>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="171"/>
-        <source>Save as</source>
-        <translation>Uložit jako</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="44"/>
-        <source>Delete</source>
-        <translation>Smazat</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="45"/>
-        <source>Export</source>
-        <translation>Exportovat</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="46"/>
-        <source>Import</source>
-        <translation>Importovat</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="112"/>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="128"/>
-        <source>Input file name</source>
-        <translation>Název vstupního souboru</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="116"/>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="135"/>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="174"/>
-        <source>Error</source>
-        <translation>Chyba</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="116"/>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="135"/>
-        <source>Cannot open graph setting file.</source>
-        <translation>Nelze otevřít soubor s nastavením grafu.</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="130"/>
-        <source>Import as</source>
-        <translation>Importovat jako</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="130"/>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="171"/>
-        <source>Input view name</source>
-        <translation>Název pohledu</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="174"/>
-        <source>Failed to save view: name is empty.</source>
-        <translation>Nepodařilo se uložit pohled: název je prázdný.</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="196"/>
-        <source>Expand</source>
-        <translation>Rozbalit</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="199"/>
-        <source>Collapse</source>
-        <translation>Sbalit</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.cpp" line="205"/>
-        <source>Expand all nodes</source>
-        <translation>Rozbalit všechny uzly</translation>
-    </message>
-</context>
-<context>
-    <name>DlgLogInspector</name>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="51"/>
-        <location filename="src/logview/dlgloginspector.cpp" line="94"/>
-        <source>ChainPack</source>
-        <translation>ChainPack</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="60"/>
-        <location filename="src/logview/dlgloginspector.cpp" line="110"/>
-        <source>Cpon</source>
-        <translation>Cpon</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="69"/>
-        <source>CSV</source>
-        <translation>CSV</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="104"/>
-        <location filename="src/logview/dlgloginspector.cpp" line="120"/>
-        <location filename="src/logview/dlgloginspector.cpp" line="418"/>
-        <location filename="src/logview/dlgloginspector.cpp" line="450"/>
-        <location filename="src/logview/dlgloginspector.cpp" line="466"/>
-        <source>Warning</source>
-        <translation>Varování</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="104"/>
-        <source>Invalid ChainPack file: </source>
-        <translation>Neplatný soubor ChainPack: </translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="120"/>
-        <source>Invalid CPON file: </source>
-        <translation>Neplatný soubor CPON: </translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="169"/>
-        <source>&amp;Copy</source>
-        <translation>&amp;Kopírovat</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="440"/>
-        <source>Loadfile</source>
-        <translation>Načístsoubor</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="450"/>
-        <source>Cannot open file &apos;%1&apos; for read.</source>
-        <translation>Nelze otevřít soubor &apos;%1&apos; pro čtení.</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="456"/>
-        <source>Savefile</source>
-        <translation>Uložení souboru</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="466"/>
-        <source>Cannot open file &apos;%1&apos; for write.</source>
-        <translation>Nelze otevřít soubor &apos;%1&apos; pro zápis.</translation>
-    </message>
-</context>
-<context>
-    <name>Graph</name>
-    <message>
-        <location filename="src/timeline/graph.cpp" line="936"/>
-        <source>%1.%2 sec</source>
-        <translation>%1.%2 s</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graph.cpp" line="942"/>
-        <source>%1:%2.%3 min</source>
-        <translation>%1:%2.%3 min</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graph.cpp" line="949"/>
-        <source>%1:%2:%3</source>
-        <comment>time</comment>
-        <translation>%1:%2:%3</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graph.cpp" line="956"/>
-        <source>%1 day %1:%2:%3</source>
-        <translation>%1 den %1:%2:%3</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graph.cpp" line="2139"/>
-        <source>t1: %1</source>
-        <translation>t1: %1</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graph.cpp" line="2140"/>
-        <source>duration: %1</source>
-        <translation>trvání: %1</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graph.cpp" line="2142"/>
-        <source>y1: %1</source>
-        <translation>y1: %1</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graph.cpp" line="2143"/>
-        <source>diff: %1</source>
-        <translation>rozdíl: %1</translation>
-    </message>
-</context>
-<context>
-    <name>GraphWidget</name>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="111"/>
-        <location filename="src/timeline/graphwidget.cpp" line="115"/>
-        <source>Path:</source>
-        <translation>Cesta:</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="115"/>
-        <source>Name:</source>
-        <translation>Název:</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="730"/>
-        <source>Zoom X axis to selection</source>
-        <translation>Zvětšení osy X na výběr</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="734"/>
-        <source>Zoom channel to selection</source>
-        <translation>Přiblížení kanálu k výběru</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="743"/>
-        <source>Show selection info</source>
-        <translation>Zobrazit informace o výběru</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="753"/>
-        <source>t1: %1</source>
-        <translation>t1: %1</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="754"/>
-        <source>t2: %2</source>
-        <translation>t2: %2</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="755"/>
-        <source>duration: %1</source>
-        <translation>trvání: %1</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="756"/>
-        <source>y1: %1</source>
-        <translation>y1: %1</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="757"/>
-        <source>y2: %2</source>
-        <translation>y2: %2</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="759"/>
-        <source>diff: %1</source>
-        <translation>rozdíl: %1</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="760"/>
-        <source>Selection info</source>
-        <translation>Informace o výběru</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="780"/>
-        <source>Normal size</source>
-        <translation>Normální velikost</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="785"/>
-        <source>Maximize</source>
-        <translation>Maximalizovat</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="790"/>
-        <source>Set probe (Ctrl + Left mouse)</source>
-        <translation>Umístit sondu (Ctrl + levá myš)</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="795"/>
-        <source>Add probe (Ctrl + Shift + Left mouse)</source>
-        <translation>Přidat sondu (Ctrl + Shift + levá myš)</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="799"/>
-        <source>Reset X-zoom</source>
-        <translation>Resetovat X-zoom</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="803"/>
-        <source>Reset Y-zoom</source>
-        <translation>Resetovat Y-zoom</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="809"/>
-        <source>Hide Y axis</source>
-        <translation>Schovat osu Y</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/graphwidget.cpp" line="814"/>
-        <source>Show Y axis</source>
-        <translation>Zobrazit osu Y</translation>
-    </message>
-</context>
-<context>
-    <name>LogModel</name>
-    <message>
-        <location filename="src/logview/logmodel.cpp" line="59"/>
-        <source>DateTime</source>
-        <translation>DatumČas</translation>
-    </message>
-    <message>
-        <location filename="src/logview/logmodel.cpp" line="60"/>
-        <source>Path</source>
-        <translation>Cesta</translation>
-    </message>
-    <message>
-        <location filename="src/logview/logmodel.cpp" line="61"/>
-        <source>Value</source>
-        <translation>Hodnota</translation>
-    </message>
-    <message>
-        <location filename="src/logview/logmodel.cpp" line="62"/>
-        <source>ShortTime</source>
-        <translation>ShortTime</translation>
-    </message>
-    <message>
-        <location filename="src/logview/logmodel.cpp" line="63"/>
-        <source>Domain</source>
-        <translation>Doména</translation>
-    </message>
-    <message>
-        <location filename="src/logview/logmodel.cpp" line="64"/>
-        <source>ValueFlags</source>
-        <translation>ValueFlags</translation>
-    </message>
-    <message>
-        <location filename="src/logview/logmodel.cpp" line="65"/>
-        <source>UserId</source>
-        <translation>UživatelskéID</translation>
-    </message>
-</context>
-<context>
     <name>shv::visu::ErrorLogModel</name>
     <message>
         <location filename="src/logwidget/errorlogmodel.cpp" line="21"/>
@@ -440,6 +106,67 @@
 </context>
 <context>
     <name>shv::visu::logview::DlgLogInspector</name>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="51"/>
+        <location filename="src/logview/dlgloginspector.cpp" line="94"/>
+        <source>ChainPack</source>
+        <translation>ChainPack</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="60"/>
+        <location filename="src/logview/dlgloginspector.cpp" line="110"/>
+        <source>Cpon</source>
+        <translation>Cpon</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="69"/>
+        <source>CSV</source>
+        <translation>CSV</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="104"/>
+        <location filename="src/logview/dlgloginspector.cpp" line="120"/>
+        <location filename="src/logview/dlgloginspector.cpp" line="418"/>
+        <location filename="src/logview/dlgloginspector.cpp" line="450"/>
+        <location filename="src/logview/dlgloginspector.cpp" line="466"/>
+        <source>Warning</source>
+        <translation>Varování</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="104"/>
+        <source>Invalid ChainPack file: </source>
+        <translation>Neplatný soubor ChainPack: </translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="120"/>
+        <source>Invalid CPON file: </source>
+        <translation>Neplatný soubor CPON: </translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="169"/>
+        <source>&amp;Copy</source>
+        <translation>&amp;Kopírovat</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="440"/>
+        <source>Loadfile</source>
+        <translation>Načístsoubor</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="450"/>
+        <source>Cannot open file &apos;%1&apos; for read.</source>
+        <translation>Nelze otevřít soubor &apos;%1&apos; pro čtení.</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="456"/>
+        <source>Savefile</source>
+        <translation>Uložení souboru</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="466"/>
+        <source>Cannot open file &apos;%1&apos; for write.</source>
+        <translation>Nelze otevřít soubor &apos;%1&apos; pro zápis.</translation>
+    </message>
     <message>
         <location filename="src/logview/dlgloginspector.ui" line="14"/>
         <source>Log inspector</source>
@@ -579,7 +306,126 @@
     </message>
 </context>
 <context>
+    <name>shv::visu::logview::LogModel</name>
+    <message>
+        <location filename="src/logview/logmodel.cpp" line="59"/>
+        <source>DateTime</source>
+        <translation>DatumČas</translation>
+    </message>
+    <message>
+        <location filename="src/logview/logmodel.cpp" line="60"/>
+        <source>Path</source>
+        <translation>Cesta</translation>
+    </message>
+    <message>
+        <location filename="src/logview/logmodel.cpp" line="61"/>
+        <source>Value</source>
+        <translation>Hodnota</translation>
+    </message>
+    <message>
+        <location filename="src/logview/logmodel.cpp" line="62"/>
+        <source>ShortTime</source>
+        <translation>ShortTime</translation>
+    </message>
+    <message>
+        <location filename="src/logview/logmodel.cpp" line="63"/>
+        <source>Domain</source>
+        <translation>Doména</translation>
+    </message>
+    <message>
+        <location filename="src/logview/logmodel.cpp" line="64"/>
+        <source>ValueFlags</source>
+        <translation>ValueFlags</translation>
+    </message>
+    <message>
+        <location filename="src/logview/logmodel.cpp" line="65"/>
+        <source>UserId</source>
+        <translation>UživatelskéID</translation>
+    </message>
+</context>
+<context>
     <name>shv::visu::timeline::ChannelFilterDialog</name>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="41"/>
+        <source>Discard changes</source>
+        <translation>Zahodit změny</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="42"/>
+        <source>Save</source>
+        <translation>Uložit</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="43"/>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="171"/>
+        <source>Save as</source>
+        <translation>Uložit jako</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="44"/>
+        <source>Delete</source>
+        <translation>Smazat</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="45"/>
+        <source>Export</source>
+        <translation>Exportovat</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="46"/>
+        <source>Import</source>
+        <translation>Importovat</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="112"/>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="128"/>
+        <source>Input file name</source>
+        <translation>Název vstupního souboru</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="116"/>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="135"/>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="174"/>
+        <source>Error</source>
+        <translation>Chyba</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="116"/>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="135"/>
+        <source>Cannot open graph setting file.</source>
+        <translation>Nelze otevřít soubor s nastavením grafu.</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="130"/>
+        <source>Import as</source>
+        <translation>Importovat jako</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="130"/>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="171"/>
+        <source>Input view name</source>
+        <translation>Název pohledu</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="174"/>
+        <source>Failed to save view: name is empty.</source>
+        <translation>Nepodařilo se uložit pohled: název je prázdný.</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="196"/>
+        <source>Expand</source>
+        <translation>Rozbalit</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="199"/>
+        <source>Collapse</source>
+        <translation>Sbalit</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.cpp" line="205"/>
+        <source>Expand all nodes</source>
+        <translation>Rozbalit všechny uzly</translation>
+    </message>
     <message>
         <location filename="src/timeline/channelfilterdialog.ui" line="14"/>
         <source>Channels filter dialog</source>
@@ -634,6 +480,154 @@
         <location filename="src/timeline/channelprobewidget.ui" line="167"/>
         <source>...</source>
         <translation>...</translation>
+    </message>
+</context>
+<context>
+    <name>shv::visu::timeline::Graph</name>
+    <message>
+        <location filename="src/timeline/graph.cpp" line="936"/>
+        <source>%1.%2 sec</source>
+        <translation>%1.%2 s</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graph.cpp" line="942"/>
+        <source>%1:%2.%3 min</source>
+        <translation>%1:%2.%3 min</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graph.cpp" line="949"/>
+        <source>%1:%2:%3</source>
+        <comment>time</comment>
+        <translation>%1:%2:%3</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graph.cpp" line="956"/>
+        <source>%1 day %1:%2:%3</source>
+        <translation>%1 den %1:%2:%3</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graph.cpp" line="2139"/>
+        <source>t1: %1</source>
+        <translation>t1: %1</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graph.cpp" line="2140"/>
+        <source>duration: %1</source>
+        <translation>trvání: %1</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graph.cpp" line="2142"/>
+        <source>y1: %1</source>
+        <translation>y1: %1</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graph.cpp" line="2143"/>
+        <source>diff: %1</source>
+        <translation>rozdíl: %1</translation>
+    </message>
+</context>
+<context>
+    <name>shv::visu::timeline::GraphWidget</name>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="111"/>
+        <location filename="src/timeline/graphwidget.cpp" line="115"/>
+        <source>Path:</source>
+        <translation>Cesta:</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="115"/>
+        <source>Name:</source>
+        <translation>Název:</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="730"/>
+        <source>Zoom X axis to selection</source>
+        <translation>Zvětšení osy X na výběr</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="734"/>
+        <source>Zoom channel to selection</source>
+        <translation>Přiblížení kanálu k výběru</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="743"/>
+        <source>Show selection info</source>
+        <translation>Zobrazit informace o výběru</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="753"/>
+        <source>t1: %1</source>
+        <translation>t1: %1</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="754"/>
+        <source>t2: %2</source>
+        <translation>t2: %2</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="755"/>
+        <source>duration: %1</source>
+        <translation>trvání: %1</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="756"/>
+        <source>y1: %1</source>
+        <translation>y1: %1</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="757"/>
+        <source>y2: %2</source>
+        <translation>y2: %2</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="759"/>
+        <source>diff: %1</source>
+        <translation>rozdíl: %1</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="760"/>
+        <source>Selection info</source>
+        <translation>Informace o výběru</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="780"/>
+        <source>Normal size</source>
+        <translation>Normální velikost</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="785"/>
+        <source>Maximize</source>
+        <translation>Maximalizovat</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="790"/>
+        <source>Set probe (Ctrl + Left mouse)</source>
+        <translation>Umístit sondu (Ctrl + levá myš)</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="795"/>
+        <source>Add probe (Ctrl + Shift + Left mouse)</source>
+        <translation>Přidat sondu (Ctrl + Shift + levá myš)</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="799"/>
+        <source>Reset X-zoom</source>
+        <translation>Resetovat X-zoom</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="803"/>
+        <source>Reset Y-zoom</source>
+        <translation>Resetovat Y-zoom</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="809"/>
+        <source>Hide Y axis</source>
+        <translation>Schovat osu Y</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/graphwidget.cpp" line="814"/>
+        <source>Show Y axis</source>
+        <translation>Zobrazit osu Y</translation>
     </message>
 </context>
 </TS>
