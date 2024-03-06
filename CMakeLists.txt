@@ -45,26 +45,26 @@ set(LIBSHV_PROJECT_TRANSLATIONS
 	de_DE
 )
 
-function(libshv_set_translations component langs)
+function(libshv_set_translations target langs)
 	foreach(lang ${langs})
-		set(TS_FILES ${TS_FILES} "${component}.${lang}.ts")
+		set(TS_FILES ${TS_FILES} "${target}.${lang}.ts")
 	endforeach()
 
-	if(DEFINED ENV{LIBSHV_RUN_LUPDATE})
-		if(USE_QT6)
-			qt6_create_translation(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR} ${TS_FILES})
-		else()
-			qt5_create_translation(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR} ${TS_FILES})
-	endif()
+	if(USE_QT6)
+		if(DEFINED ENV{LIBSHV_RUN_LUPDATE})
+			qt_add_lupdate("${target}" TS_FILES ${TS_FILES})
+		endif()
+
+		qt_add_lrelease("${target}" TS_FILES ${TS_FILES} QM_FILES_OUTPUT_VARIABLE QM_FILES)
 	else()
-		if(USE_QT6)
-			qt6_add_translation(QM_FILES ${TS_FILES})
+		if(DEFINED ENV{LIBSHV_RUN_LUPDATE})
+			qt5_create_translation(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR} ${TS_FILES})
 		else()
 			qt5_add_translation(QM_FILES ${TS_FILES})
 		endif()
+		target_sources(${target} PRIVATE ${QM_FILES})
 	endif()
 
-	target_sources(${component} PRIVATE ${QM_FILES})
 	install(FILES ${QM_FILES} DESTINATION ${CMAKE_INSTALL_BINDIR}/translations)
 endfunction()
 
