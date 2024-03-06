@@ -2,7 +2,7 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="fi_FI">
 <context>
-    <name>ChannelFilterDialog</name>
+    <name>shv::visu::timeline::ChannelFilterDialog</name>
     <message>
         <location filename="src/timeline/channelfilterdialog.cpp" line="41"/>
         <source>Discard changes</source>
@@ -86,7 +86,7 @@
     </message>
 </context>
 <context>
-    <name>DlgLogInspector</name>
+    <name>shv::visu::logview::DlgLogInspector</name>
     <message>
         <location filename="src/logview/dlgloginspector.cpp" line="51"/>
         <location filename="src/logview/dlgloginspector.cpp" line="94"/>
@@ -150,7 +150,7 @@
     </message>
 </context>
 <context>
-    <name>Graph</name>
+    <name>shv::visu::timeline::Graph</name>
     <message>
         <location filename="src/timeline/graph.cpp" line="936"/>
         <source>%1.%2 sec</source>
@@ -194,7 +194,7 @@
     </message>
 </context>
 <context>
-    <name>GraphWidget</name>
+    <name>shv::visu::timeline::GraphWidget</name>
     <message>
         <location filename="src/timeline/graphwidget.cpp" line="111"/>
         <location filename="src/timeline/graphwidget.cpp" line="115"/>
@@ -298,7 +298,7 @@
     </message>
 </context>
 <context>
-    <name>LogModel</name>
+    <name>shv::visu::logview::LogModel</name>
     <message>
         <location filename="src/logview/logmodel.cpp" line="59"/>
         <source>DateTime</source>
