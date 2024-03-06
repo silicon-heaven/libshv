@@ -59,7 +59,7 @@ add_library(libshvvisu
 	include/shv/visu/errorlogmodel.h
 	)
 
-set_translations(libshvvisu "${PROJECT_TRANSLATIONS}")
+libshv_set_translations(libshvvisu "${LIBSHV_PROJECT_TRANSLATIONS}")
 
 add_library(libshv::libshvvisu ALIAS libshvvisu)
 
