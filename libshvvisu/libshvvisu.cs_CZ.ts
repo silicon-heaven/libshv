@@ -2,6 +2,348 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="cs_CZ">
 <context>
+    <name>shv::visu::ErrorLogModel</name>
+    <message>
+        <location filename="src/logwidget/errorlogmodel.cpp" line="21"/>
+        <source>Level</source>
+        <translation>Úroveň</translation>
+    </message>
+    <message>
+        <location filename="src/logwidget/errorlogmodel.cpp" line="23"/>
+        <source>Time stamp</source>
+        <translation>Časová značka</translation>
+    </message>
+    <message>
+        <location filename="src/logwidget/errorlogmodel.cpp" line="25"/>
+        <source>Message</source>
+        <translation>Zpráva</translation>
+    </message>
+    <message>
+        <location filename="src/logwidget/errorlogmodel.cpp" line="27"/>
+        <source>Data</source>
+        <translation>Data</translation>
+    </message>
+</context>
+<context>
+    <name>shv::visu::LogWidget</name>
+    <message>
+        <location filename="src/logwidget/logwidget.ui" line="14"/>
+        <source>Form</source>
+        <translation>Formulář</translation>
+    </message>
+    <message>
+        <location filename="src/logwidget/logwidget.ui" line="37"/>
+        <source>Filter</source>
+        <translation>Filtr</translation>
+    </message>
+    <message>
+        <location filename="src/logwidget/logwidget.ui" line="64"/>
+        <source>Clear</source>
+        <translation>Smazat</translation>
+    </message>
+    <message>
+        <location filename="src/logwidget/logwidget.ui" line="78"/>
+        <source>Resize columns to fit content</source>
+        <translation>Přizpůsobit šířku sloupců obsahu</translation>
+    </message>
+    <message>
+        <location filename="src/logwidget/logwidget.ui" line="92"/>
+        <source>Event log options</source>
+        <translation>Nastavení záznamu událostí</translation>
+    </message>
+    <message>
+        <location filename="src/logwidget/logwidget.ui" line="95"/>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+    <message>
+        <location filename="src/logwidget/logwidget.cpp" line="130"/>
+        <source>Maximal log length</source>
+        <translation>Maximální délka logu</translation>
+    </message>
+    <message>
+        <location filename="src/logwidget/logwidget.cpp" line="135"/>
+        <source>Get number</source>
+        <translation>Získat číslo</translation>
+    </message>
+    <message>
+        <location filename="src/logwidget/logwidget.cpp" line="135"/>
+        <source>Maximal log row count:</source>
+        <translation>Maximální počet řádků logu:</translation>
+    </message>
+</context>
+<context>
+    <name>shv::visu::LogWidgetTableView</name>
+    <message>
+        <location filename="src/logwidget/logwidget.cpp" line="25"/>
+        <source>Copy</source>
+        <translation>Kopírovat</translation>
+    </message>
+    <message>
+        <location filename="src/logwidget/logwidget.cpp" line="27"/>
+        <source>Ctrl+C</source>
+        <comment>Copy selection</comment>
+        <translation>Ctrl+C</translation>
+    </message>
+</context>
+<context>
+    <name>shv::visu::logview::DataViewWidget</name>
+    <message>
+        <location filename="src/logview/dataviewwidget.ui" line="14"/>
+        <source>Form</source>
+        <translation>Formulář</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dataviewwidget.ui" line="32"/>
+        <source>Show filter dialog</source>
+        <translation>Zobrazit dialogové okno filtru</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dataviewwidget.ui" line="35"/>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+</context>
+<context>
+    <name>shv::visu::logview::DlgLogInspector</name>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="51"/>
+        <location filename="src/logview/dlgloginspector.cpp" line="94"/>
+        <source>ChainPack</source>
+        <translation>ChainPack</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="60"/>
+        <location filename="src/logview/dlgloginspector.cpp" line="110"/>
+        <source>Cpon</source>
+        <translation>Cpon</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="69"/>
+        <source>CSV</source>
+        <translation>CSV</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="104"/>
+        <location filename="src/logview/dlgloginspector.cpp" line="120"/>
+        <location filename="src/logview/dlgloginspector.cpp" line="418"/>
+        <location filename="src/logview/dlgloginspector.cpp" line="450"/>
+        <location filename="src/logview/dlgloginspector.cpp" line="466"/>
+        <source>Warning</source>
+        <translation>Varování</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="104"/>
+        <source>Invalid ChainPack file: </source>
+        <translation>Neplatný soubor ChainPack: </translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="120"/>
+        <source>Invalid CPON file: </source>
+        <translation>Neplatný soubor CPON: </translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="169"/>
+        <source>&amp;Copy</source>
+        <translation>&amp;Kopírovat</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="440"/>
+        <source>Loadfile</source>
+        <translation>Načístsoubor</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="450"/>
+        <source>Cannot open file &apos;%1&apos; for read.</source>
+        <translation>Nelze otevřít soubor &apos;%1&apos; pro čtení.</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="456"/>
+        <source>Savefile</source>
+        <translation>Uložení souboru</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.cpp" line="466"/>
+        <source>Cannot open file &apos;%1&apos; for write.</source>
+        <translation>Nelze otevřít soubor &apos;%1&apos; pro zápis.</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="14"/>
+        <source>Log inspector</source>
+        <translation>Log inspektor</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="35"/>
+        <source>TextLabel</source>
+        <translation>TextovýPopisek</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="44"/>
+        <source>&amp;Since</source>
+        <translation>&amp;Od</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="62"/>
+        <location filename="src/logview/dlgloginspector.ui" line="113"/>
+        <source>Not defined</source>
+        <translation>Nedefinováno</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="72"/>
+        <location filename="src/logview/dlgloginspector.ui" line="123"/>
+        <source>yyyy-MM-dd hh:mm:ss</source>
+        <translation>rrrr-MM-dd hh:mm:ss</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="95"/>
+        <source>&amp;Until</source>
+        <translation>&amp;Do</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="146"/>
+        <source>Time zone</source>
+        <translation>Časové pásmo</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="156"/>
+        <source>&amp;Options</source>
+        <translation>&amp;Možnosti</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="182"/>
+        <source>Download</source>
+        <translation>Stáhnout</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="191"/>
+        <source>Options</source>
+        <translation>Možnosti</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="253"/>
+        <source> sec</source>
+        <translation> s</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="272"/>
+        <source>Max record count</source>
+        <translation>Maximální počet záznamů</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="279"/>
+        <source>SHV &amp;Path</source>
+        <translation>SHV &amp;Cesta</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="289"/>
+        <source>paths dict</source>
+        <translation>cesty dict</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="299"/>
+        <source>Path pattern is regex</source>
+        <translation>Vzor cesty je regex</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="302"/>
+        <source>&amp;regex</source>
+        <translation>&amp;regex</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="312"/>
+        <source>Timeout</source>
+        <translation>Timeout</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="319"/>
+        <source>Path pa&amp;ttern</source>
+        <translation>&amp;Vzor cesty</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="329"/>
+        <source>use &amp;history provider</source>
+        <translation>použít &amp;history provider</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="339"/>
+        <source>with snapshot</source>
+        <translation>se snímkem</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="346"/>
+        <source>with type info</source>
+        <translation>s informacemi o typu</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="377"/>
+        <source>Graph</source>
+        <translation>Graf</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="393"/>
+        <source>Data</source>
+        <translation>Data</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="406"/>
+        <source>Info</source>
+        <translation>Info</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="508"/>
+        <source>Resize columns to fit width</source>
+        <translation>Přizpůsobit šířku sloupců</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="519"/>
+        <source>Load data</source>
+        <translation>Načíst data</translation>
+    </message>
+    <message>
+        <location filename="src/logview/dlgloginspector.ui" line="526"/>
+        <source>Save data</source>
+        <translation>Uložit data</translation>
+    </message>
+</context>
+<context>
+    <name>shv::visu::logview::LogModel</name>
+    <message>
+        <location filename="src/logview/logmodel.cpp" line="59"/>
+        <source>DateTime</source>
+        <translation>DatumČas</translation>
+    </message>
+    <message>
+        <location filename="src/logview/logmodel.cpp" line="60"/>
+        <source>Path</source>
+        <translation>Cesta</translation>
+    </message>
+    <message>
+        <location filename="src/logview/logmodel.cpp" line="61"/>
+        <source>Value</source>
+        <translation>Hodnota</translation>
+    </message>
+    <message>
+        <location filename="src/logview/logmodel.cpp" line="62"/>
+        <source>ShortTime</source>
+        <translation>ShortTime</translation>
+    </message>
+    <message>
+        <location filename="src/logview/logmodel.cpp" line="63"/>
+        <source>Domain</source>
+        <translation>Doména</translation>
+    </message>
+    <message>
+        <location filename="src/logview/logmodel.cpp" line="64"/>
+        <source>ValueFlags</source>
+        <translation>ValueFlags</translation>
+    </message>
+    <message>
+        <location filename="src/logview/logmodel.cpp" line="65"/>
+        <source>UserId</source>
+        <translation>UživatelskéID</translation>
+    </message>
+</context>
+<context>
     <name>shv::visu::timeline::ChannelFilterDialog</name>
     <message>
         <location filename="src/timeline/channelfilterdialog.cpp" line="41"/>
@@ -84,69 +426,60 @@
         <source>Expand all nodes</source>
         <translation>Rozbalit všechny uzly</translation>
     </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.ui" line="14"/>
+        <source>Channels filter dialog</source>
+        <translation>Filtr kanálů</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.ui" line="23"/>
+        <source>Channel filter is enabled</source>
+        <translation>Filtr kanálů je povolen</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.ui" line="54"/>
+        <source>Data view</source>
+        <translation>Datový pohled</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.ui" line="102"/>
+        <source>Check channels</source>
+        <translation>Zaškrtnout všechny kanály</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.ui" line="116"/>
+        <source>Uncheck channels</source>
+        <translation>Zrušit zaškrtnutí všech kanálů</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.ui" line="130"/>
+        <source>Uncheck channels without data changes</source>
+        <translation>Zrušit zaškrtnutí kanálů beze změn</translation>
+    </message>
+    <message>
+        <location filename="src/timeline/channelfilterdialog.ui" line="144"/>
+        <source>Matching text</source>
+        <translation>Odpovídající text</translation>
+    </message>
 </context>
 <context>
-    <name>shv::visu::logview::DlgLogInspector</name>
+    <name>shv::visu::timeline::ChannelProbeWidget</name>
     <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="51"/>
-        <location filename="src/logview/dlgloginspector.cpp" line="94"/>
-        <source>ChainPack</source>
-        <translation>ChainPack</translation>
+        <location filename="src/timeline/channelprobewidget.ui" line="17"/>
+        <source>Form</source>
+        <translation>Formulář</translation>
     </message>
     <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="60"/>
-        <location filename="src/logview/dlgloginspector.cpp" line="110"/>
-        <source>Cpon</source>
-        <translation>Cpon</translation>
+        <location filename="src/timeline/channelprobewidget.ui" line="74"/>
+        <source>Title</source>
+        <translation>Název</translation>
     </message>
     <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="69"/>
-        <source>CSV</source>
-        <translation>CSV</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="104"/>
-        <location filename="src/logview/dlgloginspector.cpp" line="120"/>
-        <location filename="src/logview/dlgloginspector.cpp" line="418"/>
-        <location filename="src/logview/dlgloginspector.cpp" line="450"/>
-        <location filename="src/logview/dlgloginspector.cpp" line="466"/>
-        <source>Warning</source>
-        <translation>Varování</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="104"/>
-        <source>Invalid ChainPack file: </source>
-        <translation>Neplatný soubor ChainPack: </translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="120"/>
-        <source>Invalid CPON file: </source>
-        <translation>Neplatný soubor CPON: </translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="169"/>
-        <source>&amp;Copy</source>
-        <translation>&amp;Kopírovat</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="440"/>
-        <source>Loadfile</source>
-        <translation>Načístsoubor</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="450"/>
-        <source>Cannot open file &apos;%1&apos; for read.</source>
-        <translation>Nelze otevřít soubor &apos;%1&apos; pro čtení.</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="456"/>
-        <source>Savefile</source>
-        <translation>Uložení souboru</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.cpp" line="466"/>
-        <source>Cannot open file &apos;%1&apos; for write.</source>
-        <translation>Nelze otevřít soubor &apos;%1&apos; pro zápis.</translation>
+        <location filename="src/timeline/channelprobewidget.ui" line="87"/>
+        <location filename="src/timeline/channelprobewidget.ui" line="153"/>
+        <location filename="src/timeline/channelprobewidget.ui" line="167"/>
+        <source>...</source>
+        <translation>...</translation>
     </message>
 </context>
 <context>
@@ -295,345 +628,6 @@
         <location filename="src/timeline/graphwidget.cpp" line="814"/>
         <source>Show Y axis</source>
         <translation>Zobrazit osu Y</translation>
-    </message>
-</context>
-<context>
-    <name>shv::visu::logview::LogModel</name>
-    <message>
-        <location filename="src/logview/logmodel.cpp" line="59"/>
-        <source>DateTime</source>
-        <translation>DatumČas</translation>
-    </message>
-    <message>
-        <location filename="src/logview/logmodel.cpp" line="60"/>
-        <source>Path</source>
-        <translation>Cesta</translation>
-    </message>
-    <message>
-        <location filename="src/logview/logmodel.cpp" line="61"/>
-        <source>Value</source>
-        <translation>Hodnota</translation>
-    </message>
-    <message>
-        <location filename="src/logview/logmodel.cpp" line="62"/>
-        <source>ShortTime</source>
-        <translation>ShortTime</translation>
-    </message>
-    <message>
-        <location filename="src/logview/logmodel.cpp" line="63"/>
-        <source>Domain</source>
-        <translation>Doména</translation>
-    </message>
-    <message>
-        <location filename="src/logview/logmodel.cpp" line="64"/>
-        <source>ValueFlags</source>
-        <translation>ValueFlags</translation>
-    </message>
-    <message>
-        <location filename="src/logview/logmodel.cpp" line="65"/>
-        <source>UserId</source>
-        <translation>UživatelskéID</translation>
-    </message>
-</context>
-<context>
-    <name>shv::visu::ErrorLogModel</name>
-    <message>
-        <location filename="src/logwidget/errorlogmodel.cpp" line="21"/>
-        <source>Level</source>
-        <translation>Úroveň</translation>
-    </message>
-    <message>
-        <location filename="src/logwidget/errorlogmodel.cpp" line="23"/>
-        <source>Time stamp</source>
-        <translation>Časová značka</translation>
-    </message>
-    <message>
-        <location filename="src/logwidget/errorlogmodel.cpp" line="25"/>
-        <source>Message</source>
-        <translation>Zpráva</translation>
-    </message>
-    <message>
-        <location filename="src/logwidget/errorlogmodel.cpp" line="27"/>
-        <source>Data</source>
-        <translation>Data</translation>
-    </message>
-</context>
-<context>
-    <name>shv::visu::LogWidget</name>
-    <message>
-        <location filename="src/logwidget/logwidget.ui" line="14"/>
-        <source>Form</source>
-        <translation>Formulář</translation>
-    </message>
-    <message>
-        <location filename="src/logwidget/logwidget.ui" line="37"/>
-        <source>Filter</source>
-        <translation>Filtr</translation>
-    </message>
-    <message>
-        <location filename="src/logwidget/logwidget.ui" line="64"/>
-        <source>Clear</source>
-        <translation>Smazat</translation>
-    </message>
-    <message>
-        <location filename="src/logwidget/logwidget.ui" line="78"/>
-        <source>Resize columns to fit content</source>
-        <translation>Přizpůsobit šířku sloupců obsahu</translation>
-    </message>
-    <message>
-        <location filename="src/logwidget/logwidget.ui" line="92"/>
-        <source>Event log options</source>
-        <translation>Nastavení záznamu událostí</translation>
-    </message>
-    <message>
-        <location filename="src/logwidget/logwidget.ui" line="95"/>
-        <source>...</source>
-        <translation>...</translation>
-    </message>
-    <message>
-        <location filename="src/logwidget/logwidget.cpp" line="130"/>
-        <source>Maximal log length</source>
-        <translation>Maximální délka logu</translation>
-    </message>
-    <message>
-        <location filename="src/logwidget/logwidget.cpp" line="135"/>
-        <source>Get number</source>
-        <translation>Získat číslo</translation>
-    </message>
-    <message>
-        <location filename="src/logwidget/logwidget.cpp" line="135"/>
-        <source>Maximal log row count:</source>
-        <translation>Maximální počet řádků logu:</translation>
-    </message>
-</context>
-<context>
-    <name>shv::visu::LogWidgetTableView</name>
-    <message>
-        <location filename="src/logwidget/logwidget.cpp" line="25"/>
-        <source>Copy</source>
-        <translation>Kopírovat</translation>
-    </message>
-    <message>
-        <location filename="src/logwidget/logwidget.cpp" line="27"/>
-        <source>Ctrl+C</source>
-        <comment>Copy selection</comment>
-        <translation>Ctrl+C</translation>
-    </message>
-</context>
-<context>
-    <name>shv::visu::logview::DataViewWidget</name>
-    <message>
-        <location filename="src/logview/dataviewwidget.ui" line="14"/>
-        <source>Form</source>
-        <translation>Formulář</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dataviewwidget.ui" line="32"/>
-        <source>Show filter dialog</source>
-        <translation>Zobrazit dialogové okno filtru</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dataviewwidget.ui" line="35"/>
-        <source>...</source>
-        <translation>...</translation>
-    </message>
-</context>
-<context>
-    <name>shv::visu::logview::DlgLogInspector</name>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="14"/>
-        <source>Log inspector</source>
-        <translation>Log inspektor</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="35"/>
-        <source>TextLabel</source>
-        <translation>TextovýPopisek</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="44"/>
-        <source>&amp;Since</source>
-        <translation>&amp;Od</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="62"/>
-        <location filename="src/logview/dlgloginspector.ui" line="113"/>
-        <source>Not defined</source>
-        <translation>Nedefinováno</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="72"/>
-        <location filename="src/logview/dlgloginspector.ui" line="123"/>
-        <source>yyyy-MM-dd hh:mm:ss</source>
-        <translation>rrrr-MM-dd hh:mm:ss</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="95"/>
-        <source>&amp;Until</source>
-        <translation>&amp;Do</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="146"/>
-        <source>Time zone</source>
-        <translation>Časové pásmo</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="156"/>
-        <source>&amp;Options</source>
-        <translation>&amp;Možnosti</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="182"/>
-        <source>Download</source>
-        <translation>Stáhnout</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="191"/>
-        <source>Options</source>
-        <translation>Možnosti</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="253"/>
-        <source> sec</source>
-        <translation> s</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="272"/>
-        <source>Max record count</source>
-        <translation>Maximální počet záznamů</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="279"/>
-        <source>SHV &amp;Path</source>
-        <translation>SHV &amp;Cesta</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="289"/>
-        <source>paths dict</source>
-        <translation>cesty dict</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="299"/>
-        <source>Path pattern is regex</source>
-        <translation>Vzor cesty je regex</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="302"/>
-        <source>&amp;regex</source>
-        <translation>&amp;regex</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="312"/>
-        <source>Timeout</source>
-        <translation>Timeout</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="319"/>
-        <source>Path pa&amp;ttern</source>
-        <translation>&amp;Vzor cesty</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="329"/>
-        <source>use &amp;history provider</source>
-        <translation>použít &amp;history provider</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="339"/>
-        <source>with snapshot</source>
-        <translation>se snímkem</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="346"/>
-        <source>with type info</source>
-        <translation>s informacemi o typu</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="377"/>
-        <source>Graph</source>
-        <translation>Graf</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="393"/>
-        <source>Data</source>
-        <translation>Data</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="406"/>
-        <source>Info</source>
-        <translation>Info</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="508"/>
-        <source>Resize columns to fit width</source>
-        <translation>Přizpůsobit šířku sloupců</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="519"/>
-        <source>Load data</source>
-        <translation>Načíst data</translation>
-    </message>
-    <message>
-        <location filename="src/logview/dlgloginspector.ui" line="526"/>
-        <source>Save data</source>
-        <translation>Uložit data</translation>
-    </message>
-</context>
-<context>
-    <name>shv::visu::timeline::ChannelFilterDialog</name>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.ui" line="14"/>
-        <source>Channels filter dialog</source>
-        <translation>Filtr kanálů</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.ui" line="23"/>
-        <source>Channel filter is enabled</source>
-        <translation>Filtr kanálů je povolen</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.ui" line="54"/>
-        <source>Data view</source>
-        <translation>Datový pohled</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.ui" line="102"/>
-        <source>Check channels</source>
-        <translation>Zaškrtnout všechny kanály</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.ui" line="116"/>
-        <source>Uncheck channels</source>
-        <translation>Zrušit zaškrtnutí všech kanálů</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.ui" line="130"/>
-        <source>Uncheck channels without data changes</source>
-        <translation>Zrušit zaškrtnutí kanálů beze změn</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelfilterdialog.ui" line="144"/>
-        <source>Matching text</source>
-        <translation>Odpovídající text</translation>
-    </message>
-</context>
-<context>
-    <name>shv::visu::timeline::ChannelProbeWidget</name>
-    <message>
-        <location filename="src/timeline/channelprobewidget.ui" line="17"/>
-        <source>Form</source>
-        <translation>Formulář</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelprobewidget.ui" line="74"/>
-        <source>Title</source>
-        <translation>Název</translation>
-    </message>
-    <message>
-        <location filename="src/timeline/channelprobewidget.ui" line="87"/>
-        <location filename="src/timeline/channelprobewidget.ui" line="153"/>
-        <location filename="src/timeline/channelprobewidget.ui" line="167"/>
-        <source>...</source>
-        <translation>...</translation>
     </message>
 </context>
 </TS>
