@@ -179,9 +179,9 @@ void ClientConnectionOnBroker::sendRpcFrame(chainpack::RpcFrame &&frame)
 	chainpack::RpcDriver::sendRpcFrame(std::move(frame));
 }
 
-ClientConnectionOnBroker::Subscription ClientConnectionOnBroker::createSubscription(const std::string &shv_path, const std::string &method)
+ClientConnectionOnBroker::Subscription ClientConnectionOnBroker::createSubscription(const std::string &shv_path, const std::string &method, const std::string& source)
 {
-	logSubscriptionsD() << "Create client subscription for path:" << shv_path << "method:" << method;
+	logSubscriptionsD() << "Create client subscription for path:" << shv_path << "method:" << method << "source:" << source;
 	using ServiceProviderPath = shv::core::utils::ShvUrl;
 	ServiceProviderPath spp(shv_path);
 	string local_path = shv_path;
@@ -221,7 +221,7 @@ ClientConnectionOnBroker::Subscription ClientConnectionOnBroker::createSubscript
 				ACCESS_EXCEPTION("Acces to shv signal '" + shv_path + '/' + method + "()' not granted for user '" + loggedUserName() + "'");
 		}
 	}
-	return Subscription(local_path, shv_path, method);
+	return Subscription(local_path, shv_path, method, source);
 }
 
 string ClientConnectionOnBroker::toSubscribedPath(const CommonRpcClientHandle::Subscription &subs, const string &signal_path) const

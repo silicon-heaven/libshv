@@ -98,13 +98,13 @@ void MasterBrokerConnection::sendRpcMessage(const shv::chainpack::RpcMessage &rp
 	Super::sendRpcMessage(rpc_msg);
 }
 
-CommonRpcClientHandle::Subscription MasterBrokerConnection::createSubscription(const std::string &shv_path, const std::string &method)
+CommonRpcClientHandle::Subscription MasterBrokerConnection::createSubscription(const std::string &shv_path, const std::string &method, const std::string& source)
 {
 	using ServiceProviderPath = shv::core::utils::ShvUrl;
 	ServiceProviderPath spp(shv_path);
 	if(spp.isServicePath())
 		SHV_EXCEPTION("This could never happen by SHV design logic, master broker tries to subscribe service provided path: "  + shv_path);
-	return Subscription(masterExportedToLocalPath(shv_path), shv_path, method);
+	return Subscription(masterExportedToLocalPath(shv_path), shv_path, method, source);
 }
 
 std::string MasterBrokerConnection::toSubscribedPath(const Subscription &subs, const std::string &signal_path) const

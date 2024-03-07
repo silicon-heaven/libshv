@@ -114,15 +114,15 @@ int IRpcConnection::callShvMethod(int rq_id, const std::string &shv_path, std::s
 	return rq_id;
 }
 
-int IRpcConnection::callMethodSubscribe(const std::string &shv_path, std::string method)
+int IRpcConnection::callMethodSubscribe(const std::string &shv_path, std::string method, const std::string& source)
 {
 	int rq_id = nextRequestId();
-	return callMethodSubscribe(rq_id, shv_path, method);
+	return callMethodSubscribe(rq_id, shv_path, method, source);
 }
 
-int IRpcConnection::callMethodSubscribe(int rq_id, const std::string &shv_path, std::string method)
+int IRpcConnection::callMethodSubscribe(int rq_id, const std::string &shv_path, std::string method, const std::string& source)
 {
-	logSubscriptionsD() << "call subscribe for connection id:" << connectionId() << "path:" << shv_path << "method:" << method;
+	logSubscriptionsD() << "call subscribe for connection id:" << connectionId() << "path:" << shv_path << "method:" << method << "source:" << source;
 	if(m_shvApiVersion == ShvApiVersion::V3) {
 		auto path = shv_path + "/**";
 		return callShvMethod(rq_id
@@ -131,6 +131,7 @@ int IRpcConnection::callMethodSubscribe(int rq_id, const std::string &shv_path, 
 							 , RpcValue::Map{
 								 {Rpc::PAR_PATHS, path},
 								 {Rpc::PAR_METHODS, method},
+								 {Rpc::PAR_SOURCE, source},
 							 });
 	}
 	return callShvMethod(rq_id
@@ -139,18 +140,19 @@ int IRpcConnection::callMethodSubscribe(int rq_id, const std::string &shv_path, 
 						 , RpcValue::Map{
 							 {Rpc::PAR_PATH, shv_path},
 							 {Rpc::PAR_METHOD, std::move(method)},
+							 {Rpc::PAR_SOURCE, source},
 						 });
 }
 
-int IRpcConnection::callMethodUnsubscribe(const std::string &shv_path, std::string method)
+int IRpcConnection::callMethodUnsubscribe(const std::string &shv_path, std::string method, const std::string& source)
 {
 	int rq_id = nextRequestId();
-	return callMethodUnsubscribe(rq_id, shv_path, method);
+	return callMethodUnsubscribe(rq_id, shv_path, method, source);
 }
 
-int IRpcConnection::callMethodUnsubscribe(int rq_id, const std::string &shv_path, std::string method)
+int IRpcConnection::callMethodUnsubscribe(int rq_id, const std::string &shv_path, std::string method, const std::string& source)
 {
-	logSubscriptionsD() << "call unsubscribe for connection id:" << connectionId() << "path:" << shv_path << "method:" << method;
+	logSubscriptionsD() << "call unsubscribe for connection id:" << connectionId() << "path:" << shv_path << "method:" << method << "source:" << source;
 	if(m_shvApiVersion == ShvApiVersion::V3) {
 		auto path = shv_path + "/**";
 		return callShvMethod(rq_id
@@ -159,6 +161,7 @@ int IRpcConnection::callMethodUnsubscribe(int rq_id, const std::string &shv_path
 							 , RpcValue::Map{
 								 {Rpc::PAR_PATHS, path},
 								 {Rpc::PAR_METHODS, method},
+								 {Rpc::PAR_SOURCE, source},
 							 });
 	}
 	return callShvMethod(rq_id
@@ -167,6 +170,7 @@ int IRpcConnection::callMethodUnsubscribe(int rq_id, const std::string &shv_path
 						 , RpcValue::Map{
 							 {Rpc::PAR_PATH, shv_path},
 							 {Rpc::PAR_METHOD, std::move(method)},
+							 {Rpc::PAR_SOURCE, source},
 						 });
 }
 

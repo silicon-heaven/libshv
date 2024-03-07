@@ -29,7 +29,7 @@ public:
 	void sendRpcFrame(shv::chainpack::RpcFrame &&frame) override;
 	void sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg) override;
 
-	Subscription createSubscription(const std::string &shv_path, const std::string &method) override;
+	Subscription createSubscription(const std::string &shv_path, const std::string &method, const std::string& source) override;
 	std::string toSubscribedPath(const Subscription &subs, const std::string &signal_path) const override;
 
 	std::string masterExportedToLocalPath(const std::string &master_path) const;
