@@ -1,54 +1,97 @@
 {
   description = "Silicon Heaven library Flake";
 
+  inputs.necrolog.url = "github:cynerd/necrolog/flake.nix";
+
   outputs = {
     self,
     flake-utils,
     nixpkgs,
-  }:
-    with builtins;
-    with flake-utils.lib;
-    with nixpkgs.lib; let
-      packages = pkgs:
-        with pkgs;
-        with qt6Packages; rec {
-          libshv = stdenv.mkDerivation {
-            name = "libshv";
-            src = builtins.path {
-              name = "libshv-src";
-              path = ./.;
-              filter = path: type: ! hasSuffix ".nix" path;
-            };
-            outputs = ["out" "dev"];
-            buildInputs = [
-              wrapQtAppsHook
-              qtbase
-              qtserialport
-              qtwebsockets
-            ];
-            nativeBuildInputs = [
-              cmake
-            ];
-            cmakeFlags = ["-DWITH_CLI_EXAMPLES=ON"];
-          };
-          default = libshv;
-        };
-    in
-      {
-        overlays = {
-          libshv = final: prev: packages (id prev);
-          default = self.overlays.libshv;
-        };
-      }
-      // eachDefaultSystem (system: let
-        pkgs = nixpkgs.legacyPackages.${system}.extend self.overlays.default;
-      in {
-        packages = filterPackages system rec {
-          inherit (pkgs) libshv;
-          default = libshv;
-        };
-        legacyPackages = pkgs;
+    necrolog,
+  }: let
+    inherit (flake-utils.lib) eachDefaultSystem;
+    inherit (nixpkgs.lib) hasSuffix composeManyExtensions optional optionals strings;
+    inherit (strings) cmakeBool;
+    rev = self.shortRev or self.dirtyShortRev or "unknown";
 
-        formatter = pkgs.alejandra;
-      });
+    libshv = {
+      stdenv,
+      qt6,
+      cmake,
+      necrolog,
+      chainpack ? true,
+      chainpack_cpp ? true,
+      core ? true,
+      coreqt ? true,
+      iotqt ? true,
+      visu ? true,
+      broker ? true,
+      cli_examples ? false,
+      gui_examples ? false,
+    }:
+      stdenv.mkDerivation {
+        name = "libshv-${rev}";
+        src = builtins.path {
+          name = "libshv-src";
+          path = ./.;
+          filter = path: type: ! hasSuffix ".nix" path;
+        };
+        buildInputs =
+          [necrolog]
+          ++ (optionals coreqt [
+            qt6.wrapQtAppsHook
+            qt6.qtbase
+            qt6.qtserialport
+            qt6.qtwebsockets
+          ]);
+        nativeBuildInputs = [cmake] ++ (optional coreqt qt6.qttools);
+        cmakeFlags = [
+          "-DLIBSHV_USE_LOCAL_NECROLOG=ON"
+          (cmakeBool "WITH_CHAINPACK" chainpack)
+          (cmakeBool "WITH_CHAINPACK_CPP" chainpack_cpp)
+          (cmakeBool "WITH_CORE" core)
+          (cmakeBool "WITH_COREQT" coreqt)
+          (cmakeBool "WITH_IOTQT" iotqt)
+          (cmakeBool "WITH_VISU" visu)
+          (cmakeBool "WITH_BROKER" broker)
+          (cmakeBool "WITH_CLI_EXAMPLES" cli_examples)
+          (cmakeBool "WITH_GUI_EXAMPLES" gui_examples)
+        ];
+      };
+  in
+    {
+      overlays = {
+        pkgs = final: prev: {
+          libshv = final.callPackage libshv {};
+          libshvFull = final.callPackage libshv {
+            cli_examples = true;
+            gui_examples = true;
+          };
+          libshvCli = final.callPackage libshv {
+            visu = false;
+            cli_examples = true;
+          };
+          libshvForClients = final.callPackage libshv {
+            broker = false;
+          };
+        };
+        default = composeManyExtensions [
+          necrolog.overlays.default
+          self.overlays.pkgs
+        ];
+      };
+    }
+    // eachDefaultSystem (system: let
+      pkgs = nixpkgs.legacyPackages.${system}.extend self.overlays.default;
+    in {
+      packages = {
+        default = pkgs.libshv;
+        full = pkgs.libshvFull;
+        cli = pkgs.libshvCli;
+        forClients = pkgs.libshvForClients;
+      };
+      legacyPackages = pkgs;
+
+      formatter = pkgs.alejandra;
+    });
 }

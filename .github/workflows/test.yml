@@ -78,9 +78,7 @@ jobs:
       - name: Build and test
         uses: ./.github/actions/build-and-test
   nix:
-    # FIXME: disable until submodules get fixed
-    if: false
-    name: Qt 6.5.0 / NixOS
+    name: Qt 6.6.2 / NixOS
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
@@ -91,8 +89,14 @@ jobs:
         with:
           nix_path: nixpkgs=channel:nixos-unstable
       - name: Build
-        run: nix --experimental-features 'nix-command flakes' build -L .?submodules=1
+        run: nix --experimental-features 'nix-command flakes' build -L .
+      - name: Build Full
+        run: nix --experimental-features 'nix-command flakes' build -L .#full
+      - name: Build CLI
+        run: nix --experimental-features 'nix-command flakes' build -L .#cli
+      - name: Build for clients
+        run: nix --experimental-features 'nix-command flakes' build -L .#forClients
       - name: Flake check
-        run: nix --experimental-features 'nix-command flakes' flake check .?submodules=1
+        run: nix --experimental-features 'nix-command flakes' flake check .
       - name: Format
         run: nix --experimental-features 'nix-command flakes' fmt && git diff --exit-code
