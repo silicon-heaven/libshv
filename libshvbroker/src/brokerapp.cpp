@@ -857,7 +857,7 @@ void BrokerApp::checkLogin(const chainpack::UserLoginContext &ctx, const QObject
 void BrokerApp::sendNewLogEntryNotify(const std::string &msg)
 {
 	if(isSendLogAsSignalEnabled())
-		sendNotifyToSubscribers(".broker/app/log", cp::Rpc::SIG_VAL_CHANGED, msg);
+		sendNotifyToSubscribers(".broker/app/log", cp::Rpc::SIG_VAL_CHANGED, cp::Rpc::METH_GET, msg);
 }
 
 void BrokerApp::initDbConfigSqlConnection()
@@ -1039,14 +1039,14 @@ void BrokerApp::onClientLogin(int connection_id)
 			}
 			mount_point = cli_nd->shvPath();
 			QTimer::singleShot(0, this, [this, mount_point]() {
-				sendNotifyToSubscribers(mount_point, cp::Rpc::SIG_MOUNTED_CHANGED, true);
+				sendNotifyToSubscribers(mount_point, cp::Rpc::SIG_MOUNTED_CHANGED, "", true);
 			});
 			shvInfo() << "client connection id:" << conn->connectionId() << "device id:" << conn->deviceId().toCpon() << " mounted on:" << mount_point;
 			/// overwrite client default mount point
 			conn->setMountPoint(mount_point);
 			connect(cli_nd, &ClientShvNode::destroyed, this, [this, mount_point]() {
 				shvInfo() << "mounted node destroyed:" << mount_point;
-				sendNotifyToSubscribers(mount_point, cp::Rpc::SIG_MOUNTED_CHANGED, false);
+				sendNotifyToSubscribers(mount_point, cp::Rpc::SIG_MOUNTED_CHANGED, "", false);
 			});
 			QTimer::singleShot(0, this, [this, connection_id]() {
 				onClientConnected(connection_id);
@@ -1361,7 +1361,7 @@ void BrokerApp::onRootNodeSendRpcMesage(const shv::chainpack::RpcMessage &msg)
 	}
 	if(msg.isSignal()) {
 		cp::RpcSignal sig(msg);
-		sendNotifyToSubscribers(sig.shvPath().asString(), sig.method().asString(), sig.params());
+		sendNotifyToSubscribers(sig.shvPath().asString(), sig.method().asString(), sig.source(), sig.params());
 	}
 	else {
 		shvError() << "Send message not implemented.";// << msg.toCpon();
@@ -1402,7 +1402,8 @@ bool BrokerApp::sendNotifyToSubscribers(const chainpack::RpcFrame &frame)
 		if(conn->isConnectedAndLoggedIn()) {
 			const cp::RpcValue shv_path = cp::RpcMessage::shvPath(frame.meta);
 			const cp::RpcValue method = cp::RpcMessage::method(frame.meta);
-			int subs_ix = conn->isSubscribed(shv_path.toString(), method.asString());
+			const auto source = cp::RpcMessage::source(frame.meta);
+			int subs_ix = conn->isSubscribed(shv_path.toString(), method.asString(), source);
 			if(subs_ix >= 0) {
 				const rpc::ClientConnectionOnBroker::Subscription &subs = conn->subscriptionAt(static_cast<size_t>(subs_ix));
 				std::string new_path = conn->toSubscribedPath(subs, shv_path.asString());
@@ -1421,16 +1422,17 @@ bool BrokerApp::sendNotifyToSubscribers(const chainpack::RpcFrame &frame)
 	return subs_sent;
 }
 
-void BrokerApp::sendNotifyToSubscribers(const std::string &shv_path, const std::string &method, const shv::chainpack::RpcValue &params)
+void BrokerApp::sendNotifyToSubscribers(const std::string &shv_path, const std::string &method, const std::string& source, const shv::chainpack::RpcValue &params)
 {
 	cp::RpcSignal sig;
 	sig.setShvPath(shv_path);
 	sig.setMethod(method);
 	sig.setParams(params);
+	sig.setSource(!source.empty() ? source : cp::Rpc::METH_GET);
 	// send it to all clients for now
 	for(rpc::CommonRpcClientHandle *conn : allClientConnections()) {
 		if(conn->isConnectedAndLoggedIn()) {
-			int subs_ix = conn->isSubscribed(shv_path, method);
+			int subs_ix = conn->isSubscribed(shv_path, method, source);
 			if(subs_ix >= 0) {
 				const rpc::ClientConnectionOnBroker::Subscription &subs = conn->subscriptionAt(static_cast<size_t>(subs_ix));
 				std::string new_path = conn->toSubscribedPath(subs, shv_path);
@@ -1442,12 +1444,12 @@ void BrokerApp::sendNotifyToSubscribers(const std::string &shv_path, const std::
 	}
 }
 
-void BrokerApp::addSubscription(int client_id, const std::string &shv_path, const std::string &method)
+void BrokerApp::addSubscription(int client_id, const std::string &shv_path, const std::string &method, const std::string& source)
 {
 	rpc::CommonRpcClientHandle *connection_handle = commonClientConnectionById(client_id);
 	if(!connection_handle)
 		SHV_EXCEPTION("Cannot create subscription, invalid connection ID.");
-	rpc::CommonRpcClientHandle::Subscription subs = connection_handle->createSubscription(shv_path, method);
+	rpc::CommonRpcClientHandle::Subscription subs = connection_handle->createSubscription(shv_path, method, source);
 	connection_handle->addSubscription(subs);
 	shv::core::utils::ShvUrl spp(subs.localPath);
 	if(spp.isServicePath()) {
@@ -1473,21 +1475,21 @@ void BrokerApp::addSubscription(int client_id, const std::string &shv_path, cons
 	}
 }
 
-bool BrokerApp::removeSubscription(int client_id, const std::string &shv_path, const std::string &method)
+bool BrokerApp::removeSubscription(int client_id, const std::string &shv_path, const std::string &method, const std::string& source)
 {
 	rpc::CommonRpcClientHandle *conn = commonClientConnectionById(client_id);
 	if(!conn)
 		SHV_EXCEPTION("Connot remove subscription, client doesn't exist.");
-	rpc::CommonRpcClientHandle::Subscription subs(string(), shv_path, method);
+	rpc::CommonRpcClientHandle::Subscription subs(string(), shv_path, method, source);
 	return conn->removeSubscription(subs);
 }
 
-bool BrokerApp::rejectNotSubscribedSignal(int client_id, const std::string &path, const std::string &method)
+bool BrokerApp::rejectNotSubscribedSignal(int client_id, const std::string &path, const std::string &method, const std::string& source)
 {
-	logSubscriptionsD() << "signal rejected, shv_path:" << path << "method:" << method;
+	logSubscriptionsD() << "signal rejected, shv_path:" << path << "method:" << method << "source:" << source;
 	rpc::MasterBrokerConnection *conn = masterBrokerConnectionById(client_id);
 	if(conn) {
-		return conn->rejectNotSubscribedSignal(conn->masterExportedToLocalPath(path), method);
+		return conn->rejectNotSubscribedSignal(conn->masterExportedToLocalPath(path), method, source);
 	}
 	return false;
 }

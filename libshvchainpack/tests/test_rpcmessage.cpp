@@ -78,7 +78,7 @@ DOCTEST_TEST_CASE("RpcMessage")
 	{
 		RpcResponse rs;
 		rs.setRequestId(123)
-			.setError(RpcResponse::Error("Paramter length should be greater than zero!", RpcResponse::Error::InvalidParams, RpcValue::Map{{"foo", 42}}));
+			.setError(RpcResponse::Error("Parameter length should be greater than zero!", RpcResponse::Error::InvalidParams, RpcValue::Map{{"foo", 42}}));
 		std::stringstream out;
 		RpcValue cp1 = rs.value();
 		{ ChainPackWriter wr(out); rs.write(wr); }

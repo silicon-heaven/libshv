@@ -45,10 +45,10 @@ public:
 	int callShvMethod(int rq_id, const std::string &shv_path, std::string method, const shv::chainpack::RpcValue &params = shv::chainpack::RpcValue());
 	int callShvMethod(int rq_id, const std::string &shv_path, std::string method, const shv::chainpack::RpcValue &params, const shv::chainpack::RpcValue &user_id);
 
-	int callMethodSubscribe(const std::string &shv_path, std::string method);
-	int callMethodSubscribe(int rq_id, const std::string &shv_path, std::string method);
-	int callMethodUnsubscribe(const std::string &shv_path, std::string method);
-	int callMethodUnsubscribe(int rq_id, const std::string &shv_path, std::string method);
+	int callMethodSubscribe(const std::string &shv_path, std::string method, const std::string& source = "");
+	int callMethodSubscribe(int rq_id, const std::string &shv_path, std::string method, const std::string& source = "");
+	int callMethodUnsubscribe(const std::string &shv_path, std::string method, const std::string& source = "");
+	int callMethodUnsubscribe(int rq_id, const std::string &shv_path, std::string method, const std::string& source = "");
 protected:
 	static int nextConnectionId();
 protected:

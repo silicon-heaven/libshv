@@ -45,6 +45,7 @@ public:
 								AccessGrant = 14,
 								TunnelCtl = 15,
 								UserId = 16,
+								Source = 19,
 								MAX};};
 		struct Key { enum Enum {Params = 1, Result, Error, MAX};};
 
@@ -124,6 +125,11 @@ public:
 	void setUserId(const RpcValue &user_id);
 	static RpcValue userId(RpcValue::MetaData &meta);
 	static void setUserId(RpcValue::MetaData &meta, const RpcValue &user_id);
+
+	RpcValue::String source() const;
+	void setSource(const RpcValue::String& source);
+	static RpcValue::String source(const RpcValue::MetaData& meta);
+	static void setSource(RpcValue::MetaData& meta, const RpcValue::String& source);
 
 	std::string toPrettyString() const;
 	std::string toCpon() const;

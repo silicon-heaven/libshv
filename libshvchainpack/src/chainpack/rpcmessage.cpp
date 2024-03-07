@@ -32,6 +32,7 @@ RpcMessage::MetaType::MetaType()
 		{static_cast<int>(Tag::AccessGrant), {static_cast<int>(Tag::AccessGrant), "grant"}},
 		{static_cast<int>(Tag::TunnelCtl), {static_cast<int>(Tag::TunnelCtl), "tctl"}},
 		{static_cast<int>(Tag::UserId), {static_cast<int>(Tag::UserId), "userId"}},
+		{static_cast<int>(Tag::Source), {static_cast<int>(Tag::Source), "source"}},
 	};
 }
 
@@ -530,6 +531,26 @@ RpcValue RpcMessage::userId(RpcValue::MetaData &meta)
 void RpcMessage::setUserId(RpcValue::MetaData &meta, const RpcValue &user_id)
 {
 	meta.setValue(RpcMessage::MetaType::Tag::UserId, user_id);
+}
+
+RpcValue::String RpcMessage::source() const
+{
+	return metaValue(RpcMessage::MetaType::Tag::Source).asString();
+}
+
+void RpcMessage::setSource(const RpcValue::String& source)
+{
+	setMetaValue(RpcMessage::MetaType::Tag::Source, source);
+}
+
+RpcValue::String RpcMessage::source(const RpcValue::MetaData& meta)
+{
+	return meta.value(RpcMessage::MetaType::Tag::Source).asString();
+}
+
+void RpcMessage::setSource(RpcValue::MetaData &meta, const RpcValue::String& source)
+{
+	meta.setValue(RpcMessage::MetaType::Tag::Source, source);
 }
 
 void RpcMessage::write(AbstractStreamWriter &wr) const

@@ -73,9 +73,9 @@ public:
 
 	rpc::MasterBrokerConnection* masterBrokerConnectionForClient(int client_id);
 
-	void addSubscription(int client_id, const std::string &path, const std::string &method);
-	bool removeSubscription(int client_id, const std::string &shv_path, const std::string &method);
-	bool rejectNotSubscribedSignal(int client_id, const std::string &path, const std::string &method);
+	void addSubscription(int client_id, const std::string &path, const std::string &method, const std::string& source);
+	bool removeSubscription(int client_id, const std::string &shv_path, const std::string &method, const std::string& source);
+	bool rejectNotSubscribedSignal(int client_id, const std::string &path, const std::string &method, const std::string& source);
 
 	rpc::BrokerTcpServer* tcpServer();
 	rpc::BrokerTcpServer* sslServer();
@@ -134,7 +134,7 @@ private:
 
 	void onClientConnected(int client_id);
 
-	void sendNotifyToSubscribers(const std::string &shv_path, const std::string &method, const shv::chainpack::RpcValue &params);
+	void sendNotifyToSubscribers(const std::string &shv_path, const std::string &method, const std::string& source, const shv::chainpack::RpcValue &params);
 	bool sendNotifyToSubscribers(const shv::chainpack::RpcFrame &frame);
 
 	static std::string brokerClientDirPath(int client_id);

@@ -14,12 +14,13 @@ public:
 		std::string localPath;
 		std::string subscribedPath;
 		std::string method;
+		std::string source;
 
 		Subscription() = default;
-		Subscription(const std::string &local_path, const std::string &subscribed_path, const std::string &m);
+		Subscription(const std::string &local_path, const std::string &subscribed_path, const std::string &m, const std::string& source);
 
 		bool cmpSubscribed(const CommonRpcClientHandle::Subscription &o) const;
-		bool match(const std::string_view &shv_path, const std::string_view &shv_method) const;
+		bool match(const std::string_view &shv_path, const std::string_view &shv_method, const std::string_view& source) const;
 		std::string toString() const;
 	};
 public:
@@ -29,14 +30,14 @@ public:
 	virtual int connectionId() const = 0;
 	virtual bool isConnectedAndLoggedIn() const = 0;
 
-	virtual Subscription createSubscription(const std::string &shv_path, const std::string &method) = 0;
+	virtual Subscription createSubscription(const std::string &shv_path, const std::string &method, const std::string& source) = 0;
 	unsigned addSubscription(const Subscription &subs);
 	bool removeSubscription(const Subscription &subs);
-	int isSubscribed(const std::string &shv_path, const std::string &method) const;
+	int isSubscribed(const std::string &shv_path, const std::string &method, const std::string& source) const;
 	virtual std::string toSubscribedPath(const Subscription &subs, const std::string &abs_path) const = 0;
 	size_t subscriptionCount() const;
 	const Subscription& subscriptionAt(size_t ix) const;
-	bool rejectNotSubscribedSignal(const std::string &path, const std::string &method);
+	bool rejectNotSubscribedSignal(const std::string &path, const std::string &method, const std::string& source);
 
 	virtual std::string loggedUserName() = 0;
 	virtual bool isSlaveBrokerConnection() const = 0;
