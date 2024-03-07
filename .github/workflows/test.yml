@@ -19,7 +19,7 @@ jobs:
       CFLAGS: -fsanitize=address,undefined
       CXXFLAGS: -fsanitize=address,undefined
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -40,7 +40,7 @@ jobs:
       CFLAGS: -fsanitize=address,undefined
       CXXFLAGS: -fsanitize=address,undefined
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -58,7 +58,7 @@ jobs:
     name: Qt 6.5.3 / Windows
     runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -81,7 +81,7 @@ jobs:
     name: Qt 6.6.2 / NixOS
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
       - name: Install Nix
