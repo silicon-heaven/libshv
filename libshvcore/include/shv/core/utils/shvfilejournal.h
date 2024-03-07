@@ -85,7 +85,7 @@ public:
 	static constexpr bool Force = true;
 	const JournalContext& checkJournalContext(bool force = !Force);
 	void createNewLogFile(int64_t journal_file_start_msec = 0);
-	static shv::chainpack::RpcValue getLog(const JournalContext &journal_context, const ShvGetLogParams &params, bool ignore_record_count_limit = false);
+	static shv::chainpack::RpcValue getLog(const JournalContext &journal_context, const ShvGetLogParams &params, IgnoreRecordCountLimit ignore_record_count_limit = IgnoreRecordCountLimit::No);
 private:
 
 	void checkJournalContext_helper(bool force = false);
