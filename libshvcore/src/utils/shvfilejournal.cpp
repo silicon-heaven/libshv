@@ -591,11 +591,15 @@ const ShvFileJournal::JournalContext &ShvFileJournal::checkJournalContext(bool f
 
 chainpack::RpcValue ShvFileJournal::getLog(const ShvGetLogParams &params, IgnoreRecordCountLimit ignore_record_count_limit)
 {
+	return ShvFileJournal::getLog(checkJournalContext(), params, ignore_record_count_limit);
+}
+
+chainpack::RpcValue ShvFileJournal::getLog(const JournalContext &journal_context, const ShvGetLogParams &params, IgnoreRecordCountLimit ignore_record_count_limit)
+{
 	std::vector<std::function<ShvJournalFileReader()>> readers;
 	{
-		JournalContext ctx = checkJournalContext();
-		for (auto it = shv::core::utils::newestMatchingFileIt(ctx.files, params); it != ctx.files.cend(); ++it) {
-			readers.emplace_back([full_file_name = ctx.fileMsecToFilePath(*it)] {
+		for (auto it = shv::core::utils::newestMatchingFileIt(journal_context.files, params); it != journal_context.files.cend(); ++it) {
+			readers.emplace_back([full_file_name = journal_context.fileMsecToFilePath(*it)] {
 				return shv::core::utils::ShvJournalFileReader(full_file_name);
 			});
 		}
