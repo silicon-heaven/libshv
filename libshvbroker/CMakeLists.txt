@@ -31,7 +31,7 @@ qt_add_library(libshvbroker
 	)
 add_library(libshv::libshvbroker ALIAS libshvbroker)
 
-if(WITH_SHV_WEBSOCKETS)
+if(LIBSHV_WITH_WEBSOCKETS)
 	target_sources(libshvbroker PRIVATE
 		src/rpc/websocketserver.cpp
 		)
