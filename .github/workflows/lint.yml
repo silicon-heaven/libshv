@@ -19,7 +19,7 @@ jobs:
       CC: clang-15
       CXX: clang++-15
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -35,7 +35,7 @@ jobs:
       CC: clang-15
       CXX: clang++-15
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 

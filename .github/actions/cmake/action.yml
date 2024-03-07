@@ -23,7 +23,7 @@ runs:
     # Linux deps
     - name: Install/cache clazy, ninja, openldap, doctest, and Qt's dependencies
       if: runner.os != 'Windows'
-      uses: awalsh128/cache-apt-pkgs-action@v1.3.0
+      uses: awalsh128/cache-apt-pkgs-action@v1.4.1
       with:
         packages: ninja-build doctest-dev libgl1-mesa-dev libpulse-dev libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-util1 libxcb-xinerama0 libxkbcommon-x11-0 libldap-dev clazy
         version: 1.0
@@ -52,7 +52,7 @@ runs:
         modules: ${{ inputs.modules }}
 
     - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2
+      uses: hendrikmuhs/ccache-action@v1.2.12
       with:
         key: ${{ github.job }}
 

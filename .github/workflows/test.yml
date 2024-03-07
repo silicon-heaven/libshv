@@ -19,7 +19,7 @@ jobs:
       CFLAGS: -fsanitize=address,undefined
       CXXFLAGS: -fsanitize=address,undefined
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -34,20 +34,20 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   ubuntu-qt6:
-    name: Qt 6.5.0 / Ubuntu 22.04
+    name: Qt 6.5.3 / Ubuntu 22.04
     runs-on: ubuntu-22.04
     env:
       CFLAGS: -fsanitize=address,undefined
       CXXFLAGS: -fsanitize=address,undefined
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.5.0
+          qt_version: 6.5.3
           use_qt6: ON
           modules: qtserialport qtwebsockets
 
@@ -55,17 +55,17 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   windows:
-    name: Qt 6.5.0 / Windows
+    name: Qt 6.5.3 / Windows
     runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.5.0
+          qt_version: 6.5.3
           qt_arch: win64_mingw
           use_qt6: ON
           modules: qtserialport qtwebsockets
@@ -81,7 +81,7 @@ jobs:
     name: Qt 6.6.2 / NixOS
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
       - name: Install Nix
