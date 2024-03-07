@@ -79,7 +79,7 @@ jobs:
         uses: ./.github/actions/build-and-test
   nix:
     # FIXME: disable until submodules get fixed
-    # if: false
+    if: false
     name: Qt 6.5.0 / NixOS
     runs-on: ubuntu-22.04
     steps:
