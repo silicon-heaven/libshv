@@ -65,7 +65,7 @@ target_include_directories(libshviotqt PUBLIC
 	)
 target_compile_definitions(libshviotqt PRIVATE SHVIOTQT_BUILD_DLL)
 
-if(WITH_SHV_WEBSOCKETS)
+if(LIBSHV_WITH_WEBSOCKETS)
 	target_sources(libshviotqt PRIVATE
 		include/shv/iotqt/rpc/websocket.h
 		src/rpc/websocket.cpp

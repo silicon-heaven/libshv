@@ -68,9 +68,9 @@ runs:
         -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
         -DUSE_QT6=${{ inputs.use_qt6 }} \
-        -DWITH_CLI_EXAMPLES=ON \
-        -DWITH_GUI_EXAMPLES=ON \
-        -DWITH_LDAP=ON \
+        -DLIBSHV_WITH_CLI_EXAMPLES=ON \
+        -DLIBSHV_WITH_GUI_EXAMPLES=ON \
+        -DLIBSHV_WITH_LDAP=ON \
         ${{ env.cmake_extra_args }} \
         ${{ inputs.additional_cmake_args }}
       shell: bash
