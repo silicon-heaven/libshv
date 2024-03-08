@@ -71,7 +71,7 @@ jobs:
           modules: qtserialport qtwebsockets
           # Need to get all binaries in the same directory, otherwise the tests can't find the dlls.
           additional_cmake_args: |
-            -DWITH_LDAP=OFF \
+            -DLIBSHV_WITH_LDAP=OFF \
             -DCMAKE_RUNTIME_OUTPUT_DIRECTORY='${{github.workspace}}/build/bin' \
             -DCMAKE_LIBRARY_OUTPUT_DIRECTORY='${{github.workspace}}/build/bin'
 
