@@ -1,7 +1,7 @@
 {
   description = "Silicon Heaven library Flake";
 
-  inputs.necrolog.url = "github:cynerd/necrolog/flake.nix";
+  inputs.necrolog.url = "github:fvacek/necrolog";
 
   outputs = {
     self,
