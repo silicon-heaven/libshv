@@ -97,6 +97,14 @@ MetaMethod& MetaMethod::setTag(const std::string &key, const RpcValue& value)
 	m_tags.setValue(key, value); return *this;
 }
 
+enum class Ikey {
+	Name = 1,
+	Flags = 2,
+	Param = 3,
+	Result = 4,
+	Access = 5,
+};
+
 RpcValue MetaMethod::toRpcValue() const
 {
 	RpcValue::Map ret;
@@ -134,6 +142,7 @@ RpcValue MetaMethod::toIMap() const
 	return ret;
 }
 */
+
 MetaMethod MetaMethod::fromRpcValue(const RpcValue &rv)
 {
 	MetaMethod ret;
@@ -183,19 +192,11 @@ void MetaMethod::applyAttributesMap(const RpcValue::Map &attr_map)
 
 void MetaMethod::applyAttributesIMap(const RpcValue::IMap &attr_map)
 {
-	enum {
-		IKEY_NAME = 1,
-		IKEY_FLAGS = 2,
-		IKEY_PARAM = 3,
-		IKEY_RESULT = 4,
-		IKEY_ACCESS = 5,
-	};
-
-	if(auto rv = attr_map.value(IKEY_NAME); rv.isString())
+	if(auto rv = attr_map.value(static_cast<int>(Ikey::Name)); rv.isString())
 		m_name = rv.asString();
-	if(auto rv = attr_map.value(IKEY_FLAGS); rv.isValid())
+	if(auto rv = attr_map.value(static_cast<int>(Ikey::Flags)); rv.isValid())
 		m_flags = rv.toInt();
-	if(auto rv = attr_map.value(IKEY_ACCESS); rv.isString())
+	if(auto rv = attr_map.value(static_cast<int>(Ikey::Access)); rv.isString())
 		m_accessGrant = rv.asString();
 }
 
