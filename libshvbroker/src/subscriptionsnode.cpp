@@ -22,13 +22,14 @@ const auto METH_PATH = "path";
 const auto METH_METHOD = "method";
 
 const std::vector<cp::MetaMethod> meta_methods1 {
-	{cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None},
-	{cp::Rpc::METH_LS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None},
+	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
 };
 const std::vector<cp::MetaMethod> meta_methods2 {
-	{cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam, false},
-	{METH_PATH, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter},
-	{METH_METHOD, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter},
+	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+	{METH_PATH, cp::MetaMethod::Flag::IsGetter, "void", "ret"},
+	{METH_METHOD, cp::MetaMethod::Flag::IsGetter, "void", "ret"},
 };
 }
 

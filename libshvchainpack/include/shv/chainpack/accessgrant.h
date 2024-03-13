@@ -61,7 +61,7 @@ struct SHVCHAINPACK_DECL_EXPORT AccessGrant
 
 	enum class Type { Invalid = 0, AccessLevel, Role, UserLogin, };
 	Type type = Type::Invalid;
-	int accessLevel = shv::chainpack::MetaMethod::AccessLevel::None;
+	MetaMethod::AccessLevel accessLevel = shv::chainpack::MetaMethod::AccessLevel::None;
 	std::string role;
 	UserLogin login;
 public:

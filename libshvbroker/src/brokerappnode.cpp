@@ -30,13 +30,12 @@ public:
 	BrokerLogNode(shv::iotqt::node::ShvNode *parent = nullptr)
 		: Super("log", &m_metaMethods, parent)
 		, m_metaMethods {
-			{cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_BROWSE},
-			{cp::Rpc::METH_LS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-			{cp::Rpc::SIG_VAL_CHANGED, cp::MetaMethod::Signature::VoidParam, cp::MetaMethod::Flag::IsSignal, cp::Rpc::ROLE_READ},
-			{M_GET_SEND_LOG_SIGNAL_ENABLED, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_READ},
-			{M_SET_SEND_LOG_SIGNAL_ENABLED, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::IsSetter, cp::Rpc::ROLE_WRITE},
-			{M_GET_VERBOSITY, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_READ},
-			{M_SET_VERBOSITY, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::IsSetter, cp::Rpc::ROLE_COMMAND},
+			{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+			{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+			{M_GET_SEND_LOG_SIGNAL_ENABLED, cp::MetaMethod::Flag::IsGetter, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+			{M_SET_SEND_LOG_SIGNAL_ENABLED, cp::MetaMethod::Flag::IsSetter, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Write},
+			{M_GET_VERBOSITY, cp::MetaMethod::Flag::IsGetter, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+			{M_SET_VERBOSITY, cp::MetaMethod::Flag::IsSetter, "ret", "param", shv::chainpack::MetaMethod::AccessLevel::Command},
 		}
 	{ }
 
@@ -78,21 +77,21 @@ static const auto M_MASTER_BROKER_ID = "masterBrokerId";
 BrokerAppNode::BrokerAppNode(shv::iotqt::node::ShvNode *parent)
 	: Super("", &m_metaMethods, parent)
 	, m_metaMethods {
-		{cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_BROWSE},
-		{cp::Rpc::METH_LS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_BROWSE},
-		{cp::Rpc::METH_PING, cp::MetaMethod::Signature::VoidVoid, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_BROWSE},
-		{cp::Rpc::METH_ECHO, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_BROWSE},
-		{M_APP_VERSION, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_BROWSE},
-		{M_GIT_COMMIT, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_READ},
-		{M_SHV_VERSION, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_READ},
-		{M_SHV_GIT_COMMIT, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_READ},
-		{M_BROKER_ID, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_READ},
-		{M_MASTER_BROKER_ID, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_READ},
-		{cp::Rpc::METH_SUBSCRIBE, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-		{cp::Rpc::METH_UNSUBSCRIBE, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-		{cp::Rpc::METH_REJECT_NOT_SUBSCRIBED, cp::MetaMethod::Signature::RetParam, 0, cp::Rpc::ROLE_READ},
-		{M_RELOAD_CONFIG, cp::MetaMethod::Signature::VoidVoid, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_SERVICE},
-		{M_RESTART, cp::MetaMethod::Signature::VoidVoid, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_SERVICE},
+		{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+		{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+		{shv::chainpack::Rpc::METH_PING, shv::chainpack::MetaMethod::Flag::None, "void", "void", shv::chainpack::MetaMethod::AccessLevel::Browse},
+		{shv::chainpack::Rpc::METH_ECHO, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+		{M_APP_VERSION, cp::MetaMethod::Flag::IsGetter, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+		{M_GIT_COMMIT, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::MetaMethod::AccessLevel::Read},
+		{M_SHV_VERSION, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::MetaMethod::AccessLevel::Read},
+		{M_SHV_GIT_COMMIT, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::MetaMethod::AccessLevel::Read},
+		{M_BROKER_ID, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::MetaMethod::AccessLevel::Read},
+		{M_MASTER_BROKER_ID, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::MetaMethod::AccessLevel::Read},
+		{cp::Rpc::METH_SUBSCRIBE, cp::MetaMethod::Flag::None, "param", "ret", cp::MetaMethod::AccessLevel::Read},
+		{cp::Rpc::METH_UNSUBSCRIBE, cp::MetaMethod::Flag::None, "param", "ret", cp::MetaMethod::AccessLevel::Read},
+		{cp::Rpc::METH_REJECT_NOT_SUBSCRIBED, 0, "param", "ret", cp::MetaMethod::AccessLevel::Read},
+		{M_RELOAD_CONFIG, cp::MetaMethod::Flag::None, "void", "void", cp::MetaMethod::AccessLevel::Service},
+		{M_RESTART, cp::MetaMethod::Flag::None, "void", "void", cp::MetaMethod::AccessLevel::Service},
 	}
 {
 	new BrokerLogNode(this);

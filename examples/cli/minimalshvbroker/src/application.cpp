@@ -20,8 +20,8 @@ public:
 	TestNode(shv::iotqt::node::ShvNode *parent = nullptr)
 		: Super(std::string(), &m_metaMethods, parent)
 		, m_metaMethods{
-			{cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::MetaMethod::AccessLevel::Browse},
-			{cp::Rpc::METH_LS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::MetaMethod::AccessLevel::Browse},
+			{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+			{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
 		}
 	{ }
 
@@ -31,7 +31,7 @@ private:
 
 namespace {
 const std::vector<shv::chainpack::MetaMethod> methods{
-	{METH_RESET, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::MetaMethod::AccessLevel::Command}
+	{METH_RESET, cp::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Command},
 };
 }
 

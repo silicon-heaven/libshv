@@ -203,7 +203,7 @@ RpcValue AccessGrant::toRpcValue() const
 	if(!isValid())
 		return RpcValue();
 	if(isAccessLevel())
-		return RpcValue(accessLevel);
+		return RpcValue(static_cast<int>(accessLevel));
 	if(isRole())
 		return RpcValue(role);
 	RpcValue ret(RpcValue::IMap{});
@@ -212,7 +212,7 @@ RpcValue AccessGrant::toRpcValue() const
 	ret.set(MetaType::Key::Type, static_cast<int>(type));
 	switch (type) {
 	case Type::AccessLevel:
-		ret.set(MetaType::Key::AccessLevel, accessLevel);
+		ret.set(MetaType::Key::AccessLevel, static_cast<int>(accessLevel));
 		break;
 	case Type::Role:
 		ret.set(MetaType::Key::Role, role);
@@ -237,7 +237,7 @@ RpcValue AccessGrant::toRpcValueMap() const
 	RpcValue::Map ret;
 	switch (type) {
 	case Type::AccessLevel:
-		ret[KEY_ACCESS_LEVEL] = accessLevel;
+		ret[KEY_ACCESS_LEVEL] = static_cast<int>(accessLevel);
 		break;
 	case Type::Role:
 		ret[KEY_ROLE] = role;
@@ -262,7 +262,7 @@ AccessGrant AccessGrant::fromRpcValue(const RpcValue &rpcval)
 	case RpcValue::Type::UInt:
 	case RpcValue::Type::Int:
 		ret.type = Type::AccessLevel;
-		ret.accessLevel = rpcval.toInt();
+		ret.accessLevel = static_cast<MetaMethod::AccessLevel>(rpcval.toInt());
 		break;
 	case RpcValue::Type::String:
 		ret.type = Type::Role;
@@ -273,7 +273,7 @@ AccessGrant AccessGrant::fromRpcValue(const RpcValue &rpcval)
 		ret.type = static_cast<Type>(m.value(MetaType::Key::Type).toInt());
 		switch (ret.type) {
 		case Type::AccessLevel:
-			ret.accessLevel = m.value(MetaType::Key::AccessLevel).toInt();
+			ret.accessLevel = static_cast<MetaMethod::AccessLevel>(m.value(MetaType::Key::AccessLevel).toInt());
 			break;
 		case Type::Role:
 			ret.role = m.value(MetaType::Key::Role).toString();
@@ -296,7 +296,7 @@ AccessGrant AccessGrant::fromRpcValue(const RpcValue &rpcval)
 				auto access_level = m.value(KEY_ACCESS_LEVEL).toInt();
 				if(access_level > 0) {
 					ret.type = Type::AccessLevel;
-					ret.accessLevel = access_level;
+					ret.accessLevel = static_cast<MetaMethod::AccessLevel>(access_level);
 					break;
 				}
 			}

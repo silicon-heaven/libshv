@@ -20,21 +20,21 @@ const auto M_RMDIR = "rmdir";
 const auto M_LS_FILES = "lsfiles";
 
 const std::vector<MetaMethod> meta_methods_dir {
-	{Rpc::METH_DIR, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_BROWSE},
-	{Rpc::METH_LS, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_BROWSE},
-	{M_LS_FILES, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_READ},
-	{M_MKFILE, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_WRITE},
-	{M_MKDIR, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_WRITE},
-	{M_RMDIR, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_SERVICE}
+	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
+	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
+	{M_LS_FILES, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Read},
+	{M_MKFILE, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Write},
+	{M_MKDIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Write},
+	{M_RMDIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Service}
 };
 
 const std::vector<MetaMethod> meta_methods_dir_write_file {
-	{M_WRITE, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_WRITE},
+	{M_WRITE, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Write},
 };
 
 const std::vector<MetaMethod> meta_methods_file_modificable {
-	{M_WRITE, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_WRITE},
-	{M_DELETE, MetaMethod::Signature::RetVoid, 0, Rpc::ROLE_SERVICE}
+	{M_WRITE, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Write},
+	{M_DELETE, MetaMethod::Flag::None, "void", "ret", MetaMethod::AccessLevel::Service}
 };
 
 const std::vector<MetaMethod> & get_meta_methods_file()

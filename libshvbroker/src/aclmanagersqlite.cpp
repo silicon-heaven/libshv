@@ -311,7 +311,7 @@ acl::AclRoleAccessRules AclManagerSqlite::aclAccessRoleRules(const std::string &
 		std::string grant_type = q.value("grantType").toString().toStdString();
 		ag.grant.type = cp::AccessGrant::typeFromString(grant_type);
 		switch (ag.grant.type) {
-		case cp::AccessGrant::Type::AccessLevel: ag.grant.accessLevel = q.value("accessLevel").toInt(); break;
+		case cp::AccessGrant::Type::AccessLevel: ag.grant.accessLevel = static_cast<cp::MetaMethod::AccessLevel>(q.value("accessLevel").toInt()); break;
 		case cp::AccessGrant::Type::Role: ag.grant.role = q.value("accessRole").toString().toStdString(); break;
 		case cp::AccessGrant::Type::UserLogin: {
 			ag.grant.login.user = q.value("user").toString().toStdString();
@@ -344,7 +344,7 @@ void AclManagerSqlite::aclSetAccessRoleRules(const std::string &role_name, const
 			rec.setValue("method", rule.method.empty()? QVariant(): QString::fromStdString(rule.method));
 			rec.setValue("grantType", cp::AccessGrant::typeToString(rule.grant.type));
 			switch (rule.grant.type) {
-			case cp::AccessGrant::Type::AccessLevel: rec.setValue("accessLevel", rule.grant.accessLevel); break;
+			case cp::AccessGrant::Type::AccessLevel: rec.setValue("accessLevel", static_cast<int>(rule.grant.accessLevel)); break;
 			case cp::AccessGrant::Type::Role: rec.setValue("accessRole", QString::fromStdString(rule.grant.role)); break;
 			case cp::AccessGrant::Type::UserLogin: {
 				rec.setValue("user", QString::fromStdString(rule.grant.login.user));

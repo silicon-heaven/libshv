@@ -28,21 +28,21 @@ namespace shv::broker {
 // EtcAclNode
 //========================================================
 static const std::vector<cp::MetaMethod> meta_methods_dir_ls {
-	{cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-	{cp::Rpc::METH_LS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
+	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
 };
 
 static const std::vector<cp::MetaMethod> meta_methods_property {
-	{cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-	{cp::Rpc::METH_LS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-	{cp::Rpc::METH_GET, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_READ},
+	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	{shv::chainpack::Rpc::METH_GET, shv::chainpack::MetaMethod::Flag::IsGetter, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
 };
 
 static const std::vector<cp::MetaMethod> meta_methods_property_rw {
-	{cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-	{cp::Rpc::METH_LS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-	{cp::Rpc::METH_GET, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_READ},
-	{cp::Rpc::METH_SET, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsSetter, cp::Rpc::ROLE_CONFIG},
+	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	{shv::chainpack::Rpc::METH_GET, shv::chainpack::MetaMethod::Flag::IsGetter, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	{shv::chainpack::Rpc::METH_SET, shv::chainpack::MetaMethod::Flag::IsSetter, "param", "void", shv::chainpack::MetaMethod::AccessLevel::Config},
 };
 
 static const std::string M_VALUE = "value";
@@ -50,23 +50,23 @@ static const std::string M_SET_VALUE = "setValue";
 static const std::string M_SAVE_TO_CONFIG_FILE = "saveToConfigFile";
 
 static const std::vector<cp::MetaMethod> meta_methods_acl_node {
-	{cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-	{cp::Rpc::METH_LS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-	{M_SET_VALUE, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_CONFIG},
-	{M_SAVE_TO_CONFIG_FILE, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_CONFIG},
+	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	{M_SET_VALUE, cp::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Config},
+	{M_SAVE_TO_CONFIG_FILE, cp::MetaMethod::Flag::None, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Config},
 };
 
 static const std::vector<cp::MetaMethod> meta_methods_acl_subnode {
-	{cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-	{cp::Rpc::METH_LS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-	{M_VALUE, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
+	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	{M_VALUE, cp::MetaMethod::Flag::None, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
 };
 
 static const std::string M_SAVE_TO_CONFIG_FILES = "saveToConfigFiles";
 static const std::vector<cp::MetaMethod> meta_methods_acl_root {
-	{cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-	{cp::Rpc::METH_LS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-	{M_SAVE_TO_CONFIG_FILES, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_CONFIG},
+	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	{M_SAVE_TO_CONFIG_FILES, cp::MetaMethod::Flag::None, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Config},
 };
 
 //========================================================
@@ -443,16 +443,16 @@ static const std::string M_SET_PATH_PATTERN = "setPathPattern";
 static const std::string M_SET_METHOD = "setMethod";
 
 static const std::vector<cp::MetaMethod> meta_methods_role_access {
-	{cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-	{cp::Rpc::METH_LS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
+	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
 
-	{M_GET_PATH_PATTERN, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_READ},
-	{M_SET_PATH_PATTERN, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::IsSetter, cp::Rpc::ROLE_CONFIG},
-	{M_GET_METHOD, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_READ},
-	{M_SET_METHOD, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::IsSetter, cp::Rpc::ROLE_CONFIG},
-	{M_GET_GRANT, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_READ},
-	{M_SET_GRANT, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::IsSetter, cp::Rpc::ROLE_CONFIG},
-	{M_GET_GRANT_TYPE, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_READ},
+	{M_GET_PATH_PATTERN, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::MetaMethod::AccessLevel::Read},
+	{M_SET_PATH_PATTERN, cp::MetaMethod::Flag::IsSetter, "param", "ret", cp::MetaMethod::AccessLevel::Config},
+	{M_GET_METHOD, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::MetaMethod::AccessLevel::Read},
+	{M_SET_METHOD, cp::MetaMethod::Flag::IsSetter, "param", "ret", cp::MetaMethod::AccessLevel::Config},
+	{M_GET_GRANT, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::MetaMethod::AccessLevel::Read},
+	{M_SET_GRANT, cp::MetaMethod::Flag::IsSetter, "param", "ret", cp::MetaMethod::AccessLevel::Config},
+	{M_GET_GRANT_TYPE, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::MetaMethod::AccessLevel::Read},
 };
 
 AccessAclNode::AccessAclNode(shv::iotqt::node::ShvNode *parent)
@@ -603,9 +603,9 @@ namespace {
 const auto M_LDAP_USERS = "users";
 const auto LDAP_USERS_DESC = "accepts a login name as a string param";
 const std::vector<cp::MetaMethod> meta_methods_ldap_node {
-	{cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-	{cp::Rpc::METH_LS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-	{M_LDAP_USERS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_SERVICE, LDAP_USERS_DESC},
+	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+	{M_LDAP_USERS, cp::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Service, {}, LDAP_USERS_DESC},
 };
 }
 

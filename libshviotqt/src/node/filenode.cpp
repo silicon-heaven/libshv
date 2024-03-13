@@ -22,21 +22,22 @@ const auto M_READ_COMPRESSED = "readCompressed";
 }
 
 const std::vector<shv::chainpack::MetaMethod> FileNode::meta_methods_file_base = {
-	{cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_BROWSE},
-	{cp::Rpc::METH_LS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_BROWSE},
-	{M_HASH, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ},
-	{M_SIZE, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::LargeResultHint, cp::Rpc::ROLE_BROWSE},
-	{M_SIZE_COMPRESSED, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_BROWSE
+	// FIXME: Add proper types param and ret types
+	{cp::Rpc::METH_DIR, cp::MetaMethod::Flag::None, "param", "ret", cp::MetaMethod::AccessLevel::Browse},
+	{cp::Rpc::METH_LS, cp::MetaMethod::Flag::None, "param", "ret", cp::MetaMethod::AccessLevel::Browse},
+	{M_HASH, cp::MetaMethod::Flag::None, "ret", "void", cp::MetaMethod::AccessLevel::Read},
+	{M_SIZE, cp::MetaMethod::Flag::LargeResultHint, "void", "ret", cp::MetaMethod::AccessLevel::Browse},
+	{M_SIZE_COMPRESSED, cp::MetaMethod::Flag::None, "ret", "param", cp::MetaMethod::AccessLevel::Browse , {}
 	 , "Parameters\n"
 	   "  read() parameters\n"
 	   "  compressionType: gzip (default) | qcompress"
 	},
-	{M_READ, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::LargeResultHint, cp::Rpc::ROLE_READ
+	{M_READ, cp::MetaMethod::Flag::LargeResultHint, "void", "ret", cp::MetaMethod::AccessLevel::Read, {}
 	 , "Parameters\n"
 	 "  offset: file offset to start read, default is 0\n"
 	 "  size: number of bytes to read starting on offset, default is till end of file\n"
 	},
-	{M_READ_COMPRESSED, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_READ
+	{M_READ_COMPRESSED, cp::MetaMethod::Flag::None, "ret", "param", cp::MetaMethod::AccessLevel::Read, {}
 	 , "Parameters\n"
 	   "  read() parameters\n"
 	   "  compressionType: gzip (default) | qcompress"

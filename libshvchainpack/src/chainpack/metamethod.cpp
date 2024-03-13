@@ -8,18 +8,43 @@ namespace {
 constexpr auto KEY_ACCESSGRANT = "accessGrant";
 }
 
+MetaMethod::Signal::Signal(std::string _name, std::string _param_type)
+	: name(_name)
+	, param_type(_param_type)
+{
+}
+
+MetaMethod::Signal::Signal(std::string _name)
+	: name(_name)
+	, param_type("Null")
+{
+}
+
 MetaMethod::MetaMethod() = default;
 
-MetaMethod::MetaMethod(std::string name, Signature ms, unsigned flags, const RpcValue &access_grant
-					   , const std::string &description, const RpcValue::Map &tags)
-	: m_name(std::move(name))
-	, m_signature(ms)
+MetaMethod::MetaMethod(
+	std::string name,
+	unsigned flags,
+	std::optional<std::string> param,
+	std::optional<std::string> result,
+	AccessLevel access_grant,
+	const std::vector<Signal>& signal_definitions,
+	const std::string& description,
+	const std::string& label,
+	const RpcValue::Map& extra
+)
+	: m_name(name)
 	, m_flags(flags)
-	, m_accessGrant(access_grant)
+	, m_param(param.value_or(std::string{}))
+	, m_result(result.value_or(std::string{}))
+	, m_accessLevel(access_grant)
+	, m_label(label)
 	, m_description(description)
-	, m_tags(tags)
+	, m_extra(extra)
 {
-	applyAttributesMap(tags);
+	for (const auto& [signal_name, signal_ret] : signal_definitions) {
+		m_signals.emplace(signal_name, signal_ret);
+	}
 }
 
 bool MetaMethod::isValid() const
@@ -48,76 +73,47 @@ const std::string& MetaMethod::description() const
 	return m_description;
 }
 
-MetaMethod::Signature MetaMethod::signature() const
-{
-	return m_signature;
-}
-
 unsigned MetaMethod::flags() const
 {
 	return m_flags;
 }
 
-const RpcValue& MetaMethod::accessGrant() const
+RpcValue MetaMethod::accessGrant() const
 {
-	return m_accessGrant;
-}
-/*
-RpcValue MetaMethod::attributes(unsigned mask) const
-{
-	RpcValue::List lst;
-	if(mask & static_cast<unsigned>(DirAttribute::Signature))
-		lst.push_back(static_cast<unsigned>(m_signature));
-	if(mask & DirAttribute::Flags)
-		lst.push_back(m_flags);
-	if(mask & DirAttribute::AccessGrant)
-		lst.push_back(m_accessGrant);
-	if(mask & DirAttribute::Description)
-		lst.push_back(m_description);
-	if(mask & DirAttribute::Tags)
-		lst.push_back(m_tags);
-	if(lst.empty())
-		return name();
-	lst.insert(lst.begin(), name());
-	return RpcValue{lst};
-}
-*/
-const RpcValue::Map& MetaMethod::tags() const
-{
-	return m_tags;
+	return accessLevelToString(m_accessLevel);
 }
 
-RpcValue MetaMethod::tag(const std::string &key, const RpcValue& default_value) const
+const RpcValue::Map& MetaMethod::extra() const
 {
-	return m_tags.value(key, default_value);
-}
-
-MetaMethod& MetaMethod::setTag(const std::string &key, const RpcValue& value)
-{
-	m_tags.setValue(key, value); return *this;
+	return m_extra;
 }
 
 enum class Ikey {
 	Name = 1,
 	Flags = 2,
-	Param = 3,
-	Result = 4,
+	ParamType = 3,
+	ResultType = 4,
 	Access = 5,
+	Signals = 6,
+	Extra = 7,
 };
 
 RpcValue MetaMethod::toRpcValue() const
 {
-	RpcValue::Map ret;
-	ret[KEY_NAME] = m_name;
-	ret[KEY_SIGNATURE] = static_cast<int>(m_signature);
-	ret[KEY_FLAGS] = m_flags;
-	ret[KEY_ACCESS] = m_accessGrant;
-	if(!m_label.empty())
-		ret[KEY_LABEL] = m_label;
-	if(!m_description.empty())
-		ret[KEY_DESCRIPTION] = m_description;
-	RpcValue::Map tags = m_tags;
-	ret.merge(tags);
+	RpcValue::IMap ret;
+	ret[static_cast<int>(Ikey::Name)] = m_name;
+	ret[static_cast<int>(Ikey::ParamType)] = m_param;
+	ret[static_cast<int>(Ikey::ResultType)] = m_result;
+	ret[static_cast<int>(Ikey::Access)] = static_cast<RpcValue::Int>(m_accessLevel);
+	ret[static_cast<int>(Ikey::Signals)] = m_signals;
+	RpcValue::Map extra{
+		{KEY_DESCRIPTION, m_description},
+		{KEY_LABEL, m_label}
+	};
+	for (const auto& [k, v] : m_extra) {
+		extra.insert_or_assign(k, v);
+	}
+	ret[static_cast<int>(Ikey::Extra)] = extra;
 	return ret;
 }
 /*
@@ -127,7 +123,7 @@ RpcValue MetaMethod::toIMap() const
 	ret[DirKey::Name] = m_name;
 	ret[DirKey::Signature] = static_cast<int>(m_signature);
 	ret[DirKey::Flags] = m_flags;
-	ret[DirKey::Access] = m_accessGrant;
+	ret[DirKey::Access] = m_accessLevel;
 	if(!m_label.empty())
 		ret[DirKey::Label] = m_label;
 	if(!m_description.empty())
@@ -143,6 +139,24 @@ RpcValue MetaMethod::toIMap() const
 }
 */
 
+namespace {
+MetaMethod::AccessLevel accessLevelFromRole(const std::string& role) {
+
+	if(role == Rpc::ROLE_BROWSE) return MetaMethod::AccessLevel::Browse;
+	if(role == Rpc::ROLE_READ) return MetaMethod::AccessLevel::Read;
+	if(role == Rpc::ROLE_WRITE) return MetaMethod::AccessLevel::Write;
+	if(role == Rpc::ROLE_COMMAND) return MetaMethod::AccessLevel::Command;
+	if(role == Rpc::ROLE_CONFIG) return MetaMethod::AccessLevel::Config;
+	if(role == Rpc::ROLE_SERVICE) return MetaMethod::AccessLevel::Service;
+	if(role == Rpc::ROLE_SUPER_SERVICE) return MetaMethod::AccessLevel::SuperService;
+	if(role == Rpc::ROLE_DEVEL) return MetaMethod::AccessLevel::Devel;
+	if(role == Rpc::ROLE_ADMIN) return MetaMethod::AccessLevel::Admin;
+
+	return MetaMethod::AccessLevel::None;
+}
+}
+
+
 MetaMethod MetaMethod::fromRpcValue(const RpcValue &rv)
 {
 	MetaMethod ret;
@@ -152,9 +166,8 @@ MetaMethod MetaMethod::fromRpcValue(const RpcValue &rv)
 	else if(rv.isList()) {
 		const auto &lst = rv.asList();
 		ret.m_name = lst.value(0).asString();
-		ret.m_signature = static_cast<Signature>(lst.value(1).toUInt());
 		ret.m_flags = lst.value(2).toUInt();
-		ret.m_accessGrant = lst.value(3);
+		ret.m_accessLevel = accessLevelFromRole(lst.value(3).asString());
 		ret.m_description = lst.value(4).asString();
 		const auto tags = lst.value(5);
 		ret.applyAttributesMap(tags.asMap());
@@ -170,34 +183,49 @@ MetaMethod MetaMethod::fromRpcValue(const RpcValue &rv)
 
 void MetaMethod::applyAttributesMap(const RpcValue::Map &attr_map)
 {
-	RpcValue::Map map = attr_map;
-	RpcValue::Map tags = map.take("tags").asMap();
-	map.merge(tags);
+	auto map = attr_map;
 	if(auto rv = map.take(KEY_NAME); rv.isString())
 		m_name = rv.asString();
-	if(auto rv = map.take(KEY_SIGNATURE); rv.isValid())
-		m_signature = static_cast<Signature>(rv.toInt());
 	if(auto rv = map.take(KEY_FLAGS); rv.isValid())
 		m_flags = rv.toInt();
 	if(auto rv = map.take(KEY_ACCESS); rv.isString())
-		m_accessGrant = rv.asString();
+		m_accessLevel = accessLevelFromRole(rv.asString());
 	if(auto rv = map.take(KEY_ACCESSGRANT); rv.isString())
-		m_accessGrant = rv.asString();
+		m_accessLevel = accessLevelFromRole(rv.asString());
 	if(auto rv = map.take(KEY_LABEL); rv.isString())
 		m_label = rv.asString();
 	if(auto rv = map.take(KEY_DESCRIPTION); rv.isString())
 		m_description = rv.asString();
-	m_tags = map;
+	if(auto rv = map.take(KEY_TAGS); rv.isMap())
+		m_extra = rv.asMap();
 }
 
 void MetaMethod::applyAttributesIMap(const RpcValue::IMap &attr_map)
 {
 	if(auto rv = attr_map.value(static_cast<int>(Ikey::Name)); rv.isString())
 		m_name = rv.asString();
-	if(auto rv = attr_map.value(static_cast<int>(Ikey::Flags)); rv.isValid())
+	if(auto rv = attr_map.value(static_cast<int>(Ikey::Flags)); rv.isInt())
 		m_flags = rv.toInt();
-	if(auto rv = attr_map.value(static_cast<int>(Ikey::Access)); rv.isString())
-		m_accessGrant = rv.asString();
+	if(auto rv = attr_map.value(static_cast<int>(Ikey::ParamType)); rv.isString())
+		m_param = rv.asString();
+	if(auto rv = attr_map.value(static_cast<int>(Ikey::ResultType)); rv.isString())
+		m_result = rv.asString();
+	{
+		auto rv = attr_map.value(static_cast<int>(Ikey::Access));
+		if (rv.isString()) {
+			m_accessLevel = accessLevelFromRole(rv.asString());
+		}
+		if (rv.isInt()) {
+			m_accessLevel = static_cast<AccessLevel>(rv.toInt());
+		}
+	}
+	if(auto rv = attr_map.value(static_cast<int>(Ikey::Signals)); rv.isMap())
+		m_signals = rv.asMap();
+	if(auto rv = attr_map.value(static_cast<int>(Ikey::Extra)); rv.isMap()) {
+		m_extra = rv.asMap();
+		m_description = rv.asMap().value(KEY_DESCRIPTION).asString();
+		m_label = rv.asMap().value(KEY_LABEL).asString();
+	}
 }
 
 MetaMethod::Signature MetaMethod::signatureFromString(const std::string &sigstr)
@@ -241,7 +269,7 @@ std::string MetaMethod::flagsToString(unsigned flags)
 	return ret;
 }
 
-const char *MetaMethod::accessLevelToString(int access_level)
+const char *MetaMethod::accessLevelToString(MetaMethod::AccessLevel access_level)
 {
 	switch(access_level) {
 	case AccessLevel::None: return "";

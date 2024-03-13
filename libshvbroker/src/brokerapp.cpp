@@ -105,8 +105,8 @@ public:
 	ClientsNode(shv::iotqt::node::ShvNode *parent = nullptr)
 		: Super(std::string(), &m_metaMethods, parent)
 		, m_metaMethods {
-			{cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::MetaMethod::AccessLevel::Browse},
-			{cp::Rpc::METH_LS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::MetaMethod::AccessLevel::Browse},
+			{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+			{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
 		}
 	{ }
 
@@ -135,8 +135,8 @@ public:
 	MasterBrokersNode(shv::iotqt::node::ShvNode *parent = nullptr)
 		: Super(std::string(), &m_metaMethods, parent)
 		, m_metaMethods{
-				  {cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam},
-				  {cp::Rpc::METH_LS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_CONFIG},
+			{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+			{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Config},
 		}
 	{ }
 private:
@@ -219,9 +219,9 @@ private:
 };
 
 const std::vector<cp::MetaMethod> MountsNode::m_metaMethods = {
-	{cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam},
-	{cp::Rpc::METH_LS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_CONFIG},
-	{METH_CLIENT_IDS, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_CONFIG},
+	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	{METH_CLIENT_IDS, cp::MetaMethod::Flag::IsGetter, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Config},
 };
 
 #ifdef WITH_SHV_LDAP

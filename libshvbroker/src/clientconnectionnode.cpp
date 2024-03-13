@@ -21,15 +21,15 @@ static const auto M_IDLE_TIME_MAX = "idleTimeMax";
 // MasterBrokerConnectionNode
 //=================================================================================
 const static std::vector<cp::MetaMethod> meta_methods {
-	{cp::Rpc::METH_DIR, cp::MetaMethod::Signature::RetParam},
-	{cp::Rpc::METH_LS, cp::MetaMethod::Signature::RetParam, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_SERVICE},
-	{M_USER_NAME, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_SERVICE},
-	{M_USER_ROLES, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_SERVICE},
-	{M_USER_PROFILE, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_SERVICE},
-	{M_MOUNT_POINT, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::IsGetter, cp::Rpc::ROLE_SERVICE},
-	{M_DROP_CLIENT, cp::MetaMethod::Signature::VoidVoid, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_SERVICE},
-	{M_IDLE_TIME, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_SERVICE, "Connection inactivity time in msec."},
-	{M_IDLE_TIME_MAX, cp::MetaMethod::Signature::RetVoid, cp::MetaMethod::Flag::None, cp::Rpc::ROLE_SERVICE, "Maximum connection inactivity time in msec, before it is closed by server."},
+	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+	{M_USER_NAME, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::MetaMethod::AccessLevel::Service},
+	{M_USER_ROLES, cp::MetaMethod::Flag::None, "void", "ret", cp::MetaMethod::AccessLevel::Service},
+	{M_USER_PROFILE, cp::MetaMethod::Flag::None, "void", "ret", cp::MetaMethod::AccessLevel::Service},
+	{M_MOUNT_POINT, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::MetaMethod::AccessLevel::Service},
+	{M_DROP_CLIENT, cp::MetaMethod::Flag::None, "void", "void", cp::MetaMethod::AccessLevel::Service},
+	{M_IDLE_TIME, cp::MetaMethod::Flag::None, "ret", "void", cp::MetaMethod::AccessLevel::Service, {}, "Connection inactivity time in msec."},
+	{M_IDLE_TIME_MAX, cp::MetaMethod::Flag::None, "void", "ret", cp::MetaMethod::AccessLevel::Service, {}, "Maximum connection inactivity time in msec, before it is closed by server."},
 };
 
 ClientConnectionNode::ClientConnectionNode(int client_id, shv::iotqt::node::ShvNode *parent)
