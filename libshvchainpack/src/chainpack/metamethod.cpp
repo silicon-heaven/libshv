@@ -1,7 +1,5 @@
 #include <shv/chainpack/metamethod.h>
 
-#include <array>
-
 using namespace std::string_literals;
 
 namespace shv::chainpack {
