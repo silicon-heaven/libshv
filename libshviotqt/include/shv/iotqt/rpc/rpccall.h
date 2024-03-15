@@ -72,6 +72,7 @@ public:
 	RpcCall* setTimeout(int timeout);
 	RpcCall* setUserId(const ::shv::chainpack::RpcValue &user_id);
 
+	std::string shvPath() const;
 	int start();
 
 	Q_SIGNAL void maybeResult(const ::shv::chainpack::RpcValue &result, const ::shv::chainpack::RpcError &error);
