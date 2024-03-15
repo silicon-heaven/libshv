@@ -984,7 +984,7 @@ void RpcValueConfigNode::saveValues()
 }
 
 //===========================================================
-// ObjectPropertyProxyShvNode
+// PropertyShvNode
 //===========================================================
 static const std::vector<MetaMethod> meta_methods_pn {
 	{Rpc::METH_DIR, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_BROWSE},
@@ -1003,63 +1003,6 @@ enum {
 	IX_Count,
 };
 
-ObjectPropertyProxyShvNode::ObjectPropertyProxyShvNode(const char *property_name, QObject *property_obj, shv::iotqt::node::ShvNode *parent)
-	: Super(std::string(property_name), parent)
-	, m_propertyObj(property_obj)
-{
-	const QMetaObject *mo = m_propertyObj->metaObject();
-	m_metaProperty = mo->property(mo->indexOfProperty(property_name));
-}
-
-size_t ObjectPropertyProxyShvNode::methodCount(const shv::iotqt::node::ShvNode::StringViewList &shv_path)
-{
-	if(shv_path.empty()) {
-		if(m_metaProperty.isWritable() && m_metaProperty.hasNotifySignal())
-			return IX_Count;
-		if(m_metaProperty.isWritable() && !m_metaProperty.hasNotifySignal())
-			return IX_CHNG;
-		if(!m_metaProperty.isWritable() && m_metaProperty.hasNotifySignal())
-			return IX_CHNG;
-		return IX_SET;
-	}
-	return  Super::methodCount(shv_path);
-}
-
-const shv::chainpack::MetaMethod *ObjectPropertyProxyShvNode::metaMethod(const shv::iotqt::node::ShvNode::StringViewList &shv_path, size_t ix)
-{
-	if(shv_path.empty()) {
-		if(ix < methodCount(shv_path)) {
-			if(!m_metaProperty.isWritable() && m_metaProperty.hasNotifySignal())
-				return &(meta_methods_pn[ix+1]);
-			return &(meta_methods_pn[ix]);
-		}
-
-		SHV_EXCEPTION("Invalid method index: " + std::to_string(ix) + " on path: " + shv_path.join('/'));
-	}
-	return  Super::metaMethod(shv_path, ix);
-}
-
-shv::chainpack::RpcValue ObjectPropertyProxyShvNode::callMethod(const shv::iotqt::node::ShvNode::StringViewList &shv_path, const std::string &method, const shv::chainpack::RpcValue &params, const chainpack::RpcValue &user_id)
-{
-	if(shv_path.empty()) {
-		if(method == Rpc::METH_GET) {
-			QVariant qv = m_propertyObj->property(m_metaProperty.name());
-			return shv::coreqt::Utils::qVariantToRpcValue(qv);
-		}
-		if(method == Rpc::METH_SET) {
-			bool ok;
-			QVariant qv = shv::coreqt::Utils::rpcValueToQVariant(params, &ok);
-			if(ok)
-				ok = m_propertyObj->setProperty(m_metaProperty.name(), qv);
-			return ok;
-		}
-	}
-	return  Super::callMethod(shv_path, method, params, user_id);
-}
-
-//===========================================================
-// PropertyShvNode
-//===========================================================
 ValueProxyShvNode::Handle::Handle() = default;
 
 ValueProxyShvNode::Handle::~Handle() = default;
