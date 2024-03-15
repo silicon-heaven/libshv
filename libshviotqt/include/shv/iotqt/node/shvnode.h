@@ -197,7 +197,7 @@ protected:
 	shv::chainpack::RpcValue m_templateValues;
 };
 
-class [[deprecated("Use ValueProxyShvNode")]] SHVIOTQT_DECL_EXPORT ObjectPropertyProxyShvNode : public shv::iotqt::node::ShvNode
+class SHVIOTQT_DECL_EXPORT [[deprecated("Use ValueProxyShvNode")]] ObjectPropertyProxyShvNode : public shv::iotqt::node::ShvNode
 {
 	using Super = shv::iotqt::node::ShvNode;
 public:
