@@ -375,11 +375,6 @@ public:
 	const Map &asMap() const;
 	const IMap &asIMap() const;
 
-	/// deprecated, new applications should us asString, asInt, ...
-	[[deprecated("Use asList instead")]] const List &toList() const;
-	[[deprecated("Use asMap instead")]] const Map &toMap() const;
-	[[deprecated("Use asIMap instead")]] const IMap &toIMap() const;
-
 	template<typename T> T to() const
 	{
 		if constexpr (std::is_same<T, bool>())

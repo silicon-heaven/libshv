@@ -679,21 +679,6 @@ const RpcValue::List & RpcValue::asList() const { return !m_ptr.isNull()? m_ptr-
 const RpcValue::Map & RpcValue::asMap() const { return !m_ptr.isNull()? m_ptr->asMap(): static_empty_map(); }
 const RpcValue::IMap &RpcValue::asIMap() const { return !m_ptr.isNull()? m_ptr->asIMap(): static_empty_imap(); }
 
-[[deprecated("Use asList instead")]] const RpcValue::List &RpcValue::toList() const
-{
-	return asList();
-}
-
-[[deprecated("Use asMap instead")]] const RpcValue::Map &RpcValue::toMap() const
-{
-	return asMap();
-}
-
-[[deprecated("Use asIMap instead")]] const RpcValue::IMap &RpcValue::toIMap() const
-{
-	return asIMap();
-}
-
 size_t RpcValue::count() const { return !m_ptr.isNull()? m_ptr->count(): 0; }
 RpcValue RpcValue::at(RpcValue::Int i) const { return !m_ptr.isNull()? m_ptr->atI(i): RpcValue(); }
 RpcValue RpcValue::at(Int i, const RpcValue &def_val) const  { return has(i)? at(i): def_val; }
