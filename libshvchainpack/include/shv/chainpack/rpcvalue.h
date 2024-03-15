@@ -137,8 +137,7 @@ public:
 		DateTime();
 		int64_t msecsSinceEpoch() const;
 		int utcOffsetMin() const;
-		/// @deprecated
-		int minutesFromUtc() const;
+		[[deprecated("Use RpcValue::utcOffsetMin")]] int minutesFromUtc() const;
 		bool isZero() const;
 
 		static DateTime now();
@@ -151,8 +150,7 @@ public:
 		void setMsecsSinceEpoch(int64_t msecs);
 		void setUtcOffsetMin(int utc_offset_min);
 #pragma GCC diagnostic pop
-		/// @deprecated
-		void setTimeZone(int utc_offset_min);
+		[[deprecated("Use RpcValue::setUtcOffsetMin")]]void setTimeZone(int utc_offset_min);
 
 		std::string toLocalString() const;
 		std::string toIsoString() const;

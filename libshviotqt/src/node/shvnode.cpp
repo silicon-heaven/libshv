@@ -1007,7 +1007,6 @@ ObjectPropertyProxyShvNode::ObjectPropertyProxyShvNode(const char *property_name
 	: Super(std::string(property_name), parent)
 	, m_propertyObj(property_obj)
 {
-	shvWarning() << "ObjectPropertyProxyShvNode is deprecated use PropertyShvNode instead.";
 	const QMetaObject *mo = m_propertyObj->metaObject();
 	m_metaProperty = mo->property(mo->indexOfProperty(property_name));
 }
