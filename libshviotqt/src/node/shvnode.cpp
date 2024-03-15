@@ -184,7 +184,7 @@ void ShvNode::handleRpcFrame(RpcFrame &&frame)
 		RpcResponse::Error err(err_str, RpcResponse::Error::MethodCallException);
 		resp.setError(err);
 	}
-	if(resp.hasRetVal()) {
+	if(resp.hasResult()) {
 		ShvNode *root = rootNode();
 		if(root) {
 			if (ls_hook && resp.isSuccess()) {
@@ -1007,7 +1007,6 @@ ObjectPropertyProxyShvNode::ObjectPropertyProxyShvNode(const char *property_name
 	: Super(std::string(property_name), parent)
 	, m_propertyObj(property_obj)
 {
-	shvWarning() << "ObjectPropertyProxyShvNode is deprecated use PropertyShvNode instead.";
 	const QMetaObject *mo = m_propertyObj->metaObject();
 	m_metaProperty = mo->property(mo->indexOfProperty(property_name));
 }

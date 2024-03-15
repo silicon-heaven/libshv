@@ -101,9 +101,6 @@ CLIOptions::Option& CLIOptions::Option::setValueString(const QString& val_str)
 CLIOptions::CLIOptions(QObject *parent)
 	: QObject(parent), m_parsedArgIndex(), m_isAppBreak()
 {
-#if not defined(SHVCOREQT_BUILD_DLL)
-#warning shv::coreqt::utils::CLIOptions is deprecated use shv::core::utils::CLIOptions instead
-#endif
 	addOption("abortOnException").setType(QMetaType::Bool).setNames("--abort-on-exception").setComment(tr("Abort application on exception"));
 	addOption("help").setType(QMetaType::Bool).setNames("-h", "--help").setComment(tr("Print help"));
 }

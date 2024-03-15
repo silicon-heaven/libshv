@@ -146,7 +146,7 @@ DOCTEST_TEST_CASE("Cpon")
 				REQUIRE(cp.at(7) == RpcValue::Decimal(123456, -3));
 				RpcValue::DateTime dt = cp.at(8).toDateTime();
 				REQUIRE(dt.msecsSinceEpoch() % 1000 == 256);
-				REQUIRE(dt.minutesFromUtc() == -(10*60+45));
+				REQUIRE(dt.utcOffsetMin() == -(10*60+45));
 			}
 		}
 		DOCTEST_SUBCASE("Map")

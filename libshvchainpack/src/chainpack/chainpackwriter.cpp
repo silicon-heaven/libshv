@@ -178,7 +178,7 @@ ChainPackWriter &ChainPackWriter::write_p(RpcValue::Decimal value)
 
 ChainPackWriter &ChainPackWriter::write_p(RpcValue::DateTime value)
 {
-	cchainpack_pack_date_time(&m_outCtx, value.msecsSinceEpoch(), value.minutesFromUtc());
+	cchainpack_pack_date_time(&m_outCtx, value.msecsSinceEpoch(), value.utcOffsetMin());
 	return *this;
 }
 

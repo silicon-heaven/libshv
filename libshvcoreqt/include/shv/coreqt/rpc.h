@@ -31,7 +31,7 @@ template<> inline shv::chainpack::RpcValue RpcValue::fromValue<QDateTime>(const 
 	if (d.isValid()) {
 		shv::chainpack::RpcValue::DateTime dt = shv::chainpack::RpcValue::DateTime::fromMSecsSinceEpoch(d.toUTC().toMSecsSinceEpoch());
 		int offset = d.offsetFromUtc();
-		dt.setTimeZone(offset / 60);
+		dt.setUtcOffsetMin(offset / 60);
 		return dt;
 	}
 	else {

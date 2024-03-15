@@ -381,7 +381,7 @@ CponWriter &CponWriter::write_p(RpcValue::Decimal value)
 
 CponWriter &CponWriter::write_p(RpcValue::DateTime value)
 {
-	ccpon_pack_date_time(&m_outCtx, value.msecsSinceEpoch(), value.minutesFromUtc());
+	ccpon_pack_date_time(&m_outCtx, value.msecsSinceEpoch(), value.utcOffsetMin());
 	return *this;
 }
 

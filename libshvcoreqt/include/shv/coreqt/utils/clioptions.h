@@ -34,7 +34,7 @@ namespace utils {
 	public: bool getter_prefix##name_rest##_isset() const {return isValueSet(QStringLiteral(pkey));} \
 	public: bool setter_prefix##name_rest(const ptype &val) {return setValue(QStringLiteral(pkey), val);}
 
-class SHVCOREQT_DECL_EXPORT CLIOptions : public QObject
+class [[deprecated("Use shv::core::CLIOptions")]] SHVCOREQT_DECL_EXPORT CLIOptions : public QObject
 {
 	Q_OBJECT
 public:
@@ -134,7 +134,7 @@ private:
 	QStringList m_allArgs;
 };
 
-class SHVCOREQT_DECL_EXPORT ConfigCLIOptions : public CLIOptions
+class [[deprecated("Use shv::core::ConfigCLIOptions")]] SHVCOREQT_DECL_EXPORT ConfigCLIOptions : public CLIOptions
 {
 	Q_OBJECT
 private:
