@@ -29,7 +29,7 @@ __shv_compl() {
     if ((${#PREVIOUS_WORD_OPTION_LINE[@]})); then
         local TYPE="bool"
         local PARSED_TYPE
-        if PARSED_TYPE="$(grep -o -E "'string'|'int'" <<< "${PREVIOUS_WORD_OPTION_LINE[0]}")"; then
+        if PARSED_TYPE="$(grep -o -E "'string'|'number'" <<< "${PREVIOUS_WORD_OPTION_LINE[0]}")"; then
             TYPE="${PARSED_TYPE//\'/}"
         fi
 
