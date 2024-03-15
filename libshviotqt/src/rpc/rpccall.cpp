@@ -216,6 +216,11 @@ RpcCall *RpcCall::setUserId(const chainpack::RpcValue &user_id)
 	return this;
 }
 
+std::string RpcCall::shvPath() const
+{
+	return m_shvPath;
+}
+
 int RpcCall::start()
 {
 	if(m_rpcConnection.isNull()) {
