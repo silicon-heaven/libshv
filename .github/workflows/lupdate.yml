@@ -15,8 +15,6 @@ jobs:
   ubuntu-qt6:
     name: Qt 6.5.3 / Ubuntu 22.04
     runs-on: ubuntu-22.04
-    env:
-      LIBSHV_RUN_LUPDATE: 1
     steps:
       - uses: actions/checkout@v4
         with:
