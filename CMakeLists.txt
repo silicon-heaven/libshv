@@ -30,8 +30,10 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_SHARED_LIBRARY_PREFIX "") # we don't want CMake to prepend "lib" to our libraries, we prefer adding that ourselves
 set(CMAKE_STATIC_LIBRARY_PREFIX "")
 
-if(DEFINED ENV{LIBSHV_RUN_LUPDATE})
-	message(WARNING "LIBSHV_RUN_LUPDATE env variable is set! Translation files will be refreshed.")
+if(NOT LIBSHV_USE_QT6)
+	if(DEFINED ENV{LIBSHV_RUN_LUPDATE})
+		message(WARNING "LIBSHV_RUN_LUPDATE env variable is set! Translation files will be refreshed.")
+	endif()
 endif()
 
 set(LIBSHV_PROJECT_TRANSLATIONS
@@ -51,10 +53,7 @@ function(libshv_set_translations target langs)
 	endforeach()
 
 	if(LIBSHV_USE_QT6)
-		if(DEFINED ENV{LIBSHV_RUN_LUPDATE})
-			qt_add_lupdate("${target}" TS_FILES ${TS_FILES})
-		endif()
-
+		qt_add_lupdate("${target}" TS_FILES ${TS_FILES})
 		qt_add_lrelease("${target}" TS_FILES ${TS_FILES} QM_FILES_OUTPUT_VARIABLE QM_FILES)
 	else()
 		if(DEFINED ENV{LIBSHV_RUN_LUPDATE})
