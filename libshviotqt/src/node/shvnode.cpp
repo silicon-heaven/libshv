@@ -184,7 +184,7 @@ void ShvNode::handleRpcFrame(RpcFrame &&frame)
 		RpcResponse::Error err(err_str, RpcResponse::Error::MethodCallException);
 		resp.setError(err);
 	}
-	if(resp.hasRetVal()) {
+	if(resp.hasResult()) {
 		ShvNode *root = rootNode();
 		if(root) {
 			if (ls_hook && resp.isSuccess()) {

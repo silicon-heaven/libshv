@@ -33,7 +33,7 @@ QVariant rpcValueToQVariant(const chainpack::RpcValue &v, bool *ok)
 	}
 	case chainpack::RpcValue::Type::DateTime: {
 		chainpack::RpcValue::DateTime cdt = v.toDateTime();
-		QDateTime dt = QDateTime::fromMSecsSinceEpoch(cdt.msecsSinceEpoch(), Qt::OffsetFromUTC, cdt.minutesFromUtc() * 60);
+		QDateTime dt = QDateTime::fromMSecsSinceEpoch(cdt.msecsSinceEpoch(), Qt::OffsetFromUTC, cdt.utcOffsetMin() * 60);
 		return dt;
 	}
 	case chainpack::RpcValue::Type::List: {

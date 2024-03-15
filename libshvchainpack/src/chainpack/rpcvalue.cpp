@@ -1109,7 +1109,7 @@ std::string RpcValue::DateTime::toIsoString(RpcValue::DateTime::MsecPolicy msec_
 	ccpcp_pack_context ctx;
 	std::array<char, 32> buff;
 	ccpcp_pack_context_init(&ctx, buff.data(), buff.size(), nullptr);
-	ccpon_pack_date_time_str(&ctx, msecsSinceEpoch(), minutesFromUtc(), static_cast<ccpon_msec_policy>(msec_policy), include_tz);
+	ccpon_pack_date_time_str(&ctx, msecsSinceEpoch(), utcOffsetMin(), static_cast<ccpon_msec_policy>(msec_policy), include_tz);
 	return std::string(buff.data(), ctx.current);
 }
 
