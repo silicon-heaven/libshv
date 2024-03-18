@@ -306,12 +306,21 @@ void AclManager::setGroupForLdapUser(const std::string_view& user_name, const st
 }
 #endif
 
-cp::AccessGrant AclManager::accessGrantForShvPath(const std::string& user_name, const shv::core::utils::ShvUrl &shv_url, const std::string &method, bool is_request_from_master_broker, bool is_service_provider_mount_point_relative_call, const shv::chainpack::RpcValue &rq_grant)
+struct GrantToString {
+	std::string operator()(const chainpack::MetaMethod::AccessLevel level) const {
+		return std::to_string(static_cast<int>(level));
+	}
+	std::string operator()(const std::string& role) const {
+		return role;
+	}
+};
+
+chainpack::RpcValue AclManager::accessGrantForShvPath(const std::string& user_name, const shv::core::utils::ShvUrl &shv_url, const std::string &method, bool is_request_from_master_broker, bool is_service_provider_mount_point_relative_call, const shv::chainpack::RpcValue &rq_grant)
 {
 	logAclResolveM() << "==== accessGrantForShvPath user:" << user_name << "requested path:" << shv_url.toString() << "method:" << method << "request grant:" << rq_grant.toCpon();
 	if(is_service_provider_mount_point_relative_call) {
-		auto ret = cp::AccessGrant(cp::Rpc::ROLE_WRITE);
-		logAclResolveM() << "==== resolved path:" << shv_url.toString() << "grant:" << ret.toRpcValue().toCpon();
+		auto ret = cp::Rpc::ROLE_WRITE;
+		logAclResolveM() << "==== resolved path:" << shv_url.toString() << "grant:" << ret;
 		return ret;
 	}
 #ifdef USE_SHV_PATHS_GRANTS_CACHE
@@ -324,18 +333,14 @@ cp::AccessGrant AclManager::accessGrantForShvPath(const std::string& user_name, 
 		}
 	}
 #endif
-	auto request_grant = cp::AccessGrant::fromRpcValue(rq_grant);
+	auto request_grant = rq_grant;
 	if(is_request_from_master_broker) {
-		if(request_grant.isValid()) {
-			// access resolved by master broker already, forward use this
-			logAclResolveM() << "\t Resolved on master broker already.";
-			return request_grant;
-		}
+		// access resolved by master broker already, forward use this
+		logAclResolveM() << "\t Resolved on master broker already.";
+		return request_grant;
 	}
-	else {
-		if(request_grant.isValid()) {
-			logAclResolveM() << "Client defined grants in RPC request are not implemented yet and will be ignored.";
-		}
+	if(request_grant.isValid()) {
+		logAclResolveM() << "Client defined grants in RPC request are not implemented yet and will be ignored.";
 	}
 	std::vector<std::string> flatten_user_roles;
 	if(is_request_from_master_broker) {
@@ -343,7 +348,7 @@ cp::AccessGrant AclManager::accessGrantForShvPath(const std::string& user_name, 
 		// This is used mainly for service calls as (un)subscribe propagation to slave brokers etc.
 		if(shv_url.pathPart() == cp::Rpc::DIR_BROKER_APP) {
 			// master broker has always rd grant to .broker/app path
-			return cp::AccessGrant(cp::Rpc::ROLE_WRITE);
+			return cp::Rpc::ROLE_WRITE;
 		}
 		flatten_user_roles = flattenRole(cp::Rpc::ROLE_MASTER_BROKER);
 	}
@@ -396,7 +401,7 @@ cp::AccessGrant AclManager::accessGrantForShvPath(const std::string& user_name, 
 				tbl += to_str(access_rule.service.c_str(), cols[1]);
 				tbl += to_str(access_rule.pathPattern.c_str(), cols[2]);
 				tbl += to_str(access_rule.method.c_str(), cols[3]);
-				tbl += to_str(access_rule.grant.toRpcValue().toCpon().c_str(), cols[4]);
+				tbl += to_str(std::visit(GrantToString{}, access_rule.grant).c_str(), cols[4]);
 			}
 		}
 		tbl += "\n" + QString(row_len, '-');
@@ -406,7 +411,7 @@ cp::AccessGrant AclManager::accessGrantForShvPath(const std::string& user_name, 
 	// find first matching rule
 	if(shv_url.pathPart() == BROKER_CURRENT_CLIENT_SHV_PATH) {
 		// client has WR grant on currentClient node
-		return cp::AccessGrant{cp::Rpc::ROLE_WRITE};
+		return cp::Rpc::ROLE_WRITE;
 	}
 
 	for (const std::string& flatten_role : flatten_user_roles) {
@@ -422,13 +427,13 @@ cp::AccessGrant AclManager::accessGrantForShvPath(const std::string& user_name, 
 				logAclResolveM() << "access user:" << user_name
 					<< "shv_path:" << shv_url.toString()
 					<< "rq_grant:" << (rq_grant.isValid()? rq_grant.toCpon(): "<none>")
-					<< "==== path:" << access_rule.pathPattern << "method:" << access_rule.method << "grant:" << access_rule.grant.toRpcValue().toCpon();
-				return access_rule.grant;
+					<< "==== path:" << access_rule.pathPattern << "method:" << access_rule.method << "grant:" << std::visit(GrantToString{}, access_rule.grant);
+				return std::visit(GrantToRpcValue{}, access_rule.grant);
 			}
 		}
 	}
 
-	return cp::AccessGrant{};
+	return {};
 }
 
 //================================================================

@@ -350,6 +350,9 @@ void RpcMessage::setAccessGrant(RpcValue::MetaData &meta, const RpcValue &ag)
 
 RpcValue RpcMessage::accessGrant() const
 {
+	if (m_value.has(RpcMessage::MetaType::Tag::AccessLevel)) {
+		return metaValue(RpcMessage::MetaType::Tag::AccessLevel);
+	}
 	return metaValue(RpcMessage::MetaType::Tag::AccessGrant);
 }
 
@@ -563,7 +566,6 @@ void RpcMessage::registerMetaTypes()
 {
 	RpcMessage::MetaType::registerMetaType();
 	TunnelCtl::MetaType::registerMetaType();
-	AccessGrant::MetaType::registerMetaType();
 	DataChange::MetaType::registerMetaType();
 }
 

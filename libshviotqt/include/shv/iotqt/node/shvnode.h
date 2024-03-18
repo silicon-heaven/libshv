@@ -74,8 +74,8 @@ public:
 	// returns null if does not know
 	virtual chainpack::RpcValue hasChildren(const StringViewList &shv_path);
 
-	static chainpack::MetaMethod::AccessLevel basicGrantToAccessLevel(const shv::chainpack::AccessGrant &acces_grant);
-	virtual chainpack::MetaMethod::AccessLevel grantToAccessLevel(const chainpack::AccessGrant &acces_grant) const;
+	static chainpack::MetaMethod::AccessLevel basicGrantToAccessLevel(const chainpack::RpcValue &acces_grant);
+	virtual chainpack::MetaMethod::AccessLevel grantToAccessLevel(const chainpack::RpcValue &acces_grant) const;
 
 	void treeWalk(std::function<void (ShvNode *parent_nd, const StringViewList &shv_path)> callback);
 private:

@@ -1168,10 +1168,10 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 				}
 				else if(master_broker_connection) {
 					auto has_dot_local_access = [](const cp::RpcValue::MetaData &meta_data) {
-						auto access_grant = shv::chainpack::AccessGrant::fromRpcValue(cp::RpcMessage::accessGrant(meta_data));
+						auto access_grant = cp::RpcMessage::accessGrant(meta_data);
 						auto access_level = shv::iotqt::node::ShvNode::basicGrantToAccessLevel(access_grant);
 						if (access_level < chainpack::MetaMethod::AccessLevel::SuperService) {
-							auto roles = access_grant.roles();
+							auto roles = shv::core::utils::split(access_grant.asString(), ',');
 							return std::find(roles.begin(), roles.end(), "dot_local") != roles.end();
 						}
 						return true;
@@ -1215,15 +1215,12 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 				const std::string method = cp::RpcMessage::method(frame.meta).asString();
 				const std::string resolved_shv_path = cp::RpcMessage::shvPath(frame.meta).asString();
 				ShvUrl resolved_shv_url(resolved_shv_path);
-				cp::AccessGrant acg;
-				acg = aclManager()->accessGrantForShvPath(connection_handle->loggedUserName(), resolved_shv_url, method, connection_handle->isMasterBrokerConnection(), is_service_provider_mount_point_relative_call, cp::RpcMessage::accessGrant(frame.meta));
-				if(acg.isValid()) {
-					auto level = iotqt::node::ShvNode::basicGrantToAccessLevel(acg);
-					if(level != shv::chainpack::MetaMethod::AccessLevel::None) {
-						if(level < shv::chainpack::MetaMethod::AccessLevel::Write) {
-							// remove iser id for read operations
-							cp::RpcMessage::setUserId(frame.meta, {});
-						}
+				auto acg = aclManager()->accessGrantForShvPath(connection_handle->loggedUserName(), resolved_shv_url, method, connection_handle->isMasterBrokerConnection(), is_service_provider_mount_point_relative_call, cp::RpcMessage::accessGrant(frame.meta));
+				auto level = iotqt::node::ShvNode::basicGrantToAccessLevel(acg);
+				if(level != shv::chainpack::MetaMethod::AccessLevel::None) {
+					if(level < shv::chainpack::MetaMethod::AccessLevel::Write) {
+						// remove iser id for read operations
+						cp::RpcMessage::setUserId(frame.meta, {});
 					}
 				}
 				else {
@@ -1231,7 +1228,7 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 						shvWarning() << "Acces to shv path '" + resolved_shv_path + "' not granted for master broker";
 					ACCESS_EXCEPTION("Acces to shv path '" + resolved_shv_path + "' not granted for user '" + connection_handle->loggedUserName() + "'");
 				}
-				cp::RpcMessage::setAccessGrant(frame.meta, acg.toRpcValue());
+				cp::RpcMessage::setAccessGrant(frame.meta, acg);
 				cp::RpcMessage::pushCallerId(frame.meta, connection_id);
 				if(m_nodesTree->root()) {
 					m_nodesTree->root()->handleRpcFrame(std::move(frame));

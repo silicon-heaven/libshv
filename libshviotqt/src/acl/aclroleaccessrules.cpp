@@ -22,7 +22,7 @@ AclAccessRule::AclAccessRule(const std::string &path_pattern_, const std::string
 {
 }
 
-AclAccessRule::AclAccessRule(const std::string &path_pattern_, const std::string &method_, const shv::chainpack::AccessGrant &grant_)
+AclAccessRule::AclAccessRule(const std::string &path_pattern_, const std::string &method_, const std::string &grant_)
 	: pathPattern(path_pattern_)
 	, method(method_)
 	, grant(grant_)
@@ -31,7 +31,12 @@ AclAccessRule::AclAccessRule(const std::string &path_pattern_, const std::string
 
 RpcValue AclAccessRule::toRpcValue() const
 {
-	RpcValue::Map m = grant.toRpcValueMap().asMap();
+	RpcValue::Map m;
+	if (std::holds_alternative<std::string>(grant)) {
+		m["role"] = std::get<std::string>(grant);
+	} else {
+		m["accessLevel"] = static_cast<int>(std::get<chainpack::MetaMethod::AccessLevel>(grant));
+	}
 	m["service"] = service;
 	m["method"] = method;
 	m["pathPattern"] = pathPattern;
@@ -42,7 +47,7 @@ AclAccessRule AclAccessRule::fromRpcValue(const RpcValue &rpcval)
 {
 	AclAccessRule ret;
 	shvDebug() << rpcval.toCpon();
-	ret.grant = AccessGrant::fromRpcValue(rpcval);
+	ret.grant = rpcval.at("role").toString();
 	ret.service = rpcval.at("service").toString();
 	ret.method = rpcval.at("method").toString();
 	ret.pathPattern = rpcval.at("pathPattern").toString();
@@ -62,7 +67,7 @@ bool is_wild_card_pattern(const string path)
 
 bool AclAccessRule::isValid() const
 {
-	return !pathPattern.empty() && grant.isValid();
+	return !pathPattern.empty() && (!std::holds_alternative<std::string>(grant) || !std::get<std::string>(grant).empty());
 }
 
 bool AclAccessRule::isMoreSpecificThan(const AclAccessRule &other) const

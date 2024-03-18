@@ -55,43 +55,5 @@ public:
 	chainpack::RpcValue toRpcValueMap() const;
 	static UserLogin fromRpcValue(const RpcValue &val);
 };
-
-struct SHVCHAINPACK_DECL_EXPORT AccessGrant
-{
-
-	enum class Type { Invalid = 0, AccessLevel, Role, UserLogin, };
-	Type type = Type::Invalid;
-	MetaMethod::AccessLevel accessLevel = shv::chainpack::MetaMethod::AccessLevel::None;
-	std::string role;
-	UserLogin login;
-public:
-	class MetaType : public chainpack::meta::MetaType
-	{
-		using Super = chainpack::meta::MetaType;
-	public:
-		enum {ID = chainpack::meta::GlobalNS::MetaTypeId::AccessGrant};
-		struct Key { enum Enum {Type = 1, NotResolved /*reserved NOT USED*/, Role, AccessLevel, User, Password, LoginType, MAX};};
-
-		MetaType();
-		static void registerMetaType();
-	};
-public:
-	AccessGrant();
-	AccessGrant(const std::string &role_);
-
-	bool isValid() const;
-	bool isUserLogin() const;
-	bool isRole() const;
-	bool isAccessLevel() const;
-
-	std::vector<std::string_view> roles() const;
-
-	chainpack::RpcValue toRpcValue() const;
-	chainpack::RpcValue toRpcValueMap() const;
-	static AccessGrant fromRpcValue(const chainpack::RpcValue &rpcval);
-	static const char* typeToString(Type t);
-	static Type typeFromString(const std::string &s);
-};
-
 } // namespace chainpack
 } // namespace shv
