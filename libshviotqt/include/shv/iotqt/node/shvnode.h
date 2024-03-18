@@ -197,21 +197,6 @@ protected:
 	shv::chainpack::RpcValue m_templateValues;
 };
 
-class [[deprecated("Use ValueProxyShvNode")]] SHVIOTQT_DECL_EXPORT ObjectPropertyProxyShvNode : public shv::iotqt::node::ShvNode
-{
-	using Super = shv::iotqt::node::ShvNode;
-public:
-	explicit ObjectPropertyProxyShvNode(const char *property_name, QObject *property_obj, shv::iotqt::node::ShvNode *parent = nullptr);
-
-	size_t methodCount(const StringViewList &shv_path) override;
-	const shv::chainpack::MetaMethod* metaMethod(const StringViewList &shv_path, size_t ix) override;
-
-	shv::chainpack::RpcValue callMethod(const StringViewList &shv_path, const std::string &method, const shv::chainpack::RpcValue &params, const shv::chainpack::RpcValue &user_id) override;
-protected:
-	QMetaProperty m_metaProperty;
-	QObject *m_propertyObj = nullptr;
-};
-
 class SHVIOTQT_DECL_EXPORT ValueProxyShvNode : public shv::iotqt::node::ShvNode
 {
 	Q_OBJECT

@@ -56,6 +56,12 @@ runs:
       with:
         key: ${{ github.job }}
 
+    # https://github.com/actions/runner-images/issues/9491#issuecomment-1989718917
+    - name: Fix kernel mmap rnd bits
+      if: runner.os != 'Windows'
+      run: sudo sysctl vm.mmap_rnd_bits=28
+      shell: bash
+
     - name: Configure CMake
       run: |
         CFLAGS="-Werror ${CFLAGS}" \
@@ -67,10 +73,8 @@ runs:
         -DCMAKE_C_COMPILER_LAUNCHER=ccache \
         -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-        -DUSE_QT6=${{ inputs.use_qt6 }} \
-        -DLIBSHV_WITH_CLI_EXAMPLES=ON \
-        -DLIBSHV_WITH_GUI_EXAMPLES=ON \
-        -DLIBSHV_WITH_LDAP=ON \
+        -DLIBSHV_USE_QT6=${{ inputs.use_qt6 }} \
+        -DLIBSHV_WITH_ALL=ON \
         ${{ env.cmake_extra_args }} \
         ${{ inputs.additional_cmake_args }}
       shell: bash
