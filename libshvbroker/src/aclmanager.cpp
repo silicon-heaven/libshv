@@ -306,15 +306,6 @@ void AclManager::setGroupForLdapUser(const std::string_view& user_name, const st
 }
 #endif
 
-struct GrantToString {
-	std::string operator()(const chainpack::MetaMethod::AccessLevel level) const {
-		return std::to_string(static_cast<int>(level));
-	}
-	std::string operator()(const std::string& role) const {
-		return role;
-	}
-};
-
 chainpack::RpcValue AclManager::accessGrantForShvPath(const std::string& user_name, const shv::core::utils::ShvUrl &shv_url, const std::string &method, bool is_request_from_master_broker, bool is_service_provider_mount_point_relative_call, const shv::chainpack::RpcValue &rq_grant)
 {
 	logAclResolveM() << "==== accessGrantForShvPath user:" << user_name << "requested path:" << shv_url.toString() << "method:" << method << "request grant:" << rq_grant.toCpon();
@@ -401,7 +392,7 @@ chainpack::RpcValue AclManager::accessGrantForShvPath(const std::string& user_na
 				tbl += to_str(access_rule.service.c_str(), cols[1]);
 				tbl += to_str(access_rule.pathPattern.c_str(), cols[2]);
 				tbl += to_str(access_rule.method.c_str(), cols[3]);
-				tbl += to_str(std::visit(GrantToString{}, access_rule.grant).c_str(), cols[4]);
+				tbl += to_str(std::visit(shv::chainpack::GrantToString{}, access_rule.grant).c_str(), cols[4]);
 			}
 		}
 		tbl += "\n" + QString(row_len, '-');
@@ -427,8 +418,8 @@ chainpack::RpcValue AclManager::accessGrantForShvPath(const std::string& user_na
 				logAclResolveM() << "access user:" << user_name
 					<< "shv_path:" << shv_url.toString()
 					<< "rq_grant:" << (rq_grant.isValid()? rq_grant.toCpon(): "<none>")
-					<< "==== path:" << access_rule.pathPattern << "method:" << access_rule.method << "grant:" << std::visit(GrantToString{}, access_rule.grant);
-				return std::visit(GrantToRpcValue{}, access_rule.grant);
+					<< "==== path:" << access_rule.pathPattern << "method:" << access_rule.method << "grant:" << std::visit(shv::chainpack::GrantToString{}, access_rule.grant);
+				return std::visit(shv::chainpack::GrantToRpcValue{}, access_rule.grant);
 			}
 		}
 	}

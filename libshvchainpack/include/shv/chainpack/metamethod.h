@@ -68,7 +68,7 @@ public:
 	MetaMethod& setLabel(const std::string &label);
 	const std::string& description() const;
 	unsigned flags() const;
-	RpcValue accessGrant() const;
+	AccessLevel accessLevel() const;
 	const RpcValue::Map& extra() const;
 	RpcValue tag(const std::string &key, const RpcValue& default_value = {}) const;
 	MetaMethod& setTag(const std::string &key, const RpcValue& value);
@@ -92,6 +92,24 @@ private:
 	std::string m_label;
 	std::string m_description;
 	RpcValue::Map m_extra;
+};
+
+struct GrantToString {
+	std::string operator()(const chainpack::MetaMethod::AccessLevel level) const {
+		return std::to_string(static_cast<int>(level));
+	}
+	std::string operator()(const std::string& role) const {
+		return role;
+	}
+};
+
+struct GrantToRpcValue {
+	chainpack::RpcValue operator()(const chainpack::MetaMethod::AccessLevel level) const {
+		return static_cast<int>(level);
+	}
+	chainpack::RpcValue operator()(const std::string& role) const {
+		return role;
+	}
 };
 
 namespace methods {

@@ -536,7 +536,7 @@ chainpack::RpcValue AccessAclNode::callMethod(const iotqt::node::ShvNode::String
 		if(method == M_GET_METHOD)
 			return rule.method;
 		if(method == M_GET_GRANT)
-			return std::visit(GrantToRpcValue{}, rule.grant);
+			return std::visit(shv::chainpack::GrantToRpcValue{}, rule.grant);
 		if(method == M_GET_GRANT_TYPE) {
 			if (std::holds_alternative<std::string>(rule.grant)) {
 				return "Role";

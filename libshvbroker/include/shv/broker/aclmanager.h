@@ -19,16 +19,6 @@ namespace broker {
 
 class BrokerApp;
 
-struct GrantToRpcValue {
-	chainpack::RpcValue operator()(const chainpack::MetaMethod::AccessLevel level) const {
-		return static_cast<int>(level);
-	}
-	chainpack::RpcValue operator()(const std::string& role) const {
-		return role;
-	}
-};
-
-
 class SHVBROKER_DECL_EXPORT AclManager : public QObject
 {
 	Q_OBJECT

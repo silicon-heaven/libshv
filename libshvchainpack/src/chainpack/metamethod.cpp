@@ -78,9 +78,9 @@ unsigned MetaMethod::flags() const
 	return m_flags;
 }
 
-RpcValue MetaMethod::accessGrant() const
+MetaMethod::AccessLevel MetaMethod::accessLevel() const
 {
-	return accessLevelToString(m_accessLevel);
+	return m_accessLevel;
 }
 
 const RpcValue::Map& MetaMethod::extra() const

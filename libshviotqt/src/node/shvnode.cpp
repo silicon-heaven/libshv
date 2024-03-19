@@ -268,11 +268,10 @@ chainpack::RpcValue ShvNode::processRpcRequest(const chainpack::RpcRequest &rq)
 									  std::string(__FILE__) + ":" + std::to_string(__LINE__));
 	}
 	const chainpack::RpcValue &rq_grant = rq.accessGrant();
-	const RpcValue &mm_grant = mm->accessGrant();
 	auto rq_access_level = grantToAccessLevel(rq_grant);
-	auto mm_access_level = grantToAccessLevel(mm_grant);
+	auto mm_access_level = mm->accessLevel();
 	if(mm_access_level > rq_access_level)
-		SHV_EXCEPTION(std::string("Call method: '") + method + "' on path '" + shvPath() + '/' + rq.shvPath().toString() + "' permission denied, grant: " + rq_grant.toCpon() + " required: " + mm_grant.toCpon());
+		SHV_EXCEPTION(std::string("Call method: '") + method + "' on path '" + shvPath() + '/' + rq.shvPath().toString() + "' permission denied, grant: " + rq_grant.toCpon() + " required: " + GrantToString{}(mm_access_level));
 
 	if(mm_access_level > MetaMethod::AccessLevel::Write) {
 
