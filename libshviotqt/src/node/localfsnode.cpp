@@ -22,19 +22,19 @@ const auto M_LS_FILES = "lsfiles";
 const std::vector<MetaMethod> meta_methods_dir {
 	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
 	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
-	{M_LS_FILES, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Read},
-	{M_MKFILE, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Write},
-	{M_MKDIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Write},
-	{M_RMDIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Service}
+	{M_LS_FILES, MetaMethod::Flag::None, "Map|Null", "List", MetaMethod::AccessLevel::Read},
+	{M_MKFILE, MetaMethod::Flag::None, "String|List", "Bool", MetaMethod::AccessLevel::Write},
+	{M_MKDIR, MetaMethod::Flag::None, "String", "Bool", MetaMethod::AccessLevel::Write},
+	{M_RMDIR, MetaMethod::Flag::None, "Bool", "Bool", MetaMethod::AccessLevel::Service}
 };
 
 const std::vector<MetaMethod> meta_methods_dir_write_file {
-	{M_WRITE, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Write},
+	{M_WRITE, MetaMethod::Flag::None, "String|List", "Bool", MetaMethod::AccessLevel::Write},
 };
 
 const std::vector<MetaMethod> meta_methods_file_modificable {
-	{M_WRITE, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Write},
-	{M_DELETE, MetaMethod::Flag::None, "void", "ret", MetaMethod::AccessLevel::Service}
+	{M_WRITE, MetaMethod::Flag::None, "String|List", "Bool", MetaMethod::AccessLevel::Write},
+	{M_DELETE, MetaMethod::Flag::None, "", "Bool", MetaMethod::AccessLevel::Service}
 };
 
 const std::vector<MetaMethod> & get_meta_methods_file()

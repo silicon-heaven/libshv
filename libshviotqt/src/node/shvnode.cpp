@@ -583,15 +583,15 @@ const shv::chainpack::MetaMethod *MethodsTableNode::metaMethod(const shv::iotqt:
 // RpcValueMapNode
 //===========================================================
 const std::vector<MetaMethod> meta_methods_value_map_root_node {
-	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Config},
-	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Config},
+	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
+	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
 };
 
 const std::vector<MetaMethod> meta_methods_value_map_node {
-	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Read},
-	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Read},
-	{Rpc::METH_GET, MetaMethod::Flag::IsGetter, "void", "get", MetaMethod::AccessLevel::Read},
-	{Rpc::METH_SET, MetaMethod::Flag::IsSetter, "param", "void", MetaMethod::AccessLevel::Config},
+	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
+	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
+	{Rpc::METH_GET, MetaMethod::Flag::IsGetter, "", "RpcValue", MetaMethod::AccessLevel::Read},
+	{Rpc::METH_SET, MetaMethod::Flag::IsSetter, "RpcValue", "Bool", MetaMethod::AccessLevel::Config},
 };
 
 RpcValueMapNode::RpcValueMapNode(const std::string &node_id, ShvNode *parent)
@@ -818,20 +818,20 @@ const auto METH_ORIG_VALUE = "origValue";
 const auto METH_RESET_TO_ORIG_VALUE = "resetValue";
 
 const std::vector<MetaMethod> meta_methods_root_node {
-	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Config},
-	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Config},
-	{shv::iotqt::node::RpcValueMapNode::M_LOAD, MetaMethod::Flag::None, "void", "ret", MetaMethod::AccessLevel::Service},
-	{shv::iotqt::node::RpcValueMapNode::M_SAVE, MetaMethod::Flag::None, "void", "ret", MetaMethod::AccessLevel::Admin},
-	{shv::iotqt::node::RpcValueMapNode::M_COMMIT, MetaMethod::Flag::None, "void", "ret", MetaMethod::AccessLevel::Admin},
+	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
+	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
+	{shv::iotqt::node::RpcValueMapNode::M_LOAD, MetaMethod::Flag::None, "", "RpcValue", MetaMethod::AccessLevel::Service},
+	{shv::iotqt::node::RpcValueMapNode::M_SAVE, MetaMethod::Flag::None, "RpcValue", "Bool", MetaMethod::AccessLevel::Admin},
+	{shv::iotqt::node::RpcValueMapNode::M_COMMIT, MetaMethod::Flag::None, "", "Bool", MetaMethod::AccessLevel::Admin},
 };
 
 const std::vector<MetaMethod> meta_methods_node {
-	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Config},
-	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Config},
-	{Rpc::METH_GET, MetaMethod::Flag::IsGetter, "void", "ret", MetaMethod::AccessLevel::Config},
-	{Rpc::METH_SET, MetaMethod::Flag::IsSetter, "void", "ret", MetaMethod::AccessLevel::Devel},
-	{METH_ORIG_VALUE, MetaMethod::Flag::IsGetter, "void", "ret", MetaMethod::AccessLevel::Read},
-	{METH_RESET_TO_ORIG_VALUE, MetaMethod::Flag::None, "void", "ret", MetaMethod::AccessLevel::Write},
+	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
+	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
+	{Rpc::METH_GET, MetaMethod::Flag::IsGetter, "", "RpcValue", MetaMethod::AccessLevel::Config},
+	{Rpc::METH_SET, MetaMethod::Flag::IsSetter, "RpcValue", "bool", MetaMethod::AccessLevel::Devel},
+	{METH_ORIG_VALUE, MetaMethod::Flag::IsGetter, "", "RpcValue", MetaMethod::AccessLevel::Read},
+	{METH_RESET_TO_ORIG_VALUE, MetaMethod::Flag::None, "RpcValue", "Bool", MetaMethod::AccessLevel::Write},
 };
 }
 
@@ -990,8 +990,8 @@ void RpcValueConfigNode::saveValues()
 static const std::vector<MetaMethod> meta_methods_pn {
 	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
 	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
-	{Rpc::METH_GET, MetaMethod::Flag::IsGetter, "void", "ret", MetaMethod::AccessLevel::Read, {{Rpc::SIG_VAL_CHANGED}}},
-	{Rpc::METH_SET, MetaMethod::Flag::IsSetter, "void", "ret", MetaMethod::AccessLevel::Write},
+	{Rpc::METH_GET, MetaMethod::Flag::IsGetter, "", "RpcValue", MetaMethod::AccessLevel::Read, {{Rpc::SIG_VAL_CHANGED}}},
+	{Rpc::METH_SET, MetaMethod::Flag::IsSetter, "RpcValue", "Bool", MetaMethod::AccessLevel::Write},
 };
 
 enum {
