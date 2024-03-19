@@ -28,19 +28,19 @@ namespace shv::broker {
 // EtcAclNode
 //========================================================
 static const std::vector<cp::MetaMethod> meta_methods_dir_ls {
-	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
-	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 };
 
 static const std::vector<cp::MetaMethod> meta_methods_property {
-	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
-	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 	{shv::chainpack::Rpc::METH_GET, shv::chainpack::MetaMethod::Flag::IsGetter, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
 };
 
 static const std::vector<cp::MetaMethod> meta_methods_property_rw {
-	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
-	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 	{shv::chainpack::Rpc::METH_GET, shv::chainpack::MetaMethod::Flag::IsGetter, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
 	{shv::chainpack::Rpc::METH_SET, shv::chainpack::MetaMethod::Flag::IsSetter, "param", "void", shv::chainpack::MetaMethod::AccessLevel::Config},
 };
@@ -50,22 +50,22 @@ static const std::string M_SET_VALUE = "setValue";
 static const std::string M_SAVE_TO_CONFIG_FILE = "saveToConfigFile";
 
 static const std::vector<cp::MetaMethod> meta_methods_acl_node {
-	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
-	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 	{M_SET_VALUE, cp::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Config},
 	{M_SAVE_TO_CONFIG_FILE, cp::MetaMethod::Flag::None, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Config},
 };
 
 static const std::vector<cp::MetaMethod> meta_methods_acl_subnode {
-	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
-	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 	{M_VALUE, cp::MetaMethod::Flag::None, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
 };
 
 static const std::string M_SAVE_TO_CONFIG_FILES = "saveToConfigFiles";
 static const std::vector<cp::MetaMethod> meta_methods_acl_root {
-	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
-	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 	{M_SAVE_TO_CONFIG_FILES, cp::MetaMethod::Flag::None, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Config},
 };
 
@@ -443,8 +443,8 @@ static const std::string M_SET_PATH_PATTERN = "setPathPattern";
 static const std::string M_SET_METHOD = "setMethod";
 
 static const std::vector<cp::MetaMethod> meta_methods_role_access {
-	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
-	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 
 	{M_GET_PATH_PATTERN, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::MetaMethod::AccessLevel::Read},
 	{M_SET_PATH_PATTERN, cp::MetaMethod::Flag::IsSetter, "param", "ret", cp::MetaMethod::AccessLevel::Config},
@@ -614,8 +614,8 @@ namespace {
 const auto M_LDAP_USERS = "users";
 const auto LDAP_USERS_DESC = "accepts a login name as a string param";
 const std::vector<cp::MetaMethod> meta_methods_ldap_node {
-	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
-	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 	{M_LDAP_USERS, cp::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Service, {}, LDAP_USERS_DESC},
 };
 }

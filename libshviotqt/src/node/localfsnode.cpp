@@ -20,8 +20,8 @@ const auto M_RMDIR = "rmdir";
 const auto M_LS_FILES = "lsfiles";
 
 const std::vector<MetaMethod> meta_methods_dir {
-	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
-	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 	{M_LS_FILES, MetaMethod::Flag::None, "Map|Null", "List", MetaMethod::AccessLevel::Read},
 	{M_MKFILE, MetaMethod::Flag::None, "String|List", "Bool", MetaMethod::AccessLevel::Write},
 	{M_MKDIR, MetaMethod::Flag::None, "String", "Bool", MetaMethod::AccessLevel::Write},

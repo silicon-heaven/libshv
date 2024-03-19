@@ -22,9 +22,8 @@ const auto M_READ_COMPRESSED = "readCompressed";
 }
 
 const std::vector<shv::chainpack::MetaMethod> FileNode::meta_methods_file_base = {
-	// FIXME: Add proper types param and ret types
-	{cp::Rpc::METH_DIR, cp::MetaMethod::Flag::None, "param", "ret", cp::MetaMethod::AccessLevel::Browse},
-	{cp::Rpc::METH_LS, cp::MetaMethod::Flag::None, "param", "ret", cp::MetaMethod::AccessLevel::Browse},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 	{M_HASH, cp::MetaMethod::Flag::None, "Map", "String", cp::MetaMethod::AccessLevel::Read},
 	{M_SIZE, cp::MetaMethod::Flag::LargeResultHint, "", "UInt", cp::MetaMethod::AccessLevel::Browse},
 	{M_SIZE_COMPRESSED, cp::MetaMethod::Flag::None, "Map", "UInt", cp::MetaMethod::AccessLevel::Browse , {}

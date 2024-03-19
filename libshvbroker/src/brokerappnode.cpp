@@ -30,8 +30,8 @@ public:
 	BrokerLogNode(shv::iotqt::node::ShvNode *parent = nullptr)
 		: Super("log", &m_metaMethods, parent)
 		, m_metaMethods {
-			{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
-			{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+			shv::chainpack::methods::DIR,
+			shv::chainpack::methods::LS,
 			{M_GET_SEND_LOG_SIGNAL_ENABLED, cp::MetaMethod::Flag::IsGetter, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
 			{M_SET_SEND_LOG_SIGNAL_ENABLED, cp::MetaMethod::Flag::IsSetter, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Write},
 			{M_GET_VERBOSITY, cp::MetaMethod::Flag::IsGetter, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
@@ -77,8 +77,8 @@ static const auto M_MASTER_BROKER_ID = "masterBrokerId";
 BrokerAppNode::BrokerAppNode(shv::iotqt::node::ShvNode *parent)
 	: Super("", &m_metaMethods, parent)
 	, m_metaMethods {
-		{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
-		{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+		shv::chainpack::methods::DIR,
+		shv::chainpack::methods::LS,
 		{shv::chainpack::Rpc::METH_PING, shv::chainpack::MetaMethod::Flag::None, "void", "void", shv::chainpack::MetaMethod::AccessLevel::Browse},
 		{shv::chainpack::Rpc::METH_ECHO, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
 		{M_APP_VERSION, cp::MetaMethod::Flag::IsGetter, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},

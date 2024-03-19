@@ -22,12 +22,12 @@ const auto METH_PATH = "path";
 const auto METH_METHOD = "method";
 
 const std::vector<cp::MetaMethod> meta_methods1 {
-	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
-	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 };
 const std::vector<cp::MetaMethod> meta_methods2 {
-	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
-	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 	{METH_PATH, cp::MetaMethod::Flag::IsGetter, "void", "ret"},
 	{METH_METHOD, cp::MetaMethod::Flag::IsGetter, "void", "ret"},
 };

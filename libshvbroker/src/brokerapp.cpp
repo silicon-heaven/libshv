@@ -105,8 +105,8 @@ public:
 	ClientsNode(shv::iotqt::node::ShvNode *parent = nullptr)
 		: Super(std::string(), &m_metaMethods, parent)
 		, m_metaMethods {
-			{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
-			{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+			shv::chainpack::methods::DIR,
+			shv::chainpack::methods::LS,
 		}
 	{ }
 
@@ -135,8 +135,8 @@ public:
 	MasterBrokersNode(shv::iotqt::node::ShvNode *parent = nullptr)
 		: Super(std::string(), &m_metaMethods, parent)
 		, m_metaMethods{
-			{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
-			{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Config},
+			shv::chainpack::methods::DIR,
+				shv::chainpack::methods::LS,
 		}
 	{ }
 private:
@@ -219,8 +219,8 @@ private:
 };
 
 const std::vector<cp::MetaMethod> MountsNode::m_metaMethods = {
-	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
-	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Read},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 	{METH_CLIENT_IDS, cp::MetaMethod::Flag::IsGetter, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Config},
 };
 

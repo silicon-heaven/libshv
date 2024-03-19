@@ -38,8 +38,8 @@ const string M_ACCESS_GRANT_FOR_METHOD_CALL = "accessGrantForMethodCall";
 CurrentClientShvNode::CurrentClientShvNode(shv::iotqt::node::ShvNode *parent)
 	: Super(NodeId, &m_metaMethods, parent)
 	, m_metaMethods {
-		{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
-		{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+		shv::chainpack::methods::DIR,
+		shv::chainpack::methods::LS,
 		{M_CLIENT_ID, cp::MetaMethod::Flag::None, "void", "ret", cp::MetaMethod::AccessLevel::Read},
 		{M_MOUNT_POINT, cp::MetaMethod::Flag::None, "void", "ret", cp::MetaMethod::AccessLevel::Read},
 		{M_USER_ROLES, cp::MetaMethod::Flag::None, "void", "ret", cp::MetaMethod::AccessLevel::Read},

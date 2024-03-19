@@ -94,6 +94,11 @@ private:
 	RpcValue::Map m_extra;
 };
 
+namespace methods {
+const auto LS = MetaMethod{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "LsParam", "LsResult", shv::chainpack::MetaMethod::AccessLevel::Browse};
+const auto DIR = MetaMethod{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "DirParam", "DirResult", shv::chainpack::MetaMethod::AccessLevel::Browse};
+}
+
 constexpr bool operator<(const MetaMethod::AccessLevel a, const MetaMethod::AccessLevel b)
 {
 	return static_cast<int>(a) < static_cast<int>(b);

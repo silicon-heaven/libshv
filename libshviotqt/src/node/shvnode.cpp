@@ -435,8 +435,8 @@ chainpack::RpcValue ShvNode::ls(const StringViewList &shv_path, const chainpack:
 }
 
 static const std::vector<MetaMethod> meta_methods {
-	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
-	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 };
 
 size_t ShvNode::methodCount(const StringViewList &shv_path)
@@ -583,13 +583,13 @@ const shv::chainpack::MetaMethod *MethodsTableNode::metaMethod(const shv::iotqt:
 // RpcValueMapNode
 //===========================================================
 const std::vector<MetaMethod> meta_methods_value_map_root_node {
-	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
-	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 };
 
 const std::vector<MetaMethod> meta_methods_value_map_node {
-	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
-	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 	{Rpc::METH_GET, MetaMethod::Flag::IsGetter, "", "RpcValue", MetaMethod::AccessLevel::Read},
 	{Rpc::METH_SET, MetaMethod::Flag::IsSetter, "RpcValue", "Bool", MetaMethod::AccessLevel::Config},
 };
@@ -818,16 +818,16 @@ const auto METH_ORIG_VALUE = "origValue";
 const auto METH_RESET_TO_ORIG_VALUE = "resetValue";
 
 const std::vector<MetaMethod> meta_methods_root_node {
-	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
-	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 	{shv::iotqt::node::RpcValueMapNode::M_LOAD, MetaMethod::Flag::None, "", "RpcValue", MetaMethod::AccessLevel::Service},
 	{shv::iotqt::node::RpcValueMapNode::M_SAVE, MetaMethod::Flag::None, "RpcValue", "Bool", MetaMethod::AccessLevel::Admin},
 	{shv::iotqt::node::RpcValueMapNode::M_COMMIT, MetaMethod::Flag::None, "", "Bool", MetaMethod::AccessLevel::Admin},
 };
 
 const std::vector<MetaMethod> meta_methods_node {
-	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
-	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 	{Rpc::METH_GET, MetaMethod::Flag::IsGetter, "", "RpcValue", MetaMethod::AccessLevel::Config},
 	{Rpc::METH_SET, MetaMethod::Flag::IsSetter, "RpcValue", "bool", MetaMethod::AccessLevel::Devel},
 	{METH_ORIG_VALUE, MetaMethod::Flag::IsGetter, "", "RpcValue", MetaMethod::AccessLevel::Read},
@@ -988,8 +988,8 @@ void RpcValueConfigNode::saveValues()
 // PropertyShvNode
 //===========================================================
 static const std::vector<MetaMethod> meta_methods_pn {
-	{Rpc::METH_DIR, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
-	{Rpc::METH_LS, MetaMethod::Flag::None, "param", "ret", MetaMethod::AccessLevel::Browse},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 	{Rpc::METH_GET, MetaMethod::Flag::IsGetter, "", "RpcValue", MetaMethod::AccessLevel::Read, {{Rpc::SIG_VAL_CHANGED}}},
 	{Rpc::METH_SET, MetaMethod::Flag::IsSetter, "RpcValue", "Bool", MetaMethod::AccessLevel::Write},
 };

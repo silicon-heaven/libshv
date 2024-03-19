@@ -21,8 +21,8 @@ static const auto M_IDLE_TIME_MAX = "idleTimeMax";
 // MasterBrokerConnectionNode
 //=================================================================================
 const static std::vector<cp::MetaMethod> meta_methods {
-	{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
-	{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Browse},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 	{M_USER_NAME, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::MetaMethod::AccessLevel::Service},
 	{M_USER_ROLES, cp::MetaMethod::Flag::None, "void", "ret", cp::MetaMethod::AccessLevel::Service},
 	{M_USER_PROFILE, cp::MetaMethod::Flag::None, "void", "ret", cp::MetaMethod::AccessLevel::Service},
