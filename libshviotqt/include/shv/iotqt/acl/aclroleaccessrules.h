@@ -5,7 +5,7 @@
 #include <shv/chainpack/accessgrant.h>
 #include <shv/core/utils/shvpath.h>
 
-#include <map>
+#include <variant>
 
 namespace shv {
 namespace core { namespace utils { class ShvUrl; } }
@@ -18,13 +18,13 @@ public:
 	std::string service;
 	std::string pathPattern;
 	std::string method;
-	shv::chainpack::AccessGrant grant;
+	std::variant<std::string, chainpack::MetaMethod::AccessLevel> grant;
 
 	static constexpr auto ALL_SERVICES = "*";
 
 	AclAccessRule();
 	AclAccessRule(const std::string &path_pattern_, const std::string &method_ = std::string());
-	AclAccessRule(const std::string &path_pattern_, const std::string &method_, const shv::chainpack::AccessGrant &grant_);
+	AclAccessRule(const std::string &path_pattern_, const std::string &method_, const std::string &grant_);
 
 	chainpack::RpcValue toRpcValue() const;
 	static AclAccessRule fromRpcValue(const chainpack::RpcValue &rpcval);

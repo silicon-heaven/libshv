@@ -45,6 +45,7 @@ public:
 								AccessGrant = 14,
 								TunnelCtl = 15,
 								UserId = 16,
+								AccessLevel = 17,
 								Source = 19,
 								MAX};};
 		struct Key { enum Enum {Params = 1, Result, Error, MAX};};

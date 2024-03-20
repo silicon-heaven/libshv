@@ -3,6 +3,8 @@
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/chainpack/rpc.h>
 
+#include <optional>
+
 namespace shv {
 namespace chainpack {
 
@@ -19,19 +21,17 @@ public:
 			LargeResultHint = 1 << 3,
 		};
 	};
-	struct AccessLevel {
-		enum {
-			None = 0,
-			Browse = 1,
-			Read = 10,
-			Write = 20,
-			Command = 30,
-			Config = 40,
-			Service = 50,
-			SuperService = 55,
-			Devel = 60,
-			Admin = 70,
-		};
+	enum class AccessLevel {
+		None = 0,
+		Browse = 1,
+		Read = 8,
+		Write = 16,
+		Command = 24,
+		Config = 32,
+		Service = 40,
+		SuperService = 48,
+		Devel = 56,
+		Admin = 63,
 	};
 
 	static constexpr auto KEY_NAME = "name";
@@ -42,11 +42,24 @@ public:
 	static constexpr auto KEY_LABEL = "label";
 	static constexpr auto KEY_TAGS = "tags";
 public:
+	struct SHVCHAINPACK_DECL_EXPORT Signal {
+		Signal(std::string name, std::string param_type);
+		Signal(std::string name);
+		std::string name;
+		std::string param_type;
+	};
+
 	MetaMethod();
-	MetaMethod(std::string name, Signature ms, unsigned flags = 0
-				, const RpcValue &access_grant = Rpc::ROLE_BROWSE
-				, const std::string &description = {}
-				, const RpcValue::Map &tags = {});
+	MetaMethod(
+		std::string name,
+		unsigned flags = 0,
+		std::optional<std::string> param = {},
+		std::optional<std::string> result = {},
+		AccessLevel access_level = AccessLevel::Browse,
+		const std::vector<Signal>& signal_definitions = {},
+		const std::string& description = {},
+		const std::string& label = {},
+		const RpcValue::Map& extra = {});
 
 
 	bool isValid() const;
@@ -54,10 +67,9 @@ public:
 	const std::string& label() const;
 	MetaMethod& setLabel(const std::string &label);
 	const std::string& description() const;
-	Signature signature() const;
 	unsigned flags() const;
-	const RpcValue& accessGrant() const;
-	const RpcValue::Map& tags() const;
+	AccessLevel accessLevel() const;
+	const RpcValue::Map& extra() const;
 	RpcValue tag(const std::string &key, const RpcValue& default_value = {}) const;
 	MetaMethod& setTag(const std::string &key, const RpcValue& value);
 
@@ -69,16 +81,51 @@ public:
 	static Signature signatureFromString(const std::string &sigstr);
 	static const char* signatureToString(Signature sig);
 	static std::string flagsToString(unsigned flags);
-	static const char* accessLevelToString(int access_level);
+	static const char* accessLevelToString(AccessLevel access_level);
 private:
 	std::string m_name;
-	Signature m_signature = Signature::VoidVoid;
 	unsigned m_flags = 0;
-	RpcValue m_accessGrant;
+	std::string m_param;
+	std::string m_result;
+	AccessLevel m_accessLevel;
+	RpcValue::Map m_signals;
 	std::string m_label;
 	std::string m_description;
-	RpcValue::Map m_tags;
+	RpcValue::Map m_extra;
 };
+
+struct GrantToString {
+	std::string operator()(const chainpack::MetaMethod::AccessLevel level) const {
+		return std::to_string(static_cast<int>(level));
+	}
+	std::string operator()(const std::string& role) const {
+		return role;
+	}
+};
+
+struct GrantToRpcValue {
+	chainpack::RpcValue operator()(const chainpack::MetaMethod::AccessLevel level) const {
+		return static_cast<int>(level);
+	}
+	chainpack::RpcValue operator()(const std::string& role) const {
+		return role;
+	}
+};
+
+namespace methods {
+const auto LS = MetaMethod{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "LsParam", "LsResult", shv::chainpack::MetaMethod::AccessLevel::Browse};
+const auto DIR = MetaMethod{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "DirParam", "DirResult", shv::chainpack::MetaMethod::AccessLevel::Browse};
+}
+
+constexpr bool operator<(const MetaMethod::AccessLevel a, const MetaMethod::AccessLevel b)
+{
+	return static_cast<int>(a) < static_cast<int>(b);
+}
+
+constexpr bool operator>(const MetaMethod::AccessLevel a, const MetaMethod::AccessLevel b)
+{
+	return static_cast<int>(a) > static_cast<int>(b);
+}
 
 } // namespace chainpack
 } // namespace shv

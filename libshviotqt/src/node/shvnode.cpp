@@ -268,11 +268,10 @@ chainpack::RpcValue ShvNode::processRpcRequest(const chainpack::RpcRequest &rq)
 									  std::string(__FILE__) + ":" + std::to_string(__LINE__));
 	}
 	const chainpack::RpcValue &rq_grant = rq.accessGrant();
-	const RpcValue &mm_grant = mm->accessGrant();
-	int rq_access_level = grantToAccessLevel(AccessGrant::fromRpcValue(rq_grant));
-	int mm_access_level = grantToAccessLevel(AccessGrant::fromRpcValue(mm_grant));
+	auto rq_access_level = grantToAccessLevel(rq_grant);
+	auto mm_access_level = mm->accessLevel();
 	if(mm_access_level > rq_access_level)
-		SHV_EXCEPTION(std::string("Call method: '") + method + "' on path '" + shvPath() + '/' + rq.shvPath().toString() + "' permission denied, grant: " + rq_grant.toCpon() + " required: " + mm_grant.toCpon());
+		SHV_EXCEPTION(std::string("Call method: '") + method + "' on path '" + shvPath() + '/' + rq.shvPath().toString() + "' permission denied, grant: " + rq_grant.toCpon() + " required: " + GrantToString{}(mm_access_level));
 
 	if(mm_access_level > MetaMethod::AccessLevel::Write) {
 
@@ -343,11 +342,12 @@ chainpack::RpcValue ShvNode::hasChildren(const StringViewList &shv_path)
 	return !childNames(shv_path).empty();
 }
 
-int ShvNode::basicGrantToAccessLevel(const shv::chainpack::AccessGrant &acces_grant)
+MetaMethod::AccessLevel ShvNode::basicGrantToAccessLevel(const RpcValue &access_grant)
 {
-	if(acces_grant.isRole()) {
+	if(access_grant.isString()) {
 		auto acc_level = shv::chainpack::MetaMethod::AccessLevel::None;
-		for(const auto &role : acces_grant.roles()) {
+		auto roles = shv::core::utils::split(access_grant.asString(), ',');
+		for(const auto &role : roles) {
 			if(role == Rpc::ROLE_BROWSE) acc_level = std::max(acc_level, MetaMethod::AccessLevel::Browse);
 			else if(role == Rpc::ROLE_READ) acc_level = std::max(acc_level, MetaMethod::AccessLevel::Read);
 			else if(role == Rpc::ROLE_WRITE) acc_level = std::max(acc_level, MetaMethod::AccessLevel::Write);
@@ -360,13 +360,13 @@ int ShvNode::basicGrantToAccessLevel(const shv::chainpack::AccessGrant &acces_gr
 		}
 		return acc_level;
 	}
-	if(acces_grant.isAccessLevel()) {
-		return acces_grant.accessLevel;
+	if(access_grant.isInt()) {
+		return static_cast<MetaMethod::AccessLevel>(access_grant.toInt());
 	}
 	return shv::chainpack::MetaMethod::AccessLevel::None;
 }
 
-int ShvNode::grantToAccessLevel(const shv::chainpack::AccessGrant &acces_grant) const
+MetaMethod::AccessLevel ShvNode::grantToAccessLevel(const RpcValue &acces_grant) const
 {
 	return basicGrantToAccessLevel(acces_grant);
 }
@@ -434,8 +434,8 @@ chainpack::RpcValue ShvNode::ls(const StringViewList &shv_path, const chainpack:
 }
 
 static const std::vector<MetaMethod> meta_methods {
-	{Rpc::METH_DIR, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_BROWSE},
-	{Rpc::METH_LS, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_BROWSE},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 };
 
 size_t ShvNode::methodCount(const StringViewList &shv_path)
@@ -582,15 +582,15 @@ const shv::chainpack::MetaMethod *MethodsTableNode::metaMethod(const shv::iotqt:
 // RpcValueMapNode
 //===========================================================
 const std::vector<MetaMethod> meta_methods_value_map_root_node {
-	{Rpc::METH_DIR, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_CONFIG},
-	{Rpc::METH_LS, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_CONFIG},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
 };
 
 const std::vector<MetaMethod> meta_methods_value_map_node {
-	{Rpc::METH_DIR, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_READ},
-	{Rpc::METH_LS, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_READ},
-	{Rpc::METH_GET, MetaMethod::Signature::RetVoid, MetaMethod::Flag::IsGetter, Rpc::ROLE_READ},
-	{Rpc::METH_SET, MetaMethod::Signature::RetVoid, MetaMethod::Flag::IsSetter, Rpc::ROLE_CONFIG},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
+	{Rpc::METH_GET, MetaMethod::Flag::IsGetter, "", "RpcValue", MetaMethod::AccessLevel::Read},
+	{Rpc::METH_SET, MetaMethod::Flag::IsSetter, "RpcValue", "Bool", MetaMethod::AccessLevel::Config},
 };
 
 RpcValueMapNode::RpcValueMapNode(const std::string &node_id, ShvNode *parent)
@@ -817,20 +817,20 @@ const auto METH_ORIG_VALUE = "origValue";
 const auto METH_RESET_TO_ORIG_VALUE = "resetValue";
 
 const std::vector<MetaMethod> meta_methods_root_node {
-	{Rpc::METH_DIR, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_CONFIG},
-	{Rpc::METH_LS, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_CONFIG},
-	{shv::iotqt::node::RpcValueMapNode::M_LOAD, MetaMethod::Signature::RetVoid, 0, Rpc::ROLE_SERVICE},
-	{shv::iotqt::node::RpcValueMapNode::M_SAVE, MetaMethod::Signature::RetVoid, 0, Rpc::ROLE_ADMIN},
-	{shv::iotqt::node::RpcValueMapNode::M_COMMIT, MetaMethod::Signature::RetVoid, 0, Rpc::ROLE_ADMIN},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
+	{shv::iotqt::node::RpcValueMapNode::M_LOAD, MetaMethod::Flag::None, "", "RpcValue", MetaMethod::AccessLevel::Service},
+	{shv::iotqt::node::RpcValueMapNode::M_SAVE, MetaMethod::Flag::None, "RpcValue", "Bool", MetaMethod::AccessLevel::Admin},
+	{shv::iotqt::node::RpcValueMapNode::M_COMMIT, MetaMethod::Flag::None, "", "Bool", MetaMethod::AccessLevel::Admin},
 };
 
 const std::vector<MetaMethod> meta_methods_node {
-	{Rpc::METH_DIR, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_CONFIG},
-	{Rpc::METH_LS, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_CONFIG},
-	{Rpc::METH_GET, MetaMethod::Signature::RetVoid, MetaMethod::Flag::IsGetter, Rpc::ROLE_CONFIG},
-	{Rpc::METH_SET, MetaMethod::Signature::RetVoid, MetaMethod::Flag::IsSetter, Rpc::ROLE_DEVEL},
-	{METH_ORIG_VALUE, MetaMethod::Signature::RetVoid, MetaMethod::Flag::IsGetter, Rpc::ROLE_READ},
-	{METH_RESET_TO_ORIG_VALUE, MetaMethod::Signature::RetVoid, MetaMethod::Flag::None, Rpc::ROLE_WRITE},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
+	{Rpc::METH_GET, MetaMethod::Flag::IsGetter, "", "RpcValue", MetaMethod::AccessLevel::Config},
+	{Rpc::METH_SET, MetaMethod::Flag::IsSetter, "RpcValue", "bool", MetaMethod::AccessLevel::Devel},
+	{METH_ORIG_VALUE, MetaMethod::Flag::IsGetter, "", "RpcValue", MetaMethod::AccessLevel::Read},
+	{METH_RESET_TO_ORIG_VALUE, MetaMethod::Flag::None, "RpcValue", "Bool", MetaMethod::AccessLevel::Write},
 };
 }
 
@@ -987,11 +987,10 @@ void RpcValueConfigNode::saveValues()
 // PropertyShvNode
 //===========================================================
 static const std::vector<MetaMethod> meta_methods_pn {
-	{Rpc::METH_DIR, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_BROWSE},
-	{Rpc::METH_LS, MetaMethod::Signature::RetParam, 0, Rpc::ROLE_BROWSE},
-	{Rpc::METH_GET, MetaMethod::Signature::RetVoid, MetaMethod::Flag::IsGetter, Rpc::ROLE_READ},
-	{Rpc::METH_SET, MetaMethod::Signature::RetParam, MetaMethod::Flag::IsSetter, Rpc::ROLE_WRITE},
-	{Rpc::SIG_VAL_CHANGED, MetaMethod::Signature::VoidParam, MetaMethod::Flag::IsSignal, Rpc::ROLE_READ},
+	shv::chainpack::methods::DIR,
+	shv::chainpack::methods::LS,
+	{Rpc::METH_GET, MetaMethod::Flag::IsGetter, "", "RpcValue", MetaMethod::AccessLevel::Read, {{Rpc::SIG_VAL_CHANGED}}},
+	{Rpc::METH_SET, MetaMethod::Flag::IsSetter, "RpcValue", "Bool", MetaMethod::AccessLevel::Write},
 };
 
 enum {

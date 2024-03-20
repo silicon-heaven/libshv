@@ -1291,10 +1291,10 @@ void ShvTypeInfo::fromNodesTree_helper(const RpcValue::Map &node_types,
 		if(method_name == Rpc::METH_LS || method_name == Rpc::METH_DIR)
 			continue;
 		property_methods.push_back(mm.toRpcValue());
-		if(!mm.tags().empty()) {
+		if(!mm.extra().empty()) {
 			string key = shv::core::utils::joinPath(property_path, "method"s);
 			key = shv::core::utils::joinPath(key, mm.name());
-			setExtraTags(key, mm.tags());
+			setExtraTags(key, mm.extra());
 		}
 	}
 	const RpcValue::Map &node_tags = node.metaData().valref(KEY_TAGS).asMap();

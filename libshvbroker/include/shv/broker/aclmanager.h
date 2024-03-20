@@ -40,7 +40,7 @@ public:
 	std::vector<std::string> accessRoles();
 	shv::iotqt::acl::AclRoleAccessRules accessRoleRules(const std::string &role_name);
 	void setAccessRoleRules(const std::string &role_name, const shv::iotqt::acl::AclRoleAccessRules &v);
-	shv::chainpack::AccessGrant accessGrantForShvPath(const std::string& user_name, const shv::core::utils::ShvUrl &shv_url, const std::string &method, bool is_request_from_master_broker, bool is_service_provider_mount_point_relative_call, const shv::chainpack::RpcValue &rq_grant);
+	chainpack::RpcValue accessGrantForShvPath(const std::string& user_name, const shv::core::utils::ShvUrl &shv_url, const std::string &method, bool is_request_from_master_broker, bool is_service_provider_mount_point_relative_call, const shv::chainpack::RpcValue &rq_grant);
 
 	std::string mountPointForDevice(const shv::chainpack::RpcValue &device_id);
 
