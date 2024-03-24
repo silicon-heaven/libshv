@@ -61,9 +61,21 @@ public:
 		const std::string& label = {},
 		const RpcValue::Map& extra = {});
 
+	// SHV 2 compatibility constructor
+	MetaMethod(std::string name,
+		Signature signature,
+		unsigned flags,
+		const std::string &access_grant,
+		const std::string& description = {},
+		const RpcValue::Map& extra = {});
+
 
 	bool isValid() const;
 	const std::string& name() const;
+	const std::string& result() const;
+	bool hasResult() const;
+	const std::string& param() const;
+	bool hasParam() const;
 	const std::string& label() const;
 	MetaMethod& setLabel(const std::string &label);
 	const std::string& description() const;
