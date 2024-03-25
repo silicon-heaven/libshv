@@ -6,6 +6,7 @@ namespace shv::chainpack {
 
 namespace {
 constexpr auto KEY_ACCESSGRANT = "accessGrant";
+constexpr auto VOID_TYPE_NAME = "Null";
 
 MetaMethod::AccessLevel accessLevelFromName(const std::string& role) {
 
@@ -31,7 +32,7 @@ MetaMethod::Signal::Signal(std::string _name, std::string _param_type)
 
 MetaMethod::Signal::Signal(std::string _name)
 	: name(_name)
-	, param_type("Null")
+	, param_type(VOID_TYPE_NAME)
 {
 }
 
@@ -50,8 +51,8 @@ MetaMethod::MetaMethod(
 )
 	: m_name(name)
 	, m_flags(flags)
-	, m_param(param.value_or(std::string{}))
-	, m_result(result.value_or(std::string{}))
+	, m_param(param.value_or(VOID_TYPE_NAME))
+	, m_result(result.value_or(VOID_TYPE_NAME))
 	, m_accessLevel(access_grant)
 	, m_label(label)
 	, m_description(description)
@@ -75,9 +76,9 @@ MetaMethod::MetaMethod(std::string name,
 	, m_extra(extra)
 {
 	switch (signature) {
-	case Signature::VoidVoid: m_result = "Null"; m_param = "Null"; break;
-	case Signature::VoidParam: m_result = "Null"; m_param = "RpcValue"; break;
-	case Signature::RetVoid: m_result = "RpcValue"; m_param = "Null"; break;
+	case Signature::VoidVoid: m_result = VOID_TYPE_NAME; m_param = VOID_TYPE_NAME; break;
+	case Signature::VoidParam: m_result = VOID_TYPE_NAME; m_param = "RpcValue"; break;
+	case Signature::RetVoid: m_result = "RpcValue"; m_param = VOID_TYPE_NAME; break;
 	case Signature::RetParam: m_result = "RpcValue"; m_param = "RpcValue"; break;
 	}
 }
@@ -99,7 +100,7 @@ const std::string &MetaMethod::result() const
 
 bool MetaMethod::hasResult() const
 {
-	return !(m_result.empty() || m_result == "Null");
+	return !(m_result.empty() || m_result == VOID_TYPE_NAME);
 }
 
 const std::string &MetaMethod::param() const
@@ -109,7 +110,7 @@ const std::string &MetaMethod::param() const
 
 bool MetaMethod::hasParam() const
 {
-	return !(m_param.empty() || m_param == "Null");
+	return !(m_param.empty() || m_param == VOID_TYPE_NAME);
 }
 
 const std::string& MetaMethod::label() const

@@ -137,14 +137,16 @@ RpcCall::RpcCall(ClientConnection *connection)
 //	connect(this, &RpcCall::maybeResult, this, &QObject::deleteLater, Qt::QueuedConnection);
 }
 
-RpcCall *RpcCall::createSubscriptionRequest(ClientConnection *connection, const QString &shv_path, const QString &method)
+RpcCall *RpcCall::createSubscriptionRequest(ClientConnection *connection, const QString &shv_path, const QString &signal, const QString &source)
 {
 	RpcCall *rpc = create(connection);
 	rpc->setShvPath(Rpc::DIR_BROKER_APP)
 			->setMethod(Rpc::METH_SUBSCRIBE)
 			->setParams(RpcValue::Map {
 							{Rpc::PAR_PATH, shv_path.toStdString()},
-							{Rpc::PAR_METHOD, method.toStdString()},
+							{Rpc::PAR_METHOD, signal.toStdString()}, // SHV API2 compatibility field
+							{Rpc::PAR_SIGNAL, signal.toStdString()},
+							{Rpc::PAR_SOURCE, source.toStdString()},
 						});
 	return rpc;
 }

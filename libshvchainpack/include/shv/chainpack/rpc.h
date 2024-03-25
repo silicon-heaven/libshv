@@ -58,6 +58,7 @@ public:
 	static constexpr auto PAR_PATH = "path";
 	static constexpr auto PAR_METHOD = "method";
 	static constexpr auto PAR_PARAMS = "params";
+	static constexpr auto PAR_SIGNAL = "signal";
 	static constexpr auto PAR_SOURCE = "source";
 
 	static constexpr auto SIG_VAL_CHANGED = "chng";
