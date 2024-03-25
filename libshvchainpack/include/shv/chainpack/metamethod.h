@@ -43,10 +43,9 @@ public:
 	static constexpr auto KEY_TAGS = "tags";
 public:
 	struct SHVCHAINPACK_DECL_EXPORT Signal {
-		Signal(std::string name, std::string param_type);
-		Signal(std::string name);
+		Signal(std::string name, std::optional<std::string> param_type = {});
 		std::string name;
-		std::string param_type;
+		std::optional<std::string> param_type;
 	};
 
 	MetaMethod();

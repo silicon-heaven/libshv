@@ -24,15 +24,9 @@ MetaMethod::AccessLevel accessLevelFromName(const std::string& role) {
 }
 }
 
-MetaMethod::Signal::Signal(std::string _name, std::string _param_type)
+MetaMethod::Signal::Signal(std::string _name, std::optional<std::string> _param_type)
 	: name(_name)
 	, param_type(_param_type)
-{
-}
-
-MetaMethod::Signal::Signal(std::string _name)
-	: name(_name)
-	, param_type(VOID_TYPE_NAME)
 {
 }
 
@@ -59,7 +53,7 @@ MetaMethod::MetaMethod(
 	, m_extra(extra)
 {
 	for (const auto& [signal_name, signal_ret] : signal_definitions) {
-		m_signals.emplace(signal_name, signal_ret);
+		m_signals.emplace(signal_name, signal_ret.has_value()? RpcValue(signal_ret.value()): RpcValue(nullptr));
 	}
 }
 
