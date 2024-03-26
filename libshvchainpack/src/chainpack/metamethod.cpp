@@ -7,21 +7,6 @@ namespace shv::chainpack {
 namespace {
 constexpr auto KEY_ACCESSGRANT = "accessGrant";
 constexpr auto VOID_TYPE_NAME = "Null";
-
-MetaMethod::AccessLevel accessLevelFromName(const std::string& role) {
-
-	if(role == Rpc::ROLE_BROWSE) return MetaMethod::AccessLevel::Browse;
-	if(role == Rpc::ROLE_READ) return MetaMethod::AccessLevel::Read;
-	if(role == Rpc::ROLE_WRITE) return MetaMethod::AccessLevel::Write;
-	if(role == Rpc::ROLE_COMMAND) return MetaMethod::AccessLevel::Command;
-	if(role == Rpc::ROLE_CONFIG) return MetaMethod::AccessLevel::Config;
-	if(role == Rpc::ROLE_SERVICE) return MetaMethod::AccessLevel::Service;
-	if(role == Rpc::ROLE_SUPER_SERVICE) return MetaMethod::AccessLevel::SuperService;
-	if(role == Rpc::ROLE_DEVEL) return MetaMethod::AccessLevel::Devel;
-	if(role == Rpc::ROLE_ADMIN) return MetaMethod::AccessLevel::Admin;
-
-	return MetaMethod::AccessLevel::None;
-}
 }
 
 MetaMethod::Signal::Signal(std::string _name, std::optional<std::string> _param_type)
@@ -32,12 +17,11 @@ MetaMethod::Signal::Signal(std::string _name, std::optional<std::string> _param_
 
 MetaMethod::MetaMethod() = default;
 
-MetaMethod::MetaMethod(
-	std::string name,
+MetaMethod::MetaMethod(std::string name,
 	unsigned flags,
 	std::optional<std::string> param,
 	std::optional<std::string> result,
-	AccessLevel access_grant,
+	AccessLevel access_level,
 	const std::vector<Signal>& signal_definitions,
 	const std::string& description,
 	const std::string& label,
@@ -47,7 +31,7 @@ MetaMethod::MetaMethod(
 	, m_flags(flags)
 	, m_param(param.value_or(VOID_TYPE_NAME))
 	, m_result(result.value_or(VOID_TYPE_NAME))
-	, m_accessLevel(access_grant)
+	, m_accessLevelInt(static_cast<int>(access_level))
 	, m_label(label)
 	, m_description(description)
 	, m_extra(extra)
@@ -65,7 +49,7 @@ MetaMethod::MetaMethod(std::string name,
 	const RpcValue::Map &extra)
 	: m_name(name)
 	, m_flags(flags)
-	, m_accessLevel(accessLevelFromName(access_grant))
+	, m_accessLevelInt(static_cast<int>(accessLevelFromAccessString(access_grant).value_or(AccessLevel::Browse)))
 	, m_description(description)
 	, m_extra(extra)
 {
@@ -87,22 +71,22 @@ const std::string& MetaMethod::name() const
 	return m_name;
 }
 
-const std::string &MetaMethod::result() const
+const std::string &MetaMethod::resultType() const
 {
 	return m_result;
 }
 
-bool MetaMethod::hasResult() const
+bool MetaMethod::hasResultType() const
 {
 	return !(m_result.empty() || m_result == VOID_TYPE_NAME);
 }
 
-const std::string &MetaMethod::param() const
+const std::string &MetaMethod::paramType() const
 {
 	return m_param;
 }
 
-bool MetaMethod::hasParam() const
+bool MetaMethod::hasParamType() const
 {
 	return !(m_param.empty() || m_param == VOID_TYPE_NAME);
 }
@@ -128,9 +112,19 @@ unsigned MetaMethod::flags() const
 	return m_flags;
 }
 
-MetaMethod::AccessLevel MetaMethod::accessLevel() const
+int MetaMethod::accessLevelAsInt() const
 {
-	return m_accessLevel;
+	return m_accessLevelInt;
+}
+
+std::optional<MetaMethod::AccessLevel> MetaMethod::accessLevel() const
+{
+	return accessLevelFromInt(accessLevelAsInt());
+}
+
+void MetaMethod::setAccessLevel(std::optional<AccessLevel> level)
+{
+	m_accessLevelInt = static_cast<int>(level.value_or(AccessLevel::None));
 }
 
 const RpcValue::Map& MetaMethod::extra() const
@@ -154,7 +148,7 @@ enum class Ikey {
 	Flags = 2,
 	ParamType = 3,
 	ResultType = 4,
-	Access = 5,
+	AccessLevel = 5,
 	Signals = 6,
 	Extra = 7,
 };
@@ -165,7 +159,7 @@ RpcValue MetaMethod::toRpcValue() const
 	ret[static_cast<int>(Ikey::Name)] = m_name;
 	ret[static_cast<int>(Ikey::ParamType)] = m_param;
 	ret[static_cast<int>(Ikey::ResultType)] = m_result;
-	ret[static_cast<int>(Ikey::Access)] = static_cast<RpcValue::Int>(m_accessLevel);
+	ret[static_cast<int>(Ikey::AccessLevel)] = static_cast<RpcValue::Int>(m_accessLevelInt);
 	ret[static_cast<int>(Ikey::Signals)] = m_signals;
 	RpcValue::Map extra{
 		{KEY_DESCRIPTION, m_description},
@@ -210,7 +204,7 @@ MetaMethod MetaMethod::fromRpcValue(const RpcValue &rv)
 		const auto &lst = rv.asList();
 		ret.m_name = lst.value(0).asString();
 		ret.m_flags = lst.value(2).toUInt();
-		ret.m_accessLevel = accessLevelFromName(lst.value(3).asString());
+		ret.setAccessLevel(accessLevelFromAccessString(lst.value(3).asString()));
 		ret.m_description = lst.value(4).asString();
 		const auto tags = lst.value(5);
 		ret.applyAttributesMap(tags.asMap());
@@ -232,9 +226,11 @@ void MetaMethod::applyAttributesMap(const RpcValue::Map &attr_map)
 	if(auto rv = map.take(KEY_FLAGS); rv.isValid())
 		m_flags = rv.toInt();
 	if(auto rv = map.take(KEY_ACCESS); rv.isString())
-		m_accessLevel = accessLevelFromName(rv.asString());
+		setAccessLevel(accessLevelFromAccessString(rv.asString()));
 	if(auto rv = map.take(KEY_ACCESSGRANT); rv.isString())
-		m_accessLevel = accessLevelFromName(rv.asString());
+		setAccessLevel(accessLevelFromAccessString(rv.asString()));
+	if(auto rv = map.take(KEY_ACCESS_LEVEL); rv.isInt())
+		setAccessLevel(accessLevelFromInt(rv.toInt()));
 	if(auto rv = map.take(KEY_LABEL); rv.isString())
 		m_label = rv.asString();
 	if(auto rv = map.take(KEY_DESCRIPTION); rv.isString())
@@ -254,12 +250,12 @@ void MetaMethod::applyAttributesIMap(const RpcValue::IMap &attr_map)
 	if(auto rv = attr_map.value(static_cast<int>(Ikey::ResultType)); rv.isString())
 		m_result = rv.asString();
 	{
-		auto rv = attr_map.value(static_cast<int>(Ikey::Access));
+		auto rv = attr_map.value(static_cast<int>(Ikey::AccessLevel));
 		if (rv.isString()) {
-			m_accessLevel = accessLevelFromName(rv.asString());
+			setAccessLevel(accessLevelFromAccessString(rv.asString()));
 		}
 		if (rv.isInt()) {
-			m_accessLevel = static_cast<AccessLevel>(rv.toInt());
+			setAccessLevel(accessLevelFromInt(rv.toInt()));
 		}
 	}
 	if(auto rv = attr_map.value(static_cast<int>(Ikey::Signals)); rv.isMap())
@@ -312,7 +308,7 @@ std::string MetaMethod::flagsToString(unsigned flags)
 	return ret;
 }
 
-const char *MetaMethod::accessLevelToString(MetaMethod::AccessLevel access_level)
+const char *MetaMethod::accessLevelToAccessString(MetaMethod::AccessLevel access_level)
 {
 	switch(access_level) {
 	case AccessLevel::None: return "";
@@ -328,6 +324,49 @@ const char *MetaMethod::accessLevelToString(MetaMethod::AccessLevel access_level
 	}
 	return "";
 }
+
+std::optional<MetaMethod::AccessLevel> MetaMethod::accessLevelFromAccessString(std::string_view s)
+{
+	if(s == Rpc::ROLE_BROWSE) return MetaMethod::AccessLevel::Browse;
+	if(s == Rpc::ROLE_READ) return MetaMethod::AccessLevel::Read;
+	if(s == Rpc::ROLE_WRITE) return MetaMethod::AccessLevel::Write;
+	if(s == Rpc::ROLE_COMMAND) return MetaMethod::AccessLevel::Command;
+	if(s == Rpc::ROLE_CONFIG) return MetaMethod::AccessLevel::Config;
+	if(s == Rpc::ROLE_SERVICE) return MetaMethod::AccessLevel::Service;
+	if(s == Rpc::ROLE_SUPER_SERVICE) return MetaMethod::AccessLevel::SuperService;
+	if(s == Rpc::ROLE_DEVEL) return MetaMethod::AccessLevel::Devel;
+	if(s == Rpc::ROLE_ADMIN) return MetaMethod::AccessLevel::Admin;
+
+	return {};
+}
+
+std::optional<MetaMethod::AccessLevel> MetaMethod::accessLevelFromInt(int i)
+{
+	switch(static_cast<AccessLevel>(i)) {
+	case AccessLevel::None: return AccessLevel::None;
+	case AccessLevel::Browse: return AccessLevel::Browse;
+	case AccessLevel::Read: return AccessLevel::Read;
+	case AccessLevel::Write: return AccessLevel::Write;
+	case AccessLevel::Command: return AccessLevel::Command;
+	case AccessLevel::Config: return AccessLevel::Config;
+	case AccessLevel::Service: return AccessLevel::Service;
+	case AccessLevel::SuperService: return AccessLevel::SuperService;
+	case AccessLevel::Devel: return AccessLevel::Devel;
+	case AccessLevel::Admin: return AccessLevel::Admin;
+	}
+	return {};
+}
+
+//MetaMethod::AccessLevel MetaMethod::findAccessLevel(const std::string &access)
+//{
+//	for (const auto s : std::views::split(std::string_view(access), ',')) {
+//		std::string_view sv(s.begin(), s.size());
+//		if (auto level = MetaMethod::accessLevelFromAccessString(sv); level.has_value()) {
+//			return level.value();
+//		}
+//	}
+//	return AccessLevel::None;
+//}
 
 
 } // namespace shv
