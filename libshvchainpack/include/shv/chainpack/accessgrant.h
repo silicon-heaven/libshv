@@ -55,5 +55,23 @@ public:
 	chainpack::RpcValue toRpcValueMap() const;
 	static UserLogin fromRpcValue(const RpcValue &val);
 };
+
+struct SHVCHAINPACK_DECL_EXPORT AccessGrant
+{
+	using AccessLevel = MetaMethod::AccessLevel;
+
+	int accessLevelInt = 0;
+	std::string access;
+
+	AccessGrant() = default;
+	AccessGrant(AccessLevel level);
+	AccessGrant(int level, const std::string &access_);
+
+	std::optional<AccessLevel> accessLevel() const;
+	static AccessGrant fromShv2Access(std::string_view shv2_access, int access_level = 0);
+	std::string toShv2Access() const;
+	std::string toPrettyString() const;
+};
+
 } // namespace chainpack
 } // namespace shv

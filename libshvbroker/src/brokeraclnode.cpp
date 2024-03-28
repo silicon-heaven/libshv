@@ -434,7 +434,6 @@ std::string UsersAclNode::saveConfigFile()
 //========================================================
 
 static const std::string M_GET_GRANT = "grant";
-static const std::string M_GET_GRANT_TYPE = "grantType";
 static const std::string M_GET_PATH_PATTERN = "pathPattern";
 static const std::string M_GET_METHOD = "method";
 
@@ -452,7 +451,6 @@ static const std::vector<cp::MetaMethod> meta_methods_role_access {
 	{M_SET_METHOD, cp::MetaMethod::Flag::IsSetter, "param", "ret", cp::MetaMethod::AccessLevel::Config},
 	{M_GET_GRANT, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::MetaMethod::AccessLevel::Read},
 	{M_SET_GRANT, cp::MetaMethod::Flag::IsSetter, "param", "ret", cp::MetaMethod::AccessLevel::Config},
-	{M_GET_GRANT_TYPE, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::MetaMethod::AccessLevel::Read},
 };
 
 AccessAclNode::AccessAclNode(shv::iotqt::node::ShvNode *parent)
@@ -532,24 +530,15 @@ chainpack::RpcValue AccessAclNode::callMethod(const iotqt::node::ShvNode::String
 		auto &rule = role_rules[i];
 
 		if(method == M_GET_PATH_PATTERN)
-			return rule.pathPattern;
+                    return rule.path;
 		if(method == M_GET_METHOD)
 			return rule.method;
 		if(method == M_GET_GRANT)
-			return std::visit(shv::chainpack::GrantToRpcValue{}, rule.grant);
-		if(method == M_GET_GRANT_TYPE) {
-			if (std::holds_alternative<std::string>(rule.grant)) {
-				return "Role";
-			}
-			if (std::holds_alternative<chainpack::MetaMethod::AccessLevel>(rule.grant)) {
-				return "AccessLevel";
-			}
-			return "<unknown";
-		}
+			return rule.access;
 
 		using namespace shv::core;
 		if(method == M_SET_PATH_PATTERN) {
-			rule.pathPattern = params.toString();
+			rule.path = params.toString();
 			return callMethod(StringViewList{}, M_SET_VALUE, cp::RpcValue::List{rule_name, rule.toRpcValue()}, user_id);
 		}
 		if(method == M_SET_METHOD) {
@@ -557,11 +546,7 @@ chainpack::RpcValue AccessAclNode::callMethod(const iotqt::node::ShvNode::String
 			return callMethod(StringViewList{}, M_SET_VALUE, cp::RpcValue::List{rule_name, rule.toRpcValue()}, user_id);
 		}
 		if(method == M_SET_GRANT) {
-			if (params.isString()) {
-				rule.grant = params.asString();
-			} else if (params.isString()) {
-				rule.grant = static_cast<chainpack::MetaMethod::AccessLevel>(params.toInt());
-			}
+			rule.access = params.asString();
 			return callMethod(StringViewList{}, M_SET_VALUE, cp::RpcValue::List{rule_name, rule.toRpcValue()}, user_id);
 		}
 	}
@@ -587,7 +572,7 @@ std::string AccessAclNode::ruleKey(unsigned rule_ix, unsigned rules_cnt, const a
 		rules_cnt /= 10;
 	}
 	std::string ret = QStringLiteral("[%1] ").arg(rule_ix, width, 10, QChar('0')).toStdString();
-	ret += rule.pathPattern;
+	ret += rule.path;
 	if(!rule.method.empty())
 		ret += core::utils::ShvPath::SHV_PATH_METHOD_DELIM + rule.method;
 	return ret;

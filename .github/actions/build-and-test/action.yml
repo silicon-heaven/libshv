@@ -5,6 +5,9 @@ runs:
   using: "composite"
   steps:
     - name: Build
+      env:
+        CC: gcc-12
+        CXX: g++-12
       run: cmake --build '${{github.workspace}}/build' --parallel "$(nproc)"
       shell: bash
 

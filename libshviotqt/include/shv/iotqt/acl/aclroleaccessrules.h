@@ -5,8 +5,6 @@
 #include <shv/chainpack/accessgrant.h>
 #include <shv/core/utils/shvpath.h>
 
-#include <variant>
-
 namespace shv {
 namespace core { namespace utils { class ShvUrl; } }
 namespace iotqt {
@@ -15,23 +13,22 @@ namespace acl {
 struct SHVIOTQT_DECL_EXPORT AclAccessRule
 {
 public:
-	std::string service;
-	std::string pathPattern;
+	std::string path;
 	std::string method;
-	std::variant<std::string, chainpack::MetaMethod::AccessLevel> grant;
-
-	static constexpr auto ALL_SERVICES = "*";
+	std::string access;
 
 	AclAccessRule();
-	AclAccessRule(const std::string &path_pattern_, const std::string &method_ = std::string());
-	AclAccessRule(const std::string &path_pattern_, const std::string &method_, const std::string &grant_);
+	AclAccessRule(const std::string &path_, const std::string &signal_, const std::string &access_);
+
+	//void setAccess(const std::string &access_, std::optional<int> access_level);
+	//static std::pair<std::string, std::optional<chainpack::MetaMethod::AccessLevel>> parseAccess(const std::string &access_, std::optional<int> access_level);
 
 	chainpack::RpcValue toRpcValue() const;
 	static AclAccessRule fromRpcValue(const chainpack::RpcValue &rpcval);
 
 	bool isValid() const;
-	bool isMoreSpecificThan(const AclAccessRule &other) const;
-	bool isPathMethodMatch(const shv::core::utils::ShvUrl &shv_url, const std::string &method) const;
+	//bool isMoreSpecificThan(const AclAccessRule &other) const;
+	bool isPathMethodMatch(const shv::core::utils::ShvUrl &shv_url, const std::string &signal_) const;
 };
 
 class SHVIOTQT_DECL_EXPORT AclRoleAccessRules : public std::vector<AclAccessRule>

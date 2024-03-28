@@ -267,15 +267,15 @@ chainpack::RpcValue ShvNode::processRpcRequest(const chainpack::RpcRequest &rq)
 									  "Method: '" + method + "' on path '" + shvPath() + '/' + rq.shvPath().toString() + "' doesn't exist",
 									  std::string(__FILE__) + ":" + std::to_string(__LINE__));
 	}
-	const chainpack::RpcValue &rq_grant = rq.accessGrant();
-	auto rq_access_level = grantToAccessLevel(rq_grant);
-	auto mm_access_level = mm->accessLevel();
+	auto rq_grant = rq.accessGrant();
+	auto rq_access_level = rq_grant.accessLevelInt;
+	auto mm_access_level = mm->accessLevelAsInt();
 	if(mm_access_level > rq_access_level)
-		SHV_EXCEPTION(std::string("Call method: '") + method + "' on path '" + shvPath() + '/' + rq.shvPath().toString() + "' permission denied, grant: " + rq_grant.toCpon() + " required: " + GrantToString{}(mm_access_level));
+		SHV_EXCEPTION(std::string("Call method: '") + method + "' on path '" + shvPath() + '/' + rq.shvPath().toString()
+					  + "' permission denied, grant: " + rq_grant.toPrettyString()
+					  + " required: " + MetaMethod::accessLevelToAccessString(MetaMethod::accessLevelFromInt(mm_access_level).value_or(MetaMethod::AccessLevel::None)));
 
-	if(mm_access_level > MetaMethod::AccessLevel::Write) {
-
-
+	if(mm_access_level > static_cast<int>(MetaMethod::AccessLevel::Write)) {
 		shv::core::utils::ShvJournalEntry e(shv::core::utils::joinPath(shvPath(), rq.shvPath().asString())
 											, method + '(' + rq.params().toCpon() + ')'
 											, shv::chainpack::Rpc::SIG_COMMAND_LOGGED

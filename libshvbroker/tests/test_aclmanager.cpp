@@ -311,8 +311,8 @@ DOCTEST_TEST_CASE("accessGrantForShvPath")
 	}
 
 	auto acg = acl->accessGrantForShvPath(user, shv::core::utils::ShvUrl{shv_path}, method, is_request_from_master_broker, is_service_provider_mount_point_relative_call, {});
-	REQUIRE(acg.isValid() == expected_valid);
+	REQUIRE((acg.accessLevelInt > 0) == expected_valid);
 	if (expected_valid) {
-		REQUIRE(shv::iotqt::node::ShvNode::basicGrantToAccessLevel(acg) == expected_access_level);
+		REQUIRE(acg.accessLevelInt == expected_access_level);
 	}
 }

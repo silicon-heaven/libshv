@@ -127,8 +127,6 @@ void AclManagerSqlite::createAclSqlTables()
 				service character varying,
 				path character varying,
 				method character varying,
-				grantType character varying,
-				accessLevel integer,
 				accessRole character varying,
 				user character varying,
 				password character varying,
@@ -304,19 +302,11 @@ acl::AclRoleAccessRules AclManagerSqlite::aclAccessRoleRules(const std::string &
 	acl::AclRoleAccessRules ret;
 	QSqlQuery q = execSql("SELECT * FROM " + TBL_ACL_ACCESS + " WHERE role='" + QString::fromStdString(role_name) + "' ORDER BY ruleNumber");
 	while(q.next()) {
-		acl::AclAccessRule ag;
-		ag.service = q.value("service").toString().toStdString();
-		ag.pathPattern = q.value("path").toString().toStdString();
-		ag.method = q.value("method").toString().toStdString();
-		std::string grant_type = q.value("grantType").toString().toStdString();
-		if (grant_type == "AccessLevel") {
-			ag.grant = static_cast<cp::MetaMethod::AccessLevel>(q.value("accessLevel").toInt());
-		} else if (grant_type == "Role") {
-			ag.grant = q.value("accessRole").toString().toStdString();
-		} else {
-			SHV_EXCEPTION("Invalid PathAccessGrant type: " + grant_type);
-		}
-		ret.push_back(std::move(ag));
+		acl::AclAccessRule rule;
+		rule.path = q.value("path").toString().toStdString();
+		rule.method = q.value("method").toString().toStdString();
+		rule.access = q.value("accessRole").toString().toStdString();
+		ret.push_back(std::move(rule));
 	}
 	return ret;
 }
@@ -333,18 +323,9 @@ void AclManagerSqlite::aclSetAccessRoleRules(const std::string &role_name, const
 		int rule_number = 0;
 		for(const auto &rule : rules) {
 			rec.setValue("role", QString::fromStdString(role_name));
-			rec.setValue("service", QString::fromStdString(rule.service));
-			rec.setValue("path", QString::fromStdString(rule.pathPattern));
-			rec.setValue("method", rule.method.empty()? QVariant(): QString::fromStdString(rule.method));
-			if (std::holds_alternative<std::string>(rule.grant)) {
-				rec.setValue("grantType", "Role");
-				rec.setValue("accessLevel", QString::fromStdString(std::get<std::string>(rule.grant)));
-			} else if (std::holds_alternative<chainpack::MetaMethod::AccessLevel>(rule.grant)) {
-				rec.setValue("grantType", "AccessLevel");
-				rec.setValue("accessLevel", static_cast<int>(std::get<chainpack::MetaMethod::AccessLevel>(rule.grant)));
-			} else {
-				SHV_EXCEPTION("Invalid PathAccessGrant type: " + std::to_string(rule.grant.index()));
-			}
+			rec.setValue("path", QString::fromStdString(rule.path));
+			rec.setValue("method", QString::fromStdString(rule.method));
+			rec.setValue("accessRole", QString::fromStdString(rule.access));
 			rec.setValue("ruleNumber", rule_number);
 			qs = drv->sqlStatement(QSqlDriver::InsertStatement, TBL_ACL_ACCESS, rec, false);
 			logAclManagerM() << qs;

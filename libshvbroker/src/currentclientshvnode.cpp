@@ -113,7 +113,8 @@ shv::chainpack::RpcValue CurrentClientShvNode::callMethodRq(const shv::chainpack
 				if(method_param.empty())
 					SHV_EXCEPTION("Method not specified in params.");
 				auto shv_url = shv::core::utils::ShvUrl(shv_path_param);
-				return app->aclManager()->accessGrantForShvPath(cli->loggedUserName(), shv_url, method_param, cli->isMasterBrokerConnection(), shv_url.isUpTreeMountPointRelative(), rq.accessGrant());
+				auto ag = app->aclManager()->accessGrantForShvPath(cli->loggedUserName(), shv_url, method_param, cli->isMasterBrokerConnection(), shv_url.isUpTreeMountPointRelative(), rq.accessGrant());
+				return shv::chainpack::MetaMethod::accessLevelToAccessString(ag.accessLevel().value_or(shv::chainpack::MetaMethod::AccessLevel::None));
 			}
 			return nullptr;
 		}
@@ -131,12 +132,8 @@ shv::chainpack::RpcValue CurrentClientShvNode::callMethodRq(const shv::chainpack
 					SHV_EXCEPTION("Method not specified in params.");
 				auto shv_url = shv::core::utils::ShvUrl(shv_path_param);
 				auto acg = app->aclManager()->accessGrantForShvPath(cli->loggedUserName(), shv_url, method_param, cli->isMasterBrokerConnection(), shv_url.isUpTreeMountPointRelative(), rq.accessGrant());
-				auto level = shv::iotqt::node::ShvNode::basicGrantToAccessLevel(acg);
-				if(level > shv::chainpack::MetaMethod::AccessLevel::None) {
-					std::string role = shv::chainpack::MetaMethod::accessLevelToString(level);
-					if(role.empty())
-						return static_cast<int>(level);
-					return role;
+				if(acg.accessLevelInt > 0) {
+					return acg.accessLevelInt;
 				}
 			}
 			return nullptr;

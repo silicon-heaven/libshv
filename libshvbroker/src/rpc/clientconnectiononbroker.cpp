@@ -215,9 +215,8 @@ ClientConnectionOnBroker::Subscription ClientConnectionOnBroker::createSubscript
 		}
 		if(!shv_path_to_acl_check.empty()) {
 			core::utils::ShvUrl shv_url(shv_path_to_acl_check);
-			auto acg = BrokerApp::instance()->aclManager()->accessGrantForShvPath(loggedUserName(), shv_url, method, isMasterBrokerConnection(), shv_url.isUpTreeMountPointRelative(), cp::RpcValue());
-			auto acc_level = shv::iotqt::node::ShvNode::basicGrantToAccessLevel(acg);
-			if(acc_level < cp::MetaMethod::AccessLevel::Read)
+			auto acg = BrokerApp::instance()->aclManager()->accessGrantForShvPath(loggedUserName(), shv_url, method, isMasterBrokerConnection(), shv_url.isUpTreeMountPointRelative(), {});
+			if(acg.accessLevelInt < static_cast<int>(cp::MetaMethod::AccessLevel::Read))
 				ACCESS_EXCEPTION("Acces to shv signal '" + shv_path + '/' + method + "()' not granted for user '" + loggedUserName() + "'");
 		}
 	}

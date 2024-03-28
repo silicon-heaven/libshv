@@ -2,6 +2,8 @@
 
 #include <necrolog.h>
 
+#include <ranges>
+
 namespace shv::chainpack {
 
 namespace {
@@ -114,4 +116,81 @@ RpcValue UserLoginResult::toRpcValue() const
 	}
 	return RpcValue(std::move(m));
 }
+
+//================================================================
+// AccessGrant
+//================================================================
+AccessGrant::AccessGrant(int level, const std::string &access_)
+	: accessLevelInt(level)
+	, access(access_)
+{
+}
+
+std::optional<MetaMethod::AccessLevel> AccessGrant::accessLevel() const
+{
+	return MetaMethod::accessLevelFromInt(accessLevelInt);
+}
+
+AccessGrant::AccessGrant(AccessLevel level)
+	: accessLevelInt(static_cast<int>(level))
+{
+}
+
+AccessGrant AccessGrant::fromShv2Access(std::string_view shv2_access, int access_level)
+{
+	AccessGrant ret;
+	if (auto level = MetaMethod::accessLevelFromInt(access_level); level.has_value()) {
+		ret.accessLevelInt = static_cast<int>(level.value());
+	}
+	size_t pos1 = 0;
+	while (pos1 != std::string::npos) {
+		auto pos2 = shv2_access.find(',', pos1);
+		std::string_view level_str;
+		if (pos2 == std::string::npos) {
+			level_str = shv2_access.substr(pos1);
+			pos1 = pos2;
+		}
+		else {
+			level_str = shv2_access.substr(pos1, pos2 - pos1);
+			pos1 = pos2 + 1;
+		}
+		if (!level_str.empty()) {
+			if (auto level = MetaMethod::accessLevelFromAccessString(level_str); level.has_value()) {
+				auto n = static_cast<int>(level.value());
+				// keep highest level
+				ret.accessLevelInt = std::max(ret.accessLevelInt, n);
+			}
+			else {
+				if (!ret.access.empty()) {
+					ret.access += ',';
+				}
+				ret.access += level_str;
+			}
+		}
+	}
+	return ret;
+}
+
+std::string AccessGrant::toShv2Access() const
+{
+	if (auto level = accessLevel(); level.has_value()) {
+		if (std::string level_str = MetaMethod::accessLevelToAccessString(level.value()); !level_str.empty()) {
+			if (!access.empty()) {
+				level_str = level_str + ',' + access;
+			}
+			return level_str;
+		}
+	}
+	return {};
+}
+
+std::string AccessGrant::toPrettyString() const
+{
+	auto s = toShv2Access();
+	if (!accessLevel()) {
+		s = s + '(' + std::to_string(accessLevelInt) + ')';
+	}
+	return s;
+}
+
 } // namespace shv

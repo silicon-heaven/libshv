@@ -38,6 +38,7 @@ public:
 	static constexpr auto KEY_SIGNATURE = "signature";
 	static constexpr auto KEY_FLAGS = "flags";
 	static constexpr auto KEY_ACCESS = "access";
+	static constexpr auto KEY_ACCESS_LEVEL = "accessLevel";
 	static constexpr auto KEY_DESCRIPTION = "description";
 	static constexpr auto KEY_LABEL = "label";
 	static constexpr auto KEY_TAGS = "tags";
@@ -71,15 +72,17 @@ public:
 
 	bool isValid() const;
 	const std::string& name() const;
-	const std::string& result() const;
-	bool hasResult() const;
-	const std::string& param() const;
-	bool hasParam() const;
+	const std::string& resultType() const;
+	bool hasResultType() const;
+	const std::string& paramType() const;
+	bool hasParamType() const;
 	const std::string& label() const;
 	MetaMethod& setLabel(const std::string &label);
 	const std::string& description() const;
 	unsigned flags() const;
-	AccessLevel accessLevel() const;
+	int accessLevelAsInt() const;
+	std::optional<MetaMethod::AccessLevel> accessLevel() const;
+	void setAccessLevel(std::optional<AccessLevel> level);
 	const RpcValue::Map& extra() const;
 	RpcValue tag(const std::string &key, const RpcValue& default_value = {}) const;
 	MetaMethod& setTag(const std::string &key, const RpcValue& value);
@@ -92,40 +95,40 @@ public:
 	static Signature signatureFromString(const std::string &sigstr);
 	static const char* signatureToString(Signature sig);
 	static std::string flagsToString(unsigned flags);
-	static const char* accessLevelToString(AccessLevel access_level);
+	static const char* accessLevelToAccessString(AccessLevel access_level);
+	static std::optional<AccessLevel> accessLevelFromAccessString(std::string_view s);
+	static std::optional<AccessLevel> accessLevelFromInt(int i);
+	//static AccessLevel findAccessLevel(const std::string &access);
 private:
 	std::string m_name;
 	unsigned m_flags = 0;
 	std::string m_param;
 	std::string m_result;
-	AccessLevel m_accessLevel;
+	int m_accessLevelInt;
 	RpcValue::Map m_signals;
 	std::string m_label;
 	std::string m_description;
 	RpcValue::Map m_extra;
 };
 
-struct GrantToString {
-	std::string operator()(const chainpack::MetaMethod::AccessLevel level) const {
-		return std::to_string(static_cast<int>(level));
-	}
-	std::string operator()(const std::string& role) const {
-		return role;
-	}
-};
-
-struct GrantToRpcValue {
-	chainpack::RpcValue operator()(const chainpack::MetaMethod::AccessLevel level) const {
-		return static_cast<int>(level);
-	}
-	chainpack::RpcValue operator()(const std::string& role) const {
-		return role;
-	}
-};
-
 namespace methods {
 const auto LS = MetaMethod{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "LsParam", "LsResult", shv::chainpack::MetaMethod::AccessLevel::Browse};
 const auto DIR = MetaMethod{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "DirParam", "DirResult", shv::chainpack::MetaMethod::AccessLevel::Browse};
+}
+
+constexpr bool operator<(int a, const MetaMethod::AccessLevel b)
+{
+	return a < static_cast<int>(b);
+}
+
+constexpr bool operator==(int a, const MetaMethod::AccessLevel b)
+{
+	return a == static_cast<int>(b);
+}
+
+constexpr bool operator>(int a, const MetaMethod::AccessLevel b)
+{
+	return a > static_cast<int>(b);
 }
 
 constexpr bool operator<(const MetaMethod::AccessLevel a, const MetaMethod::AccessLevel b)
