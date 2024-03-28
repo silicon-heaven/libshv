@@ -314,7 +314,7 @@ chainpack::AccessGrant AclManager::accessGrantForShvPath(
 		const chainpack::AccessGrant &access_grant
 )
 {
-	using AccessLevel = chainpack::MetaMethod::AccessLevel;
+	using chainpack::MetaMethod::AccessLevel;
 	logAclResolveM() << "==== accessGrantForShvPath user:" << user_name << "requested path:"
 					 << shv_url.toString() << "method:" << method << "request grant:" << access_grant.toPrettyString();
 	if(is_service_provider_mount_point_relative_call) {
