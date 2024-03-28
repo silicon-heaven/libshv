@@ -35,7 +35,7 @@ runs:
         git fetch --depth=1 origin "$BASE_REF"
         # FIXME: The clang on CI chokes on lambda captures of structured binding variables. Remove the blacklisting of
         # the files after the CI gets updated. (AFAIK clang-16).
-        readarray -t CHANGED_FILES < <(git diff --diff-filter=d --name-only "$BASE_REF" | grep 'cpp$' | grep -v -e "libshviotqt/tests/serialportsocket/test_serialportsocket.cpp" -e "libshvchainpack/tests/test_rpcvalue.cpp")
+        readarray -t CHANGED_FILES < <(git diff --diff-filter=d --name-only "$BASE_REF" | grep 'cpp$' | grep -v -e "libshviotqt/tests/serialportsocket/test_serialportsocket.cpp" -e "libshvchainpack/tests/test_rpcvalue.cpp" -e "libshvchainpack/tests/test_accessgrant.cpp")
         if [[ "${#CHANGED_FILES[@]}" -eq 0 ]]; then
           echo "No changed cpp files."
           exit 0

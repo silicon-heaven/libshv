@@ -19,6 +19,7 @@ DOCTEST_TEST_CASE("Parsing SHV API 2 access string")
 	};
 	for (const auto &[access2, acg3, access2_reco] : {
 		 make_grant("", AccessGrant::AccessLevel::None, {}, ""),
+		 make_grant(",", AccessGrant::AccessLevel::None, {}, ""),
 		 make_grant("rd", AccessGrant::AccessLevel::Read, {}, "rd"),
 		 make_grant("wr", AccessGrant::AccessLevel::Write, {}, "wr"),
 		 make_grant("dev", AccessGrant::AccessLevel::Devel, {}, "dev"),
@@ -27,6 +28,7 @@ DOCTEST_TEST_CASE("Parsing SHV API 2 access string")
 		 make_grant("rd,foo,rd", AccessGrant::AccessLevel::Read, "foo", "rd,foo"),
 		 make_grant("wr,foo,rd", AccessGrant::AccessLevel::Write, "foo", "wr,foo"),
 		 make_grant("foo,su,bar", AccessGrant::AccessLevel::Admin, "foo,bar", "su,foo,bar"),
+		 make_grant(",foo,,su,bar,", AccessGrant::AccessLevel::Admin, "foo,bar", "su,foo,bar"),
 	})
 	{
 		auto acg2 = AccessGrant::fromShv2Access(access2);

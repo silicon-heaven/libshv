@@ -140,22 +140,32 @@ AccessGrant AccessGrant::fromShv2Access(std::string_view shv2_access, int access
 {
 	AccessGrant ret;
 	if (auto level = MetaMethod::accessLevelFromInt(access_level); level.has_value()) {
-		//ret.access = MetaMethod::accessLevelToAccessString(level.value());
 		ret.accessLevelInt = static_cast<int>(level.value());
 	}
-	for (const auto s : std::views::split(shv2_access, ',')) {
-		//TODO: change to std::string_view level_str(s); when c++23 becomes available everywhere
-		std::string_view level_str(s.begin(), s.end());
-		if (auto level = MetaMethod::accessLevelFromAccessString(level_str); level.has_value()) {
-			auto n = static_cast<int>(level.value());
-			// keep highest level
-			ret.accessLevelInt = std::max(ret.accessLevelInt, n);
+	size_t pos1 = 0;
+	while (pos1 != std::string::npos) {
+		auto pos2 = shv2_access.find(',', pos1);
+		std::string_view level_str;
+		if (pos2 == std::string::npos) {
+			level_str = shv2_access.substr(pos1);
+			pos1 = pos2;
 		}
 		else {
-			if (!ret.access.empty()) {
-				ret.access += ',';
+			level_str = shv2_access.substr(pos1, pos2 - pos1);
+			pos1 = pos2 + 1;
+		}
+		if (!level_str.empty()) {
+			if (auto level = MetaMethod::accessLevelFromAccessString(level_str); level.has_value()) {
+				auto n = static_cast<int>(level.value());
+				// keep highest level
+				ret.accessLevelInt = std::max(ret.accessLevelInt, n);
 			}
-			ret.access += level_str;
+			else {
+				if (!ret.access.empty()) {
+					ret.access += ',';
+				}
+				ret.access += level_str;
+			}
 		}
 	}
 	return ret;
