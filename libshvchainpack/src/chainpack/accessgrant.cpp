@@ -142,17 +142,12 @@ AccessGrant AccessGrant::fromShv2Access(std::string_view shv2_access, int access
 	if (auto level = MetaMethod::accessLevelFromInt(access_level); level.has_value()) {
 		ret.accessLevelInt = static_cast<int>(level.value());
 	}
-	size_t pos1 = 0;
-	while (pos1 != std::string::npos) {
-		auto pos2 = shv2_access.find(',', pos1);
-		std::string_view level_str;
-		if (pos2 == std::string::npos) {
-			level_str = shv2_access.substr(pos1);
-			pos1 = pos2;
-		}
-		else {
-			level_str = shv2_access.substr(pos1, pos2 - pos1);
-			pos1 = pos2 + 1;
+	while (!shv2_access.empty()) {
+		auto first_comma = shv2_access.find(',');
+		auto level_str = shv2_access.substr(0, first_comma);
+		shv2_access.remove_prefix(level_str.size());
+		if (first_comma != std::string_view::npos) {
+			shv2_access.remove_prefix(1);
 		}
 		if (!level_str.empty()) {
 			if (auto level = MetaMethod::accessLevelFromAccessString(level_str); level.has_value()) {
