@@ -411,7 +411,7 @@ chainpack::AccessGrant AclManager::accessGrantForShvPath(
 	// find first matching rule
 	if(shv_url.pathPart() == BROKER_CURRENT_CLIENT_SHV_PATH) {
 		// client has WR grant on currentClient node
-		return {AccessLevel::Write};
+		return AccessLevel::Write;
 	}
 
 	for (const std::string& flatten_role : flatten_user_roles) {
