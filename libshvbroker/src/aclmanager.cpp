@@ -333,25 +333,40 @@ chainpack::AccessGrant AclManager::accessGrantForShvPath(
 	}
 #endif
 	if(is_request_from_master_broker) {
-		// access resolved by master broker already, forward use this
-		logAclResolveM() << "\t Resolved on master broker already.";
-		return access_grant;
+		if(access_grant.accessLevelInt > 0) {
+			// access resolved by master broker already, forward use this
+			logAclResolveM() << "\t Resolved on master broker already.";
+			return access_grant;
+		}
 	}
-	if(access_grant.accessLevelInt > 0) {
-		logAclResolveM() << "Client defined access level in RPC request are not implemented yet and will be ignored.";
+	else {
+		if(access_grant.accessLevelInt > 0) {
+			logAclResolveM() << "Client defined access level in RPC request are not implemented yet and will be ignored.";
+		}
 	}
 	std::vector<std::string> flatten_user_roles;
-	if (auto user_def = user(user_name); user_def.isValid()) {
-		flatten_user_roles = userFlattenRoles(user_name, user_def.roles);
+	if(is_request_from_master_broker) {
+		// set masterBroker role to requests from master broker without access grant specified
+		// This is used mainly for service calls as (un)subscribe propagation to slave brokers etc.
+		if(shv_url.pathPart() == cp::Rpc::DIR_BROKER_APP) {
+			// master broker has always rd grant to .broker/app path
+			return chainpack::AccessGrant(chainpack::MetaMethod::AccessLevel::Write);
+		}
+		flatten_user_roles = flattenRole(cp::Rpc::ROLE_MASTER_BROKER);
 	}
-#ifdef WITH_SHV_LDAP
-	// I don't have to check if ldap is enabled - if m_ldapUserGroups is non-empty, it must've been enabled.
-	else if (auto ldap_it = m_ldapUserGroups.find(user_name); ldap_it != m_ldapUserGroups.end()) {
-		flatten_user_roles = ldapUserFlattenRoles(user_name, ldap_it->second);
-	}
-#endif
-	else if (auto azure_it = m_azureUserGroups.find(user_name); azure_it != m_azureUserGroups.end()) {
-		flatten_user_roles = azureUserFlattenRoles(user_name, azure_it->second);
+	else {
+		if (auto user_def = user(user_name); user_def.isValid()) {
+			flatten_user_roles = userFlattenRoles(user_name, user_def.roles);
+		}
+	#ifdef WITH_SHV_LDAP
+		// I don't have to check if ldap is enabled - if m_ldapUserGroups is non-empty, it must've been enabled.
+		else if (auto ldap_it = m_ldapUserGroups.find(user_name); ldap_it != m_ldapUserGroups.end()) {
+			flatten_user_roles = ldapUserFlattenRoles(user_name, ldap_it->second);
+		}
+	#endif
+		else if (auto azure_it = m_azureUserGroups.find(user_name); azure_it != m_azureUserGroups.end()) {
+			flatten_user_roles = azureUserFlattenRoles(user_name, azure_it->second);
+		}
 	}
 	logAclResolveM() << "searched rules:" << [this, &flatten_user_roles]()
 	{
