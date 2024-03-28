@@ -20,14 +20,10 @@ public:
 	AclAccessRule();
 	AclAccessRule(const std::string &path_, const std::string &signal_, const std::string &access_);
 
-	//void setAccess(const std::string &access_, std::optional<int> access_level);
-	//static std::pair<std::string, std::optional<chainpack::MetaMethod::AccessLevel>> parseAccess(const std::string &access_, std::optional<int> access_level);
-
 	chainpack::RpcValue toRpcValue() const;
 	static AclAccessRule fromRpcValue(const chainpack::RpcValue &rpcval);
 
 	bool isValid() const;
-	//bool isMoreSpecificThan(const AclAccessRule &other) const;
 	bool isPathMethodMatch(const shv::core::utils::ShvUrl &shv_url, const std::string &signal_) const;
 };
 

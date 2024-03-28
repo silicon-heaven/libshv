@@ -23,24 +23,7 @@ AclAccessRule::AclAccessRule(const std::string &path_, const std::string &method
 	, access(access_)
 {
 }
-/*
-void AclAccessRule::setAccess(const std::string &access_, std::optional<int> access_level)
-{
-	if (access_level) {
-		accessLevel = MetaMethod::accessLevelFromInt(access_level.value()).value_or(MetaMethod::AccessLevel::None);
-	}
-	else {
-		for (const auto &sv : shv::core::utils::split(access_, ',')) {
-			std::string s(sv);
-			shv::core::String::trim(s);
-			if (auto level = MetaMethod::accessLevelFromString(s); level.has_value()) {
-				accessLevel = level.value();
-			}
-		}
-	}
-	access = access_;
-}
-*/
+
 RpcValue AclAccessRule::toRpcValue() const
 {
 	RpcValue::Map m;
@@ -76,36 +59,7 @@ bool AclAccessRule::isValid() const
 {
 	return !path.empty() && !access.empty();
 }
-/*
-bool AclAccessRule::isMoreSpecificThan(const AclAccessRule &other) const
-{
-	if(!isValid())
-		return false;
-	if(!other.isValid())
-		return true;
 
-	const bool is_exact_path = !is_wild_card_pattern(path);
-	const bool other_is_exact_path = !is_wild_card_pattern(other.path);
-	const bool has_method = !signal.empty();
-	const bool other_has_method = !other.signal.empty();
-	if(is_exact_path && other_is_exact_path) {
-		return has_method && !other_has_method;
-	}
-	if(is_exact_path && !other_is_exact_path) {
-		return true;
-	}
-	if(!is_exact_path && other_is_exact_path) {
-		return false;
-	}
-	// both path patterns with wild-card
-	auto patt_len = path.length();
-	auto other_patt_len = other.path.length();
-	if(patt_len == other_patt_len) {
-		return has_method && !other_has_method;
-	}
-	return patt_len > other_patt_len;
-}
-*/
 bool AclAccessRule::isPathMethodMatch(const shv::core::utils::ShvUrl &shv_url, const string &method_) const
 {
 	// sevice check OK here
@@ -143,9 +97,9 @@ RpcValue AclRoleAccessRules::toRpcValue_legacy() const
 {
 	shv::chainpack::RpcValue::Map ret;
 	for(const auto &kv : *this) {
-            std::string key = kv.path;
-			if(!kv.method.empty())
-				key += shv::core::utils::ShvPath::SHV_PATH_METHOD_DELIM + kv.method;
+		std::string key = kv.path;
+		if(!kv.method.empty())
+			key += shv::core::utils::ShvPath::SHV_PATH_METHOD_DELIM + kv.method;
 		ret[key] = kv.toRpcValue();
 	}
 	return shv::chainpack::RpcValue(std::move(ret));
@@ -160,11 +114,11 @@ AclRoleAccessRules AclRoleAccessRules::fromRpcValue(const shv::chainpack::RpcVal
 			auto g = AclAccessRule::fromRpcValue(kv.second);
 			auto i = kv.first.find_last_of(shv::core::utils::ShvPath::SHV_PATH_METHOD_DELIM);
 			if(i == std::string::npos) {
-                            g.path = kv.first;
+				g.path = kv.first;
 			}
 			else {
-                            g.path = kv.first.substr(0, i);
-							g.method = kv.first.substr(i + 1);
+				g.path = kv.first.substr(0, i);
+				g.method = kv.first.substr(i + 1);
 			}
 			if(g.isValid())
 				ret.push_back(std::move(g));

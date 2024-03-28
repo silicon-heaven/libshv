@@ -36,7 +36,7 @@ DOCTEST_TEST_CASE("Parsing SHV API 2 access string")
 		CAPTURE(acg2.toPrettyString());
 		REQUIRE(acg2.accessLevelInt == acg3.accessLevelInt);
 		REQUIRE(acg2.access == acg3.access);
-		auto reco =acg2.toShv2Access();
+		auto reco = acg2.toShv2Access();
 		REQUIRE(access2_reco == reco);
 	}
 }
