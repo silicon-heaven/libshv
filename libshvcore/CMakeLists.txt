@@ -23,7 +23,6 @@ add_library(libshvcore
 	src/utils/shvmemoryjournal.cpp
 	src/utils/shvpath.cpp
 	src/utils/shvtypeinfo.cpp
-	src/utils/shvurl.cpp
 	src/utils/versioninfo.cpp
 	)
 add_library(libshv::libshvcore ALIAS libshvcore)

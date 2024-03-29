@@ -1,5 +1,4 @@
 #include "clientconnectiononbroker.h"
-#include "masterbrokerconnection.h"
 
 #include <shv/broker/brokerapp.h>
 
@@ -8,7 +7,6 @@
 #include <shv/chainpack/rpc.h>
 #include <shv/coreqt/log.h>
 #include <shv/core/stringview.h>
-#include <shv/core/utils/shvurl.h>
 #include <shv/core/utils/shvpath.h>
 #include <shv/iotqt/rpc/socket.h>
 
@@ -92,57 +90,6 @@ int ClientConnectionOnBroker::idleTimeMax() const
 	return  m_idleWatchDogTimer->interval();
 }
 
-std::string ClientConnectionOnBroker::resolveLocalPath(const shv::core::utils::ShvUrl &spp, iotqt::node::ShvNode **pnd) const
-{
-	BrokerApp *app = BrokerApp::instance();
-	string local_path;
-	iotqt::node::ShvNode *nd = nullptr;
-	if(spp.isServicePath()) {
-		if(spp.isUpTreeMountPointRelative()) {
-			std::string mount_point = mountPoint();
-			if(mount_point.empty())
-				SHV_EXCEPTION("Cannot resolve relative path on unmounted device: " + spp.shvPath());
-			nd = app->nodeForService(spp);
-			if(nd) {
-				/// found on this broker
-				core::StringView mp(mount_point);
-				shv::core::utils::ShvPath::takeFirsDir(mp);
-				local_path = spp.toPlainPath(mp);
-			}
-			else {
-				/// forward to master broker
-				MasterBrokerConnection *mbconn = BrokerApp::instance()->masterBrokerConnectionForClient(connectionId());
-				if(!mbconn)
-					SHV_EXCEPTION("Cannot forward relative service provider path, no master broker connection, path: " + spp.shvPath());
-				/// if the client is mounted on exported path,
-				/// then relative path must be resolved with respect to it
-				mount_point = mbconn->localPathToMasterExported(mount_point);
-				local_path = spp.toString(mount_point);
-			}
-		}
-		else if(spp.isUpTreeAbsolute()) {
-			nd = app->nodeForService(spp);
-			if(nd) {
-				/// found on this broker
-				local_path = spp.toPlainPath();
-			}
-			else {
-				/// forward to master broker
-				MasterBrokerConnection *mbconn = BrokerApp::instance()->masterBrokerConnectionForClient(connectionId());
-				if(!mbconn)
-					SHV_EXCEPTION("Cannot forward relative service provider path, no master broker connection, path: " + spp.shvPath());
-				local_path = spp.toString();
-			}
-		}
-	}
-	else {
-		local_path = spp.shvPath();
-	}
-	if(pnd)
-		*pnd = nd;
-	return local_path;
-}
-
 void ClientConnectionOnBroker::setIdleWatchDogTimeOut(int sec)
 {
 	if(sec == 0) {
@@ -182,87 +129,14 @@ void ClientConnectionOnBroker::sendRpcFrame(chainpack::RpcFrame &&frame)
 ClientConnectionOnBroker::Subscription ClientConnectionOnBroker::createSubscription(const std::string &shv_path, const std::string &method, const std::string& source)
 {
 	logSubscriptionsD() << "Create client subscription for path:" << shv_path << "method:" << method << "source:" << source;
-	using ServiceProviderPath = shv::core::utils::ShvUrl;
-	ServiceProviderPath spp(shv_path);
-	string local_path = shv_path;
-	iotqt::node::ShvNode *service_node = nullptr;
-	{
-		local_path = resolveLocalPath(spp, &service_node);
-		logSubscriptionsD() << "\t resolved to local path:" << local_path << "node:" << service_node;
-		/// check that client has access rights to subscribed signal
-		/**
-		if path is service provided than
-			if it can be served by this proker (service_node != nullptr)
-				if it is absolute
-					check access rights for absolute path
-				else //relative
-					do not check ACL for relative paths, client has always access to it's relative service paths
-			else // it cannot be served
-				do not check ACL not served paths here, forward this to master broker
-		else
-			check access rights for shv path
-		*/
-		string shv_path_to_acl_check;
-		if(spp.isServicePath()) {
-			if(service_node) {
-				if(spp.type() == ServiceProviderPath::Type::AbsoluteService) {
-					shv_path_to_acl_check = local_path;
-				}
-			}
-		}
-		else {
-			shv_path_to_acl_check = local_path;
-		}
-		if(!shv_path_to_acl_check.empty()) {
-			core::utils::ShvUrl shv_url(shv_path_to_acl_check);
-			auto acg = BrokerApp::instance()->aclManager()->accessGrantForShvPath(loggedUserName(), shv_url, method, isMasterBrokerConnection(), shv_url.isUpTreeMountPointRelative(), {});
-			if(acg.accessLevel < cp::AccessLevel::Read)
-				ACCESS_EXCEPTION("Acces to shv signal '" + shv_path + '/' + method + "()' not granted for user '" + loggedUserName() + "'");
-		}
-	}
-	return Subscription(local_path, shv_path, method, source);
+	auto acg = BrokerApp::instance()->aclManager()->accessGrantForShvPath(loggedUserName(), shv_path, method, isMasterBrokerConnection(), {});
+	if(acg.accessLevel < cp::AccessLevel::Read)
+		ACCESS_EXCEPTION("Acces to shv signal '" + shv_path + '/' + method + "()' not granted for user '" + loggedUserName() + "'");
+	return Subscription(shv_path, method, source);
 }
 
-string ClientConnectionOnBroker::toSubscribedPath(const CommonRpcClientHandle::Subscription &subs, const string &signal_path) const
+string ClientConnectionOnBroker::toSubscribedPath(const string &signal_path) const
 {
-	using ShvPath = shv::core::utils::ShvPath;
-	using StringView = shv::core::StringView;
-	using ServiceProviderPath = shv::core::utils::ShvUrl;
-	bool debug = true;
-	ServiceProviderPath spp_signal(signal_path);
-	ServiceProviderPath spp_subs(subs.subscribedPath);
-	/// path must be retraslated if:
-	/// * local path is service relative
-	/// * local path is not service one and subcribed part is service one
-	if(spp_signal.isUpTreeMountPointRelative()) {
-		/// a:/mount_point/b/c/d --> a:/b/c/d
-		/// a@xy:/mount_point/b/c/d --> a@xy:/b/c/d
-		if(debug && !spp_subs.isUpTreeMountPointRelative())
-			shvWarning() << "Relative signal must have relative subscription, signal:" << signal_path << "subscription:" << subs.subscribedPath;
-		auto a = StringView(subs.subscribedPath);
-		auto b = StringView(signal_path).substr(subs.localPath.size());
-		return ShvPath(std::string{a}).appendPath(b);
-	}
-	if(spp_signal.isPlain()) {
-		if(spp_subs.isUpTreeMountPointRelative()) {
-			/// a/b/c/d --> a:/b/c/d
-			// cut service and slash
-			auto sv = StringView(signal_path).substr(spp_subs.service().length() + 1);
-			// cut mount point rest and slash
-			const string mount_point = mountPoint();
-			StringView mount_point_rest(mount_point);
-			ShvPath::takeFirsDir(mount_point_rest);
-			sv = sv.substr(mount_point_rest.length() + 1);
-			auto ret = ServiceProviderPath::makeShvUrlString(spp_subs.type(), spp_subs.service(), spp_subs.fullBrokerId(), sv);
-			return ret;
-		}
-		if(spp_subs.isUpTreeAbsolute()) {
-			/// a/b/c/d --> a|/b/c/d
-			// cut service and slash
-			auto sv = StringView(signal_path).substr(spp_subs.service().length() + 1);
-			return ServiceProviderPath::makeShvUrlString(spp_subs.type(), spp_subs.service(), spp_subs.fullBrokerId(), sv);
-		}
-	}
 	return signal_path;
 }
 
@@ -345,21 +219,21 @@ void ClientConnectionOnBroker::propagateSubscriptionToSlaveBroker(const CommonRp
 	if(!isSlaveBrokerConnection())
 		return;
 	const std::string &mount_point = mountPoint();
-	if(shv::core::utils::ShvPath(subs.localPath).startsWithPath(mount_point)) {
-		std::string slave_path = subs.localPath.substr(mount_point.size());
+	if(shv::core::utils::ShvPath(subs.path).startsWithPath(mount_point)) {
+		std::string slave_path = subs.path.substr(mount_point.size());
 		if(!slave_path.empty()) {
 			if(slave_path[0] != '/')
 				return;
 			slave_path = slave_path.substr(1);
 		}
-		logSubscriptionsD() << "Propagating client subscription for local path:" << subs.localPath << "method:" << subs.method << "to slave broker as:" << slave_path;
+		logSubscriptionsD() << "Propagating client subscription for local path:" << subs.path << "method:" << subs.method << "to slave broker as:" << slave_path;
 		callMethodSubscribe(slave_path, subs.method);
 		return;
 	}
-	if(shv::core::utils::ShvPath(mount_point).startsWithPath(subs.localPath)
-			&& (mount_point.size() == subs.localPath.size() || mount_point[subs.localPath.size()] == '/')
+	if(shv::core::utils::ShvPath(mount_point).startsWithPath(subs.path)
+			&& (mount_point.size() == subs.path.size() || mount_point[subs.path.size()] == '/')
 	) {
-		logSubscriptionsD() << "Propagating client subscription for local path:" << subs.localPath << "method:" << subs.method << "to slave broker as: ''";
+		logSubscriptionsD() << "Propagating client subscription for local path:" << subs.path << "method:" << subs.method << "to slave broker as: ''";
 		callMethodSubscribe(std::string(), subs.method);
 		return;
 	}

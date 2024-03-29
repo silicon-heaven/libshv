@@ -4,8 +4,6 @@
 #include <shv/iotqt/acl/acluser.h>
 #include <shv/iotqt/node/shvnode.h>
 
-#include <shv/core/utils/shvurl.h>
-
 #include <necrolog.h>
 
 #include <doctest/doctest.h>
@@ -204,7 +202,6 @@ DOCTEST_TEST_CASE("accessGrantForShvPath")
 	std::string shv_path;
 	std::string method;
 	bool is_request_from_master_broker = false;
-	bool is_service_provider_mount_point_relative_call = false;
 
 	bool expected_valid;
 	auto expected_access_level = static_cast<shv::chainpack::AccessLevel>(-1);
@@ -310,7 +307,7 @@ DOCTEST_TEST_CASE("accessGrantForShvPath")
 		}
 	}
 
-	auto acg = acl->accessGrantForShvPath(user, shv::core::utils::ShvUrl{shv_path}, method, is_request_from_master_broker, is_service_provider_mount_point_relative_call, {});
+	auto acg = acl->accessGrantForShvPath(user, shv_path, method, is_request_from_master_broker, {});
 	REQUIRE((acg.accessLevel > shv::chainpack::AccessLevel::None) == expected_valid);
 	if (expected_valid) {
 		REQUIRE(acg.accessLevel == expected_access_level);

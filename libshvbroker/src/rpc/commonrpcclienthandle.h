@@ -11,13 +11,12 @@ class CommonRpcClientHandle
 public:
 	struct Subscription
 	{
-		std::string localPath;
-		std::string subscribedPath;
+		std::string path;
 		std::string method;
 		std::string source;
 
 		Subscription() = default;
-		Subscription(const std::string &local_path, const std::string &subscribed_path, const std::string &m, const std::string& source);
+		Subscription(const std::string &path_, const std::string &method_, const std::string& source_);
 
 		bool cmpSubscribed(const CommonRpcClientHandle::Subscription &o) const;
 		bool match(const std::string_view &shv_path, const std::string_view &shv_method, const std::string_view& source) const;
@@ -34,7 +33,7 @@ public:
 	unsigned addSubscription(const Subscription &subs);
 	bool removeSubscription(const Subscription &subs);
 	int isSubscribed(const std::string &shv_path, const std::string &method, const std::string& source) const;
-	virtual std::string toSubscribedPath(const Subscription &subs, const std::string &abs_path) const = 0;
+	virtual std::string toSubscribedPath(const std::string &abs_path) const = 0;
 	size_t subscriptionCount() const;
 	const Subscription& subscriptionAt(size_t ix) const;
 	bool rejectNotSubscribedSignal(const std::string &path, const std::string &method, const std::string& source);

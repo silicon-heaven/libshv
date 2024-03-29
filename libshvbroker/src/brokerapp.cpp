@@ -25,7 +25,6 @@
 #include <shv/iotqt/node/shvnode.h>
 #include <shv/iotqt/node/shvnodetree.h>
 #include <shv/core/utils/shvpath.h>
-#include <shv/core/utils/shvurl.h>
 
 #include <shv/coreqt/log.h>
 
@@ -903,20 +902,6 @@ const std::string& BrokerApp::brokerId() const
 	return m_brokerId;
 }
 
-iotqt::node::ShvNode *BrokerApp::nodeForService(const core::utils::ShvUrl &spp)
-{
-	if(spp.isServicePath()) {
-		iotqt::node::ShvNode *ret = m_nodesTree->cd(std::string{spp.service()});
-		if(ret) {
-			core::StringView request_broker_id = spp.brokerId();
-			if(!request_broker_id.empty() && !(request_broker_id == brokerId()))
-				return nullptr;
-			return ret;
-		}
-	}
-	return nullptr;
-}
-
 void BrokerApp::remountDevices()
 {
 	shvInfo() << "Remounting devices by dropping their connection";
@@ -966,22 +951,6 @@ std::string BrokerApp::primaryIPAddress(bool &is_public)
 	if(!ha.isNull())
 		return ha.toString().toStdString();
 	return std::string();
-}
-
-void BrokerApp::propagateSubscriptionsToMasterBroker(rpc::MasterBrokerConnection *mbrconn)
-{
-	logSubscriptionsD() << "Connected to main master broker, propagating client subscriptions.";
-	for(int id : clientConnectionIds()) {
-		rpc::ClientConnectionOnBroker *conn = clientConnectionById(id);
-		for (size_t i = 0; i < conn->subscriptionCount(); ++i) {
-			const rpc::CommonRpcClientHandle::Subscription &subs = conn->subscriptionAt(i);
-			shv::core::utils::ShvUrl spp(subs.localPath);
-			if(spp.isServicePath()) {
-				logSubscriptionsD() << "client id:" << id << "propagating subscription for path:" << subs.localPath << "method:" << subs.method;
-				mbrconn->callMethodSubscribe(subs.localPath, subs.method);
-			}
-		}
-	}
 }
 
 void BrokerApp::onClientLogin(int connection_id)
@@ -1083,10 +1052,6 @@ void BrokerApp::onConnectedToMasterBrokerChanged(int connection_id, bool is_conn
 			new shv::iotqt::node::RpcValueMapNode("config", conn->options(), mbnd);
 			new SubscriptionsNode(conn, mbnd);
 		}
-		if(conn == masterBrokerConnectionForClient(connection_id)) {
-			/// propagate relative subscriptions
-			propagateSubscriptionsToMasterBroker(conn);
-		}
 	}
 	else {
 		shvInfo() << "Connection to master broker lost, connection id:" << connection_id;
@@ -1113,17 +1078,7 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 			connection_handle = master_broker_connection;
 		try {
 			std::string shv_path = cp::RpcMessage::shvPath(frame.meta).toString();
-			bool is_service_provider_mount_point_relative_call = false;
 			if(connection_handle) {
-				using ShvUrl = shv::core::utils::ShvUrl;
-				ShvUrl shv_url(shv_path);
-				if(shv_url.isServicePath()) {
-					logServiceProvidersM()  << "broker id:" << brokerId()
-											<< "Service path found:" << shv_path
-											<< "service:" << shv_url.service()
-											<< "type:" << shv_url.typeString()
-											<< "path part:" << shv_url.pathPart();
-				}
 				if(client_connection) {
 					if(!client_connection->isSlaveBrokerConnection()) {
 						{
@@ -1142,27 +1097,6 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 							m[cp::Rpc::KEY_BROKER_ID] = cliOptions()->brokerId();
 							user_id = m;
 							cp::RpcRequest::setUserId(frame.meta, user_id);
-						}
-					}
-					if(shv_url.isUpTree()) {
-						iotqt::node::ShvNode *service_node = nullptr;
-						string resolved_local_path = client_connection->resolveLocalPath(shv_url, &service_node);
-						logServiceProvidersM() << "Up-tree SP call, resolved local path:" << resolved_local_path << "service node:" << service_node;
-						if(service_node) {
-							logServiceProvidersM() << shv_path << "service path resolved on this broker, making path absolute:" << resolved_local_path;
-							cp::RpcRequest::setShvPath(frame.meta, resolved_local_path);
-							is_service_provider_mount_point_relative_call = shv_url.isUpTreeMountPointRelative();
-						}
-						else {
-							rpc::MasterBrokerConnection *master_broker = masterBrokerConnectionForClient(connection_id);
-							logServiceProvidersM() << "service path not found, forwarding it to master broker:" << master_broker;
-							if(master_broker == nullptr)
-								ACCESS_EXCEPTION("Cannot call service provider path " + cp::RpcMessage::shvPath(frame.meta).toString() + ", there is no master broker to forward the request.");
-							logServiceProvidersM() << "forwarded shv path:" << resolved_local_path;
-							cp::RpcRequest::setShvPath(frame.meta, resolved_local_path);
-							cp::RpcMessage::pushCallerId(frame.meta, connection_id);
-							master_broker->sendRpcFrame(std::move(frame));
-							return;
 						}
 					}
 				}
@@ -1185,7 +1119,7 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 							ACCESS_EXCEPTION("Insufficient access rights to make call on node: " + shv::iotqt::node::ShvNode::LOCAL_NODE_HACK);
 						}
 					}
-					else if(shv_url.isPlain()) {
+					else {
 						if (shv_path.empty() && cp::RpcMessage::method(frame.meta) == cp::Rpc::METH_LS && has_dot_local_access(frame.meta)) {
 							/// if superuser calls 'ls' on broker exported root, then '.local' dir is added to the ls result
 							/// this enables access slave broker root via virtual '.local' directory
@@ -1194,27 +1128,9 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 						auto path = master_broker_connection->masterExportedToLocalPath(shv_path);
 						cp::RpcMessage::setShvPath(frame.meta, path);
 					}
-					else if(shv_url.isDownTree()) {
-						iotqt::node::ShvNode *service_node = nodeForService(shv_url);
-						logServiceProvidersM() << "Down-tree SP call,  path:" << shv_url.toString() << "resolved on local broker:" << (service_node != nullptr);
-						if(service_node) {
-							string resolved_local_path = shv::core::utils::joinPath(std::string{shv_url.service()}, std::string{shv_url.pathPart()});
-							logServiceProvidersM() << shv_path << "service path resolved on this broker, making path absolute:" << resolved_local_path;
-							cp::RpcRequest::setShvPath(frame.meta, resolved_local_path);
-						}
-						else {
-							string exported_path = master_broker_connection->exportedShvPath();
-							string resolved_path = shv::core::utils::joinPath(exported_path, std::string{shv_url.pathPart()});
-							resolved_path = shv::core::utils::ShvUrl::makeShvUrlString(shv_url.type(), shv_url.service(), shv_url.fullBrokerId(), resolved_path);
-							logServiceProvidersM() << shv_path << "service path not resolved on this broker, preppending exported path:" << resolved_path;
-							cp::RpcRequest::setShvPath(frame.meta, resolved_path);
-						}
-					}
 				}
 				const std::string method = cp::RpcMessage::method(frame.meta).asString();
-				const std::string resolved_shv_path = cp::RpcMessage::shvPath(frame.meta).asString();
-				ShvUrl resolved_shv_url(resolved_shv_path);
-				auto acg = aclManager()->accessGrantForShvPath(connection_handle->loggedUserName(), resolved_shv_url, method, connection_handle->isMasterBrokerConnection(), is_service_provider_mount_point_relative_call, cp::RpcMessage::accessGrant(frame.meta));
+				auto acg = aclManager()->accessGrantForShvPath(connection_handle->loggedUserName(), shv_path, method, connection_handle->isMasterBrokerConnection(), cp::RpcMessage::accessGrant(frame.meta));
 				if(acg.accessLevel > shv::chainpack::AccessLevel::None) {
 					if(acg.accessLevel < shv::chainpack::AccessLevel::Write) {
 						// remove iser id for read operations
@@ -1223,8 +1139,8 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 				}
 				else {
 					if(master_broker_connection)
-						shvWarning() << "Acces to shv path '" + resolved_shv_path + "' not granted for master broker";
-					ACCESS_EXCEPTION("Acces to shv path '" + resolved_shv_path + "' not granted for user '" + connection_handle->loggedUserName() + "'");
+						shvWarning() << "Acces to shv path '" + shv_path + "' not granted for master broker";
+					ACCESS_EXCEPTION("Acces to shv path '" + shv_path + "' not granted for user '" + connection_handle->loggedUserName() + "'");
 				}
 				cp::RpcMessage::setAccessGrant(frame.meta, acg);
 				cp::RpcMessage::pushCallerId(frame.meta, connection_id);
@@ -1400,8 +1316,7 @@ bool BrokerApp::sendNotifyToSubscribers(const chainpack::RpcFrame &frame)
 			const auto source = cp::RpcMessage::source(frame.meta);
 			int subs_ix = conn->isSubscribed(shv_path.toString(), method.asString(), source);
 			if(subs_ix >= 0) {
-				const rpc::ClientConnectionOnBroker::Subscription &subs = conn->subscriptionAt(static_cast<size_t>(subs_ix));
-				std::string new_path = conn->toSubscribedPath(subs, shv_path.asString());
+				std::string new_path = conn->toSubscribedPath(shv_path.asString());
 				if(new_path == shv_path.asString()) {
 					conn->sendRpcFrame(chainpack::RpcFrame(frame));
 				}
@@ -1429,8 +1344,7 @@ void BrokerApp::sendNotifyToSubscribers(const std::string &shv_path, const std::
 		if(conn->isConnectedAndLoggedIn()) {
 			int subs_ix = conn->isSubscribed(shv_path, method, source);
 			if(subs_ix >= 0) {
-				const rpc::ClientConnectionOnBroker::Subscription &subs = conn->subscriptionAt(static_cast<size_t>(subs_ix));
-				std::string new_path = conn->toSubscribedPath(subs, shv_path);
+				std::string new_path = conn->toSubscribedPath(shv_path);
 				if(new_path != shv_path)
 					sig.setShvPath(new_path);
 				conn->sendRpcMessage(sig);
@@ -1446,18 +1360,7 @@ void BrokerApp::addSubscription(int client_id, const std::string &shv_path, cons
 		SHV_EXCEPTION("Cannot create subscription, invalid connection ID.");
 	rpc::CommonRpcClientHandle::Subscription subs = connection_handle->createSubscription(shv_path, method, source);
 	connection_handle->addSubscription(subs);
-	shv::core::utils::ShvUrl spp(subs.localPath);
-	if(spp.isServicePath()) {
-		/// not served here, should be propagated to the master broker
-		rpc::MasterBrokerConnection *mbrconn = masterBrokerConnectionForClient(client_id);
-		if(mbrconn) {
-			mbrconn->callMethodSubscribe(subs.localPath, method);
-		}
-		else {
-			shvError() << "Cannot propagate relative path subscription, without master broker connected:" << subs.localPath;
-		}
-	}
-	else {
+	{
 		/// check slave broker connections
 		/// whether this subsciption should be propagated to them
 		/// skip service providers subscriptions, since it does not make sense to send them downstream
@@ -1475,7 +1378,7 @@ bool BrokerApp::removeSubscription(int client_id, const std::string &shv_path, c
 	rpc::CommonRpcClientHandle *conn = commonClientConnectionById(client_id);
 	if(!conn)
 		SHV_EXCEPTION("Connot remove subscription, client doesn't exist.");
-	rpc::CommonRpcClientHandle::Subscription subs(string(), shv_path, method, source);
+	rpc::CommonRpcClientHandle::Subscription subs(shv_path, method, source);
 	return conn->removeSubscription(subs);
 }
 

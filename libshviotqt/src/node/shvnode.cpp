@@ -14,7 +14,6 @@
 #include <shv/core/stringview.h>
 #include <shv/core/string.h>
 #include <shv/core/utils/shvpath.h>
-#include <shv/core/utils/shvurl.h>
 
 #include <QTimer>
 #include <QFile>
@@ -134,27 +133,24 @@ void ShvNode::handleRpcFrame(RpcFrame &&frame)
 	using namespace shv::core::utils;
 	const chainpack::RpcValue::String method = RpcMessage::method(frame.meta).toString();
 	const chainpack::RpcValue::String shv_path_str = RpcMessage::shvPath(frame.meta).toString();
-	ShvUrl shv_url(RpcMessage::shvPath(frame.meta).asString());
-	core::StringViewList shv_path = ShvPath::split(shv_url.pathPart());
+	auto shv_path = RpcMessage::shvPath(frame.meta).asString();
+	core::StringViewList shv_path_list = ShvPath::split(shv_path);
 	const bool ls_hook = frame.meta.hasKey(ADD_LOCAL_TO_LS_RESULT_HACK_META_KEY);
 	RpcResponse resp = RpcResponse::forRequest(frame.meta);
 	try {
-		if(!shv_path.empty()) {
-			ShvNode *nd = childNode(std::string{shv_path.at(0)}, !shv::core::Exception::Throw);
+		if(!shv_path_list.empty()) {
+			ShvNode *nd = childNode(std::string{shv_path_list.at(0)}, !shv::core::Exception::Throw);
 			if(nd) {
-				shvDebug() << "Child node:" << shv_path.at(0) << "on path:" << shv_path.join('/') << "FOUND";
-				std::string new_path = ShvUrl::makeShvUrlString(shv_url.type(),
-																shv_url.service(),
-																shv_url.fullBrokerId(),
-																ShvPath::joinDirs(++shv_path.begin(), shv_path.end()));
+				shvDebug() << "Child node:" << shv_path_list.at(0) << "on path:" << shv_path_list.join('/') << "FOUND";
+				std::string new_path = ShvPath::joinDirs(++shv_path_list.begin(), shv_path_list.end());
 				RpcMessage::setShvPath(frame.meta, new_path);
 				nd->handleRpcFrame(std::move(frame));
 				return;
 			}
 		}
-		const chainpack::MetaMethod *mm = metaMethod(shv_path, method);
+		const chainpack::MetaMethod *mm = metaMethod(shv_path_list, method);
 		if(mm) {
-			shvDebug() << "Metamethod:" << method << "on path:" << ShvPath::joinDirs(shv_path) << "FOUND";
+			shvDebug() << "Metamethod:" << method << "on path:" << ShvPath::joinDirs(shv_path_list) << "FOUND";
 			std::string errmsg;
 			RpcMessage rpc_msg = frame.toRpcMessage(&errmsg);
 			if(!errmsg.empty())

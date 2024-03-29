@@ -2,8 +2,6 @@
 #include <shv/broker/currentclientshvnode.h>
 #include <shv/broker/brokerapp.h>
 
-#include <shv/core/utils/shvurl.h>
-
 #include <QCryptographicHash>
 
 namespace cp = shv::chainpack;
@@ -112,8 +110,7 @@ shv::chainpack::RpcValue CurrentClientShvNode::callMethodRq(const shv::chainpack
 				const string &method_param = plist.asList().valref(1).asString();
 				if(method_param.empty())
 					SHV_EXCEPTION("Method not specified in params.");
-				auto shv_url = shv::core::utils::ShvUrl(shv_path_param);
-				auto ag = app->aclManager()->accessGrantForShvPath(cli->loggedUserName(), shv_url, method_param, cli->isMasterBrokerConnection(), shv_url.isUpTreeMountPointRelative(), rq.accessGrant());
+				auto ag = app->aclManager()->accessGrantForShvPath(cli->loggedUserName(), shv_path_param, method_param, cli->isMasterBrokerConnection(), rq.accessGrant());
 				return shv::chainpack::accessLevelToAccessString(ag.accessLevel);
 			}
 			return nullptr;
@@ -130,8 +127,7 @@ shv::chainpack::RpcValue CurrentClientShvNode::callMethodRq(const shv::chainpack
 				const string &method_param = plist.asList().valref(1).asString();
 				if(method_param.empty())
 					SHV_EXCEPTION("Method not specified in params.");
-				auto shv_url = shv::core::utils::ShvUrl(shv_path_param);
-				auto acg = app->aclManager()->accessGrantForShvPath(cli->loggedUserName(), shv_url, method_param, cli->isMasterBrokerConnection(), shv_url.isUpTreeMountPointRelative(), rq.accessGrant());
+				auto acg = app->aclManager()->accessGrantForShvPath(cli->loggedUserName(), shv_path_param, method_param, cli->isMasterBrokerConnection(), rq.accessGrant());
 				if(acg.accessLevel > shv::chainpack::AccessLevel::None) {
 					return static_cast<int>(acg.accessLevel);
 				}
