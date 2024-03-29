@@ -2,8 +2,6 @@
 
 #include <necrolog.h>
 
-#include <ranges>
-
 namespace shv::chainpack {
 
 namespace {
@@ -120,28 +118,15 @@ RpcValue UserLoginResult::toRpcValue() const
 //================================================================
 // AccessGrant
 //================================================================
-AccessGrant::AccessGrant(int level, const std::string &access_)
-	: accessLevelInt(level)
+AccessGrant::AccessGrant(std::optional<AccessLevel> level, std::string_view access_)
+	: accessLevel(level.value_or(AccessLevel::None))
 	, access(access_)
-{
-}
-
-std::optional<MetaMethod::AccessLevel> AccessGrant::accessLevel() const
-{
-	return MetaMethod::accessLevelFromInt(accessLevelInt);
-}
-
-AccessGrant::AccessGrant(AccessLevel level)
-	: accessLevelInt(static_cast<int>(level))
 {
 }
 
 AccessGrant AccessGrant::fromShv2Access(std::string_view shv2_access, int access_level)
 {
-	AccessGrant ret;
-	if (auto level = MetaMethod::accessLevelFromInt(access_level); level.has_value()) {
-		ret.accessLevelInt = static_cast<int>(level.value());
-	}
+	AccessGrant ret(accessLevelFromInt(access_level));
 	while (!shv2_access.empty()) {
 		auto first_comma = shv2_access.find(',');
 		auto level_str = shv2_access.substr(0, first_comma);
@@ -150,10 +135,11 @@ AccessGrant AccessGrant::fromShv2Access(std::string_view shv2_access, int access
 			shv2_access.remove_prefix(1);
 		}
 		if (!level_str.empty()) {
-			if (auto level = MetaMethod::accessLevelFromAccessString(level_str); level.has_value()) {
-				auto n = static_cast<int>(level.value());
-				// keep highest level
-				ret.accessLevelInt = std::max(ret.accessLevelInt, n);
+			if (auto level = accessLevelFromAccessString(level_str); level.has_value()) {
+				if (level.value() > ret.accessLevel) {
+					// keep highest level
+					ret.accessLevel = level.value();
+				}
 			}
 			else {
 				if (!ret.access.empty()) {
@@ -168,22 +154,23 @@ AccessGrant AccessGrant::fromShv2Access(std::string_view shv2_access, int access
 
 std::string AccessGrant::toShv2Access() const
 {
-	if (auto level = accessLevel(); level.has_value()) {
-		if (std::string level_str = MetaMethod::accessLevelToAccessString(level.value()); !level_str.empty()) {
-			if (!access.empty()) {
-				level_str = level_str + ',' + access;
-			}
-			return level_str;
+	if (std::string level_str = accessLevelToAccessString(accessLevel); !level_str.empty()) {
+		if (!access.empty()) {
+			level_str = level_str + ',' + access;
 		}
+		return level_str;
 	}
 	return {};
 }
 
 std::string AccessGrant::toPrettyString() const
 {
-	auto s = toShv2Access();
-	if (!accessLevel()) {
-		s = s + '(' + std::to_string(accessLevelInt) + ')';
+	std::string s = accessLevelToAccessString(accessLevel);
+	if (s.empty()) {
+		s = s + '(' + std::to_string(static_cast<int>(accessLevel)) + ')';
+	}
+	if (!access.empty()) {
+		s += "," + access;
 	}
 	return s;
 }

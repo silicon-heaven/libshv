@@ -314,7 +314,7 @@ chainpack::AccessGrant AclManager::accessGrantForShvPath(
 		const chainpack::AccessGrant &access_grant
 )
 {
-	using chainpack::MetaMethod::AccessLevel;
+	using chainpack::AccessLevel;
 	logAclResolveM() << "==== accessGrantForShvPath user:" << user_name << "requested path:"
 					 << shv_url.toString() << "method:" << method << "request grant:" << access_grant.toPrettyString();
 	if(is_service_provider_mount_point_relative_call) {
@@ -333,14 +333,14 @@ chainpack::AccessGrant AclManager::accessGrantForShvPath(
 	}
 #endif
 	if(is_request_from_master_broker) {
-		if(access_grant.accessLevelInt > 0) {
+		if(access_grant.accessLevel > AccessLevel::None) {
 			// access resolved by master broker already, forward use this
 			logAclResolveM() << "\t Resolved on master broker already.";
 			return access_grant;
 		}
 	}
 	else {
-		if(access_grant.accessLevelInt > 0) {
+		if(access_grant.accessLevel > AccessLevel::None) {
 			logAclResolveM() << "Client defined access level in RPC request are not implemented yet and will be ignored.";
 		}
 	}
@@ -350,7 +350,7 @@ chainpack::AccessGrant AclManager::accessGrantForShvPath(
 		// This is used mainly for service calls as (un)subscribe propagation to slave brokers etc.
 		if(shv_url.pathPart() == cp::Rpc::DIR_BROKER_APP) {
 			// master broker has always rd grant to .broker/app path
-			return chainpack::AccessGrant(chainpack::MetaMethod::AccessLevel::Write);
+			return chainpack::AccessGrant(chainpack::AccessLevel::Write);
 		}
 		flatten_user_roles = flattenRole(cp::Rpc::ROLE_MASTER_BROKER);
 	}
@@ -411,7 +411,7 @@ chainpack::AccessGrant AclManager::accessGrantForShvPath(
 	// find first matching rule
 	if(shv_url.pathPart() == BROKER_CURRENT_CLIENT_SHV_PATH) {
 		// client has WR grant on currentClient node
-		return AccessLevel::Write;
+		return {AccessLevel::Write};
 	}
 
 	for (const std::string& flatten_role : flatten_user_roles) {

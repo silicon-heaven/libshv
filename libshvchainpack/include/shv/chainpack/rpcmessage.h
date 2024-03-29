@@ -1,5 +1,6 @@
 #pragma once
 
+#include "shv/chainpack/accesslevel.h"
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/chainpack/rpc.h>
 
@@ -100,9 +101,9 @@ public:
 	void setAccess(const RpcValue::String &access);
 
 	static int accessLevel(const RpcValue::MetaData &meta);
-	static void setAccessLevel(RpcValue::MetaData &meta, int level);
+	static void setAccessLevel(RpcValue::MetaData &meta, shv::chainpack::AccessLevel level);
 	int accessLevel() const { return accessLevel(metaData()); }
-	void setAccessLevel(int level);
+	void setAccessLevel(AccessLevel level);
 
 	static AccessGrant accessGrant(const RpcValue::MetaData &meta);
 	static void setAccessGrant(RpcValue::MetaData &meta, const AccessGrant &ag);

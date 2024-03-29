@@ -58,16 +58,12 @@ public:
 
 struct SHVCHAINPACK_DECL_EXPORT AccessGrant
 {
-	using AccessLevel = MetaMethod::AccessLevel;
-
-	int accessLevelInt = 0;
+	AccessLevel accessLevel = AccessLevel::None;
 	std::string access;
 
 	AccessGrant() = default;
-	AccessGrant(AccessLevel level);
-	AccessGrant(int level, const std::string &access_);
+	AccessGrant(std::optional<AccessLevel> level, std::string_view access_ = {});
 
-	std::optional<AccessLevel> accessLevel() const;
 	static AccessGrant fromShv2Access(std::string_view shv2_access, int access_level = 0);
 	std::string toShv2Access() const;
 	std::string toPrettyString() const;

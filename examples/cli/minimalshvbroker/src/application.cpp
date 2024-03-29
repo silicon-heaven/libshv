@@ -31,7 +31,7 @@ private:
 
 namespace {
 const std::vector<shv::chainpack::MetaMethod> methods{
-	{METH_RESET, cp::MetaMethod::Flag::None, "param", "ret", shv::chainpack::MetaMethod::AccessLevel::Command},
+	{METH_RESET, cp::MetaMethod::Flag::None, "param", "ret", shv::chainpack::AccessLevel::Command},
 };
 }
 

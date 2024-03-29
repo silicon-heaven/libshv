@@ -127,7 +127,7 @@ chainpack::RpcValue ShvNodeTree::invokeMethod(const std::string &shv_path, const
 	rq.setMethod(method);
 	rq.setParams(params);
 	rq.setUserId(user_id);
-	rq.setAccessGrant(chainpack::AccessGrant(chainpack::MetaMethod::AccessLevel::Service));
+	rq.setAccessGrant(chainpack::AccessGrant(chainpack::AccessLevel::Service));
 	if(auto *root_nd = root()) {
 		try {
 			return root_nd->handleRpcRequestImpl(rq);

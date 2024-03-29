@@ -31,7 +31,7 @@ MetaMethod::MetaMethod(std::string name,
 	, m_flags(flags)
 	, m_param(param.value_or(VOID_TYPE_NAME))
 	, m_result(result.value_or(VOID_TYPE_NAME))
-	, m_accessLevelInt(static_cast<int>(access_level))
+	, m_accessLevel(access_level)
 	, m_label(label)
 	, m_description(description)
 	, m_extra(extra)
@@ -49,7 +49,7 @@ MetaMethod::MetaMethod(std::string name,
 	const RpcValue::Map &extra)
 	: m_name(name)
 	, m_flags(flags)
-	, m_accessLevelInt(static_cast<int>(accessLevelFromAccessString(access_grant).value_or(AccessLevel::Browse)))
+	, m_accessLevel(accessLevelFromAccessString(access_grant).value_or(AccessLevel::Browse))
 	, m_description(description)
 	, m_extra(extra)
 {
@@ -112,19 +112,14 @@ unsigned MetaMethod::flags() const
 	return m_flags;
 }
 
-int MetaMethod::accessLevelAsInt() const
+AccessLevel MetaMethod::accessLevel() const
 {
-	return m_accessLevelInt;
-}
-
-std::optional<MetaMethod::AccessLevel> MetaMethod::accessLevel() const
-{
-	return accessLevelFromInt(accessLevelAsInt());
+	return m_accessLevel;
 }
 
 void MetaMethod::setAccessLevel(std::optional<AccessLevel> level)
 {
-	m_accessLevelInt = static_cast<int>(level.value_or(AccessLevel::None));
+	m_accessLevel = level.value_or(AccessLevel::None);
 }
 
 const RpcValue::Map& MetaMethod::extra() const
@@ -159,7 +154,7 @@ RpcValue MetaMethod::toRpcValue() const
 	ret[static_cast<int>(Ikey::Name)] = m_name;
 	ret[static_cast<int>(Ikey::ParamType)] = m_param;
 	ret[static_cast<int>(Ikey::ResultType)] = m_result;
-	ret[static_cast<int>(Ikey::AccessLevel)] = static_cast<RpcValue::Int>(m_accessLevelInt);
+	ret[static_cast<int>(Ikey::AccessLevel)] = static_cast<RpcValue::Int>(m_accessLevel);
 	ret[static_cast<int>(Ikey::Signals)] = m_signals;
 	RpcValue::Map extra{
 		{KEY_DESCRIPTION, m_description},
@@ -204,7 +199,7 @@ MetaMethod MetaMethod::fromRpcValue(const RpcValue &rv)
 		const auto &lst = rv.asList();
 		ret.m_name = lst.value(0).asString();
 		ret.m_flags = lst.value(2).toUInt();
-		ret.setAccessLevel(accessLevelFromAccessString(lst.value(3).asString()));
+		ret.setAccessLevel(accessLevelFromAccessString(lst.value(3).asString()).value_or(AccessLevel::None));
 		ret.m_description = lst.value(4).asString();
 		const auto tags = lst.value(5);
 		ret.applyAttributesMap(tags.asMap());
@@ -307,66 +302,5 @@ std::string MetaMethod::flagsToString(unsigned flags)
 		add_str("Signal");
 	return ret;
 }
-
-const char *MetaMethod::accessLevelToAccessString(MetaMethod::AccessLevel access_level)
-{
-	switch(access_level) {
-	case AccessLevel::None: return "";
-	case AccessLevel::Browse: return shv::chainpack::Rpc::ROLE_BROWSE;
-	case AccessLevel::Read: return shv::chainpack::Rpc::ROLE_READ;
-	case AccessLevel::Write: return shv::chainpack::Rpc::ROLE_WRITE;
-	case AccessLevel::Command: return shv::chainpack::Rpc::ROLE_COMMAND;
-	case AccessLevel::Config: return shv::chainpack::Rpc::ROLE_CONFIG;
-	case AccessLevel::Service: return shv::chainpack::Rpc::ROLE_SERVICE;
-	case AccessLevel::SuperService: return shv::chainpack::Rpc::ROLE_SUPER_SERVICE;
-	case AccessLevel::Devel: return shv::chainpack::Rpc::ROLE_DEVEL;
-	case AccessLevel::Admin: return shv::chainpack::Rpc::ROLE_ADMIN;
-	}
-	return "";
-}
-
-std::optional<MetaMethod::AccessLevel> MetaMethod::accessLevelFromAccessString(std::string_view s)
-{
-	if(s == Rpc::ROLE_BROWSE) return MetaMethod::AccessLevel::Browse;
-	if(s == Rpc::ROLE_READ) return MetaMethod::AccessLevel::Read;
-	if(s == Rpc::ROLE_WRITE) return MetaMethod::AccessLevel::Write;
-	if(s == Rpc::ROLE_COMMAND) return MetaMethod::AccessLevel::Command;
-	if(s == Rpc::ROLE_CONFIG) return MetaMethod::AccessLevel::Config;
-	if(s == Rpc::ROLE_SERVICE) return MetaMethod::AccessLevel::Service;
-	if(s == Rpc::ROLE_SUPER_SERVICE) return MetaMethod::AccessLevel::SuperService;
-	if(s == Rpc::ROLE_DEVEL) return MetaMethod::AccessLevel::Devel;
-	if(s == Rpc::ROLE_ADMIN) return MetaMethod::AccessLevel::Admin;
-
-	return {};
-}
-
-std::optional<MetaMethod::AccessLevel> MetaMethod::accessLevelFromInt(int i)
-{
-	switch(static_cast<AccessLevel>(i)) {
-	case AccessLevel::None: return AccessLevel::None;
-	case AccessLevel::Browse: return AccessLevel::Browse;
-	case AccessLevel::Read: return AccessLevel::Read;
-	case AccessLevel::Write: return AccessLevel::Write;
-	case AccessLevel::Command: return AccessLevel::Command;
-	case AccessLevel::Config: return AccessLevel::Config;
-	case AccessLevel::Service: return AccessLevel::Service;
-	case AccessLevel::SuperService: return AccessLevel::SuperService;
-	case AccessLevel::Devel: return AccessLevel::Devel;
-	case AccessLevel::Admin: return AccessLevel::Admin;
-	}
-	return {};
-}
-
-//MetaMethod::AccessLevel MetaMethod::findAccessLevel(const std::string &access)
-//{
-//	for (const auto s : std::views::split(std::string_view(access), ',')) {
-//		std::string_view sv(s.begin(), s.size());
-//		if (auto level = MetaMethod::accessLevelFromAccessString(sv); level.has_value()) {
-//			return level.value();
-//		}
-//	}
-//	return AccessLevel::None;
-//}
-
 
 } // namespace shv

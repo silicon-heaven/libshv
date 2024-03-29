@@ -207,7 +207,7 @@ DOCTEST_TEST_CASE("accessGrantForShvPath")
 	bool is_service_provider_mount_point_relative_call = false;
 
 	bool expected_valid;
-	auto expected_access_level = static_cast<shv::chainpack::MetaMethod::AccessLevel>(-1);
+	auto expected_access_level = static_cast<shv::chainpack::AccessLevel>(-1);
 
 	std::vector<std::unique_ptr<trompeloeil::expectation>> expectations;
 
@@ -249,7 +249,7 @@ DOCTEST_TEST_CASE("accessGrantForShvPath")
 			DOCTEST_SUBCASE("one matching rule")
 			{
 				expected_valid = true;
-				expected_access_level = shv::chainpack::MetaMethod::AccessLevel::Admin;
+				expected_access_level = shv::chainpack::AccessLevel::Admin;
 				EXPECT_aclAccessRoleRules("my_role", R"([
 					{"method":"", "pathPattern":"**", "role":"su"}
 				])"_cpon);
@@ -269,7 +269,7 @@ DOCTEST_TEST_CASE("accessGrantForShvPath")
 
 				DOCTEST_SUBCASE("matches with the wildcard")
 				{
-					expected_access_level = shv::chainpack::MetaMethod::AccessLevel::Admin;
+					expected_access_level = shv::chainpack::AccessLevel::Admin;
 					EXPECT_aclAccessRoleRules("my_role", R"([
 						{"method":"", "pathPattern":"shv/**", "role":"su"},
 						{"method":"", "pathPattern":"shv/test", "role":"rd"}
@@ -278,7 +278,7 @@ DOCTEST_TEST_CASE("accessGrantForShvPath")
 
 				DOCTEST_SUBCASE("matches with the path")
 				{
-					expected_access_level = shv::chainpack::MetaMethod::AccessLevel::Read;
+					expected_access_level = shv::chainpack::AccessLevel::Read;
 					EXPECT_aclAccessRoleRules("my_role", R"([
 						{"method":"", "pathPattern":"shv/test", "role":"rd"}
 						{"method":"", "pathPattern":"shv/**", "role":"su"},
@@ -292,7 +292,7 @@ DOCTEST_TEST_CASE("accessGrantForShvPath")
 
 				DOCTEST_SUBCASE("the first one")
 				{
-					expected_access_level = shv::chainpack::MetaMethod::AccessLevel::Admin;
+					expected_access_level = shv::chainpack::AccessLevel::Admin;
 					EXPECT_aclAccessRoleRules("my_role", R"([
 						{"method":"", "pathPattern":"shv/**", "role":"su"},
 						{"method":"", "pathPattern":"shv/test/subpath", "role":"rd"}
@@ -300,7 +300,7 @@ DOCTEST_TEST_CASE("accessGrantForShvPath")
 				}
 				DOCTEST_SUBCASE("the second one")
 				{
-					expected_access_level = shv::chainpack::MetaMethod::AccessLevel::Admin;
+					expected_access_level = shv::chainpack::AccessLevel::Admin;
 					EXPECT_aclAccessRoleRules("my_role", R"([
 						{"method":"", "pathPattern":"shv/test/subpath", "role":"rd"}
 						{"method":"", "pathPattern":"shv/**", "role":"su"},
@@ -311,8 +311,8 @@ DOCTEST_TEST_CASE("accessGrantForShvPath")
 	}
 
 	auto acg = acl->accessGrantForShvPath(user, shv::core::utils::ShvUrl{shv_path}, method, is_request_from_master_broker, is_service_provider_mount_point_relative_call, {});
-	REQUIRE((acg.accessLevelInt > 0) == expected_valid);
+	REQUIRE((acg.accessLevel > shv::chainpack::AccessLevel::None) == expected_valid);
 	if (expected_valid) {
-		REQUIRE(acg.accessLevelInt == expected_access_level);
+		REQUIRE(acg.accessLevel == expected_access_level);
 	}
 }

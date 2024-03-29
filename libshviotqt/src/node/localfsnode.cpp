@@ -22,19 +22,19 @@ const auto M_LS_FILES = "lsfiles";
 const std::vector<MetaMethod> meta_methods_dir {
 	shv::chainpack::methods::DIR,
 	shv::chainpack::methods::LS,
-	{M_LS_FILES, MetaMethod::Flag::None, "Map|Null", "List", MetaMethod::AccessLevel::Read},
-	{M_MKFILE, MetaMethod::Flag::None, "String|List", "Bool", MetaMethod::AccessLevel::Write},
-	{M_MKDIR, MetaMethod::Flag::None, "String", "Bool", MetaMethod::AccessLevel::Write},
-	{M_RMDIR, MetaMethod::Flag::None, "Bool", "Bool", MetaMethod::AccessLevel::Service}
+	{M_LS_FILES, MetaMethod::Flag::None, "Map|Null", "List", AccessLevel::Read},
+	{M_MKFILE, MetaMethod::Flag::None, "String|List", "Bool", AccessLevel::Write},
+	{M_MKDIR, MetaMethod::Flag::None, "String", "Bool", AccessLevel::Write},
+	{M_RMDIR, MetaMethod::Flag::None, "Bool", "Bool", AccessLevel::Service}
 };
 
 const std::vector<MetaMethod> meta_methods_dir_write_file {
-	{M_WRITE, MetaMethod::Flag::None, "String|List", "Bool", MetaMethod::AccessLevel::Write},
+	{M_WRITE, MetaMethod::Flag::None, "String|List", "Bool", AccessLevel::Write},
 };
 
 const std::vector<MetaMethod> meta_methods_file_modificable {
-	{M_WRITE, MetaMethod::Flag::None, "String|List", "Bool", MetaMethod::AccessLevel::Write},
-	{M_DELETE, MetaMethod::Flag::None, "", "Bool", MetaMethod::AccessLevel::Service}
+	{M_WRITE, MetaMethod::Flag::None, "String|List", "Bool", AccessLevel::Write},
+	{M_DELETE, MetaMethod::Flag::None, "", "Bool", AccessLevel::Service}
 };
 
 const std::vector<MetaMethod> & get_meta_methods_file()

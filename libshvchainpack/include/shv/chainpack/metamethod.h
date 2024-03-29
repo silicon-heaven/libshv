@@ -2,6 +2,7 @@
 
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/chainpack/rpc.h>
+#include <shv/chainpack/accesslevel.h>
 
 #include <optional>
 
@@ -20,18 +21,6 @@ public:
 			IsSetter = 1 << 2,
 			LargeResultHint = 1 << 3,
 		};
-	};
-	enum class AccessLevel {
-		None = 0,
-		Browse = 1,
-		Read = 8,
-		Write = 16,
-		Command = 24,
-		Config = 32,
-		Service = 40,
-		SuperService = 48,
-		Devel = 56,
-		Admin = 63,
 	};
 
 	static constexpr auto KEY_NAME = "name";
@@ -80,8 +69,7 @@ public:
 	MetaMethod& setLabel(const std::string &label);
 	const std::string& description() const;
 	unsigned flags() const;
-	int accessLevelAsInt() const;
-	std::optional<MetaMethod::AccessLevel> accessLevel() const;
+	AccessLevel accessLevel() const;
 	void setAccessLevel(std::optional<AccessLevel> level);
 	const RpcValue::Map& extra() const;
 	RpcValue tag(const std::string &key, const RpcValue& default_value = {}) const;
@@ -95,16 +83,12 @@ public:
 	static Signature signatureFromString(const std::string &sigstr);
 	static const char* signatureToString(Signature sig);
 	static std::string flagsToString(unsigned flags);
-	static const char* accessLevelToAccessString(AccessLevel access_level);
-	static std::optional<AccessLevel> accessLevelFromAccessString(std::string_view s);
-	static std::optional<AccessLevel> accessLevelFromInt(int i);
-	//static AccessLevel findAccessLevel(const std::string &access);
 private:
 	std::string m_name;
 	unsigned m_flags = 0;
 	std::string m_param;
 	std::string m_result;
-	int m_accessLevelInt;
+	AccessLevel m_accessLevel;
 	RpcValue::Map m_signals;
 	std::string m_label;
 	std::string m_description;
@@ -112,31 +96,16 @@ private:
 };
 
 namespace methods {
-const auto LS = MetaMethod{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "LsParam", "LsResult", shv::chainpack::MetaMethod::AccessLevel::Browse};
-const auto DIR = MetaMethod{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "DirParam", "DirResult", shv::chainpack::MetaMethod::AccessLevel::Browse};
+const auto LS = MetaMethod{shv::chainpack::Rpc::METH_LS, shv::chainpack::MetaMethod::Flag::None, "LsParam", "LsResult", shv::chainpack::AccessLevel::Browse};
+const auto DIR = MetaMethod{shv::chainpack::Rpc::METH_DIR, shv::chainpack::MetaMethod::Flag::None, "DirParam", "DirResult", shv::chainpack::AccessLevel::Browse};
 }
 
-constexpr bool operator<(int a, const MetaMethod::AccessLevel b)
-{
-	return a < static_cast<int>(b);
-}
-
-constexpr bool operator==(int a, const MetaMethod::AccessLevel b)
-{
-	return a == static_cast<int>(b);
-}
-
-constexpr bool operator>(int a, const MetaMethod::AccessLevel b)
-{
-	return a > static_cast<int>(b);
-}
-
-constexpr bool operator<(const MetaMethod::AccessLevel a, const MetaMethod::AccessLevel b)
+constexpr bool operator<(const AccessLevel a, const AccessLevel b)
 {
 	return static_cast<int>(a) < static_cast<int>(b);
 }
 
-constexpr bool operator>(const MetaMethod::AccessLevel a, const MetaMethod::AccessLevel b)
+constexpr bool operator>(const AccessLevel a, const AccessLevel b)
 {
 	return static_cast<int>(a) > static_cast<int>(b);
 }

@@ -1,10 +1,10 @@
 add_library(libshvchainpack-cpp
 	src/chainpack/abstractstreamreader.cpp
 	src/chainpack/abstractstreamwriter.cpp
+	src/chainpack/accesslevel.cpp
 	src/chainpack/accessgrant.cpp
 	src/chainpack/chainpack.cpp
 	src/chainpack/chainpackreader.cpp
-	#src/chainpack/chainpackreader1.cpp
 	src/chainpack/chainpackwriter.cpp
 	src/chainpack/cponreader.cpp
 	src/chainpack/cponwriter.cpp
