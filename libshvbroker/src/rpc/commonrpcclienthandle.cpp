@@ -2,6 +2,7 @@
 
 #include <shv/iotqt/node/shvnode.h>
 #include <shv/core/utils/shvpath.h>
+#include <shv/chainpack/rpc.h>
 
 #include <shv/coreqt/log.h>
 
@@ -47,11 +48,16 @@ bool CommonRpcClientHandle::Subscription::cmpSubscribed(const CommonRpcClientHan
 	return false;
 }
 
-bool CommonRpcClientHandle::Subscription::match(const shv::core::StringView &shv_path, const shv::core::StringView &shv_method, const std::string_view& shv_source) const
+bool CommonRpcClientHandle::Subscription::match(std::string_view signal_path, std::string_view signal_method,std::string_view signal_source) const
 {
-	bool path_match = shv::core::utils::ShvPath::startsWithPath(shv_path, path);
-	if(path_match)
-		return (method.empty() || shv_method == method) && (source.empty() || shv_source == source);
+	bool path_match = shv::core::utils::ShvPath::startsWithPath(signal_path, path);
+	if(path_match) {
+		if (signal_source.empty()) {
+			signal_source = shv::chainpack::Rpc::METH_GET;
+		}
+		return (method.empty() || method == signal_method)
+				&& (source.empty() || source == signal_source);
+	}
 	return false;
 }
 
@@ -109,7 +115,7 @@ int CommonRpcClientHandle::isSubscribed(const std::string &shv_path, const std::
 	logSigResolveD() << "connection id:" << connectionId() << "checking if signal:" << shv_path << "method:" << method;
 	for (size_t i = 0; i < subscriptionCount(); ++i) {
 		const Subscription &subs = subscriptionAt(i);
-		logSigResolveD() << "\tchecking path:" << subs.path << "method:" << subs.method;
+		logSigResolveD() << "\tchecking path:" << subs.path << "method:" << subs.method << "source:" << subs.source;
 		if(subs.match(shv_path, method, source)) {
 			logSigResolveD() << "\t\tHIT";
 			return static_cast<int>(i);

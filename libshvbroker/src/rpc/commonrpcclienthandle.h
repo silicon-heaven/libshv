@@ -19,7 +19,7 @@ public:
 		Subscription(const std::string &path_, const std::string &method_, const std::string& source_);
 
 		bool cmpSubscribed(const CommonRpcClientHandle::Subscription &o) const;
-		bool match(const std::string_view &shv_path, const std::string_view &shv_method, const std::string_view& source) const;
+		bool match(std::string_view signal_path, std::string_view signal_method,std::string_view signal_source) const;
 		std::string toString() const;
 	};
 public:

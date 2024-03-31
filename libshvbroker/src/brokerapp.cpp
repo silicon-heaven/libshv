@@ -1311,20 +1311,15 @@ bool BrokerApp::sendNotifyToSubscribers(const chainpack::RpcFrame &frame)
 	bool subs_sent = false;
 	for(rpc::CommonRpcClientHandle *conn : allClientConnections()) {
 		if(conn->isConnectedAndLoggedIn()) {
-			const cp::RpcValue shv_path = cp::RpcMessage::shvPath(frame.meta);
-			const cp::RpcValue method = cp::RpcMessage::method(frame.meta);
+			const auto shv_path = cp::RpcMessage::shvPath(frame.meta);
+			const auto method = cp::RpcMessage::method(frame.meta);
 			const auto source = cp::RpcMessage::source(frame.meta);
 			int subs_ix = conn->isSubscribed(shv_path.toString(), method.asString(), source);
 			if(subs_ix >= 0) {
 				std::string new_path = conn->toSubscribedPath(shv_path.asString());
-				if(new_path == shv_path.asString()) {
-					conn->sendRpcFrame(chainpack::RpcFrame(frame));
-				}
-				else {
-					auto frame2 = frame;
-					cp::RpcMessage::setShvPath(frame2.meta, new_path);
-					conn->sendRpcFrame(std::move(frame2));
-				}
+				auto frame2 = frame;
+				cp::RpcMessage::setShvPath(frame2.meta, new_path);
+				conn->sendRpcFrame(std::move(frame2));
 				subs_sent = true;
 			}
 		}
