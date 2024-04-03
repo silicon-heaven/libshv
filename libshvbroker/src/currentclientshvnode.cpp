@@ -40,14 +40,14 @@ CurrentClientShvNode::CurrentClientShvNode(shv::iotqt::node::ShvNode *parent)
 	, m_metaMethods {
 		shv::chainpack::methods::DIR,
 		shv::chainpack::methods::LS,
-		{M_CLIENT_ID, cp::MetaMethod::Flag::None, "void", "ret", cp::MetaMethod::AccessLevel::Read},
-		{M_MOUNT_POINT, cp::MetaMethod::Flag::None, "void", "ret", cp::MetaMethod::AccessLevel::Read},
-		{M_USER_ROLES, cp::MetaMethod::Flag::None, "void", "ret", cp::MetaMethod::AccessLevel::Read},
-		{M_USER_PROFILE, cp::MetaMethod::Flag::None, "void", "ret", cp::MetaMethod::AccessLevel::Read},
-		{M_ACCESS_GRANT_FOR_METHOD_CALL, cp::MetaMethod::Flag::None, "param", "ret", cp::MetaMethod::AccessLevel::Read, {}, R"(params: ["shv_path", "method"])"},
-		{M_ACCESS_LEVEL_FOR_METHOD_CALL, cp::MetaMethod::Flag::None, "param", "ret", cp::MetaMethod::AccessLevel::Read, {}, "deprecated, use accessGrantForMethodCall instead"},
-		{M_ACCES_LEVEL_FOR_METHOD_CALL, cp::MetaMethod::Flag::None, "param", "ret", cp::MetaMethod::AccessLevel::Read, {}, "deprecated, use accessGrantForMethodCall instead"},
-		{M_CHANGE_PASSWORD, cp::MetaMethod::Flag::None, "param", "ret", cp::MetaMethod::AccessLevel::Write, {} , R"(params: ["old_password", "new_password"], old and new passwords can be plain or SHA1)"},
+		{M_CLIENT_ID, cp::MetaMethod::Flag::None, "void", "ret", cp::AccessLevel::Read},
+		{M_MOUNT_POINT, cp::MetaMethod::Flag::None, "void", "ret", cp::AccessLevel::Read},
+		{M_USER_ROLES, cp::MetaMethod::Flag::None, "void", "ret", cp::AccessLevel::Read},
+		{M_USER_PROFILE, cp::MetaMethod::Flag::None, "void", "ret", cp::AccessLevel::Read},
+		{M_ACCESS_GRANT_FOR_METHOD_CALL, cp::MetaMethod::Flag::None, "param", "ret", cp::AccessLevel::Read, {}, R"(params: ["shv_path", "method"])"},
+		{M_ACCESS_LEVEL_FOR_METHOD_CALL, cp::MetaMethod::Flag::None, "param", "ret", cp::AccessLevel::Read, {}, "deprecated, use accessGrantForMethodCall instead"},
+		{M_ACCES_LEVEL_FOR_METHOD_CALL, cp::MetaMethod::Flag::None, "param", "ret", cp::AccessLevel::Read, {}, "deprecated, use accessGrantForMethodCall instead"},
+		{M_CHANGE_PASSWORD, cp::MetaMethod::Flag::None, "param", "ret", cp::AccessLevel::Write, {} , R"(params: ["old_password", "new_password"], old and new passwords can be plain or SHA1)"},
 	}
 {
 }
@@ -113,7 +113,8 @@ shv::chainpack::RpcValue CurrentClientShvNode::callMethodRq(const shv::chainpack
 				if(method_param.empty())
 					SHV_EXCEPTION("Method not specified in params.");
 				auto shv_url = shv::core::utils::ShvUrl(shv_path_param);
-				return app->aclManager()->accessGrantForShvPath(cli->loggedUserName(), shv_url, method_param, cli->isMasterBrokerConnection(), shv_url.isUpTreeMountPointRelative(), rq.accessGrant());
+				auto ag = app->aclManager()->accessGrantForShvPath(cli->loggedUserName(), shv_url, method_param, cli->isMasterBrokerConnection(), shv_url.isUpTreeMountPointRelative(), rq.accessGrant());
+				return shv::chainpack::accessLevelToAccessString(ag.accessLevel);
 			}
 			return nullptr;
 		}
@@ -131,12 +132,8 @@ shv::chainpack::RpcValue CurrentClientShvNode::callMethodRq(const shv::chainpack
 					SHV_EXCEPTION("Method not specified in params.");
 				auto shv_url = shv::core::utils::ShvUrl(shv_path_param);
 				auto acg = app->aclManager()->accessGrantForShvPath(cli->loggedUserName(), shv_url, method_param, cli->isMasterBrokerConnection(), shv_url.isUpTreeMountPointRelative(), rq.accessGrant());
-				auto level = shv::iotqt::node::ShvNode::basicGrantToAccessLevel(acg);
-				if(level > shv::chainpack::MetaMethod::AccessLevel::None) {
-					std::string role = shv::chainpack::MetaMethod::accessLevelToString(level);
-					if(role.empty())
-						return static_cast<int>(level);
-					return role;
+				if(acg.accessLevel > shv::chainpack::AccessLevel::None) {
+					return static_cast<int>(acg.accessLevel);
 				}
 			}
 			return nullptr;

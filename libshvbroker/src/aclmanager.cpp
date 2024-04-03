@@ -305,14 +305,22 @@ void AclManager::setGroupForLdapUser(const std::string_view& user_name, const st
 	m_ldapUserGroups.emplace(user_name, group_name);
 }
 #endif
-
-chainpack::RpcValue AclManager::accessGrantForShvPath(const std::string& user_name, const shv::core::utils::ShvUrl &shv_url, const std::string &method, bool is_request_from_master_broker, bool is_service_provider_mount_point_relative_call, const shv::chainpack::RpcValue &rq_grant)
+chainpack::AccessGrant AclManager::accessGrantForShvPath(
+		const std::string &user_name,
+		const core::utils::ShvUrl &shv_url,
+		const std::string &method,
+		bool is_request_from_master_broker,
+		bool is_service_provider_mount_point_relative_call,
+		const chainpack::AccessGrant &access_grant
+)
 {
-	logAclResolveM() << "==== accessGrantForShvPath user:" << user_name << "requested path:" << shv_url.toString() << "method:" << method << "request grant:" << rq_grant.toCpon();
+	using chainpack::AccessLevel;
+	logAclResolveM() << "==== accessGrantForShvPath user:" << user_name << "requested path:"
+					 << shv_url.toString() << "method:" << method << "request grant:" << access_grant.toPrettyString();
 	if(is_service_provider_mount_point_relative_call) {
 		auto ret = cp::Rpc::ROLE_WRITE;
 		logAclResolveM() << "==== resolved path:" << shv_url.toString() << "grant:" << ret;
-		return ret;
+		return access_grant;
 	}
 #ifdef USE_SHV_PATHS_GRANTS_CACHE
 	PathGrantCache *user_path_grants = m_userPathGrantCache.object(user_name);
@@ -324,14 +332,17 @@ chainpack::RpcValue AclManager::accessGrantForShvPath(const std::string& user_na
 		}
 	}
 #endif
-	auto request_grant = rq_grant;
 	if(is_request_from_master_broker) {
-		// access resolved by master broker already, forward use this
-		logAclResolveM() << "\t Resolved on master broker already.";
-		return request_grant;
+		if(access_grant.accessLevel > AccessLevel::None) {
+			// access resolved by master broker already, forward use this
+			logAclResolveM() << "\t Resolved on master broker already.";
+			return access_grant;
+		}
 	}
-	if(request_grant.isValid()) {
-		logAclResolveM() << "Client defined grants in RPC request are not implemented yet and will be ignored.";
+	else {
+		if(access_grant.accessLevel > AccessLevel::None) {
+			logAclResolveM() << "Client defined access level in RPC request are not implemented yet and will be ignored.";
+		}
 	}
 	std::vector<std::string> flatten_user_roles;
 	if(is_request_from_master_broker) {
@@ -339,7 +350,7 @@ chainpack::RpcValue AclManager::accessGrantForShvPath(const std::string& user_na
 		// This is used mainly for service calls as (un)subscribe propagation to slave brokers etc.
 		if(shv_url.pathPart() == cp::Rpc::DIR_BROKER_APP) {
 			// master broker has always rd grant to .broker/app path
-			return cp::Rpc::ROLE_WRITE;
+			return chainpack::AccessGrant(chainpack::AccessLevel::Write);
 		}
 		flatten_user_roles = flattenRole(cp::Rpc::ROLE_MASTER_BROKER);
 	}
@@ -347,12 +358,12 @@ chainpack::RpcValue AclManager::accessGrantForShvPath(const std::string& user_na
 		if (auto user_def = user(user_name); user_def.isValid()) {
 			flatten_user_roles = userFlattenRoles(user_name, user_def.roles);
 		}
-#ifdef WITH_SHV_LDAP
+	#ifdef WITH_SHV_LDAP
 		// I don't have to check if ldap is enabled - if m_ldapUserGroups is non-empty, it must've been enabled.
 		else if (auto ldap_it = m_ldapUserGroups.find(user_name); ldap_it != m_ldapUserGroups.end()) {
 			flatten_user_roles = ldapUserFlattenRoles(user_name, ldap_it->second);
 		}
-#endif
+	#endif
 		else if (auto azure_it = m_azureUserGroups.find(user_name); azure_it != m_azureUserGroups.end()) {
 			flatten_user_roles = azureUserFlattenRoles(user_name, azure_it->second);
 		}
@@ -375,24 +386,22 @@ chainpack::RpcValue AclManager::accessGrantForShvPath(const std::string& user_na
 			}
 			return s;
 		};
-		std::vector<int> cols = {15, 10, 20, 15, 1};
+		std::vector<int> cols = {15, 20, 20, 1};
 		const int row_len = 70;
 		QString tbl = "\n" + QString(row_len, '-') + '\n';
 		tbl += to_str("role", cols[0]);
-		tbl += to_str("service", cols[1]);
-		tbl += to_str("pattern", cols[2]);
-		tbl += to_str("method", cols[3]);
-		tbl += to_str("grant", cols[4]);
+		tbl += to_str("pattern", cols[1]);
+		tbl += to_str("method", cols[2]);
+		tbl += to_str("access", cols[3]);
 		tbl += "\n" + QString(row_len, '-');
 		for(const std::string &role : flatten_user_roles) {
 			const iotqt::acl::AclRoleAccessRules &role_rules = accessRoleRules(role);
 			for(const iotqt::acl::AclAccessRule &access_rule : role_rules) {
 				tbl += "\n";
 				tbl += to_str(role.c_str(), cols[0]);
-				tbl += to_str(access_rule.service.c_str(), cols[1]);
-				tbl += to_str(access_rule.pathPattern.c_str(), cols[2]);
-				tbl += to_str(access_rule.method.c_str(), cols[3]);
-				tbl += to_str(std::visit(shv::chainpack::GrantToString{}, access_rule.grant).c_str(), cols[4]);
+				tbl += to_str(access_rule.path.c_str(), cols[1]);
+				tbl += to_str(access_rule.method.c_str(), cols[2]);
+				tbl += to_str(access_rule.access.c_str(), cols[3]);
 			}
 		}
 		tbl += "\n" + QString(row_len, '-');
@@ -402,7 +411,7 @@ chainpack::RpcValue AclManager::accessGrantForShvPath(const std::string& user_na
 	// find first matching rule
 	if(shv_url.pathPart() == BROKER_CURRENT_CLIENT_SHV_PATH) {
 		// client has WR grant on currentClient node
-		return cp::Rpc::ROLE_WRITE;
+		return {AccessLevel::Write};
 	}
 
 	for (const std::string& flatten_role : flatten_user_roles) {
@@ -415,11 +424,11 @@ chainpack::RpcValue AclManager::accessGrantForShvPath(const std::string& user_na
 		for (const auto& access_rule : role_rules) {
 			logAclResolveM() << "rule:" << access_rule.toRpcValue().toCpon();
 			if (access_rule.isPathMethodMatch(shv_url, method)) {
+				auto resolved_access_grant = chainpack::AccessGrant::fromShv2Access(access_rule.access);
 				logAclResolveM() << "access user:" << user_name
 					<< "shv_path:" << shv_url.toString()
-					<< "rq_grant:" << (rq_grant.isValid()? rq_grant.toCpon(): "<none>")
-					<< "==== path:" << access_rule.pathPattern << "method:" << access_rule.method << "grant:" << std::visit(shv::chainpack::GrantToString{}, access_rule.grant);
-				return std::visit(shv::chainpack::GrantToRpcValue{}, access_rule.grant);
+					<< "access:" << access_rule.access;
+				return resolved_access_grant;
 			}
 		}
 	}

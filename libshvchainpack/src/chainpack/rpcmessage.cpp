@@ -29,7 +29,8 @@ RpcMessage::MetaType::MetaType()
 		{static_cast<int>(Tag::Method), {static_cast<int>(Tag::Method), Rpc::PAR_METHOD}},
 		{static_cast<int>(Tag::CallerIds), {static_cast<int>(Tag::CallerIds), "cid"}},
 		{static_cast<int>(Tag::RevCallerIds), {static_cast<int>(Tag::RevCallerIds), "rcid"}},
-		{static_cast<int>(Tag::AccessGrant), {static_cast<int>(Tag::AccessGrant), "grant"}},
+		{static_cast<int>(Tag::Access), {static_cast<int>(Tag::Access), "access"}},
+		{static_cast<int>(Tag::AccessLevel), {static_cast<int>(Tag::AccessLevel), "accessLevel"}},
 		{static_cast<int>(Tag::TunnelCtl), {static_cast<int>(Tag::TunnelCtl), "tctl"}},
 		{static_cast<int>(Tag::UserId), {static_cast<int>(Tag::UserId), "userId"}},
 		{static_cast<int>(Tag::Source), {static_cast<int>(Tag::Source), "source"}},
@@ -338,27 +339,56 @@ void RpcMessage::setShvPath(const RpcValue::String &path)
 	setMetaValue(RpcMessage::MetaType::Tag::ShvPath, path);
 }
 
-RpcValue RpcMessage::accessGrant(const RpcValue::MetaData &meta)
+AccessGrant RpcMessage::accessGrant(const RpcValue::MetaData &meta)
 {
-	return meta.value(RpcMessage::MetaType::Tag::AccessGrant);
+	return AccessGrant::fromShv2Access(access(meta), accessLevel(meta));
 }
 
-void RpcMessage::setAccessGrant(RpcValue::MetaData &meta, const RpcValue &ag)
+void RpcMessage::setAccessGrant(RpcValue::MetaData &meta, const AccessGrant &ag)
 {
-	meta.setValue(RpcMessage::MetaType::Tag::AccessGrant, ag);
+	setAccessLevel(meta, ag.accessLevel);
+	setAccess(meta, ag.toShv2Access());
 }
 
-RpcValue RpcMessage::accessGrant() const
+AccessGrant RpcMessage::accessGrant() const
 {
-	if (m_value.has(RpcMessage::MetaType::Tag::AccessLevel)) {
-		return metaValue(RpcMessage::MetaType::Tag::AccessLevel);
-	}
-	return metaValue(RpcMessage::MetaType::Tag::AccessGrant);
+	return accessGrant(metaData());
 }
 
-void RpcMessage::setAccessGrant(const RpcValue &ag)
+void RpcMessage::setAccessGrant(const AccessGrant &ag)
 {
-	setMetaValue(RpcMessage::MetaType::Tag::AccessGrant, ag);
+	setAccessLevel(ag.accessLevel);
+	setAccess(ag.toShv2Access());
+}
+
+std::string RpcMessage::access(const RpcValue::MetaData &meta)
+{
+	return meta.value(RpcMessage::MetaType::Tag::Access).asString();
+}
+
+void RpcMessage::setAccess(RpcValue::MetaData &meta, const RpcValue::String &access)
+{
+	meta.setValue(RpcMessage::MetaType::Tag::Access, access.empty()? RpcValue(): RpcValue(access));
+}
+
+void RpcMessage::setAccess(const RpcValue::String &access)
+{
+	setMetaValue(RpcMessage::MetaType::Tag::Access, access.empty()? RpcValue(): RpcValue(access));
+}
+
+int RpcMessage::accessLevel(const RpcValue::MetaData &meta)
+{
+	return meta.value(RpcMessage::MetaType::Tag::AccessLevel).toInt();
+}
+
+void RpcMessage::setAccessLevel(RpcValue::MetaData &meta, AccessLevel level)
+{
+	meta.setValue(RpcMessage::MetaType::Tag::AccessLevel, level == AccessLevel::None? RpcValue(): RpcValue(static_cast<int>(level)));
+}
+
+void RpcMessage::setAccessLevel(AccessLevel level)
+{
+	setMetaValue(RpcMessage::MetaType::Tag::AccessLevel, level == AccessLevel::None? RpcValue(): RpcValue(static_cast<int>(level)));
 }
 
 TunnelCtl RpcMessage::tunnelCtl(const RpcValue::MetaData &meta)

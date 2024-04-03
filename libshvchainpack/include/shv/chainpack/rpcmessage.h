@@ -1,5 +1,6 @@
 #pragma once
 
+#include "shv/chainpack/accesslevel.h"
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/chainpack/rpc.h>
 
@@ -14,6 +15,7 @@ namespace chainpack {
 class AbstractStreamWriter;
 class TunnelCtl;
 class RpcMessage;
+struct AccessGrant;
 
 struct SHVCHAINPACK_DECL_EXPORT RpcFrame
 {
@@ -42,7 +44,7 @@ public:
 								Method = 10,  // 10
 								CallerIds = 11, // 11
 								RevCallerIds = 13,
-								AccessGrant = 14,
+								Access = 14,
 								TunnelCtl = 15,
 								UserId = 16,
 								AccessLevel = 17,
@@ -93,10 +95,20 @@ public:
 	RpcValue shvPath() const;
 	void setShvPath(const RpcValue::String &path);
 
-	static RpcValue accessGrant(const RpcValue::MetaData &meta);
-	static void setAccessGrant(RpcValue::MetaData &meta, const RpcValue &ag);
-	RpcValue accessGrant() const;
-	void setAccessGrant(const RpcValue &ag);
+	static std::string access(const RpcValue::MetaData &meta);
+	static void setAccess(RpcValue::MetaData &meta, const RpcValue::String &access);
+	RpcValue::String access() const { return access(metaData()); }
+	void setAccess(const RpcValue::String &access);
+
+	static int accessLevel(const RpcValue::MetaData &meta);
+	static void setAccessLevel(RpcValue::MetaData &meta, shv::chainpack::AccessLevel level);
+	int accessLevel() const { return accessLevel(metaData()); }
+	void setAccessLevel(AccessLevel level);
+
+	static AccessGrant accessGrant(const RpcValue::MetaData &meta);
+	static void setAccessGrant(RpcValue::MetaData &meta, const AccessGrant &ag);
+	AccessGrant accessGrant() const;
+	void setAccessGrant(const AccessGrant &ag);
 
 	static TunnelCtl tunnelCtl(const RpcValue::MetaData &meta);
 	static void setTunnelCtl(RpcValue::MetaData &meta, const TunnelCtl &tc);

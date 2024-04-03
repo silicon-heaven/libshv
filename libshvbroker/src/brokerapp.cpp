@@ -221,7 +221,7 @@ private:
 const std::vector<cp::MetaMethod> MountsNode::m_metaMethods = {
 	shv::chainpack::methods::DIR,
 	shv::chainpack::methods::LS,
-	{METH_CLIENT_IDS, cp::MetaMethod::Flag::IsGetter, "void", "ret", shv::chainpack::MetaMethod::AccessLevel::Config},
+	{METH_CLIENT_IDS, cp::MetaMethod::Flag::IsGetter, "void", "ret", shv::chainpack::AccessLevel::Config},
 };
 
 #ifdef WITH_SHV_LDAP
@@ -1128,10 +1128,10 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 					if(!client_connection->isSlaveBrokerConnection()) {
 						{
 							// erase grant from client connections
-							cp::RpcValue ag = cp::RpcMessage::accessGrant(frame.meta);
-							if(ag.isValid() /*&& !ag.isUserLogin()*/) {
+							auto ag = cp::RpcMessage::accessGrant(frame.meta);
+							if(ag.accessLevel > chainpack::AccessLevel::None) {
 								shvWarning() << "Client request with access grant specified not allowed, erasing:" << ag.toPrettyString();
-								cp::RpcMessage::setAccessGrant(frame.meta, cp::RpcValue());
+								cp::RpcMessage::setAccessGrant(frame.meta, {});
 							}
 						}
 						{
@@ -1169,9 +1169,8 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 				else if(master_broker_connection) {
 					auto has_dot_local_access = [](const cp::RpcValue::MetaData &meta_data) {
 						auto access_grant = cp::RpcMessage::accessGrant(meta_data);
-						auto access_level = shv::iotqt::node::ShvNode::basicGrantToAccessLevel(access_grant);
-						if (access_level < chainpack::MetaMethod::AccessLevel::SuperService) {
-							auto roles = shv::core::utils::split(access_grant.asString(), ',');
+						if (access_grant.accessLevel < chainpack::AccessLevel::SuperService) {
+							auto roles = shv::core::utils::split(access_grant.access, ',');
 							return std::find(roles.begin(), roles.end(), "dot_local") != roles.end();
 						}
 						return true;
@@ -1216,9 +1215,8 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 				const std::string resolved_shv_path = cp::RpcMessage::shvPath(frame.meta).asString();
 				ShvUrl resolved_shv_url(resolved_shv_path);
 				auto acg = aclManager()->accessGrantForShvPath(connection_handle->loggedUserName(), resolved_shv_url, method, connection_handle->isMasterBrokerConnection(), is_service_provider_mount_point_relative_call, cp::RpcMessage::accessGrant(frame.meta));
-				auto level = iotqt::node::ShvNode::basicGrantToAccessLevel(acg);
-				if(level != shv::chainpack::MetaMethod::AccessLevel::None) {
-					if(level < shv::chainpack::MetaMethod::AccessLevel::Write) {
+				if(acg.accessLevel > shv::chainpack::AccessLevel::None) {
+					if(acg.accessLevel < shv::chainpack::AccessLevel::Write) {
 						// remove iser id for read operations
 						cp::RpcMessage::setUserId(frame.meta, {});
 					}

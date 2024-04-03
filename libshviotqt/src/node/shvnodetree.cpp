@@ -1,6 +1,7 @@
 #include <shv/iotqt/node/shvnodetree.h>
 
 #include <shv/core/utils/shvfilejournal.h>
+#include <shv/chainpack/accessgrant.h>
 #include <shv/chainpack/metamethod.h>
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/core/exception.h>
@@ -126,7 +127,7 @@ chainpack::RpcValue ShvNodeTree::invokeMethod(const std::string &shv_path, const
 	rq.setMethod(method);
 	rq.setParams(params);
 	rq.setUserId(user_id);
-	rq.setAccessGrant(chainpack::MetaMethod::accessLevelToString(chainpack::MetaMethod::AccessLevel::Service));
+	rq.setAccessGrant(chainpack::AccessGrant(chainpack::AccessLevel::Service));
 	if(auto *root_nd = root()) {
 		try {
 			return root_nd->handleRpcRequestImpl(rq);

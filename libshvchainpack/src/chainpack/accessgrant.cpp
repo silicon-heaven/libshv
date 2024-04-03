@@ -114,4 +114,65 @@ RpcValue UserLoginResult::toRpcValue() const
 	}
 	return RpcValue(std::move(m));
 }
+
+//================================================================
+// AccessGrant
+//================================================================
+AccessGrant::AccessGrant(std::optional<AccessLevel> level, std::string_view access_)
+	: accessLevel(level.value_or(AccessLevel::None))
+	, access(access_)
+{
+}
+
+AccessGrant AccessGrant::fromShv2Access(std::string_view shv2_access, int access_level)
+{
+	AccessGrant ret(accessLevelFromInt(access_level));
+	while (!shv2_access.empty()) {
+		auto first_comma = shv2_access.find(',');
+		auto level_str = shv2_access.substr(0, first_comma);
+		shv2_access.remove_prefix(level_str.size());
+		if (first_comma != std::string_view::npos) {
+			shv2_access.remove_prefix(1);
+		}
+		if (!level_str.empty()) {
+			if (auto level = accessLevelFromAccessString(level_str); level.has_value()) {
+				if (level.value() > ret.accessLevel) {
+					// keep highest level
+					ret.accessLevel = level.value();
+				}
+			}
+			else {
+				if (!ret.access.empty()) {
+					ret.access += ',';
+				}
+				ret.access += level_str;
+			}
+		}
+	}
+	return ret;
+}
+
+std::string AccessGrant::toShv2Access() const
+{
+	if (std::string level_str = accessLevelToAccessString(accessLevel); !level_str.empty()) {
+		if (!access.empty()) {
+			level_str = level_str + ',' + access;
+		}
+		return level_str;
+	}
+	return {};
+}
+
+std::string AccessGrant::toPrettyString() const
+{
+	std::string s = accessLevelToAccessString(accessLevel);
+	if (s.empty()) {
+		s = s + '(' + std::to_string(static_cast<int>(accessLevel)) + ')';
+	}
+	if (!access.empty()) {
+		s += "," + access;
+	}
+	return s;
+}
+
 } // namespace shv
