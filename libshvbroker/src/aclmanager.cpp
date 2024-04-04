@@ -4,7 +4,6 @@
 
 #include <shv/chainpack/utils.h>
 #include <shv/chainpack/cponreader.h>
-#include <shv/core/utils/shvurl.h>
 #include <shv/coreqt/log.h>
 #include <shv/iotqt/utils.h>
 
@@ -307,21 +306,15 @@ void AclManager::setGroupForLdapUser(const std::string_view& user_name, const st
 #endif
 chainpack::AccessGrant AclManager::accessGrantForShvPath(
 		const std::string &user_name,
-		const core::utils::ShvUrl &shv_url,
+		std::string_view shv_path,
 		const std::string &method,
 		bool is_request_from_master_broker,
-		bool is_service_provider_mount_point_relative_call,
 		const chainpack::AccessGrant &access_grant
 )
 {
 	using chainpack::AccessLevel;
 	logAclResolveM() << "==== accessGrantForShvPath user:" << user_name << "requested path:"
-					 << shv_url.toString() << "method:" << method << "request grant:" << access_grant.toPrettyString();
-	if(is_service_provider_mount_point_relative_call) {
-		auto ret = cp::Rpc::ROLE_WRITE;
-		logAclResolveM() << "==== resolved path:" << shv_url.toString() << "grant:" << ret;
-		return access_grant;
-	}
+					 << shv_path << "method:" << method << "request grant:" << access_grant.toPrettyString();
 #ifdef USE_SHV_PATHS_GRANTS_CACHE
 	PathGrantCache *user_path_grants = m_userPathGrantCache.object(user_name);
 	if(user_path_grants) {
@@ -348,7 +341,7 @@ chainpack::AccessGrant AclManager::accessGrantForShvPath(
 	if(is_request_from_master_broker) {
 		// set masterBroker role to requests from master broker without access grant specified
 		// This is used mainly for service calls as (un)subscribe propagation to slave brokers etc.
-		if(shv_url.pathPart() == cp::Rpc::DIR_BROKER_APP) {
+		if(shv_path == cp::Rpc::DIR_BROKER_APP) {
 			// master broker has always rd grant to .broker/app path
 			return chainpack::AccessGrant(chainpack::AccessLevel::Write);
 		}
@@ -409,7 +402,7 @@ chainpack::AccessGrant AclManager::accessGrantForShvPath(
 	}();
 
 	// find first matching rule
-	if(shv_url.pathPart() == BROKER_CURRENT_CLIENT_SHV_PATH) {
+	if(shv_path == BROKER_CURRENT_CLIENT_SHV_PATH) {
 		// client has WR grant on currentClient node
 		return {AccessLevel::Write};
 	}
@@ -423,10 +416,10 @@ chainpack::AccessGrant AclManager::accessGrantForShvPath(
 
 		for (const auto& access_rule : role_rules) {
 			logAclResolveM() << "rule:" << access_rule.toRpcValue().toCpon();
-			if (access_rule.isPathMethodMatch(shv_url, method)) {
+			if (access_rule.isPathMethodMatch(shv_path, method)) {
 				auto resolved_access_grant = chainpack::AccessGrant::fromShv2Access(access_rule.access);
 				logAclResolveM() << "access user:" << user_name
-					<< "shv_path:" << shv_url.toString()
+					<< "shv_path:" << shv_path
 					<< "access:" << access_rule.access;
 				return resolved_access_grant;
 			}

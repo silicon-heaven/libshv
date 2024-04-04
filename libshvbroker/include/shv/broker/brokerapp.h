@@ -104,7 +104,6 @@ public:
 	void sendNewLogEntryNotify(const std::string &msg);
 
 	const std::string& brokerId() const;
-	iotqt::node::ShvNode * nodeForService(const shv::core::utils::ShvUrl &spp);
 
 protected:
 	virtual void initDbConfigSqlConnection();
@@ -141,8 +140,6 @@ private:
 	static std::string brokerClientAppPath(int client_id);
 
 	std::string primaryIPAddress(bool &is_public);
-
-	void propagateSubscriptionsToMasterBroker(rpc::MasterBrokerConnection *mbrconn);
 
 protected:
 	AppCliOptions *m_cliOptions;

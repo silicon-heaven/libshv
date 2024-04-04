@@ -42,15 +42,13 @@ public:
 	int idleTime() const;
 	int idleTimeMax() const;
 
-	std::string resolveLocalPath(const shv::core::utils::ShvUrl &spp, shv::iotqt::node::ShvNode **pnd = nullptr) const;
-
 	void setIdleWatchDogTimeOut(int sec);
 
 	void sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg) override;
 	void sendRpcFrame(shv::chainpack::RpcFrame &&frame) override;
 
 	Subscription createSubscription(const std::string &shv_path, const std::string &method, const std::string& source) override;
-	std::string toSubscribedPath(const Subscription &subs, const std::string &signal_path) const override;
+	std::string toSubscribedPath(const std::string &signal_path) const override;
 	void propagateSubscriptionToSlaveBroker(const Subscription &subs);
 
 	void setLoginResult(const chainpack::UserLoginResult &result) override;

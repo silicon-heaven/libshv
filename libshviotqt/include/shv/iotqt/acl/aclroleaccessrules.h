@@ -24,7 +24,7 @@ public:
 	static AclAccessRule fromRpcValue(const chainpack::RpcValue &rpcval);
 
 	bool isValid() const;
-	bool isPathMethodMatch(const shv::core::utils::ShvUrl &shv_url, const std::string &signal_) const;
+	bool isPathMethodMatch(std::string_view shv_path, const std::string &signal_) const;
 };
 
 class SHVIOTQT_DECL_EXPORT AclRoleAccessRules : public std::vector<AclAccessRule>

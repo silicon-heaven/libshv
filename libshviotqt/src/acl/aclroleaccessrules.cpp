@@ -2,7 +2,6 @@
 
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/core/log.h>
-#include <shv/core/utils/shvurl.h>
 #include <shv/core/utils.h>
 
 #include <QString>
@@ -60,22 +59,21 @@ bool AclAccessRule::isValid() const
 	return !path.empty() && !access.empty();
 }
 
-bool AclAccessRule::isPathMethodMatch(const shv::core::utils::ShvUrl &shv_url, const string &method_) const
+bool AclAccessRule::isPathMethodMatch(std::string_view shv_path, const string &method_) const
 {
-	// sevice check OK here
 	bool is_exact_pattern_path = !is_wild_card_pattern(path);
 	if(is_exact_pattern_path) {
-		if(shv_url.pathPart() == path) {
+		if(shv_path == path) {
 			return (method.empty() || method == method_);
 		}
 		return false;
 	}
-	shv::core::StringView patt(path);
+	shv::core::StringView sub_path(path);
 	// trim "**"
-	patt = patt.substr(0, patt.length() - 2);
-	if(patt.length() > 0)
-		patt = patt.substr(0, patt.length() - 1); // trim '/'
-	if(shv::core::utils::ShvPath::startsWithPath(shv_url.pathPart(), patt)) {
+	sub_path = sub_path.substr(0, sub_path.length() - 2);
+	if(sub_path.length() > 0)
+		sub_path = sub_path.substr(0, sub_path.length() - 1); // trim '/'
+	if(shv::core::utils::ShvPath::startsWithPath(shv_path, sub_path)) {
 		return (method.empty() || method == method_);
 	}
 	return false;
