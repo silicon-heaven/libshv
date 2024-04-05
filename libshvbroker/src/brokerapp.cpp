@@ -723,7 +723,7 @@ private:
 };
 #endif
 
-#if QT_VERSION_MAJOR >= 6
+#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
 namespace azure {
 namespace {
 [[noreturn]] void throw_with_msg(const std::string& msg)
@@ -814,7 +814,7 @@ private:
 void BrokerApp::checkLogin(const chainpack::UserLoginContext &ctx, const QObject* connection_ctx, const std::function<void(chainpack::UserLoginResult)> cb)
 {
 	if (ctx.userLogin().loginType == chainpack::UserLogin::LoginType::AzureAccessToken && m_azureConfig) {
-#if QT_VERSION_MAJOR >= 6
+#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
 		auto azure_auth = new AzureAuth(ctx, *m_azureConfig);
 		connect(azure_auth, &AzureAuth::resultReady, connection_ctx, [cb, azure_auth] (const auto& azure_result, const auto& user_name, const auto& shv_groups) {
 			BrokerApp::instance()->aclManager()->setGroupForAzureUser(user_name, shv_groups);
