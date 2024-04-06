@@ -47,15 +47,15 @@
         nativeBuildInputs = [cmake] ++ (optional coreqt qt6.qttools);
         cmakeFlags = [
           "-DLIBSHV_USE_LOCAL_NECROLOG=ON"
-          (cmakeBool "WITH_CHAINPACK" chainpack)
-          (cmakeBool "WITH_CHAINPACK_CPP" chainpack_cpp)
-          (cmakeBool "WITH_CORE" core)
-          (cmakeBool "WITH_COREQT" coreqt)
-          (cmakeBool "WITH_IOTQT" iotqt)
-          (cmakeBool "WITH_VISU" visu)
-          (cmakeBool "WITH_BROKER" broker)
-          (cmakeBool "WITH_CLI_EXAMPLES" cli_examples)
-          (cmakeBool "WITH_GUI_EXAMPLES" gui_examples)
+          (cmakeBool "LIBSHV_WITH_CHAINPACK" chainpack)
+          (cmakeBool "LIBSHV_WITH_CHAINPACK_CPP" chainpack_cpp)
+          (cmakeBool "LIBSHV_WITH_CORE" core)
+          (cmakeBool "LIBSHV_WITH_COREQT" coreqt)
+          (cmakeBool "LIBSHV_WITH_IOTQT" iotqt)
+          (cmakeBool "LIBSHV_WITH_VISU" visu)
+          (cmakeBool "LIBSHV_WITH_BROKER" broker)
+          (cmakeBool "LIBSHV_WITH_CLI_EXAMPLES" cli_examples)
+          (cmakeBool "LIBSHV_WITH_GUI_EXAMPLES" gui_examples)
         ];
       };
   in
