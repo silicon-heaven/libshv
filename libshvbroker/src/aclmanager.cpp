@@ -417,6 +417,7 @@ chainpack::AccessGrant AclManager::accessGrantForShvPath(
 		for (const auto& access_rule : role_rules) {
 			logAclResolveM() << "rule:" << access_rule.toRpcValue().toCpon();
 			if (access_rule.isPathMethodMatch(shv_path, method)) {
+				logAclResolveM() << "\t\tHIT";
 				auto resolved_access_grant = chainpack::AccessGrant::fromShv2Access(access_rule.access);
 				logAclResolveM() << "access user:" << user_name
 					<< "shv_path:" << shv_path
