@@ -220,7 +220,7 @@ private:
 const std::vector<cp::MetaMethod> MountsNode::m_metaMethods = {
 	shv::chainpack::methods::DIR,
 	shv::chainpack::methods::LS,
-	{METH_CLIENT_IDS, cp::MetaMethod::Flag::IsGetter, "void", "ret", shv::chainpack::AccessLevel::Config},
+	{METH_CLIENT_IDS, cp::MetaMethod::Flag::IsGetter, {}, "List", shv::chainpack::AccessLevel::Config},
 };
 
 #ifdef WITH_SHV_LDAP

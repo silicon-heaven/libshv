@@ -38,14 +38,14 @@ CurrentClientShvNode::CurrentClientShvNode(shv::iotqt::node::ShvNode *parent)
 	, m_metaMethods {
 		shv::chainpack::methods::DIR,
 		shv::chainpack::methods::LS,
-		{M_CLIENT_ID, cp::MetaMethod::Flag::None, "void", "ret", cp::AccessLevel::Read},
-		{M_MOUNT_POINT, cp::MetaMethod::Flag::None, "void", "ret", cp::AccessLevel::Read},
-		{M_USER_ROLES, cp::MetaMethod::Flag::None, "void", "ret", cp::AccessLevel::Read},
-		{M_USER_PROFILE, cp::MetaMethod::Flag::None, "void", "ret", cp::AccessLevel::Read},
-		{M_ACCESS_GRANT_FOR_METHOD_CALL, cp::MetaMethod::Flag::None, "param", "ret", cp::AccessLevel::Read, {}, R"(params: ["shv_path", "method"])"},
-		{M_ACCESS_LEVEL_FOR_METHOD_CALL, cp::MetaMethod::Flag::None, "param", "ret", cp::AccessLevel::Read, {}, "deprecated, use accessGrantForMethodCall instead"},
-		{M_ACCES_LEVEL_FOR_METHOD_CALL, cp::MetaMethod::Flag::None, "param", "ret", cp::AccessLevel::Read, {}, "deprecated, use accessGrantForMethodCall instead"},
-		{M_CHANGE_PASSWORD, cp::MetaMethod::Flag::None, "param", "ret", cp::AccessLevel::Write, {} , R"(params: ["old_password", "new_password"], old and new passwords can be plain or SHA1)"},
+		{M_CLIENT_ID, cp::MetaMethod::Flag::None, {}, "Int", cp::AccessLevel::Read},
+		{M_MOUNT_POINT, cp::MetaMethod::Flag::None, {}, "String", cp::AccessLevel::Read},
+		{M_USER_ROLES, cp::MetaMethod::Flag::None, {}, "List", cp::AccessLevel::Read},
+		{M_USER_PROFILE, cp::MetaMethod::Flag::None, {}, "RpcValue", cp::AccessLevel::Read},
+		{M_ACCESS_GRANT_FOR_METHOD_CALL, cp::MetaMethod::Flag::None, "List", "String", cp::AccessLevel::Read, {}, R"(params: ["shv_path", "method"])"},
+		{M_ACCESS_LEVEL_FOR_METHOD_CALL, cp::MetaMethod::Flag::None, "List", "Int", cp::AccessLevel::Read, {}, "deprecated, use accessGrantForMethodCall instead"},
+		{M_ACCES_LEVEL_FOR_METHOD_CALL, cp::MetaMethod::Flag::None, "List", "Int", cp::AccessLevel::Read, {}, "deprecated, use accessGrantForMethodCall instead"},
+		{M_CHANGE_PASSWORD, cp::MetaMethod::Flag::None, "List", "Bool", cp::AccessLevel::Write, {} , R"(params: ["old_password", "new_password"], old and new passwords can be plain or SHA1)"},
 	}
 {
 }

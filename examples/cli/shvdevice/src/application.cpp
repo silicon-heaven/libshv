@@ -22,9 +22,9 @@ namespace si = shv::iotqt;
 static const std::vector<cp::MetaMethod> meta_methods {
 	shv::chainpack::methods::DIR,
 	shv::chainpack::methods::LS,
-	{cp::Rpc::METH_APP_NAME, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::AccessLevel::Browse},
-	{cp::Rpc::METH_DEVICE_ID, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::AccessLevel::Browse},
-	{cp::Rpc::METH_DEVICE_TYPE, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::AccessLevel::Browse},
+	{cp::Rpc::METH_APP_NAME, cp::MetaMethod::Flag::IsGetter, {}, "String", cp::AccessLevel::Browse},
+	{cp::Rpc::METH_DEVICE_ID, cp::MetaMethod::Flag::IsGetter, {}, "String", cp::AccessLevel::Browse},
+	{cp::Rpc::METH_DEVICE_TYPE, cp::MetaMethod::Flag::IsGetter, {}, "String", cp::AccessLevel::Browse},
 };
 
 AppRootNode::AppRootNode(QObject *parent)

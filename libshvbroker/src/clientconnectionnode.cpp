@@ -23,13 +23,13 @@ static const auto M_IDLE_TIME_MAX = "idleTimeMax";
 const static std::vector<cp::MetaMethod> meta_methods {
 	shv::chainpack::methods::DIR,
 	shv::chainpack::methods::LS,
-	{M_USER_NAME, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::AccessLevel::Service},
-	{M_USER_ROLES, cp::MetaMethod::Flag::None, "void", "ret", cp::AccessLevel::Service},
-	{M_USER_PROFILE, cp::MetaMethod::Flag::None, "void", "ret", cp::AccessLevel::Service},
-	{M_MOUNT_POINT, cp::MetaMethod::Flag::IsGetter, "void", "ret", cp::AccessLevel::Service},
-	{M_DROP_CLIENT, cp::MetaMethod::Flag::None, "void", "void", cp::AccessLevel::Service},
-	{M_IDLE_TIME, cp::MetaMethod::Flag::None, "ret", "void", cp::AccessLevel::Service, {}, "Connection inactivity time in msec."},
-	{M_IDLE_TIME_MAX, cp::MetaMethod::Flag::None, "void", "ret", cp::AccessLevel::Service, {}, "Maximum connection inactivity time in msec, before it is closed by server."},
+	{M_USER_NAME, cp::MetaMethod::Flag::IsGetter, {}, "String", cp::AccessLevel::Service},
+	{M_USER_ROLES, cp::MetaMethod::Flag::None, {}, "List", cp::AccessLevel::Service},
+	{M_USER_PROFILE, cp::MetaMethod::Flag::None, {}, "RpcValue", cp::AccessLevel::Service},
+	{M_MOUNT_POINT, cp::MetaMethod::Flag::IsGetter, {}, "String", cp::AccessLevel::Service},
+	{M_DROP_CLIENT, cp::MetaMethod::Flag::None, {}, "Bool", cp::AccessLevel::Service},
+	{M_IDLE_TIME, cp::MetaMethod::Flag::None, {}, "Int", cp::AccessLevel::Service, {}, "Connection inactivity time in msec."},
+	{M_IDLE_TIME_MAX, cp::MetaMethod::Flag::None, {}, "Int", cp::AccessLevel::Service, {}, "Maximum connection inactivity time in msec, before it is closed by server."},
 };
 
 ClientConnectionNode::ClientConnectionNode(int client_id, shv::iotqt::node::ShvNode *parent)

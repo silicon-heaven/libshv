@@ -28,8 +28,8 @@ const std::vector<cp::MetaMethod> meta_methods1 {
 const std::vector<cp::MetaMethod> meta_methods2 {
 	shv::chainpack::methods::DIR,
 	shv::chainpack::methods::LS,
-	{METH_PATH, cp::MetaMethod::Flag::IsGetter, "void", "ret"},
-	{METH_METHOD, cp::MetaMethod::Flag::IsGetter, "void", "ret"},
+	{METH_PATH, cp::MetaMethod::Flag::IsGetter, {}, "String"},
+	{METH_METHOD, cp::MetaMethod::Flag::IsGetter, {}, "String"},
 };
 }
 
