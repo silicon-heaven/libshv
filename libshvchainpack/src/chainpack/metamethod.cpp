@@ -236,14 +236,10 @@ void MetaMethod::applyAttributesMap(const RpcValue::Map &attr_map)
 
 void MetaMethod::applyAttributesIMap(const RpcValue::IMap &attr_map)
 {
-	if(auto rv = attr_map.value(static_cast<int>(Ikey::Name)); rv.isString())
-		m_name = rv.asString();
-	if(auto rv = attr_map.value(static_cast<int>(Ikey::Flags)); rv.isInt())
-		m_flags = rv.toInt();
-	if(auto rv = attr_map.value(static_cast<int>(Ikey::ParamType)); rv.isString())
-		m_param = rv.asString();
-	if(auto rv = attr_map.value(static_cast<int>(Ikey::ResultType)); rv.isString())
-		m_result = rv.asString();
+	m_name = attr_map.value(static_cast<int>(Ikey::Name)).asString();
+	m_flags = attr_map.value(static_cast<int>(Ikey::Flags)).toInt();
+	m_param = attr_map.value(static_cast<int>(Ikey::ParamType)).asString();
+	m_result = attr_map.value(static_cast<int>(Ikey::ParamType)).asString();
 	{
 		auto rv = attr_map.value(static_cast<int>(Ikey::AccessLevel));
 		if (rv.isString()) {
@@ -253,8 +249,7 @@ void MetaMethod::applyAttributesIMap(const RpcValue::IMap &attr_map)
 			setAccessLevel(accessLevelFromInt(rv.toInt()));
 		}
 	}
-	if(auto rv = attr_map.value(static_cast<int>(Ikey::Signals)); rv.isMap())
-		m_signals = rv.asMap();
+	m_signals = attr_map.value(static_cast<int>(Ikey::Signals)).asMap();
 	if(auto rv = attr_map.value(static_cast<int>(Ikey::Extra)); rv.isMap()) {
 		m_extra = rv.asMap();
 		m_description = rv.asMap().value(KEY_DESCRIPTION).asString();
