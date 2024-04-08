@@ -58,7 +58,6 @@ public:
 		const std::string& description = {},
 		const RpcValue::Map& extra = {});
 
-
 	bool isValid() const;
 	const std::string& name() const;
 	const std::string& resultType() const;

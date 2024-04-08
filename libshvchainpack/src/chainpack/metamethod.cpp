@@ -152,6 +152,7 @@ RpcValue MetaMethod::toRpcValue() const
 {
 	RpcValue::IMap ret;
 	ret[static_cast<int>(Ikey::Name)] = m_name;
+	ret[static_cast<int>(Ikey::Flags)] = m_flags;
 	ret[static_cast<int>(Ikey::ParamType)] = m_param;
 	ret[static_cast<int>(Ikey::ResultType)] = m_result;
 	ret[static_cast<int>(Ikey::AccessLevel)] = static_cast<RpcValue::Int>(m_accessLevel);
@@ -166,28 +167,6 @@ RpcValue MetaMethod::toRpcValue() const
 	ret[static_cast<int>(Ikey::Extra)] = extra;
 	return ret;
 }
-/*
-RpcValue MetaMethod::toIMap() const
-{
-	RpcValue::IMap ret;
-	ret[DirKey::Name] = m_name;
-	ret[DirKey::Signature] = static_cast<int>(m_signature);
-	ret[DirKey::Flags] = m_flags;
-	ret[DirKey::Access] = m_accessLevel;
-	if(!m_label.empty())
-		ret[DirKey::Label] = m_label;
-	if(!m_description.empty())
-		ret[DirKey::Description] = m_description;
-	RpcValue::Map tags = m_tags;
-	for(const auto &k : NO_TAGS_KEYS) {
-		tags.erase(k);
-	}
-	if(!tags.empty()) {
-		ret[DirKey::Tags] = tags;
-	}
-	return ret;
-}
-*/
 
 MetaMethod MetaMethod::fromRpcValue(const RpcValue &rv)
 {
