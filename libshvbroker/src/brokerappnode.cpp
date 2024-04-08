@@ -107,7 +107,7 @@ chainpack::RpcValue BrokerAppNode::callMethodRq(const chainpack::RpcRequest &rq)
 			if(const auto &v = pm.value(cp::Rpc::PAR_PATHS); v.isString()) {
 				path = v.asString();
 			}
-			else if(const auto &v1 = pm.value(cp::Rpc::PAR_PATHS); v.isString()) {
+			else if(const auto &v1 = pm.value(cp::Rpc::PAR_PATH); v.isString()) {
 				path = v1.asString();
 			}
 			std::string signal_name;
