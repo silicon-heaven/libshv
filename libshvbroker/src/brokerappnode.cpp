@@ -107,25 +107,25 @@ chainpack::RpcValue BrokerAppNode::callMethodRq(const chainpack::RpcRequest &rq)
 			if(const auto &v = pm.value(cp::Rpc::PAR_PATHS); v.isString()) {
 				path = v.asString();
 			}
-			else if(const auto &v1 = pm.value(cp::Rpc::PAR_PATH); v.isString()) {
+			else if(const auto &v1 = pm.value(cp::Rpc::PAR_PATH); v1.isString()) {
 				path = v1.asString();
 			}
 			std::string signal_name;
 			if(const auto &v = pm.value(cp::Rpc::PAR_SIGNAL); v.isString()) {
 				signal_name = v.asString();
 			}
-			else if(const auto &v1 = pm.value(cp::Rpc::PAR_METHODS); v.isString()) {
+			else if(const auto &v1 = pm.value(cp::Rpc::PAR_METHODS); v1.isString()) {
 				signal_name = v1.asString();
 			}
-			else if(const auto &v2 = pm.value(cp::Rpc::PAR_METHOD); v.isString()) {
-				signal_name = v.asString();
+			else if(const auto &v2 = pm.value(cp::Rpc::PAR_METHOD); v2.isString()) {
+				signal_name = v2.asString();
 			}
 			std::string source = pm.value(cp::Rpc::PAR_SOURCE).toString();
 			return std::make_tuple(path, signal_name, source);
 		};
 		if(method == cp::Rpc::METH_SUBSCRIBE) {
-			const shv::chainpack::RpcValue parms = rq.params();
-			const shv::chainpack::RpcValue::Map &pm = parms.asMap();
+			const shv::chainpack::RpcValue params = rq.params();
+			const shv::chainpack::RpcValue::Map &pm = params.asMap();
 			auto [path, signal_name, source] = get_subscribe_params(pm);
 			int client_id = rq.peekCallerId();
 			BrokerApp::instance()->addSubscription(client_id, path, signal_name, source);
