@@ -21,7 +21,9 @@ ChannelProbeWidget::ChannelProbeWidget(ChannelProbe *probe, QWidget *parent) :
 	ui->edCurentTime->setStyleSheet("background-color: white");
 	ui->fHeader->setStyleSheet("background-color:" + m_probe->color().name() + ";");
 	ui->tbClose->setStyleSheet("background-color:white;");
-	ui->lblTitle->setStyleSheet("color:white;");
+	if (m_probe->color().lightness() < 127) {
+		ui->lblTitle->setStyleSheet("color:white;");
+	}
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
 	setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
