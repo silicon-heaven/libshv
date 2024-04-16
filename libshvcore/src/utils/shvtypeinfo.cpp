@@ -609,7 +609,13 @@ ShvPropertyDescr &ShvPropertyDescr::setMethod(const ShvMethodDescr &method_descr
 
 RpcValue ShvPropertyDescr::toRpcValue() const
 {
-	return Super::toRpcValue();
+	auto rv = Super::toRpcValue();
+	RpcValue::List mml;
+	for (const auto &m : methods()) {
+		mml.push_back(m.toMap());
+	}
+	rv.set(KEY_METHODS, mml);
+	return rv;
 }
 
 ShvPropertyDescr ShvPropertyDescr::fromRpcValue(const RpcValue &v, RpcValue::Map *extra_tags)

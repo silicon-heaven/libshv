@@ -25,12 +25,15 @@ public:
 
 	static constexpr auto KEY_NAME = "name";
 	static constexpr auto KEY_SIGNATURE = "signature";
+	static constexpr auto KEY_RESULT = "result";
+	static constexpr auto KEY_PARAM = "param";
 	static constexpr auto KEY_FLAGS = "flags";
 	static constexpr auto KEY_ACCESS = "access";
 	static constexpr auto KEY_ACCESS_LEVEL = "accessLevel";
 	static constexpr auto KEY_DESCRIPTION = "description";
 	static constexpr auto KEY_LABEL = "label";
 	static constexpr auto KEY_TAGS = "tags";
+	static constexpr auto KEY_SIGNALS = "signals";
 public:
 	struct SHVCHAINPACK_DECL_EXPORT Signal {
 		Signal(std::string name, std::optional<std::string> param_type = {});
@@ -75,6 +78,7 @@ public:
 	MetaMethod& setTag(const std::string &key, const RpcValue& value);
 
 	RpcValue toRpcValue() const;
+	RpcValue::Map toMap() const;
 	static MetaMethod fromRpcValue(const RpcValue &rv);
 	void applyAttributesMap(const RpcValue::Map &attr_map);
 	void applyAttributesIMap(const RpcValue::IMap &attr_map);

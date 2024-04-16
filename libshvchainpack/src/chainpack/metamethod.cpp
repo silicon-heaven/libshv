@@ -168,6 +168,36 @@ RpcValue MetaMethod::toRpcValue() const
 	return ret;
 }
 
+RpcValue::Map MetaMethod::toMap() const
+{
+	RpcValue::Map ret;
+	ret[KEY_NAME] = m_name;
+	if (!m_param.empty())
+		ret[KEY_PARAM] = m_param;
+	if (!m_result.empty())
+		ret[KEY_RESULT] = m_result;
+	std::string access = accessLevelToAccessString(m_accessLevel);
+	if (!access.empty())
+		ret[KEY_ACCESS] = access;
+	if (!m_signals.empty())
+		ret[KEY_SIGNALS] = m_signals;
+	if (!m_label.empty())
+		ret[KEY_LABEL] = m_label;
+	if (!m_description.empty())
+		ret[KEY_DESCRIPTION] = m_description;
+	RpcValue::Map extra;
+	for (const auto& [k, v] : m_extra) {
+		if (k == KEY_LABEL)
+			continue;
+		if (k == KEY_DESCRIPTION)
+			continue;
+		extra.insert_or_assign(k, v);
+	}
+	if (!extra.empty())
+		ret[KEY_TAGS] = extra;
+	return ret;
+}
+
 MetaMethod MetaMethod::fromRpcValue(const RpcValue &rv)
 {
 	MetaMethod ret;
@@ -205,6 +235,8 @@ void MetaMethod::applyAttributesMap(const RpcValue::Map &attr_map)
 		setAccessLevel(accessLevelFromAccessString(rv.asString()));
 	if(auto rv = map.take(KEY_ACCESS_LEVEL); rv.isInt())
 		setAccessLevel(accessLevelFromInt(rv.toInt()));
+	if(auto rv = map.take(KEY_SIGNALS); rv.isMap())
+		m_signals = rv.asMap();
 	if(auto rv = map.take(KEY_LABEL); rv.isString())
 		m_label = rv.asString();
 	if(auto rv = map.take(KEY_DESCRIPTION); rv.isString())

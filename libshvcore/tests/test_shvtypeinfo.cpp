@@ -7,7 +7,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <doctest/doctest.h>
 
-#include <optional>
 #include <filesystem>
 
 namespace fs = std::filesystem;
