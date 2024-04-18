@@ -41,7 +41,6 @@ qt_add_library(libshviotqt
 	include/shv/iotqt/rpc/localsocket.h
 	include/shv/iotqt/rpc/clientconnection.h
 	include/shv/iotqt/rpc/serverconnection.h
-	include/shv/iotqt/rpc/serialportsocket.h
 	include/shv/iotqt/rpc/clientappclioptions.h
 	include/shv/iotqt/rpc/deviceappclioptions.h
 	include/shv/iotqt/rpc/rpccall.h
@@ -55,6 +54,7 @@ target_link_libraries(libshviotqt PUBLIC Qt::Network libshvcoreqt)
 if(NOT EMSCRIPTEN)
 	target_link_libraries(libshviotqt PUBLIC Qt::SerialPort)
 	target_sources(libshviotqt PRIVATE
+		include/shv/iotqt/rpc/serialportsocket.h
 		src/rpc/serialportsocket.cpp
 		)
 endif()

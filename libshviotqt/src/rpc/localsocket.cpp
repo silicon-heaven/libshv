@@ -33,8 +33,12 @@ LocalSocket::LocalSocket(QLocalSocket *socket, Protocol protocol, QObject *paren
 	, m_socket(socket)
 {
 	if (protocol == Protocol::Serial) {
+#ifdef QT_SERIALPORT_LIB
 		m_frameReader = new SerialFrameReader(SerialFrameReader::CrcCheck::No);
 		m_frameWriter = new SerialFrameWriter(SerialFrameWriter::CrcCheck::No);
+#else
+		throw std::runtime_error("libshv wasn't compiled with serial port support");
+#endif
 	}
 	else {
 		m_frameReader = new StreamFrameReader();

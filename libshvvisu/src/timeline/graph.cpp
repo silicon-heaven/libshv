@@ -1526,7 +1526,11 @@ void Graph::drawXAxis(QPainter *painter)
 		QPoint p1{x, m_layout.xAxisRect.top()};
 		QPoint p2{p1.x(), p1.y() + 2*tick_len};
 		painter->drawLine(p1, p2);
+#if SHVVISU_HAS_TIMEZONE
 		auto date_time_tz = [this](timemsec_t epoch_msec) {
+#else
+		auto date_time_tz = [](timemsec_t epoch_msec) {
+#endif
 			QDateTime dt = QDateTime::fromMSecsSinceEpoch(epoch_msec);
 #if SHVVISU_HAS_TIMEZONE
 			if(m_timeZone.isValid())

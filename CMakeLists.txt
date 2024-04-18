@@ -55,7 +55,7 @@ function(libshv_set_translations target langs)
 	endforeach()
 
 	if(LIBSHV_USE_QT6)
-		qt_add_lupdate("${target}" TS_FILES ${TS_FILES})
+		qt_add_lupdate("${target}" TS_FILES ${TS_FILES} OPTIONS  "-locations" "none")
 		qt_add_lrelease("${target}" TS_FILES ${TS_FILES} QM_FILES_OUTPUT_VARIABLE QM_FILES)
 	else()
 		if(DEFINED ENV{LIBSHV_RUN_LUPDATE})

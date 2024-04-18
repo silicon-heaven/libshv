@@ -32,7 +32,7 @@ void FrameWriter::flushToDevice(QIODevice *device)
 			break;
 		}
 		if (n < data.size()) {
-			data = data.mid(n);
+			data = data.mid(static_cast<qsizetype>(n));
 			m_messageDataToWrite[0] = data;
 		}
 		else {
@@ -65,7 +65,7 @@ void StreamFrameReader::addData(std::string_view data)
 	while (true) {
 		std::istringstream in(m_readBuffer);
 		int err_code;
-		size_t frame_size = chainpack::ChainPackReader::readUIntData(in, &err_code);
+		auto frame_size = static_cast<size_t>(chainpack::ChainPackReader::readUIntData(in, &err_code));
 		if(err_code == CCPCP_RC_BUFFER_UNDERFLOW) {
 			// not enough data
 			break;

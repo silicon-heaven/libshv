@@ -288,7 +288,11 @@ void DlgLogInspector::setShvPath(const QString &s)
 shv::chainpack::RpcValue DlgLogInspector::getLogParams()
 {
 	shv::core::utils::ShvGetLogParams params;
+#if SHVVISU_HAS_TIMEZONE
 	auto get_dt = [this](QDateTimeEdit *ed) {
+#else
+	auto get_dt = [](QDateTimeEdit *ed) {
+#endif
 		QDateTime dt = ed->dateTime();
 		if(dt == ed->minimumDateTime())
 			return  cp::RpcValue();

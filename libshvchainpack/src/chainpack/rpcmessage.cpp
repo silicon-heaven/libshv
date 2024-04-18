@@ -126,7 +126,7 @@ RpcFrame RpcFrame::fromFrameData(const std::string &frame_data)
 		auto pos = in.tellg();
 		if(pos < 0)
 			throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
-		auto data = std::string(frame_data, pos);
+		auto data = std::string(frame_data, static_cast<size_t>(pos));
 		RpcFrame frame(std::move(meta), std::move(data));
 		frame.protocol = protocol;
 		return frame;
@@ -140,7 +140,7 @@ RpcFrame RpcFrame::fromFrameData(const std::string &frame_data)
 		auto pos = in.tellg();
 		if(pos < 0)
 			throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
-		auto data = std::string(frame_data, pos);
+		auto data = std::string(frame_data, static_cast<size_t>(pos));
 		RpcFrame frame(std::move(meta), std::move(data));
 		frame.protocol = protocol;
 		return frame;
