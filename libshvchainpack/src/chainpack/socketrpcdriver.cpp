@@ -188,8 +188,8 @@ void SocketRpcDriver::exec()
 						}
 						if(err_code == CCPCP_RC_OK) {
 							auto consumed_len = in2.tellg();
-							m_readBuffer = std::string(m_readBuffer, consumed_len);
-							m_readFrameSize = frame_size;
+							m_readBuffer = std::string(m_readBuffer, static_cast<size_t>(consumed_len));
+							m_readFrameSize = static_cast<decltype(m_readFrameSize)>(frame_size);
 						}
 						else {
 							nWarning() << "Read RPC message length error.";
