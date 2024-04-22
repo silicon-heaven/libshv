@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	m_graph = new tl::Graph(this);
 	tl::Graph::Style graph_style = m_graph->style();
-	//graph_style.setYAxisVisible(true);
+	// graph_style.setYAxisVisible(false);
 	m_graph->setStyle(graph_style);
 	tl::GraphChannel::Style channel_style = m_graph->defaultChannelStyle();
 	//channel_style.setColorGrid(QColor());
@@ -135,10 +135,12 @@ void MainWindow::generateSampleData()
 		if(ch->shvPath() == "Line") {
 			style.setInterpolation(tl::GraphChannel::Style::Interpolation::Line);
 			style.setLineAreaStyle(tl::GraphChannel::Style::LineAreaStyle::Filled);
+			style.setColor(Qt::yellow);
 		}
 		else if(ch->shvPath() == "Discrete") {
 			style.setInterpolation(tl::GraphChannel::Style::Interpolation::None);
 			style.setLineAreaStyle(tl::GraphChannel::Style::LineAreaStyle::Filled);
+			style.setColor(Qt::magenta);
 		}
 		else {
 			style.setInterpolation(tl::GraphChannel::Style::Interpolation::Stepped);

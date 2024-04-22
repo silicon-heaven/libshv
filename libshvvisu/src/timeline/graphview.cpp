@@ -4,6 +4,7 @@
 #include <shv/coreqt/log.h>
 
 #include <QTimer>
+#include <QScrollBar>
 
 namespace shv::visu::timeline {
 
@@ -14,8 +15,12 @@ GraphView::GraphView(QWidget *parent)
 
 void GraphView::makeLayout()
 {
+	int scroll_bar_width = 0;
+	if (auto *sb = verticalScrollBar(); sb) {
+		scroll_bar_width = sb->width();
+	}
 	if(auto *w = qobject_cast<GraphWidget*>(widget())) {
-		w->makeLayout(geometry().size() - QSize(30, 0)); // space for scroll bar
+		w->makeLayout(geometry().size() - QSize(scroll_bar_width, 0)); // space for scroll bar
 	}
 }
 
