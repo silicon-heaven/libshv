@@ -23,9 +23,7 @@
 #include <QTimeZone>
 #endif
 
-namespace shv {
-namespace visu {
-namespace timeline {
+namespace shv::visu::timeline {
 
 class SHVVISU_DECL_EXPORT Graph : public QObject
 {
@@ -47,6 +45,10 @@ public:
 
 	static constexpr double MIN_VERTICAL_HEADER_WIDTH = 10;
 	static constexpr double MAX_VERTICAL_HEADER_WIDTH = 25;
+
+	static constexpr auto KEY_SAMPLE_TIME = "sampleTime";
+	static constexpr auto KEY_SAMPLE_VALUE = "sampleValue";
+	static constexpr auto KEY_SAMPLE_PRETTY_VALUE = "samplePrettyValue";
 
 	class SHVVISU_DECL_EXPORT Style : public QVariantMap
 	{
@@ -262,6 +264,7 @@ protected:
 			, const DataRect &src_rect = DataRect()
 			, const QRect &dest_rect = QRect()
 			, const GraphChannel::Style &channel_style = GraphChannel::Style());
+	void drawDiscreteValueInfo(QPainter *painter, const QPoint &pos, const QVariant &pretty_value);
 	void drawCrossHairTimeMarker(QPainter *painter);
 	virtual void drawCrossHair(QPainter *painter, int channel_ix);
 	virtual void drawProbes(QPainter *painter, int channel_ix);
@@ -327,4 +330,4 @@ protected:
 	QString m_settingsUserName = DEFAULT_USER_PROFILE;
 };
 
-}}}
+}

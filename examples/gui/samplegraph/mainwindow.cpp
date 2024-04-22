@@ -57,21 +57,30 @@ void MainWindow::generateSampleData()
 	double max_val = 5;
 
 	m_graphModel->clear();
-	enum Channel {Stepped = 0, Line, Discrete, WithMissinData, SparseData, CHANNEL_COUNT};
+	enum Channel {Stepped = 0, Line, Isolated, Discrete, WithMissinData, SparseData, CHANNEL_COUNT};
 	//const auto CHANNEL_COUNT = Channel::Sparse + 1;
 	auto channel_to_string = [](Channel ch) {
 		switch(ch) {
-		case Discrete: return "Discrete";
+		case Isolated: return "Isolated";
 		case Stepped: return "Stepped";
 		case Line: return "Line";
 		case WithMissinData: return "WithMissinData";
 		case SparseData: return "Sparse";
+		case Discrete: return "Discrete";
 		case CHANNEL_COUNT: return "CHANNEL_COUNT";
+		break;
 		}
 		return "???";
 	};
 	for (int i = 0; i < CHANNEL_COUNT; ++i) {
-		m_graphModel->appendChannel(channel_to_string(static_cast<Channel>(i)), {}, {});
+		if (i == Channel::Discrete) {
+			using shv::core::utils::ShvTypeDescr;
+			ShvTypeDescr td(ShvTypeDescr::Type::Map, ShvTypeDescr::SampleType::Discrete);
+			m_graphModel->appendChannel(channel_to_string(static_cast<Channel>(i)), {}, td);
+		}
+		else {
+			m_graphModel->appendChannel(channel_to_string(static_cast<Channel>(i)), {}, {});
+		}
 	}
 
 	m_graphModel->beginAppendValues();
@@ -85,11 +94,11 @@ void MainWindow::generateSampleData()
 	for (int n=0; n<sample_cnt+2; ++n)
 		times.push_back(time_distrib(gen));
 	sort(times.begin(), times.end());
-	// discrete
-	m_graphModel->appendValue(Channel::Discrete, tl::Sample{times[0], val_distrib(gen)});
+
+	m_graphModel->appendValue(Channel::Isolated, tl::Sample{times[0], val_distrib(gen)});
 	for(size_t j=1; j<times.size()-1; ++j) {
 		auto val = val_distrib(gen);
-		for (int i=Channel::Stepped; i<=Channel::Discrete; i++) {
+		for (int i = Channel::Stepped; i <= Channel::Isolated; i++) {
 			if(j == 3) {
 				// generate multiple same pixel values
 				for(int k=0; k<5; k++)
@@ -100,7 +109,17 @@ void MainWindow::generateSampleData()
 			}
 		}
 	}
-	m_graphModel->appendValue(Channel::Discrete, tl::Sample{times[times.size()-1], val_distrib(gen)});
+	m_graphModel->appendValue(Channel::Isolated, tl::Sample{times[times.size()-1], val_distrib(gen)});
+	{
+		vector<int64_t> discr_times;
+		for (int n = 0; n < sample_cnt / 5; ++n)
+			discr_times.push_back(time_distrib(gen));
+		sort(discr_times.begin(), discr_times.end());
+		for(size_t j = 0; j < discr_times.size(); ++j) {
+			auto val = val_distrib(gen);
+			m_graphModel->appendValue(Channel::Discrete, tl::Sample{discr_times[j], QVariantMap{{"name", "Discrete sample"}, {"value", val}}});
+		}
+	}
 	{
 		// generate data with not available part in center third
 		bool na_added = false;
@@ -137,10 +156,14 @@ void MainWindow::generateSampleData()
 			style.setLineAreaStyle(tl::GraphChannel::Style::LineAreaStyle::Filled);
 			style.setColor(Qt::yellow);
 		}
+		else if(ch->shvPath() == "Isolated") {
+			style.setInterpolation(tl::GraphChannel::Style::Interpolation::None);
+			style.setColor(Qt::magenta);
+		}
 		else if(ch->shvPath() == "Discrete") {
 			style.setInterpolation(tl::GraphChannel::Style::Interpolation::None);
-			style.setLineAreaStyle(tl::GraphChannel::Style::LineAreaStyle::Filled);
-			style.setColor(Qt::magenta);
+			style.setDrawDiscreteValuesInfo(true);
+			style.setColor(Qt::green);
 		}
 		else {
 			style.setInterpolation(tl::GraphChannel::Style::Interpolation::Stepped);

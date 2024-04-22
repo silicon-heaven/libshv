@@ -2,6 +2,7 @@
 
 #include <shv/visu/timeline/channelprobewidget.h>
 #include <shv/visu/timeline/channelprobe.h>
+#include <shv/visu/timeline/graph.h>
 
 #include <shv/core/log.h>
 
@@ -141,7 +142,7 @@ void ChannelProbeWidget::loadValues()
 	ui->twData->setRowCount(0);
 
 	QVariantMap values = m_probe->sampleValues();
-	auto pv = values.value("samplePrettyValue");
+	auto pv = values.value(Graph::KEY_SAMPLE_PRETTY_VALUE);
 #if QT_VERSION_MAJOR >= 6
 	if(pv.typeId() != QMetaType::QVariantMap) {
 #else
