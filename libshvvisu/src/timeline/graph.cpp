@@ -1834,7 +1834,7 @@ QString Graph::rectToString(const QRect &r)
 	return s.arg(r.x()).arg(r.y()).arg(r.width()).arg(r.height());
 }
 
-void Graph::drawDiscreteValueInfo(QPainter *painter, const QPoint &pos, const QVariant &pretty_value)
+void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, const QVariant &pretty_value)
 {
 	QString info_text;
 	if (auto map = pretty_value.toMap(); !map.isEmpty()) {
@@ -1850,8 +1850,18 @@ void Graph::drawDiscreteValueInfo(QPainter *painter, const QPoint &pos, const QV
 	if(!info_text.isEmpty()) {
 		QFontMetrics fm(m_style.font());
 		QRect info_rect = fm.boundingRect(QRect(), Qt::AlignLeft, info_text);
-		info_rect.moveCenter(pos);
-		info_rect.moveBottom(pos.y());
+		auto line_len = arrow_line.y2() - arrow_line.y1();
+		Q_ASSERT(line_len > 0);
+		info_rect.moveCenter(arrow_line.center());
+		if (info_rect.height() < line_len / 2) {
+			info_rect.moveBottom(arrow_line.center().y());
+		}
+		else if (info_rect.height() < line_len) {
+			info_rect.moveTop(arrow_line.y1());
+		}
+		else {
+			info_rect.moveBottom(arrow_line.y2());
+		}
 		int offset = 5;
 		auto r2 = info_rect.adjusted(-offset, 0, offset, 0);
 		auto pen = painter->pen();
@@ -1915,24 +1925,30 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 	if (channel_info.typeDescr.sampleType() == shv::core::utils::ShvTypeDescr::SampleType::Discrete) {
 		auto ix1 = graph_model->greaterOrEqualTimeIndex(model_ix, xrange.min);
 		auto ix2 = graph_model->lessOrEqualTimeIndex(model_ix, xrange.max);
+		std::optional<bool> last_x;
 		for (auto i = ix1; i <= ix2; ++i) {
 			Sample sample = graph_model->sampleAt(model_ix, i);
 			auto current_point = sample2point(sample, channel_meta_type_id);
-
+			if (last_x && last_x.value() == current_point.x()) {
+				continue;
+			}
+			last_x = current_point.x();
 			// draw arrow for discrete value
 			QPoint arrow_heel{current_point.x(), 0};
 			int arrow_width = u2px(1);
-			painter->drawLine(arrow_heel.x(), clip_rect.y() + clip_rect.height() / 2, arrow_heel.x(), clip_rect.y() + clip_rect.height());
+			QLine arrow_line(arrow_heel.x(), clip_rect.y(), arrow_heel.x(), clip_rect.y() + clip_rect.height() - arrow_width / 2);
+			QLine arrow_line_half(arrow_line.x1(), (arrow_line.y1() + arrow_line.y2()) / 2, arrow_line.x1(), arrow_line.y2());
+			painter->drawLine(arrow_line_half);
 			QPainterPath path;
 			path.moveTo(arrow_heel.x() - arrow_width / 2, clip_rect.y() + clip_rect.height() - arrow_width / 2);
 			path.lineTo(arrow_heel.x() + arrow_width / 2, clip_rect.y() + clip_rect.height() - arrow_width / 2);
 			path.lineTo(arrow_heel.x(), clip_rect.y() + clip_rect.height());
 			path.lineTo(arrow_heel.x() - arrow_width / 2, clip_rect.y() + clip_rect.height() - arrow_width / 2);
 			path.closeSubpath();
-			painter->fillPath(path, painter->pen().color());
+			painter->drawPath(path);
 			if (ch_style.isDrawDiscreteValuesInfo()) {
 				auto v = sampleValues(channel_ix, sample).value(KEY_SAMPLE_PRETTY_VALUE);
-				drawDiscreteValueInfo(painter, QPoint(arrow_heel.x(), clip_rect.y() + clip_rect.height() / 2), v);
+				drawDiscreteValueInfo(painter, arrow_line, v);
 			}
 		}
 	}

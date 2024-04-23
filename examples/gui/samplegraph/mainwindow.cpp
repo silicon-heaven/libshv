@@ -117,7 +117,14 @@ void MainWindow::generateSampleData()
 		sort(discr_times.begin(), discr_times.end());
 		for(auto discr_time : discr_times) {
 			auto val = val_distrib(gen);
-			m_graphModel->appendValue(Channel::Discrete, tl::Sample{discr_time, QVariantMap{{"name", "Discrete sample"}, {"value", val}}});
+			QVariantMap map{{"name", "Discrete sample"}, {"value", val}};
+			if (val > 0) {
+				map["positive"] = true;
+			}
+			if (val > 5) {
+				map["big"] = true;
+			}
+			m_graphModel->appendValue(Channel::Discrete, tl::Sample{discr_time, map});
 		}
 	}
 	{

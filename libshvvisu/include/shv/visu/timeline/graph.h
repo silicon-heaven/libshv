@@ -264,7 +264,7 @@ protected:
 			, const DataRect &src_rect = DataRect()
 			, const QRect &dest_rect = QRect()
 			, const GraphChannel::Style &channel_style = GraphChannel::Style());
-	void drawDiscreteValueInfo(QPainter *painter, const QPoint &pos, const QVariant &pretty_value);
+	void drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, const QVariant &pretty_value);
 	void drawCrossHairTimeMarker(QPainter *painter);
 	virtual void drawCrossHair(QPainter *painter, int channel_ix);
 	virtual void drawProbes(QPainter *painter, int channel_ix);
