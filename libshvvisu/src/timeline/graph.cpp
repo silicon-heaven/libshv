@@ -390,7 +390,7 @@ Sample Graph::timeToSample(qsizetype channel_ix, timemsec_t time) const
 	return Sample();
 }
 
-Sample Graph::timeToNearestSample(qsizetype channel_ix, timemsec_t time) const
+Sample Graph::timeToPreviousSample(qsizetype channel_ix, timemsec_t time) const
 {
 	GraphModel *m = model();
 	const GraphChannel *ch = channelAt(channel_ix);
@@ -398,19 +398,10 @@ Sample Graph::timeToNearestSample(qsizetype channel_ix, timemsec_t time) const
 	qsizetype ix1 = m->lessOrEqualTimeIndex(model_ix, time);
 
 	Sample s1;
-	Sample s2;
 	if (ix1 >= 0) {
 		s1 = m->sampleAt(model_ix, ix1);
 	}
-	if (ix1 + 1 == m->count(model_ix)) {
-		return s1;
-	}
-	s2 = m->sampleAt(model_ix, ix1 + 1);
-	if (s1.isValid() && time - s1.time < s2.time - time) {
-		return s1;
-	}
-
-	return s2;
+	return s1;
 }
 
 Sample Graph::posToData(const QPoint &pos) const
@@ -838,7 +829,7 @@ std::pair<Sample, int> Graph::posToSample(const QPoint &pos) const
 	auto channel_sample_type = channel_info.typeDescr.sampleType();
 	Sample s;
 	if (channel_sample_type == shv::core::utils::ShvTypeDescr::SampleType::Discrete) {
-		s = timeToNearestSample(ch_ix, time);
+		s = timeToPreviousSample(ch_ix, time);
 	}
 	else {
 		s = timeToSample(ch_ix, time);
@@ -1881,7 +1872,7 @@ void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, co
 		painter->drawRect(r2);
 		painter->restore();
 	}
-};
+}
 
 void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_rect, const QRect &dest_rect, const GraphChannel::Style &channel_style)
 {
