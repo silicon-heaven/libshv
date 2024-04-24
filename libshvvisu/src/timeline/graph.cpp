@@ -1869,7 +1869,7 @@ void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, co
 		painter->save();
 		pen.setColor(Qt::black);
 		painter->setPen(pen);
-		painter->fillRect(r2, QColor("#d2d2d2"));
+		painter->fillRect(r2, QColor(0xd2, 0xd2, 0xd2));
 		painter->drawText(info_rect, info_text);
 		pen.setColor(channel_color.darker(150));
 		painter->setPen(pen);
