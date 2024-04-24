@@ -232,7 +232,6 @@ public:
 	QStringList savedVisualSettingsNames(const QString &settings_id) const;
 	void loadVisualSettings(const QString &settings_id, const QString &name);
 	QString loadedVisualSettingsId();
-	bool isChannelFilterValid() const;
 
 protected:
 	void sanityXRangeZoom();

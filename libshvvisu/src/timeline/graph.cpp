@@ -1170,7 +1170,7 @@ QVector<int> Graph::visibleChannels() const
 	if (maximized_channel >= 0) {
 		visible_channels << maximized_channel;
 	}
-	else if (isChannelFilterValid()) {
+	else if (channelFilter()) {
 		for (int i = 0; i < m_channels.count(); ++i) {
 			QString shv_path = model()->channelInfo(m_channels[i]->modelIndex()).shvPath;
 			if(m_channelFilter && m_channelFilter.value().isPathPermitted(shv_path)) {
@@ -1865,11 +1865,14 @@ void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, co
 		int offset = 5;
 		auto r2 = info_rect.adjusted(-offset, 0, offset, 0);
 		auto pen = painter->pen();
-		pen.setColor(pen.color().darker(150));
+		auto channel_color = pen.color();
 		painter->save();
+		pen.setColor(Qt::black);
 		painter->setPen(pen);
-		painter->fillRect(r2, effectiveStyle().colorBackground());
+		painter->fillRect(r2, QColor("#d2d2d2"));
 		painter->drawText(info_rect, info_text);
+		pen.setColor(channel_color.darker(150));
+		painter->setPen(pen);
 		painter->drawRect(r2);
 		painter->restore();
 	}
@@ -1934,16 +1937,18 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 			}
 			last_x = current_point.x();
 			// draw arrow for discrete value
-			QPoint arrow_heel{current_point.x(), 0};
 			int arrow_width = u2px(1);
-			QLine arrow_line(arrow_heel.x(), clip_rect.y(), arrow_heel.x(), clip_rect.y() + clip_rect.height() - arrow_width / 2);
+			QRect arrow_box{QPoint(0, 0), QSize(arrow_width, arrow_width / 2)};
+			arrow_box.moveCenter(current_point);
+			arrow_box.moveBottom(clip_rect.y() + clip_rect.height() - painter->pen().width());
+			QLine arrow_line(arrow_box.center().x(), clip_rect.y(), arrow_box.center().x(), arrow_box.top());
 			QLine arrow_line_half(arrow_line.x1(), (arrow_line.y1() + arrow_line.y2()) / 2, arrow_line.x1(), arrow_line.y2());
 			painter->drawLine(arrow_line_half);
 			QPainterPath path;
-			path.moveTo(arrow_heel.x() - arrow_width / 2, clip_rect.y() + clip_rect.height() - arrow_width / 2);
-			path.lineTo(arrow_heel.x() + arrow_width / 2, clip_rect.y() + clip_rect.height() - arrow_width / 2);
-			path.lineTo(arrow_heel.x(), clip_rect.y() + clip_rect.height());
-			path.lineTo(arrow_heel.x() - arrow_width / 2, clip_rect.y() + clip_rect.height() - arrow_width / 2);
+			path.moveTo(arrow_box.topLeft());
+			path.lineTo(arrow_box.topRight());
+			path.lineTo(arrow_box.center().x(), arrow_box.bottom());
+			path.lineTo(arrow_box.topLeft());
 			path.closeSubpath();
 			painter->drawPath(path);
 			if (ch_style.isDrawDiscreteValuesInfo()) {
@@ -2398,11 +2403,6 @@ void Graph::loadVisualSettings(const QString &settings_id, const QString &name)
 	VisualSettings vs = VisualSettings::fromJson(settings.value(name).toString());
 	vs.name = settings_id;
 	setVisualSettingsAndChannelFilter(vs);
-}
-
-bool Graph::isChannelFilterValid() const
-{
-	return (m_channelFilter != std::nullopt);
 }
 
 void Graph::deleteVisualSettings(const QString &settings_id, const QString &name) const

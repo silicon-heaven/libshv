@@ -17,7 +17,9 @@ void GraphView::makeLayout()
 {
 	int scroll_bar_width = 0;
 	if (auto *sb = verticalScrollBar(); sb) {
-		scroll_bar_width = sb->width();
+		if (sb->isVisible()) {
+			scroll_bar_width = sb->width();
+		}
 	}
 	if(auto *w = qobject_cast<GraphWidget*>(widget())) {
 		w->makeLayout(geometry().size() - QSize(scroll_bar_width, 0)); // space for scroll bar
