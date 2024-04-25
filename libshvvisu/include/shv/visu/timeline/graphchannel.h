@@ -39,7 +39,7 @@ public:
 		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorAxis, QColor(Qt::gray))
 		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorBackground, QColor(0x23, 0x23, 0x23))
 
-		SHV_VARIANTMAP_FIELD2(bool, is, set, DrawDiscreteValuesInfo, false)
+		SHV_VARIANTMAP_FIELD2(bool, is, set, HideDiscreteValuesInfo, false)
 		SHV_VARIANTMAP_FIELD2(int, i, setI, nterpolation, Interpolation::Stepped)
 		SHV_VARIANTMAP_FIELD2(int, l, setL, ineAreaStyle, LineAreaStyle::Blank)
 		SHV_VARIANTMAP_FIELD2(double, l, setL, ineWidth, 0.1)

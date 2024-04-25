@@ -1334,7 +1334,7 @@ void Graph::drawMiniMap(QPainter *painter)
 			GraphChannel *ch = channelAt(i);
 			GraphChannel::Style ch_st = ch->m_effectiveStyle;
 			ch_st.setLineAreaStyle(GraphChannel::Style::LineAreaStyle::Blank);
-			ch_st.setDrawDiscreteValuesInfo(false);
+			ch_st.setHideDiscreteValuesInfo(true);
 			DataRect drect{xRange(), ch->yRange()};
 			drawSamples(painter2, i, drect, mm_rect, ch_st);
 		}
@@ -1951,7 +1951,7 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 			path.lineTo(arrow_box.topLeft());
 			path.closeSubpath();
 			painter->drawPath(path);
-			if (ch_style.isDrawDiscreteValuesInfo()) {
+			if (!ch_style.isHideDiscreteValuesInfo()) {
 				auto v = sampleValues(channel_ix, sample).value(KEY_SAMPLE_PRETTY_VALUE);
 				drawDiscreteValueInfo(painter, arrow_line, v);
 			}
