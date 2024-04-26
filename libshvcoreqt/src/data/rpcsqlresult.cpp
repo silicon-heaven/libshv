@@ -81,7 +81,7 @@ RpcSqlResult::RpcSqlResult(const shv::chainpack::RpcResponse &resp)
 	}
 }
 
-QVariant RpcSqlResult::value(int col, int row) const
+QVariant RpcSqlResult::value(int row, int col) const
 {
 	return rows.value(row).toList().value(col);
 }
