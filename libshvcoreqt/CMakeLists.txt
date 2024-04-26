@@ -1,5 +1,6 @@
 qt_add_library(libshvcoreqt
 	src/data/valuechange.cpp
+	src/data/rpcsqlresult.cpp
 	src/exception.cpp
 	src/log.cpp
 	src/utils.cpp
@@ -11,6 +12,7 @@ qt_add_library(libshvcoreqt
 	include/shv/coreqt/rpc.h
 	include/shv/coreqt/log.h
 	include/shv/coreqt/data/valuechange.h
+	include/shv/coreqt/data/rpcsqlresult.h
 	include/shv/coreqt/utils.h
 	include/shv/coreqt/exception.h
 	)

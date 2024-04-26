@@ -169,7 +169,7 @@ void MainWindow::generateSampleData()
 		}
 		else if(ch->shvPath() == "Discrete") {
 			style.setInterpolation(tl::GraphChannel::Style::Interpolation::None);
-			style.setDrawDiscreteValuesInfo(true);
+			// style.setHideDiscreteValuesInfo(false);
 			style.setColor(Qt::green);
 		}
 		else {
