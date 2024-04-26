@@ -1839,7 +1839,12 @@ void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, co
 	QString info_text;
 	if (auto map = pretty_value.toMap(); !map.isEmpty()) {
 		QStringList lines;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
 		for (const auto &[key, val] : map.asKeyValueRange()) {
+#else
+		for (const auto& key : map.keys()) {
+			const auto& val = map.value(key);
+#endif
 			lines << key + ": " + val.toString();
 		}
 		info_text = lines.join('\n');
@@ -1869,7 +1874,7 @@ void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, co
 		painter->save();
 		pen.setColor(Qt::black);
 		painter->setPen(pen);
-		painter->fillRect(r2, QColor("#d2d2d2"));
+		painter->fillRect(r2, QColor(0xd2, 0xd2, 0xd2));
 		painter->drawText(info_rect, info_text);
 		pen.setColor(channel_color.darker(150));
 		painter->setPen(pen);
