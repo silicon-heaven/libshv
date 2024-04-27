@@ -38,7 +38,7 @@ public:
 	explicit RpcSqlResult() = default;
 	explicit RpcSqlResult(const shv::chainpack::RpcResponse &resp);
 
-	QVariant value(int col, int row) const;
+	QVariant value(int row, int col) const;
 
 	bool isSelect() const {return !fields.isEmpty();}
 	shv::chainpack::RpcValue toRpcValue() const;
