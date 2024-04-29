@@ -826,7 +826,7 @@ void GraphWidget::createProbe(qsizetype channel_ix, timemsec_t time)
 	const GraphModel::ChannelInfo &channel_info = m_graph->model()->channelInfo(ch->modelIndex());
 
 	if (channel_info.typeDescr.sampleType() == shv::core::utils::ShvTypeDescr::SampleType::Discrete) {
-		Sample s = m_graph->timeToNearestSample(channel_ix, time);
+		Sample s = m_graph->timeToPreviousSample(channel_ix, time);
 
 		if (s.isValid())
 			time = s.time;
