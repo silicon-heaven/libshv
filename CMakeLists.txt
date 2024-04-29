@@ -110,7 +110,7 @@ if(BUILD_TESTING)
 	endif()
 endif()
 
-if (NOT TARGET libnecrolog)
+if(NOT TARGET libnecrolog)
 	if(LIBSHV_USE_LOCAL_NECROLOG)
 		find_package(necrolog REQUIRED)
 	else()
@@ -120,7 +120,7 @@ endif()
 
 function(check_shv_dep dependent dependent_var dependency dependency_var)
 	if(${${dependent_var}})
-		if (NOT ${${dependency_var}})
+		if(NOT ${${dependency_var}})
 			message(FATAL_ERROR "${dependent} needs ${dependency}, but ${dependency} has been disabled explicitly via ${dependency_var}. Set ${dependency_var} to ON to build ${dependent}.")
 		else()
 			list(APPEND BUILT_COMPONENTS ${dependent})
@@ -178,6 +178,10 @@ if(LIBSHV_WITH_COREQT)
 			add_executable(${ARGV})
 		endfunction()
 	endif()
+
+	if(QT_KNOWN_POLICY_QTP0003)
+		qt_policy(SET QTP0003 NEW)
+	endif()
 endif()
 
 # We'll error out if the user has explicitly enabled websocket support, but Qt WebSockets aren't available.
@@ -186,11 +190,11 @@ if(LIBSHV_WITH_WEBSOCKETS AND NOT QtWebSockets_FOUND)
 endif()
 
 # Otherwise enable websocket support based on whether we found Qt6 WebSockets.
-if (NOT DEFINED LIBSHV_WITH_WEBSOCKETS)
+if(NOT DEFINED LIBSHV_WITH_WEBSOCKETS)
 	set(LIBSHV_WITH_WEBSOCKETS ${QtWebSockets_FOUND})
 endif()
 
-if (LIBSHV_WITH_WEBSOCKETS)
+if(LIBSHV_WITH_WEBSOCKETS)
 	message(STATUS "SHV websocket support enabled")
 else()
 	message(STATUS "SHV websocket support disabled")
