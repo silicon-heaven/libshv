@@ -29,8 +29,8 @@ MetaMethod::MetaMethod(std::string name,
 )
 	: m_name(name)
 	, m_flags(flags)
-	, m_param(param.value_or(VOID_TYPE_NAME))
-	, m_result(result.value_or(VOID_TYPE_NAME))
+	, m_paramType(param.value_or(VOID_TYPE_NAME))
+	, m_resultType(result.value_or(VOID_TYPE_NAME))
 	, m_accessLevel(access_level)
 	, m_label(label)
 	, m_description(description)
@@ -54,10 +54,10 @@ MetaMethod::MetaMethod(std::string name,
 	, m_extra(extra)
 {
 	switch (signature) {
-	case Signature::VoidVoid: m_result = VOID_TYPE_NAME; m_param = VOID_TYPE_NAME; break;
-	case Signature::VoidParam: m_result = VOID_TYPE_NAME; m_param = "RpcValue"; break;
-	case Signature::RetVoid: m_result = "RpcValue"; m_param = VOID_TYPE_NAME; break;
-	case Signature::RetParam: m_result = "RpcValue"; m_param = "RpcValue"; break;
+	case Signature::VoidVoid: m_resultType = VOID_TYPE_NAME; m_paramType = VOID_TYPE_NAME; break;
+	case Signature::VoidParam: m_resultType = VOID_TYPE_NAME; m_paramType = "RpcValue"; break;
+	case Signature::RetVoid: m_resultType = "RpcValue"; m_paramType = VOID_TYPE_NAME; break;
+	case Signature::RetParam: m_resultType = "RpcValue"; m_paramType = "RpcValue"; break;
 	}
 }
 
@@ -73,22 +73,22 @@ const std::string& MetaMethod::name() const
 
 const std::string &MetaMethod::resultType() const
 {
-	return m_result;
+	return m_resultType;
 }
 
 bool MetaMethod::hasResultType() const
 {
-	return !(m_result.empty() || m_result == VOID_TYPE_NAME);
+	return !(m_resultType.empty() || m_resultType == VOID_TYPE_NAME);
 }
 
 const std::string &MetaMethod::paramType() const
 {
-	return m_param;
+	return m_paramType;
 }
 
 bool MetaMethod::hasParamType() const
 {
-	return !(m_param.empty() || m_param == VOID_TYPE_NAME);
+	return !(m_paramType.empty() || m_paramType == VOID_TYPE_NAME);
 }
 
 const std::string& MetaMethod::label() const
@@ -153,8 +153,8 @@ RpcValue MetaMethod::toRpcValue() const
 	RpcValue::IMap ret;
 	ret[static_cast<int>(Ikey::Name)] = m_name;
 	ret[static_cast<int>(Ikey::Flags)] = m_flags;
-	ret[static_cast<int>(Ikey::ParamType)] = m_param;
-	ret[static_cast<int>(Ikey::ResultType)] = m_result;
+	ret[static_cast<int>(Ikey::ParamType)] = m_paramType;
+	ret[static_cast<int>(Ikey::ResultType)] = m_resultType;
 	ret[static_cast<int>(Ikey::AccessLevel)] = static_cast<RpcValue::Int>(m_accessLevel);
 	ret[static_cast<int>(Ikey::Signals)] = m_signals;
 	RpcValue::Map extra{
@@ -172,10 +172,10 @@ RpcValue::Map MetaMethod::toMap() const
 {
 	RpcValue::Map ret;
 	ret[KEY_NAME] = m_name;
-	if (!m_param.empty())
-		ret[KEY_PARAM] = m_param;
-	if (!m_result.empty())
-		ret[KEY_RESULT] = m_result;
+	if (!m_paramType.empty())
+		ret[KEY_PARAM] = m_paramType;
+	if (!m_resultType.empty())
+		ret[KEY_RESULT] = m_resultType;
 	std::string access = accessLevelToAccessString(m_accessLevel);
 	if (!access.empty())
 		ret[KEY_ACCESS] = access;
@@ -227,6 +227,10 @@ void MetaMethod::applyAttributesMap(const RpcValue::Map &attr_map)
 	auto map = attr_map;
 	if(auto rv = map.take(KEY_NAME); rv.isString())
 		m_name = rv.asString();
+	if(auto rv = map.take(KEY_PARAM); rv.isString())
+		m_paramType = rv.asString();
+	if(auto rv = map.take(KEY_RESULT); rv.isString())
+		m_resultType = rv.asString();
 	if(auto rv = map.take(KEY_FLAGS); rv.isValid())
 		m_flags = rv.toInt();
 	if(auto rv = map.take(KEY_ACCESS); rv.isString())
@@ -249,8 +253,8 @@ void MetaMethod::applyAttributesIMap(const RpcValue::IMap &attr_map)
 {
 	m_name = attr_map.value(static_cast<int>(Ikey::Name)).asString();
 	m_flags = attr_map.value(static_cast<int>(Ikey::Flags)).toInt();
-	m_param = attr_map.value(static_cast<int>(Ikey::ParamType)).asString();
-	m_result = attr_map.value(static_cast<int>(Ikey::ParamType)).asString();
+	m_paramType = attr_map.value(static_cast<int>(Ikey::ParamType)).asString();
+	m_resultType = attr_map.value(static_cast<int>(Ikey::ResultType)).asString();
 	{
 		auto rv = attr_map.value(static_cast<int>(Ikey::AccessLevel));
 		if (rv.isString()) {

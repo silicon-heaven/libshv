@@ -67,6 +67,8 @@ public:
 	bool hasResultType() const;
 	const std::string& paramType() const;
 	bool hasParamType() const;
+	// name signals clashes with Qt macro
+	const RpcValue::Map& methodSignals() const { return m_signals; }
 	const std::string& label() const;
 	MetaMethod& setLabel(const std::string &label);
 	const std::string& description() const;
@@ -89,8 +91,8 @@ public:
 private:
 	std::string m_name;
 	unsigned m_flags = 0;
-	std::string m_param;
-	std::string m_result;
+	std::string m_paramType;
+	std::string m_resultType;
 	AccessLevel m_accessLevel;
 	RpcValue::Map m_signals;
 	std::string m_label;
