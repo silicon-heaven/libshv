@@ -178,6 +178,10 @@ if(LIBSHV_WITH_COREQT)
 			add_executable(${ARGV})
 		endfunction()
 	endif()
+
+	if(QT_KNOWN_POLICY_QTP0003)
+		qt_policy(SET QTP0003 NEW)
+	endif()
 endif()
 
 # We'll error out if the user has explicitly enabled websocket support, but Qt WebSockets aren't available.
