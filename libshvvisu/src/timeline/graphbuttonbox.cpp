@@ -6,8 +6,6 @@
 #include <QMouseEvent>
 #include <QPainter>
 
-#include <cmath>
-
 namespace shv::visu::timeline {
 
 
@@ -154,7 +152,7 @@ void GraphButtonBox::drawButton(QPainter *painter, const QRect &rect, int button
 {
 	painter->save();
 	int corner_radius = rect.height() / 8;
-	QPen p1(graph()->effectiveStyle().color());
+	QPen p1(graph()->effectiveStyle().colorForeground());
 	p1.setWidth(graph()->u2px(0.1));
 	if(m_mouseOverButtonIndex == button_index) {
 		painter->setPen(p1);

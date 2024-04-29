@@ -1377,7 +1377,7 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 {
 	int header_inset = u2px(m_style.headerInset());
 	GraphChannel *ch = channelAt(channel);
-	QColor c = m_style.color();
+	QColor c = m_style.colorForeground();
 	QColor bc = m_style.colorPanel();
 	QPen pen;
 	pen.setColor(c);
@@ -1834,7 +1834,7 @@ QString Graph::rectToString(const QRect &r)
 	return s.arg(r.x()).arg(r.y()).arg(r.width()).arg(r.height());
 }
 
-void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, const QVariant &pretty_value)
+void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, const QVariant &pretty_value, bool shadowed_sample)
 {
 	QString info_text;
 	if (auto map = pretty_value.toMap(); !map.isEmpty()) {
@@ -1874,11 +1874,19 @@ void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, co
 		painter->save();
 		pen.setColor(Qt::black);
 		painter->setPen(pen);
-		painter->fillRect(r2, QColor(0xd2, 0xd2, 0xd2));
+		QColor bgc(effectiveStyle().colorForeground());
+		painter->fillRect(r2, bgc);
 		painter->drawText(info_rect, info_text);
 		pen.setColor(channel_color.darker(150));
 		painter->setPen(pen);
 		painter->drawRect(r2);
+		if (shadowed_sample) {
+			pen.setWidth(2 * pen.width());
+			painter->setPen(pen);
+			r2.adjust(offset, 0, -offset, 0);
+			painter->drawLine(r2.topLeft(), r2.bottomLeft());
+			painter->drawLine(r2.topRight(), r2.bottomRight());
+		}
 		painter->restore();
 	}
 };
@@ -1933,14 +1941,13 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 	if (channel_info.typeDescr.sampleType() == shv::core::utils::ShvTypeDescr::SampleType::Discrete) {
 		auto ix1 = graph_model->greaterOrEqualTimeIndex(model_ix, xrange.min);
 		auto ix2 = graph_model->lessOrEqualTimeIndex(model_ix, xrange.max);
-		std::optional<bool> last_x;
+		std::optional<int> last_x;
 		for (auto i = ix1; i <= ix2; ++i) {
 			Sample sample = graph_model->sampleAt(model_ix, i);
 			auto current_point = sample2point(sample, channel_meta_type_id);
 			if (last_x && last_x.value() == current_point.x()) {
 				continue;
 			}
-			last_x = current_point.x();
 			// draw arrow for discrete value
 			int arrow_width = u2px(1);
 			QRect arrow_box{QPoint(0, 0), QSize(arrow_width, arrow_width / 2)};
@@ -1958,8 +1965,13 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 			painter->drawPath(path);
 			if (!ch_style.isHideDiscreteValuesInfo()) {
 				auto v = sampleValues(channel_ix, sample).value(KEY_SAMPLE_PRETTY_VALUE);
-				drawDiscreteValueInfo(painter, arrow_line, v);
+				bool shadowed_sample = false;
+				if (last_x) {
+					shadowed_sample = (current_point.x() - last_x.value()) < 5;
+				}
+				drawDiscreteValueInfo(painter, arrow_line, v, shadowed_sample);
 			}
+			last_x = current_point.x();
 		}
 	}
 	else {

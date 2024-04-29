@@ -67,7 +67,7 @@ public:
 		SHV_VARIANTMAP_FIELD2(bool, s, setS, eparateChannels, true)
 		SHV_VARIANTMAP_FIELD2(bool, y, setY, AxisVisible, true)
 
-		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olor, QColor(0xc8, 0xc8, 0xc8))
+		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorForeground, QColor(0xc8, 0xc8, 0xc8))
 		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorPanel, QColor(0x41, 0x43, 0x43))
 		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorBackground, QColor(Qt::black))
 		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorAxis, QColor(Qt::gray))
@@ -99,7 +99,7 @@ public:
 	};
 
 	Graph(QObject *parent = nullptr);
-	virtual ~Graph();
+	~Graph() override;
 
 	const Style& effectiveStyle() const;
 
@@ -263,7 +263,7 @@ protected:
 			, const DataRect &src_rect = DataRect()
 			, const QRect &dest_rect = QRect()
 			, const GraphChannel::Style &channel_style = GraphChannel::Style());
-	void drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, const QVariant &pretty_value);
+	void drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, const QVariant &pretty_value, bool shadowed_sample);
 	void drawCrossHairTimeMarker(QPainter *painter);
 	virtual void drawCrossHair(QPainter *painter, int channel_ix);
 	virtual void drawProbes(QPainter *painter, int channel_ix);
