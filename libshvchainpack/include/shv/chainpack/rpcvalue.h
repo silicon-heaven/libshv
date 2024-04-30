@@ -8,7 +8,7 @@
 #include <vector>
 #include <map>
 #include <memory>
-#include <initializer_list>
+#include <variant>
 
 #ifndef CHAINPACK_UINT
 	#define CHAINPACK_UINT unsigned
@@ -37,7 +37,7 @@ private:
 	{
 		T* tmp = m_sp.get();
 		if( !( tmp == nullptr || m_sp.use_count() == 1 ) ) {
-			m_sp = RefPtr( tmp->copy() );
+			m_sp = std::make_shared<T>(*tmp);
 		}
 	}
 
@@ -74,13 +74,15 @@ public:
 		detach();
 		return m_sp.operator->();
 	}
+	explicit operator bool() const noexcept
+	{
+		return m_sp.operator bool();
+	}
 };
 
 class SHVCHAINPACK_DECL_EXPORT RpcValue
 {
 public:
-	class AbstractValueData;
-
 	enum class Type {
 		Invalid,
 		Null,
@@ -102,6 +104,8 @@ public:
 
 	using Int = int; //int64_t;
 	using UInt = unsigned; //uint64_t;
+	using Double = double;
+	using Bool = bool;
 	class SHVCHAINPACK_DECL_EXPORT Decimal
 	{
 		static constexpr int Base = 10;
@@ -111,6 +115,7 @@ public:
 
 			Num();
 			Num(int64_t m, int e);
+			bool operator==(const Num&) const = default;
 		};
 		Num m_num;
 	public:
@@ -125,6 +130,7 @@ public:
 		void setDouble(double d);
 		double toDouble() const;
 		std::string toString() const;
+		bool operator==(const Decimal&) const = default;
 	};
 	class SHVCHAINPACK_DECL_EXPORT DateTime
 	{
@@ -416,10 +422,8 @@ public:
 	size_t count() const;
 	bool has(Int i) const;
 	bool has(const RpcValue::String &key) const;
-	RpcValue at(Int i) const;
-	RpcValue at(Int i, const RpcValue &def_val) const;
-	RpcValue at(const RpcValue::String &key) const;
-	RpcValue at(const RpcValue::String &key, const RpcValue &def_val) const;
+	RpcValue at(Int i, const RpcValue &def_val = RpcValue{}) const;
+	RpcValue at(const RpcValue::String &key, const RpcValue &def_val = RpcValue{}) const;
 	void set(Int ix, const RpcValue &val);
 	void set(const RpcValue::String &key, const RpcValue &val);
 	void append(const RpcValue &val);
@@ -447,8 +451,18 @@ public:
 	template<typename T> static inline RpcValue fromValue(const T &t);
 
 	long refCnt() const;
+
+	struct Invalid {
+		bool operator==(const Invalid&) const = default;
+	};
+	struct Null {
+		bool operator==(const Null&) const = default;
+	};
+
+	using VariantType = std::variant<RpcValue::Invalid, RpcValue::Null, uint64_t, int64_t, RpcValue::Double, RpcValue::Bool, CowPtr<RpcValue::Blob>, CowPtr<RpcValue::String>, RpcValue::DateTime, CowPtr<RpcValue::List>, CowPtr<RpcValue::Map>, CowPtr<RpcValue::IMap>, RpcValue::Decimal>;
 private:
-	CowPtr<AbstractValueData> m_ptr;
+	CowPtr<MetaData> m_meta = nullptr;
+	VariantType m_value;
 };
 
 namespace string_literals {
