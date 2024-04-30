@@ -1881,7 +1881,11 @@ void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, co
 			{
 				painter->save();
 				painter->setPen(Qt::NoPen);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
 				painter->setBrush(QColor::fromString("goldenrod"));
+#else
+				painter->setBrush(QColor("goldenrod"));
+#endif
 				painter->drawEllipse(rect);
 				painter->restore();
 			}
