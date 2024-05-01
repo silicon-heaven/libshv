@@ -39,6 +39,8 @@ public:
 	explicit RpcSqlResult(const shv::chainpack::RpcResponse &resp);
 
 	QVariant value(int row, int col) const;
+	QVariant value(int row, const QString &name) const;
+	std::optional<qsizetype> columnIndex(const QString &name) const;
 
 	bool isSelect() const {return !fields.isEmpty();}
 	shv::chainpack::RpcValue toRpcValue() const;

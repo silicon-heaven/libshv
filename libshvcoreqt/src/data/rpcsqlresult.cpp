@@ -86,6 +86,25 @@ QVariant RpcSqlResult::value(int row, int col) const
 	return rows.value(row).toList().value(col);
 }
 
+QVariant RpcSqlResult::value(int row, const QString &name) const
+{
+	if (auto ix = columnIndex(name); ix.has_value()) {
+		return rows.value(row).toList().value(ix.value());
+	}
+	return {};
+}
+
+std::optional<qsizetype> RpcSqlResult::columnIndex(const QString &name) const
+{
+	for (auto col = 0; col < fields.size(); ++col) {
+		const auto &fld = fields[col];
+		if (fld.name.compare(name, Qt::CaseInsensitive) == 0) {
+			return col;
+		}
+	}
+	return {};
+}
+
 RpcValue RpcSqlResult::toRpcValue() const
 {
 	return shv::coreqt::rpc::qVariantToRpcValue(toVariant());
