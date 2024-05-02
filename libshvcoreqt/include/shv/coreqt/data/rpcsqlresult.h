@@ -5,6 +5,8 @@
 #include <QVector>
 #include <QVariantList>
 
+#include <optional>
+
 namespace shv::chainpack { class RpcResponse; }
 
 //class QSqlQuery;
