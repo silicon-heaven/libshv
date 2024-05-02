@@ -1,30 +1,30 @@
 add_library(libshvchainpack-cpp
-	src/chainpack/abstractstreamreader.cpp
-	src/chainpack/abstractstreamwriter.cpp
-	src/chainpack/accesslevel.cpp
-	src/chainpack/accessgrant.cpp
-	src/chainpack/chainpack.cpp
-	src/chainpack/chainpackreader.cpp
-	src/chainpack/chainpackwriter.cpp
-	src/chainpack/cponreader.cpp
-	src/chainpack/cponwriter.cpp
-	src/chainpack/datachange.cpp
-	src/chainpack/exception.cpp
-	src/chainpack/irpcconnection.cpp
-	src/chainpack/metamethod.cpp
-	src/chainpack/metatypes.cpp
-	src/chainpack/rpc.cpp
-	src/chainpack/rpcdriver.cpp
-	src/chainpack/rpcmessage.cpp
-	src/chainpack/rpcvalue.cpp
-	src/chainpack/tunnelctl.cpp
-	src/chainpack/utils.cpp
+	src/abstractstreamreader.cpp
+	src/abstractstreamwriter.cpp
+	src/accesslevel.cpp
+	src/accessgrant.cpp
+	src/chainpack.cpp
+	src/chainpackreader.cpp
+	src/chainpackwriter.cpp
+	src/cponreader.cpp
+	src/cponwriter.cpp
+	src/datachange.cpp
+	src/exception.cpp
+	src/irpcconnection.cpp
+	src/metamethod.cpp
+	src/metatypes.cpp
+	src/rpc.cpp
+	src/rpcdriver.cpp
+	src/rpcmessage.cpp
+	src/rpcvalue.cpp
+	src/tunnelctl.cpp
+	src/utils.cpp
 	include/shv/chainpack/crc32.h
 	)
 add_library(libshv::libshvchainpack-cpp ALIAS libshvchainpack-cpp)
 
 if (NOT WIN32)
-	target_sources(libshvchainpack-cpp PRIVATE src/chainpack/socketrpcdriver.cpp)
+	target_sources(libshvchainpack-cpp PRIVATE src/socketrpcdriver.cpp)
 endif()
 
 target_link_libraries(libshvchainpack-cpp libnecrolog::libnecrolog libshvchainpack-c)
