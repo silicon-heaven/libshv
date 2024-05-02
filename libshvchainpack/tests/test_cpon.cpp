@@ -12,14 +12,14 @@ using namespace shv::chainpack;
 using std::string;
 
 // Check that ChainPack has the properties we want.
-#define CHECK_TRAIT(x) static_assert(std::x::value, #x)
-CHECK_TRAIT(is_nothrow_constructible<RpcValue>);
-CHECK_TRAIT(is_nothrow_default_constructible<RpcValue>);
-CHECK_TRAIT(is_copy_constructible<RpcValue>);
-CHECK_TRAIT(is_move_constructible<RpcValue>);
-CHECK_TRAIT(is_copy_assignable<RpcValue>);
-CHECK_TRAIT(is_move_assignable<RpcValue>);
-CHECK_TRAIT(is_nothrow_destructible<RpcValue>);
+#define CHECK_TRAIT(x) static_assert(std::x, #x)
+CHECK_TRAIT(is_nothrow_constructible_v<RpcValue>);
+CHECK_TRAIT(is_nothrow_default_constructible_v<RpcValue>);
+CHECK_TRAIT(is_copy_constructible_v<RpcValue>);
+CHECK_TRAIT(is_move_constructible_v<RpcValue>);
+CHECK_TRAIT(is_copy_assignable_v<RpcValue>);
+CHECK_TRAIT(is_move_assignable_v<RpcValue>);
+CHECK_TRAIT(is_nothrow_destructible_v<RpcValue>);
 
 namespace {
 
