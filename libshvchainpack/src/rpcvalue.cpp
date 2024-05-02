@@ -343,6 +343,8 @@ ResultType impl_to_int(const RpcValue::VariantType& value)
 			return static_cast<ResultType>(convert_to_int(x));
 		} else if constexpr (std::is_same<TypeX, RpcValue::Decimal>()) {
 			return static_cast<ResultType>(convert_to_int(x.toDouble()));
+		} else if constexpr (std::is_same<TypeX, RpcValue::DateTime>()) {
+			return static_cast<ResultType>(x.msecsSinceEpoch());
 		} else {
 			return ResultType{0};
 		}
