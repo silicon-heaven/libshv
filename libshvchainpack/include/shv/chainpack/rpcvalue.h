@@ -263,7 +263,7 @@ public:
 		MetaData* clone() const;
 	private:
 		MetaData& operator=(const MetaData &o);
-		void swap(MetaData &o);
+		void swap(MetaData &o) noexcept;
 	private:
 		RpcValue::IMap *m_imap = nullptr;
 		RpcValue::Map *m_smap = nullptr;

@@ -1318,7 +1318,7 @@ RpcValue::MetaData *RpcValue::MetaData::clone() const
 	return md;
 }
 
-void RpcValue::MetaData::swap(RpcValue::MetaData &o)
+void RpcValue::MetaData::swap(RpcValue::MetaData &o) noexcept
 {
 	std::swap(m_imap, o.m_imap);
 	std::swap(m_smap, o.m_smap);
