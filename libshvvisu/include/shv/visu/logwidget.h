@@ -8,8 +8,7 @@
 
 class QAbstractButton;
 
-namespace shv {
-namespace visu {
+namespace shv::visu {
 
 class LogFilterProxyModel;
 class LogTableModelRow;
@@ -66,5 +65,4 @@ private:
 	bool m_isAutoScroll = true;
 };
 
-}}
-
+}

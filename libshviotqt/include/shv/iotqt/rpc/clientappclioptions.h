@@ -4,9 +4,7 @@
 
 #include "../shviotqtglobal.h"
 
-namespace shv {
-namespace iotqt {
-namespace rpc {
+namespace shv::iotqt::rpc {
 
 class SHVIOTQT_DECL_EXPORT ClientAppCliOptions : public shv::core::utils::ConfigCLIOptions
 {
@@ -27,6 +25,5 @@ public:
 	CLIOPTION_GETTER_SETTER2(int, "rpc.heartbeatInterval", h, setH, eartBeatInterval)
 };
 
-} // namespace client
-} // namespace iot
-} // namespace shv
+}
+

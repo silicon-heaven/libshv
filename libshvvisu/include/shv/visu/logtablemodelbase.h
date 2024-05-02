@@ -6,8 +6,7 @@
 
 #include <QAbstractTableModel>
 
-namespace shv {
-namespace visu {
+namespace shv::visu {
 
 class SHVVISU_DECL_EXPORT LogTableModelRow : public QVector<QVariant>
 {
@@ -38,7 +37,4 @@ public:
 protected:
 	QList<LogTableModelRow> m_rows;
 };
-
-}}
-
-
+}

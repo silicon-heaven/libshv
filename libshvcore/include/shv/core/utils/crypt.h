@@ -8,9 +8,8 @@
 #include <cstddef>
 #include <string>
 
-namespace shv {
-namespace core {
-namespace utils {
+
+namespace shv::core::utils {
 
 class SHVCORE_DECL_EXPORT Crypt
 {
@@ -35,5 +34,5 @@ private:
 	Generator m_generator;
 };
 
-}}}
+}
 

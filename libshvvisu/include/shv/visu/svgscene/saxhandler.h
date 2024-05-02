@@ -16,9 +16,7 @@ class QGraphicsRectItem;
 class QGraphicsTextItem;
 class QAbstractGraphicsShapeItem;
 
-namespace shv {
-namespace visu {
-namespace svgscene {
+namespace shv::visu::svgscene {
 
 using XmlAttributes = Types::XmlAttributes;
 using CssAttributes = Types::CssAttributes;
@@ -73,6 +71,6 @@ private:
 	bool m_skipDefinitions = false;
 };
 
-}}}
+}
 
 Q_DECLARE_METATYPE(shv::visu::svgscene::XmlAttributes)

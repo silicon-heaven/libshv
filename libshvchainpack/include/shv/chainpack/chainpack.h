@@ -3,8 +3,7 @@
 #include <shv/chainpack/cchainpack.h>
 #include <shv/chainpack/shvchainpackglobal.h>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT ChainPack
 {
@@ -42,6 +41,4 @@ public:
 		static const char* name(Enum e);
 	};
 };
-
-}}
-
+}

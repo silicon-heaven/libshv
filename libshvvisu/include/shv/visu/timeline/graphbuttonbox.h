@@ -7,9 +7,7 @@
 
 class QPainter;
 
-namespace shv {
-namespace visu {
-namespace timeline {
+namespace shv::visu::timeline {
 
 class Graph;
 
@@ -54,6 +52,4 @@ private:
 	int m_mousePressButtonIndex = -1;
 };
 
-} // namespace timeline
-} // namespace visu
-} // namespace shv
+} // namespace shv::visu::timeline

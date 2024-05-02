@@ -7,9 +7,7 @@
 #include <functional>
 #include <map>
 
-namespace shv {
-namespace core {
-namespace utils {
+namespace shv::core::utils {
 
 namespace shvpath {
 
@@ -95,6 +93,4 @@ public:
 		}
 	}
 };
-
-}}}
-
+}

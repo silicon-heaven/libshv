@@ -6,9 +6,8 @@
 #include <shv/core/utils/shvpath.h>
 
 namespace shv {
-namespace core { namespace utils { class ShvUrl; } }
-namespace iotqt {
-namespace acl {
+namespace core::utils { class ShvUrl; }
+namespace iotqt::acl {
 
 struct SHVIOTQT_DECL_EXPORT AclAccessRule
 {
@@ -36,7 +35,5 @@ public:
 	static AclRoleAccessRules fromRpcValue(const shv::chainpack::RpcValue &v);
 };
 
-} // namespace acl
-} // namespace iotqt
+} // namespace iotqt::acl
 } // namespace shv
-

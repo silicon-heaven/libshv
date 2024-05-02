@@ -9,8 +9,7 @@
 #include <tuple>
 #include <limits>
 
-namespace shv {
-namespace core {
+namespace shv::core {
 
 class SHVCORE_DECL_EXPORT String : public std::string
 {
@@ -76,4 +75,4 @@ public:
 
 };
 
-}}
+}

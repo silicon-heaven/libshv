@@ -3,8 +3,7 @@
 #include <shv/chainpack/abstractstreamreader.h>
 #include <shv/chainpack/rpcvalue.h>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT CponReaderOptions
 {
@@ -34,7 +33,4 @@ private:
 
 	void throwParseException(const std::string &msg = {});
 };
-
-} // namespace chainpack
-} // namespace shv
-
+} // namespace shv::chainpack

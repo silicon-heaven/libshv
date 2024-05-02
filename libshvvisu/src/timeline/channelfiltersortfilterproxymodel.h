@@ -4,9 +4,7 @@
 
 #include <QSortFilterProxyModel>
 
-namespace shv {
-namespace visu {
-namespace timeline {
+namespace shv::visu::timeline {
 
 class SHVVISU_DECL_EXPORT ChannelFilterSortFilterProxyModel : public QSortFilterProxyModel
 {
@@ -24,5 +22,4 @@ public:
 private:
 	QString m_filterString;
 };
-
-}}}
+}

@@ -5,8 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace shv {
-namespace core {
+namespace shv::core {
 
 using StringView = std::string_view;
 class SHVCORE_DECL_EXPORT StringViewList : public std::vector<StringView>
@@ -30,5 +29,5 @@ public:
 	ssize_t length() const;
 };
 
-} // namespace core
-} // namespace shv
+} // namespace shv::core
+

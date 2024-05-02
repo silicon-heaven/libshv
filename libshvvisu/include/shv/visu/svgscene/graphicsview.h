@@ -4,9 +4,7 @@
 
 #include <QGraphicsView>
 
-namespace shv {
-namespace visu {
-namespace svgscene {
+namespace shv::visu::svgscene {
 
 class SHVVISU_DECL_EXPORT GraphicsView : public QGraphicsView
 {
@@ -29,6 +27,4 @@ protected:
 private:
 	QPoint m_dragMouseStartPos;
 };
-
-}}}
-
+}

@@ -20,8 +20,7 @@
 
 namespace shv {
 namespace chainpack { class RpcValue; }
-namespace core {
-namespace utils {
+namespace core::utils {
 
 class SHVCORE_DECL_EXPORT CLIOptions
 {
@@ -138,5 +137,5 @@ protected:
 	void mergeConfig_helper(const std::string &key_prefix, const shv::chainpack::RpcValue &config_map);
 };
 
-}}}
+}}
 

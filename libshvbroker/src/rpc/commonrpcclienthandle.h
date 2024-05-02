@@ -2,9 +2,7 @@
 
 #include <shv/chainpack/rpcmessage.h>
 
-namespace shv {
-namespace broker {
-namespace rpc {
+namespace shv::broker::rpc {
 
 class CommonRpcClientHandle
 {
@@ -47,6 +45,4 @@ public:
 protected:
 	std::vector<Subscription> m_subscriptions;
 };
-
-}}}
-
+}

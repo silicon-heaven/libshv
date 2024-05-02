@@ -5,9 +5,7 @@
 #include <QString>
 #include <QMap>
 
-namespace shv {
-namespace visu {
-namespace svgscene {
+namespace shv::visu::svgscene {
 
 struct SHVVISU_DECL_EXPORT Types
 {
@@ -34,5 +32,4 @@ struct SHVVISU_DECL_EXPORT Types
 	static const QString ATTR_SHV_VISU_TYPE;
 	static const QString ATTR_SHV_GRAPHICS_TYPE;
 };
-
-}}}
+}

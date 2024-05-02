@@ -5,9 +5,7 @@
 #include <shv/coreqt/rpc.h>
 #endif
 
-namespace shv {
-namespace iotqt {
-namespace node {
+namespace shv::iotqt::node {
 
 class SHVIOTQT_DECL_EXPORT FileNode : public ShvNode
 {
@@ -33,5 +31,4 @@ private:
 	shv::chainpack::RpcValue read(const ShvNode::StringViewList &shv_path, const chainpack::RpcValue &params) const;
 	shv::chainpack::RpcValue readFileCompressed(const ShvNode::StringViewList &shv_path, const shv::chainpack::RpcValue &params) const;
 };
-
-}}}
+}

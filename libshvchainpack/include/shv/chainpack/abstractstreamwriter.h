@@ -5,8 +5,7 @@
 
 #include <ostream>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT AbstractStreamWriter
 {
@@ -35,7 +34,4 @@ protected:
 	char m_packBuff[32];
 	ccpcp_pack_context m_outCtx;
 };
-
-} // namespace chainpack
-} // namespace shv
-
+} // namespace shv::chainpack

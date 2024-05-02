@@ -4,8 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace shv {
-namespace broker {
+namespace shv::broker {
 
 class TunnelSecretList
 {
@@ -23,5 +22,4 @@ private:
 	};
 	std::vector<Secret> m_secretList;
 };
-
-}}
+}

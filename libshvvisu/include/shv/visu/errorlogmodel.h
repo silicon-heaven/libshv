@@ -6,8 +6,7 @@
 
 #include <necrologlevel.h>
 
-namespace shv {
-namespace visu {
+namespace shv::visu {
 
 class SHVVISU_DECL_EXPORT ErrorLogModel : public LogTableModelBase
 {
@@ -29,6 +28,4 @@ public:
 	void addLogRow(NecroLogLevel level, const std::string &msg, const QVariant &user_data = QVariant());
 
 };
-
-}}
-
+}

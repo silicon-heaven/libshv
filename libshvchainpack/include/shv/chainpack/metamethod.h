@@ -6,8 +6,7 @@
 
 #include <optional>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT MetaMethod
 {
@@ -114,6 +113,4 @@ constexpr bool operator>(const AccessLevel a, const AccessLevel b)
 {
 	return static_cast<int>(a) > static_cast<int>(b);
 }
-
-} // namespace chainpack
-} // namespace shv
+} // namespace shv::chainpack

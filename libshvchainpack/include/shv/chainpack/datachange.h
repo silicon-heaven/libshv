@@ -5,8 +5,7 @@
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/chainpack/utils.h>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT DataChange
 {
@@ -79,6 +78,4 @@ private:
 	int m_shortTime = NO_SHORT_TIME;
 	ValueFlags m_valueFlags = NO_VALUE_FLAGS;
 };
-
-} // namespace chainpack
-} // namespace shv
+} // namespace shv::chainpack

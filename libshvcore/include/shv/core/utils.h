@@ -78,8 +78,7 @@
 #define SHV_FIELD_BOOL_CMP_IMPL(lower_letter, upper_letter, name_rest) \
 	SHV_FIELD_BOOL_CMP_IMPL2(lower_letter, upper_letter, name_rest, false)
 
-namespace shv {
-namespace core {
+namespace shv::core {
 
 class SHVCORE_DECL_EXPORT Utils
 {
@@ -166,5 +165,5 @@ auto findLongestPrefix(const Container& cont, std::string value) -> typename std
 }
 }
 
-}}
+}
 

@@ -5,9 +5,7 @@
 #include <QSet>
 #include <QRegularExpression>
 
-namespace shv {
-namespace visu {
-namespace timeline {
+namespace shv::visu::timeline {
 
 class SHVVISU_DECL_EXPORT ChannelFilter
 {
@@ -29,6 +27,4 @@ private:
 	QSet<QString> m_permittedPaths;
 };
 
-}
-}
 }

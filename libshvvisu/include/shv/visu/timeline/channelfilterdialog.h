@@ -6,9 +6,7 @@
 #include <QDialog>
 #include <optional>
 
-namespace shv {
-namespace visu {
-namespace timeline {
+namespace shv::visu::timeline {
 
 namespace Ui {
 class ChannelFilterDialog;
@@ -70,6 +68,4 @@ private:
 	QAction *m_importViewAction = nullptr;
 };
 
-}
-}
 }

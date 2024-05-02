@@ -5,9 +5,7 @@
 #include <QDir>
 #include <QMap>
 
-namespace shv {
-namespace iotqt {
-namespace node {
+namespace shv::iotqt::node {
 
 class SHVIOTQT_DECL_EXPORT LocalFSNode : public FileNode
 {
@@ -46,8 +44,4 @@ private:
 protected:
 	QDir m_rootDir;
 };
-
-} // namespace node
-} // namespace iotqt
-} // namespace shv
-
+} // namespace shv::iotqt::node

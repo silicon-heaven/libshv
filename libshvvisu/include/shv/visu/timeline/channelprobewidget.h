@@ -5,9 +5,7 @@
 #include <QSet>
 #include <QWidget>
 
-namespace shv {
-namespace visu {
-namespace timeline {
+namespace shv::visu::timeline {
 
 namespace Ui {
 class ChannelProbeWidget;
@@ -49,4 +47,4 @@ protected:
 	Ui::ChannelProbeWidget *ui;
 };
 
-}}}
+}

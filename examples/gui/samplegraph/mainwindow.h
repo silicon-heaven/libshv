@@ -2,8 +2,8 @@
 
 #include <QMainWindow>
 
-namespace shv { namespace visu { namespace logview { class LogModel; class LogSortFilterProxyModel;}}}
-namespace shv { namespace visu { namespace timeline { class GraphModel; class GraphWidget; class Graph; class ChannelFilterDialog;}}}
+namespace shv::visu::logview { class LogModel; class LogSortFilterProxyModel;}
+namespace shv::visu::timeline { class GraphModel; class GraphWidget; class Graph; class ChannelFilterDialog;}
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

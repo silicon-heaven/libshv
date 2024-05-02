@@ -10,9 +10,7 @@
 #include <QTimeZone>
 #endif
 
-namespace shv {
-namespace visu {
-namespace logview {
+namespace shv::visu::logview {
 
 class SHVVISU_DECL_EXPORT LogModel : public QAbstractTableModel
 {
@@ -40,5 +38,4 @@ protected:
 	QTimeZone m_timeZone;
 #endif
 };
-
-}}}
+}

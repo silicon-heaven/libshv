@@ -17,8 +17,7 @@
 namespace shv::chainpack { class RpcValue; }
 template <class ...> static constexpr std::false_type not_implemented_for_type [[maybe_unused]] {};
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 /// This implementation of copy-on-write is generic, but apart from the inconvenience of having to refer to the inner object through smart pointer dereferencing,
 /// it suffers from at least one drawback: classes that return references to their internal state, like
@@ -487,7 +486,7 @@ private:
 	RpcValue m_val;
 };
 
-}}
+}
 template<typename T> [[deprecated("Use RpcValue::to<>")]] T rpcvalue_cast(const shv::chainpack::RpcValue &v)
 {
 	return v.to<T>();

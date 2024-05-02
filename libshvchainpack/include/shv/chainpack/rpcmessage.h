@@ -9,8 +9,7 @@
 
 #include <functional>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class AbstractStreamWriter;
 class TunnelCtl;
@@ -291,6 +290,4 @@ public:
 	RpcValue result() const;
 	RpcResponse& setRequestId(const RpcValue &id);
 };
-
-} // namespace chainpack
-} // namespace shv
+} // namespace shv::chainpack

@@ -5,8 +5,7 @@
 
 #include <istream>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT ParseException : public std::exception
 {
@@ -41,7 +40,4 @@ protected:
 	char m_unpackBuff[1];
 	ccpcp_unpack_context m_inCtx;
 };
-
-} // namespace chainpack
-} // namespace shv
-
+} // namespace shv::chainpack

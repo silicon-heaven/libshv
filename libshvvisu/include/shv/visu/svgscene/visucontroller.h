@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 #include "saxhandler.h"
 #include "types.h"
@@ -8,9 +8,7 @@
 #include <QObject>
 #include <QGraphicsItem>
 
-namespace shv {
-namespace visu {
-namespace svgscene {
+namespace shv::visu::svgscene {
 	
 class SHVVISU_DECL_EXPORT VisuController : public QObject
 {
@@ -95,5 +93,4 @@ protected:
 	QGraphicsItem *m_graphicsItem;
 };
 
-}}}
-
+}

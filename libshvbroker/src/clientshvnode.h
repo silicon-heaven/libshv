@@ -2,8 +2,7 @@
 
 #include <shv/iotqt/node/shvnode.h>
 
-namespace shv {
-namespace broker {
+namespace shv::broker {
 
 namespace rpc { class BrokerTcpServer; class ClientConnectionOnBroker; }
 
@@ -37,5 +36,4 @@ public:
 	MasterBrokerShvNode(shv::iotqt::node::ShvNode *parent = nullptr);
 	~MasterBrokerShvNode() override;
 };
-
-}}
+}

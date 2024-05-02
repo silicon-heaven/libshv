@@ -4,9 +4,7 @@
 
 #include <QObject>
 
-namespace shv {
-namespace iotqt {
-namespace node {
+namespace shv::iotqt::node {
 
 class SHVIOTQT_DECL_EXPORT ShvNodeTree : public QObject
 {
@@ -36,5 +34,4 @@ protected:
 protected:
 	ShvNode* m_root = nullptr;
 };
-
-}}}
+}

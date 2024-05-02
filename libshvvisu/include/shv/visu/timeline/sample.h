@@ -6,9 +6,7 @@
 
 #include <limits>
 
-namespace shv {
-namespace visu {
-namespace timeline {
+namespace shv::visu::timeline {
 
 using timemsec_t = int64_t;
 
@@ -60,5 +58,4 @@ template<> inline bool Range<double>::isEmpty() const { return interval() < 1e-4
 using XRange = Range<timemsec_t>;
 using YRange = Range<double>;
 
-}}}
-
+}

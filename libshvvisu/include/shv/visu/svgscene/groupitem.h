@@ -4,9 +4,7 @@
 
 #include <QGraphicsItem>
 
-namespace shv {
-namespace visu {
-namespace svgscene {
+namespace shv::visu::svgscene {
 
 class SHVVISU_DECL_EXPORT GroupItem : public QGraphicsRectItem
 {
@@ -17,6 +15,4 @@ public:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 };
 
-} // namespace svgscene
-} // namespace visu
-} // namespace shv
+} // namespace shv::visu::svgscene

@@ -2,8 +2,7 @@
 
 #include <shv/chainpack/shvchainpackglobal.h>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT Rpc
 {
@@ -97,6 +96,4 @@ public:
 	static constexpr auto JSONRPC_CALLER_ID = "cid";
 	static constexpr auto JSONRPC_REV_CALLER_ID = "rcid";
 };
-
-} // namespace chainpack
-} // namespace shv
+} // namespace shv::chainpack

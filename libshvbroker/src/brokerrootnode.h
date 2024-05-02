@@ -3,8 +3,7 @@
 #include <shv/iotqt/node/shvnode.h>
 #include <shv/chainpack/rpcvalue.h>
 
-namespace shv {
-namespace broker {
+namespace shv::broker {
 
 class BrokerRootNode : public shv::iotqt::node::ShvRootNode
 {
@@ -14,7 +13,5 @@ class BrokerRootNode : public shv::iotqt::node::ShvRootNode
 public:
 	BrokerRootNode(shv::iotqt::node::ShvNode *parent = nullptr);
 };
-
-}
 }
 

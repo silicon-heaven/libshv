@@ -1,8 +1,6 @@
 #pragma once
 
-namespace shv {
-namespace core {
-namespace utils {
+namespace shv::core::utils {
 
 class ShvJournalCommon
 {
@@ -30,7 +28,4 @@ public:
 protected:
 	int m_getLogRecordCountLimit = DEFAULT_GET_LOG_RECORD_COUNT_LIMIT;
 };
-
-} // namespace utils
-} // namespace core
-} // namespace shv
+} // namespace shv::core::utils

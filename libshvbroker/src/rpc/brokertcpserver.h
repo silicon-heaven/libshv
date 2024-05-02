@@ -4,9 +4,7 @@
 
 #include <QSslConfiguration>
 
-namespace shv {
-namespace broker {
-namespace rpc {
+namespace shv::broker::rpc {
 
 class ClientConnectionOnBroker;
 
@@ -30,5 +28,4 @@ protected:
 	SslMode m_sslMode;
 	QSslConfiguration m_sslConfiguration;
 };
-
-}}}
+}

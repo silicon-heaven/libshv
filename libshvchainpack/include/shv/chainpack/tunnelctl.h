@@ -5,8 +5,7 @@
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/chainpack/utils.h>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT TunnelCtl : public shv::chainpack::RpcValue
 {
@@ -106,5 +105,4 @@ public:
 	CloseTunnelCtl();
 	CloseTunnelCtl(const TunnelCtl &o);
 };
-
-}}
+}

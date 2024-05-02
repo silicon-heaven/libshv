@@ -9,8 +9,7 @@
 
 namespace shv {
 namespace chainpack { class RpcValue; }
-namespace core {
-namespace utils {
+namespace core::utils {
 
 class ShvJournalEntry;
 struct ShvGetLogParams;
@@ -39,6 +38,5 @@ protected:
 	ShvSnapshot m_snapshot;
 };
 
-} // namespace utils
-} // namespace core
+} // namespace core::utils
 } // namespace shv

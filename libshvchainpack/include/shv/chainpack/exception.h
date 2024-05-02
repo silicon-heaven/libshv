@@ -7,8 +7,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT Exception : public std::exception
 {
@@ -36,7 +35,7 @@ protected:
 	std::string m_where;
 };
 
-}}
+}
 
 #define SHVCHP_EXCEPTION(e) throw shv::chainpack::Exception(e, std::string(__FILE__) + ":" + std::to_string(__LINE__))
 #define SHVCHP_EXCEPTION_V(msg, topic) throw shv::core::Exception(msg, std::string(__FILE__) + ":" + std::to_string(__LINE__), topic)

@@ -2,9 +2,7 @@
 
 #include "clientappclioptions.h"
 
-namespace shv {
-namespace iotqt {
-namespace rpc {
+namespace shv::iotqt::rpc {
 
 class SHVIOTQT_DECL_EXPORT DeviceAppCliOptions : public shv::iotqt::rpc::ClientAppCliOptions
 {
@@ -21,6 +19,4 @@ public:
 	CLIOPTION_GETTER_SETTER2(std::string, "shvJournal.sizeLimit", s, setS, hvJournalSizeLimit)
 };
 
-} // namespace rpc
-} // namespace iotqt
-} // namespace shv
+} // namespace shv::iotqt::rpc

@@ -3,9 +3,7 @@
 #include "shvlogheader.h"
 #include "shvjournalentry.h"
 
-namespace shv {
-namespace core {
-namespace utils {
+namespace shv::core::utils {
 
 class ShvJournalEntry;
 
@@ -29,6 +27,4 @@ private:
 	int64_t m_snapshotMsec = -1;
 };
 
-} // namespace utils
-} // namespace core
-} // namespace shv
+} // namespace shv::core::utils

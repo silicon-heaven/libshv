@@ -4,9 +4,7 @@
 
 #include <QScrollArea>
 
-namespace shv {
-namespace visu {
-namespace timeline {
+namespace shv::visu::timeline {
 
 class SHVVISU_DECL_EXPORT GraphView : public QScrollArea
 {
@@ -23,5 +21,4 @@ protected:
 	void scrollContentsBy(int dx, int dy) override;
 };
 
-}}}
-
+}

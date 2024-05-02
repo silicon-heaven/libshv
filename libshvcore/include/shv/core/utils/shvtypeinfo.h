@@ -10,9 +10,7 @@
 
 namespace shv::chainpack { class MetaMethod; }
 
-namespace shv {
-namespace core {
-namespace utils {
+namespace shv::core::utils {
 
 class SHVCORE_DECL_EXPORT ShvDescriptionBase
 {
@@ -285,6 +283,4 @@ using ShvLogPathDescr [[deprecated("ShvLogPathDescr is deprecated, use ShvProper
 using ShvLogTypeDescrField [[deprecated("ShvLogTypeDescrField is deprecated, use ShvFieldDescr instead")]] = ShvFieldDescr;
 
 
-} // namespace utils
-} // namespace core
-} // namespace shv
+} // namespace shv::core::utils

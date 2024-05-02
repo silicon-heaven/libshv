@@ -6,9 +6,7 @@
 
 #include <QWidget>
 
-namespace shv {
-namespace visu {
-namespace logview {
+namespace shv::visu::logview {
 
 namespace Ui {
 class DataViewWidget;
@@ -32,5 +30,4 @@ private:
 
 	Ui::DataViewWidget *ui;
 };
-
-}}}
+}
