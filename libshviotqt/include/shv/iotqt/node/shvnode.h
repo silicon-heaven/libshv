@@ -16,10 +16,7 @@
 
 namespace shv::chainpack { struct AccessGrant; }
 namespace shv::core::utils { class ShvJournalEntry; }
-namespace shv::iotqt {
-namespace utils { class ShvPath; }
-
-namespace node {
+namespace shv::iotqt::node {
 
 class SHVIOTQT_DECL_EXPORT ShvNode : public QObject
 {
@@ -244,4 +241,4 @@ protected:
 	std::vector<shv::chainpack::MetaMethod> m_extraMetaMethods;
 };
 
-}}
+}
