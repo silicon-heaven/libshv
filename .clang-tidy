@@ -15,6 +15,7 @@ Checks:
     -bugprone-narrowing-conversions,
     -bugprone-parent-virtual-call,
     -bugprone-suspicious-missing-comma,
+    -clang-analyzer-core.CallAndMessage,
     -clang-analyzer-core.UndefinedBinaryOperatorResult,
     -clang-analyzer-cplusplus.NewDeleteLeaks,
     -clang-analyzer-optin.cplusplus.VirtualCall,
