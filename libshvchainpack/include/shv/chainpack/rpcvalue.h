@@ -30,10 +30,8 @@ template <class T>
 class CowPtr
 {
 public:
-	typedef std::shared_ptr<T> RefPtr;
-
 private:
-	RefPtr m_sp;
+	std::shared_ptr<T> m_sp;
 
 	void detach()
 	{
@@ -47,7 +45,7 @@ public:
 	CowPtr(T* t)
 		:   m_sp(t)
 	{}
-	CowPtr(const RefPtr& refptr)
+	CowPtr(const std::shared_ptr<T>& refptr)
 		:   m_sp(refptr)
 	{}
 	bool isNull() const
