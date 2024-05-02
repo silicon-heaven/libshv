@@ -99,6 +99,8 @@ shv::core::utils::ShvTypeDescr::Type qt_to_shv_type(int meta_type_id)
 		return Type::Bool;
 	case QMetaType::QString:
 		return Type::String;
+	default:
+		break;
 	}
 	return Type::Invalid;
 }

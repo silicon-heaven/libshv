@@ -25,6 +25,8 @@ QVariant ErrorLogModel::headerData(int section, Qt::Orientation orientation, int
 			return tr("Message");
 		case Cols::UserData:
 			return tr("Data");
+		default:
+			break;
 		};
 		return Super::headerData(section, orientation, role);
 	}
@@ -57,6 +59,8 @@ QVariant ErrorLogModel::data(const QModelIndex &index, int role) const
 			return QColor("lightsalmon");
 		break;
 	}
+	default:
+		break;
 	};
 	return Super::data(index, role);
 }

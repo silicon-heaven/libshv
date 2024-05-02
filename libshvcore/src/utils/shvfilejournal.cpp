@@ -91,6 +91,7 @@ int64_t str_to_size(const std::string &str)
 	case 'K': n *= 1024; break;
 	case 'M': n *= 1024 * 1024; break;
 	case 'G': n *= 1024 * 1024 * 1024; break;
+	default: break;
 	}
 	if(n < 1024)
 		n = 1024;
