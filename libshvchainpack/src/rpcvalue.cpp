@@ -373,10 +373,28 @@ uint64_t RpcValue::toUInt64() const
 	return try_convert_or_default<uint64_t>(m_value, 0);
 }
 
+template<class T, template<class> class U>
+inline constexpr bool is_instance_of_v = std::false_type{};
+
+template<template<class> class U, class V>
+inline constexpr bool is_instance_of_v<U<V>,U> = std::true_type{};
+
 bool RpcValue::toBool() const
 {
-	// FIXME
-	return try_convert_or_default<bool>(m_value, false);
+	return std::visit([] (const auto& x) {
+		using Type = std::remove_cvref_t<decltype(x)>;
+		if constexpr (std::is_same_v<Type, DateTime>) {
+			return x.msecsSinceEpoch() != 0;
+		} else if constexpr (std::is_same_v<Type, Decimal>) {
+			return x.mantisa() != 0;
+		} else if constexpr (std::is_arithmetic_v<Type>) {
+			return x != 0;
+		} else if constexpr (std::is_same_v<Type, bool>) {
+			return x;
+		} else {
+			return false;
+		}
+	}, m_value);
 }
 
 RpcValue::DateTime RpcValue::toDateTime() const
@@ -611,12 +629,6 @@ std::string RpcValue::toCpon(const std::string &indent) const
 	}
 	return out.str();
 }
-
-template<class T, template<class> class U>
-inline constexpr bool is_instance_of_v = std::false_type{};
-
-template<template<class> class U, class V>
-inline constexpr bool is_instance_of_v<U<V>,U> = std::true_type{};
 
 /* * * * * * * * * * * * * * * * * * * *
  * Comparison
