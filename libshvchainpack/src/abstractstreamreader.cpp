@@ -10,8 +10,8 @@ size_t unpack_underflow_handler(ccpcp_unpack_context *ctx)
 		// id directory is open then c == -1 but eof() == false, strange
 		return 0;
 	}
-	rd->m_unpackBuff[0] = static_cast<char>(c);
-	ctx->start = rd->m_unpackBuff;
+	rd->m_unpackBuff = static_cast<char>(c);
+	ctx->start = &rd->m_unpackBuff;
 	ctx->current = ctx->start;
 	ctx->end = ctx->start + 1;
 	return 1;
@@ -52,7 +52,7 @@ AbstractStreamReader::AbstractStreamReader(std::istream &in)
 	: m_in(in)
 {
 	// C++ implementation does not require container states stack
-	ccpcp_unpack_context_init(&m_inCtx, m_unpackBuff, 0, unpack_underflow_handler, nullptr);
+	ccpcp_unpack_context_init(&m_inCtx, &m_unpackBuff, 0, unpack_underflow_handler, nullptr);
 	m_inCtx.custom_context = this;
 }
 

@@ -77,6 +77,7 @@ public:
 	Option& optionRef(const std::string &name);
 	const std::map<std::string, Option>& options() const;
 
+	// NOLINTNEXTLINE(modernize-avoid-c-arrays)
 	void parse(int argc, char *argv[]);
 	virtual void parse(const StringList &cmd_line_args);
 	bool isParseError() const;

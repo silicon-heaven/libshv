@@ -9,14 +9,14 @@ void pack_overflow_handler(ccpcp_pack_context *ctx, size_t size_hint)
 	while(ctx->start < ctx->current) {
 		wr->m_out << *ctx->start++;
 	}
-	ctx->start = wr->m_packBuff;
+	ctx->start = wr->m_packBuff.data();
 	ctx->current = ctx->start;
 }
 
 AbstractStreamWriter::AbstractStreamWriter(std::ostream &out)
 	: m_out(out)
 {
-	ccpcp_pack_context_init(&m_outCtx, m_packBuff, sizeof(m_packBuff), pack_overflow_handler);
+	ccpcp_pack_context_init(&m_outCtx, m_packBuff.data(), m_packBuff.size(), pack_overflow_handler);
 	m_outCtx.custom_context = this;
 }
 
