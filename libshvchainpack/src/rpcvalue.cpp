@@ -306,11 +306,12 @@ bool RpcValue::isValueNotAvailable() const
 double RpcValue::toDouble() const
 {
 	return std::visit([] (const auto& x) {
-		if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, Decimal>()) {
+		using TypeX = std::remove_cvref_t<decltype(x)>;
+		if constexpr (std::is_same<TypeX, Decimal>()) {
 			return x.toDouble();
-		} else if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, Double>() ||
-							 std::is_same<std::remove_cvref_t<decltype(x)>, Int>() ||
-							 std::is_same<std::remove_cvref_t<decltype(x)>, UInt>()) {
+		} else if constexpr (std::is_same<TypeX, Double>() ||
+							 std::is_same<TypeX, Int>() ||
+							 std::is_same<TypeX, UInt>()) {
 			return double{x};
 		} else {
 			return double{0};
@@ -333,13 +334,14 @@ template <std::integral ResultType>
 ResultType impl_to_int(const RpcValue::VariantType& value)
 {
 	return std::visit([] (const auto& x) {
-		if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, int64_t>() ||
-					  std::is_same<std::remove_cvref_t<decltype(x)>, uint64_t>() ||
-					  std::is_same<std::remove_cvref_t<decltype(x)>, bool>()) {
+		using TypeX = std::remove_cvref_t<decltype(x)>;
+		if constexpr (std::is_same<TypeX, int64_t>() ||
+					  std::is_same<TypeX, uint64_t>() ||
+					  std::is_same<TypeX, bool>()) {
 			return static_cast<ResultType>(x);
-		} else if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, double>()) {
+		} else if constexpr (std::is_same<TypeX, double>()) {
 			return static_cast<ResultType>(convert_to_int(x));
-		} else if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, RpcValue::Decimal>()) {
+		} else if constexpr (std::is_same<TypeX, RpcValue::Decimal>()) {
 			return static_cast<ResultType>(convert_to_int(x.toDouble()));
 		} else {
 			return ResultType{0};
@@ -463,9 +465,10 @@ std::pair<const char *, size_t> RpcValue::asData() const
 size_t RpcValue::count() const
 {
 	return std::visit([] (const auto& x) {
-		if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, CowPtr<List>>() ||
-					  std::is_same<std::remove_cvref_t<decltype(x)>, CowPtr<IMap>>() ||
-					  std::is_same<std::remove_cvref_t<decltype(x)>, CowPtr<Map>>()) {
+		using TypeX = std::remove_cvref_t<decltype(x)>;
+		if constexpr (std::is_same<TypeX, CowPtr<List>>() ||
+					  std::is_same<TypeX, CowPtr<IMap>>() ||
+					  std::is_same<TypeX, CowPtr<Map>>()) {
 			return x->size();
 		} else {
 			return size_t{0};
@@ -476,7 +479,8 @@ size_t RpcValue::count() const
 RpcValue RpcValue::at(RpcValue::Int ix, const RpcValue& default_value) const
 {
 	return std::visit([ix, &default_value] (const auto& x) mutable {
-		if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, CowPtr<List>>()) {
+		using TypeX = std::remove_cvref_t<decltype(x)>;
+		if constexpr (std::is_same<TypeX, CowPtr<List>>()) {
 			if (ix < 0) {
 				ix = static_cast<RpcValue::Int>(x->size()) + ix;
 			}
@@ -486,7 +490,7 @@ RpcValue RpcValue::at(RpcValue::Int ix, const RpcValue& default_value) const
 			}
 
 			return x->at(ix);
-		} else if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, CowPtr<IMap>>()) {
+		} else if constexpr (std::is_same<TypeX, CowPtr<IMap>>()) {
 			auto iter = x->find(ix);
 			return (iter == x->end()) ? default_value : iter->second;
 		} else {
@@ -536,21 +540,22 @@ std::string RpcValue::toStdString() const
 {
 	return std::visit([] (const auto& x) {
 		using namespace std::string_literals;
-		if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, Double>() ||
-					  std::is_same<std::remove_cvref_t<decltype(x)>, UInt>() ||
-					  std::is_same<std::remove_cvref_t<decltype(x)>, Int>()) {
+		using TypeX = std::remove_cvref_t<decltype(x)>;
+		if constexpr (std::is_same<TypeX, Double>() ||
+					  std::is_same<TypeX, UInt>() ||
+					  std::is_same<TypeX, Int>()) {
 			return std::to_string(x);
-		} else if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, DateTime>()) {
+		} else if constexpr (std::is_same<TypeX, DateTime>()) {
 			return x.toIsoString();
-		} else if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, Blob>()) {
+		} else if constexpr (std::is_same<TypeX, Blob>()) {
 			return blobToString(x);
-		} else if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, Decimal>()) {
+		} else if constexpr (std::is_same<TypeX, Decimal>()) {
 			return x.toString();
-		} else if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, Bool>()) {
+		} else if constexpr (std::is_same<TypeX, Bool>()) {
 			return x ? "true"s : "false"s;
-		} else if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, Null>()) {
+		} else if constexpr (std::is_same<TypeX, Null>()) {
 			return "null"s;
-		} else if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, String>()) {
+		} else if constexpr (std::is_same<TypeX, String>()) {
 			return x;
 		} else {
 			return std::string();
@@ -563,8 +568,9 @@ template <typename KeyType>
 void impl_set(RpcValue::VariantType& map, const KeyType& key, const RpcValue& value)
 {
 	return std::visit([&key, &value] (auto& x) {
-		if constexpr ((std::is_same<std::remove_cvref_t<decltype(x)>, CowPtr<RpcValue::Map>>() && std::is_same<std::remove_cvref_t<KeyType>, std::string>()) ||
-					  (std::is_same<std::remove_cvref_t<decltype(x)>, CowPtr<RpcValue::IMap>>() && std::is_same<std::remove_cvref_t<KeyType>, RpcValue::Int>())) {
+		using TypeX = std::remove_cvref_t<decltype(x)>;
+		if constexpr ((std::is_same<TypeX, CowPtr<RpcValue::Map>>() && std::is_same<std::remove_cvref_t<KeyType>, std::string>()) ||
+					  (std::is_same<TypeX, CowPtr<RpcValue::IMap>>() && std::is_same<std::remove_cvref_t<KeyType>, RpcValue::Int>())) {
 			if (value.isValid()) {
 				x->insert_or_assign(key, value);
 			} else {
