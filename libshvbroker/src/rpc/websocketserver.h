@@ -3,7 +3,6 @@
 #include <QWebSocketServer>
 
 class QWebSocket;
-class ServerConnection;
 
 namespace shv::broker::rpc {
 

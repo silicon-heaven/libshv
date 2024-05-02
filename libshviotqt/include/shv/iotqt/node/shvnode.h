@@ -21,8 +21,6 @@ namespace utils { class ShvPath; }
 
 namespace node {
 
-class ShvRootNode;
-
 class SHVIOTQT_DECL_EXPORT ShvNode : public QObject
 {
 	Q_OBJECT
