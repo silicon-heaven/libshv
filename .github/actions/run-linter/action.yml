@@ -40,7 +40,7 @@ runs:
       run: |
         readarray -t FILES < <(find '${{github.workspace}}' -name \*.cpp |
           grep -v 3rdparty/ |
-          grep -v build/ |
+          grep -v build.*/ |
           grep -v "libshviotqt/tests/serialportsocket/test_serialportsocket.cpp" |
           grep -v "libshvchainpack/tests/test_rpcvalue.cpp" |
           grep -v "libshvchainpack/tests/test_accessgrant.cpp" |
