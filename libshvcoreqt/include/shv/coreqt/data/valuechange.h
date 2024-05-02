@@ -7,11 +7,7 @@
 #include <math.h>
 #include <vector>
 
-namespace shv {
-namespace coreqt {
-namespace data {
-
-
+namespace shv::coreqt::data {
 class SHVCOREQT_DECL_EXPORT CustomData
 {
 public:
@@ -138,6 +134,6 @@ class SHVCOREQT_DECL_EXPORT SerieDataList : public QVector<SerieData>
 {
 };
 
-} //namespace data
-} //namespace coreqt
-} //namespace shv
+} // namespace shv::coreqt::data
+
+
