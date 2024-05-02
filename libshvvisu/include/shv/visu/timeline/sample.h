@@ -44,12 +44,12 @@ struct Range
 			ret.max = std::max(ret.max, o.max);
 			return ret;
 		}
-		else if(isValid()) {
+
+		if(isValid()) {
 			return *this;
 		}
-		else {
-			return o;
-		}
+
+		return o;
 	}
 };
 

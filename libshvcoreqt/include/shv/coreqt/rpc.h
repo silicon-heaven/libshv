@@ -31,9 +31,7 @@ template<> inline shv::chainpack::RpcValue RpcValue::fromValue<QDateTime>(const 
 		dt.setUtcOffsetMin(offset / 60);
 		return dt;
 	}
-	else {
-		return shv::chainpack::RpcValue();
-	}
+	return shv::chainpack::RpcValue();
 }
 
 } // namespace chainack
