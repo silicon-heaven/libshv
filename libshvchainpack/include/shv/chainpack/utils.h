@@ -9,8 +9,7 @@
 #include <algorithm>
 #include <cstdint>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class RpcValue;
 
@@ -84,8 +83,8 @@ namespace utils {
 char SHVCHAINPACK_DECL_EXPORT hexNibble(char i);
 }
 
-} // namespace chainpack
-} // namespace shv
+} // namespace shv::chainpack
+
 
 #define SHV_IMAP_FIELD_IMPL(ptype, int_key, getter_prefix, setter_prefix, name_rest) \
 	SHV_IMAP_FIELD_IMPL2(ptype, int_key, getter_prefix, setter_prefix, name_rest, shv::chainpack::RpcValue())

@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 	shv::chainpack::RpcMessage::registerMetaTypes();
 
 	shvInfo() << "======================================================================================";
-	shvInfo() << "Starting sample SHV client, PID:" << QCoreApplication::applicationPid() << "build:" << __DATE__ << __TIME__;
+	shvInfo() << "Starting sample SHV client, PID:" << QCoreApplication::applicationPid();
 #ifdef GIT_COMMIT
 	shvInfo() << "GIT commit:" << SHV_EXPAND_AND_QUOTE(GIT_COMMIT);
 #endif

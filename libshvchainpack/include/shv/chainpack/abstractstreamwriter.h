@@ -3,10 +3,10 @@
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/chainpack/ccpcp.h>
 
+#include <array>
 #include <ostream>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT AbstractStreamWriter
 {
@@ -31,11 +31,9 @@ public:
 protected:
 	static constexpr bool WRITE_INVALID_AS_NULL = true;
 protected:
+	// NOLINTNEXTLINE(cppcoreguidelines-avoid-const-or-ref-data-members)
 	std::ostream &m_out;
-	char m_packBuff[32];
+	std::array<char, 32> m_packBuff;
 	ccpcp_pack_context m_outCtx;
 };
-
-} // namespace chainpack
-} // namespace shv
-
+} // namespace shv::chainpack

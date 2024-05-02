@@ -7,9 +7,7 @@
 #include "shvgetlogparams.h"
 #include "shvlogheader.h"
 
-namespace shv {
-namespace core {
-namespace utils {
+namespace shv::core::utils {
 
 class SHVCORE_DECL_EXPORT ShvMemoryJournal : public AbstractShvJournal
 {
@@ -63,7 +61,4 @@ private:
 	std::map<std::string, ShortTime> m_recentShortTimes;
 };
 
-} // namespace utils
-} // namespace core
-} // namespace shv
-
+} // namespace shv::core::utils

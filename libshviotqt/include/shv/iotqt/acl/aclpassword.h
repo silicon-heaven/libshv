@@ -4,11 +4,9 @@
 
 #include <string>
 
-namespace shv { namespace chainpack { class RpcValue; } }
+namespace shv::chainpack { class RpcValue; }
 
-namespace shv {
-namespace iotqt {
-namespace acl {
+namespace shv::iotqt::acl {
 
 struct SHVIOTQT_DECL_EXPORT AclPassword
 {
@@ -28,8 +26,4 @@ struct SHVIOTQT_DECL_EXPORT AclPassword
 	static const char *formatToString(Format f);
 	static Format formatFromString(const std::string &s);
 };
-
-} // namespace acl
-} // namespace iotqt
-} // namespace shv
-
+} // namespace shv::iotqt::acl

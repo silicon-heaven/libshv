@@ -4,8 +4,7 @@
 
 class QSqlQuery;
 
-namespace shv {
-namespace broker {
+namespace shv::broker {
 
 class SHVBROKER_DECL_EXPORT AclManagerSqlite : public AclManager
 {
@@ -45,6 +44,4 @@ private:
 	std::vector<std::string> sqlLoadFields(const QString &table, const QString &column);
 	QSqlQuery sqlLoadRow(const QString &table, const QString &key_name, const QString &key_value);
 };
-
-} // namespace broker
-} // namespace shv
+} // namespace shv::broker

@@ -8,9 +8,7 @@
 #include <vector>
 #include <limits>
 
-namespace shv {
-namespace iotqt {
-namespace acl {
+namespace shv::iotqt::acl {
 
 struct SHVIOTQT_DECL_EXPORT AclRole
 {
@@ -24,7 +22,4 @@ struct SHVIOTQT_DECL_EXPORT AclRole
 	static AclRole fromRpcValue(const shv::chainpack::RpcValue &v);
 };
 
-} // namespace acl
-} // namespace iotqt
-} // namespace shv
-
+} // namespace shv::iotqt::acl

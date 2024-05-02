@@ -114,7 +114,7 @@ if(NOT TARGET libnecrolog)
 	if(LIBSHV_USE_LOCAL_NECROLOG)
 		find_package(necrolog REQUIRED)
 	else()
-		add_subdirectory(3rdparty/necrolog)
+		add_subdirectory(3rdparty/necrolog SYSTEM)
 	endif()
 endif()
 

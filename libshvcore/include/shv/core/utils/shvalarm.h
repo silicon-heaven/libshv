@@ -7,11 +7,9 @@
 #include <string>
 #include <vector>
 
-namespace shv { namespace chainpack { class RpcValue; }}
+namespace shv::chainpack { class RpcValue; }
 
-namespace shv {
-namespace core {
-namespace utils {
+namespace shv::core::utils {
 
 class ShvTypeInfo;
 
@@ -59,7 +57,4 @@ protected:
 	int m_level = 0;
 	Severity m_severity = Severity::Invalid;
 };
-
-} // namespace utils
-} // namespace core
-} // namespace shv
+} // namespace shv::core::utils

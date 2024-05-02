@@ -120,7 +120,7 @@ public:
 	static T findParent(const QObject *_o, bool throw_exc = shv::core::Exception::Throw)
 	{
 		T t = nullptr;
-		QObject *o = const_cast<QObject*>(_o);
+		auto *o = _o;
 		while(o) {
 			o = o->parent();
 			if(!o)
@@ -207,5 +207,6 @@ public:
 	auto end() { return m_data.keyValueEnd(); }
 
 private:
+	// NOLINTNEXTLINE(cppcoreguidelines-avoid-const-or-ref-data-members)
 	T &m_data;
 };

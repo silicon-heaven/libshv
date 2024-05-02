@@ -6,8 +6,7 @@
 
 class QTimeZone;
 
-namespace shv {
-namespace visu {
+namespace shv::visu {
 
 class SHVVISU_DECL_EXPORT TimeZoneComboBox : public QComboBox
 {
@@ -24,5 +23,4 @@ private:
 #endif
 };
 
-}}
-
+}

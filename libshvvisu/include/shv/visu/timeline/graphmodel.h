@@ -10,9 +10,7 @@
 #include <shv/core/utils/shvtypeinfo.h>
 #include <shv/coreqt/utils.h>
 
-namespace shv {
-namespace visu {
-namespace timeline {
+namespace shv::visu::timeline {
 
 class SHVVISU_DECL_EXPORT GraphModel : public QObject
 {
@@ -86,4 +84,4 @@ protected:
 	shv::core::utils::ShvTypeInfo m_typeInfo;
 };
 
-}}}
+}

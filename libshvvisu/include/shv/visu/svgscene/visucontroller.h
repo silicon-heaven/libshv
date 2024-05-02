@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 #include "saxhandler.h"
 #include "types.h"
@@ -8,9 +8,7 @@
 #include <QObject>
 #include <QGraphicsItem>
 
-namespace shv {
-namespace visu {
-namespace svgscene {
+namespace shv::visu::svgscene {
 	
 class SHVVISU_DECL_EXPORT VisuController : public QObject
 {
@@ -43,16 +41,14 @@ protected:
 				if(attr_name.isEmpty()) {
 					return tit;
 				}
+				svgscene::XmlAttributes attrs = qvariant_cast<svgscene::XmlAttributes>(tit->data(Types::DataKey::XmlAttributes));
+				if(attr_value.isEmpty()) {
+					if(attrs.contains(attr_name))
+						return tit;
+				}
 				else {
-					svgscene::XmlAttributes attrs = qvariant_cast<svgscene::XmlAttributes>(tit->data(Types::DataKey::XmlAttributes));
-					if(attr_value.isEmpty()) {
-						if(attrs.contains(attr_name))
-							return tit;
-					}
-					else {
-						if(attrs.value(attr_name) == attr_value)
-							return tit;
-					}
+					if(attrs.value(attr_name) == attr_value)
+						return tit;
 				}
 			}
 			T tit = findChildGraphicsItem<T>(it, attr_name, attr_value);
@@ -95,5 +91,4 @@ protected:
 	QGraphicsItem *m_graphicsItem;
 };
 
-}}}
-
+}

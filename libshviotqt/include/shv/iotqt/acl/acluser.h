@@ -5,11 +5,8 @@
 
 #include <vector>
 
-namespace shv { namespace chainpack { class RpcValue; } }
-
-namespace shv {
-namespace iotqt {
-namespace acl {
+namespace shv::chainpack { class RpcValue; }
+namespace shv::iotqt::acl {
 
 struct SHVIOTQT_DECL_EXPORT AclUser
 {
@@ -24,7 +21,4 @@ struct SHVIOTQT_DECL_EXPORT AclUser
 	static AclUser fromRpcValue(const shv::chainpack::RpcValue &v);
 };
 
-} // namespace acl
-} // namespace iotqt
-} // namespace shv
-
+} // namespace shv::iotqt::acl

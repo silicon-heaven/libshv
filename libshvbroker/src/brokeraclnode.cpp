@@ -120,8 +120,9 @@ const std::vector<chainpack::MetaMethod> *BrokerAclNode::metaMethodsForPath(cons
 		return &meta_methods_acl_subnode;
 	case 2:
 		return &meta_methods_property_rw;
+	default:
+		return &meta_methods_dir_ls;
 	}
-	return &meta_methods_dir_ls;
 }
 
 size_t BrokerAclNode::methodCount(const iotqt::node::ShvNode::StringViewList &shv_path)
@@ -468,8 +469,9 @@ const std::vector<chainpack::MetaMethod> *AccessAclNode::metaMethodsForPath(cons
 		return &meta_methods_acl_subnode;
 	case 2:
 		return &meta_methods_role_access;
+	default:
+		return &meta_methods_dir_ls;
 	}
-	return &meta_methods_dir_ls;
 }
 
 iotqt::node::ShvNode::StringList AccessAclNode::childNames(const iotqt::node::ShvNode::StringViewList &shv_path)

@@ -5,11 +5,9 @@
 #include <QStandardItemModel>
 #include <shv/core/stringview.h>
 
-namespace shv { namespace chainpack { class RpcMessage; class RpcValue; }}
+namespace shv::chainpack { class RpcMessage; class RpcValue; }
 
-namespace shv {
-namespace visu {
-namespace timeline {
+namespace shv::visu::timeline {
 
 class SHVVISU_DECL_EXPORT ChannelFilterModel : public QStandardItemModel
 {
@@ -48,6 +46,3 @@ protected:
 };
 
 }
-}
-}
-

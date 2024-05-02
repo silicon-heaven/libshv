@@ -10,9 +10,7 @@
 #include <QTimer>
 #include <QWidget>
 
-namespace shv {
-namespace visu {
-namespace timeline {
+namespace shv::visu::timeline {
 
 class Graph;
 
@@ -104,7 +102,6 @@ protected:
 		QWidget *channelDropMarker;
 		int draggedChannel;
 	};
-	ChannelHeaderMoveContext *m_channelHeaderMoveContext;
+	ChannelHeaderMoveContext *m_channelHeaderMoveContext = nullptr;
 };
-
-}}}
+}

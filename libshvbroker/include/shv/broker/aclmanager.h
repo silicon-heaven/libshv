@@ -13,8 +13,7 @@
 
 #include <string>
 
-namespace shv {
-namespace broker {
+namespace shv::broker {
 
 class BrokerApp;
 
@@ -125,7 +124,4 @@ protected:
 protected:
 	shv::chainpack::RpcValue::Map m_configFiles;
 };
-
-} // namespace broker
-} // namespace shv
-
+} // namespace shv::broker

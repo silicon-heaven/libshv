@@ -7,9 +7,7 @@
 #include <shv/chainpack/datachange.h>
 #include <shv/chainpack/rpc.h>
 
-namespace shv {
-namespace core {
-namespace utils {
+namespace shv::core::utils {
 
 class SHVCORE_DECL_EXPORT ShvJournalEntry
 {
@@ -77,7 +75,4 @@ public:
 
 	shv::chainpack::DataChange toDataChange() const;
 };
-
-} // namespace utils
-} // namespace core
-} // namespace shv
+} // namespace shv::core::utils

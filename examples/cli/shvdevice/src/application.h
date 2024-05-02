@@ -7,9 +7,9 @@
 class AppCliOptions;
 class QTimer;
 
-namespace shv { namespace chainpack { class RpcMessage; }}
-namespace shv { namespace iotqt { namespace rpc { class ClientConnection; }}}
-namespace shv { namespace iotqt { namespace node { class ShvNodeTree; }}}
+namespace shv::chainpack { class RpcMessage; }
+namespace shv::iotqt::rpc { class ClientConnection; }
+namespace shv::iotqt::node { class ShvNodeTree; }
 
 class AppRootNode : public shv::iotqt::node::ShvRootNode
 {

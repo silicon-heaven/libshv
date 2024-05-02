@@ -6,9 +6,7 @@
 
 #include <QString>
 
-namespace shv {
-namespace coreqt {
-namespace utils {
+namespace shv::coreqt::utils {
 
 class SHVCOREQT_DECL_EXPORT VersionInfo : public shv::core::utils::VersionInfo
 {
@@ -22,7 +20,4 @@ public:
 
 	QString toString() const;
 };
-
-}
-}
 }

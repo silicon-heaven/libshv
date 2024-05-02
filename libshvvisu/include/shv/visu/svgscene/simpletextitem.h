@@ -4,9 +4,7 @@
 
 #include <QGraphicsItem>
 
-namespace shv {
-namespace visu {
-namespace svgscene {
+namespace shv::visu::svgscene {
 
 class SHVVISU_DECL_EXPORT SimpleTextItem : public QGraphicsSimpleTextItem
 {
@@ -22,5 +20,4 @@ private:
 	bool m_origTransformLoaded = false;
 };
 
-}}} // namespace svgscene
-
+} // namespace svgscene

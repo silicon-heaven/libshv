@@ -2,8 +2,7 @@
 
 #include <shv/chainpack/abstractstreamreader.h>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT ChainPackReader : public AbstractStreamReader
 {
@@ -34,6 +33,4 @@ private:
 
 	void throwParseException(const std::string &msg = {});
 };
-
-} // namespace chainpack
-} // namespace shv
+} // namespace shv::chainpack

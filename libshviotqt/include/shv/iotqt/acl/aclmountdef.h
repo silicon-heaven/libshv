@@ -4,11 +4,9 @@
 
 #include <string>
 
-namespace shv { namespace chainpack { class RpcValue; } }
+namespace shv::chainpack { class RpcValue; }
 
-namespace shv {
-namespace iotqt {
-namespace acl {
+namespace shv::iotqt::acl {
 
 struct SHVIOTQT_DECL_EXPORT AclMountDef
 {
@@ -19,8 +17,4 @@ struct SHVIOTQT_DECL_EXPORT AclMountDef
 	shv::chainpack::RpcValue toRpcValue() const;
 	static AclMountDef fromRpcValue(const shv::chainpack::RpcValue &v);
 };
-
-} // namespace acl
-} // namespace iotqt
-} // namespace shv
-
+} // namespace shv::iotqt::acl

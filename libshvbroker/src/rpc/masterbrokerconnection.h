@@ -4,9 +4,7 @@
 
 #include <shv/iotqt/rpc/deviceconnection.h>
 
-namespace shv {
-namespace broker {
-namespace rpc {
+namespace shv::broker::rpc {
 
 class MasterBrokerConnection : public shv::iotqt::rpc::DeviceConnection, public CommonRpcClientHandle
 {
@@ -44,6 +42,4 @@ protected:
 	std::string m_exportedShvPath;
 	shv::chainpack::RpcValue m_options;
 };
-
-}}}
-
+}

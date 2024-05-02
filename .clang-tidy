@@ -1,3 +1,4 @@
+HeaderFilterRegex: .*
 Checks:
     -*,
     cppcoreguidelines-*,
@@ -14,6 +15,7 @@ Checks:
     -bugprone-narrowing-conversions,
     -bugprone-parent-virtual-call,
     -bugprone-suspicious-missing-comma,
+    -clang-analyzer-core.CallAndMessage,
     -clang-analyzer-core.UndefinedBinaryOperatorResult,
     -clang-analyzer-cplusplus.NewDeleteLeaks,
     -clang-analyzer-optin.cplusplus.VirtualCall,
@@ -37,6 +39,7 @@ Checks:
     -cppcoreguidelines-pro-type-static-cast-downcast,
     -cppcoreguidelines-pro-type-union-access,
     -cppcoreguidelines-pro-type-vararg,
+    -cppcoreguidelines-rvalue-reference-param-not-moved,
     -cppcoreguidelines-special-member-functions,
     -hicpp-avoid-c-arrays,
     -hicpp-avoid-goto,

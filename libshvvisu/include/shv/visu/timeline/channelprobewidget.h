@@ -5,9 +5,7 @@
 #include <QSet>
 #include <QWidget>
 
-namespace shv {
-namespace visu {
-namespace timeline {
+namespace shv::visu::timeline {
 
 namespace Ui {
 class ChannelProbeWidget;
@@ -23,7 +21,7 @@ class SHVVISU_DECL_EXPORT ChannelProbeWidget : public QWidget
 
 public:
 	explicit ChannelProbeWidget(ChannelProbe *probe, QWidget *parent);
-	~ChannelProbeWidget();
+	~ChannelProbeWidget() override;
 
 	const ChannelProbe* probe();
 
@@ -49,4 +47,4 @@ protected:
 	Ui::ChannelProbeWidget *ui;
 };
 
-}}}
+}

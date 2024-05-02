@@ -131,6 +131,7 @@ bool ShvJournalFileReader::next()
 			case Column::UserId: {
 				m_currentEntry.userId = std::string{fld};
 				break;
+			default: break;
 			}
 			}
 		}

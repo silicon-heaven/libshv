@@ -2,8 +2,8 @@
 
 #include <QMainWindow>
 
-namespace shv { namespace visu { namespace logview { class LogModel; class LogSortFilterProxyModel;}}}
-namespace shv { namespace visu { namespace timeline { class GraphModel; class GraphWidget; class Graph; class ChannelFilterDialog;}}}
+namespace shv::visu::logview { class LogModel; class LogSortFilterProxyModel;}
+namespace shv::visu::timeline { class GraphModel; class GraphWidget; class Graph; class ChannelFilterDialog;}
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -14,7 +14,7 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 public:
 	MainWindow(QWidget *parent = nullptr);
-	~MainWindow();
+	~MainWindow() override;
 private slots:
 	void on_actionGenerate_sample_data_triggered();
 

@@ -63,6 +63,7 @@ QVariant LogModel::headerData(int section, Qt::Orientation orientation, int role
 			case ColDomain: return tr("Domain");
 			case ColValueFlags: return tr("ValueFlags");
 			case ColUserId: return tr("UserId");
+			default: break;
 			}
 		}
 	}

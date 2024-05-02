@@ -5,8 +5,7 @@
 
 #include <istream>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT ParseException : public std::exception
 {
@@ -37,11 +36,9 @@ public:
 	virtual void read(RpcValue::MetaData &meta_data) = 0;
 	virtual void read(RpcValue &val) = 0;
 protected:
+	// NOLINTNEXTLINE(cppcoreguidelines-avoid-const-or-ref-data-members)
 	std::istream &m_in;
-	char m_unpackBuff[1];
+	char m_unpackBuff;
 	ccpcp_unpack_context m_inCtx;
 };
-
-} // namespace chainpack
-} // namespace shv
-
+} // namespace shv::chainpack

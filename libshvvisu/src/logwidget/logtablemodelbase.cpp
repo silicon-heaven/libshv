@@ -45,6 +45,8 @@ QVariant LogTableModelBase::data(const QModelIndex &index, int role) const
 		QVariant ret = data(index, Qt::DisplayRole);
 		return ret;
 	}
+	default:
+		break;
 	}
 	return QVariant();
 }

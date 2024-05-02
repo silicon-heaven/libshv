@@ -3,11 +3,8 @@
 #include <QWebSocketServer>
 
 class QWebSocket;
-class ServerConnection;
 
-namespace shv {
-namespace broker {
-namespace rpc {
+namespace shv::broker::rpc {
 
 class ClientConnectionOnBroker;
 
@@ -30,5 +27,4 @@ private:
 private:
 	std::map<int, ClientConnectionOnBroker*> m_connections;
 };
-
-}}}
+}

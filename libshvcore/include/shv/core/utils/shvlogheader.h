@@ -8,9 +8,7 @@
 
 #include <shv/chainpack/rpcvalue.h>
 
-namespace shv {
-namespace core {
-namespace utils {
+namespace shv::core::utils {
 
 struct ShvGetLogParams;
 
@@ -65,7 +63,4 @@ public:
 private:
 	std::map<std::string, ShvTypeInfo> m_typeInfos;
 };
-
-} // namespace utils
-} // namespace core
-} // namespace shv
+} // namespace shv::core::utils

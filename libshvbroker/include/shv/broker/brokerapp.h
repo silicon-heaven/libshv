@@ -35,12 +35,11 @@ inline unsigned qHash(const std::string &s) noexcept //Q_DECL_NOEXCEPT_EXPR(noex
 class QSocketNotifier;
 class QSqlDatabase;
 
-namespace shv { namespace iotqt { namespace node { class ShvNodeTree; }}}
-namespace shv { namespace core { namespace utils { class ShvUrl; }}}
-namespace shv { namespace chainpack { class RpcSignal; }}
+namespace shv::iotqt::node { class ShvNodeTree; }
+namespace shv::core::utils { class ShvUrl; }
+namespace shv::chainpack { class RpcSignal; }
 
-namespace shv {
-namespace broker {
+namespace shv::broker {
 
 const std::string BROKER_CURRENT_CLIENT_SHV_PATH = std::string(shv::chainpack::Rpc::DIR_BROKER) + '/' + CurrentClientShvNode::NodeId;
 
@@ -177,5 +176,4 @@ private:
 	QSocketNotifier *m_snTerm = nullptr;
 #endif
 };
-
-}}
+}

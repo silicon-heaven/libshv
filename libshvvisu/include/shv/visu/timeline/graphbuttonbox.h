@@ -7,9 +7,7 @@
 
 class QPainter;
 
-namespace shv {
-namespace visu {
-namespace timeline {
+namespace shv::visu::timeline {
 
 class Graph;
 
@@ -22,7 +20,6 @@ public:
 	enum class ButtonId { Invalid = 0, Menu, User };
 public:
 	GraphButtonBox(const QVector<ButtonId> &button_ids, QObject *parent);
-	virtual ~GraphButtonBox() = default;
 
 	Q_SIGNAL void buttonClicked(int button_id);
 
@@ -54,6 +51,4 @@ private:
 	int m_mousePressButtonIndex = -1;
 };
 
-} // namespace timeline
-} // namespace visu
-} // namespace shv
+} // namespace shv::visu::timeline

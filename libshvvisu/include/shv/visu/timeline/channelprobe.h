@@ -4,9 +4,7 @@
 
 #include <QObject>
 
-namespace shv {
-namespace visu {
-namespace timeline {
+namespace shv::visu::timeline {
 
 class Graph;
 
@@ -40,6 +38,4 @@ private:
 	qsizetype m_channelIndex;
 };
 
-}
-}
 }

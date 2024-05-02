@@ -6,9 +6,7 @@
 #include <QDialog>
 #include <optional>
 
-namespace shv {
-namespace visu {
-namespace timeline {
+namespace shv::visu::timeline {
 
 namespace Ui {
 class ChannelFilterDialog;
@@ -23,7 +21,7 @@ class SHVVISU_DECL_EXPORT ChannelFilterDialog : public QDialog
 
 public:
 	explicit ChannelFilterDialog(QWidget *parent, const QString &site_path, Graph *graph);
-	~ChannelFilterDialog();
+	~ChannelFilterDialog() override;
 
 	std::optional<ChannelFilter> channelFilter();
 
@@ -70,6 +68,4 @@ private:
 	QAction *m_importViewAction = nullptr;
 };
 
-}
-}
 }

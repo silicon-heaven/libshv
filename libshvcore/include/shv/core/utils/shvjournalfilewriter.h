@@ -8,9 +8,7 @@
 #include <map>
 #include <fstream>
 
-namespace shv {
-namespace core {
-namespace utils {
+namespace shv::core::utils {
 
 class ShvJournalEntry;
 
@@ -38,8 +36,4 @@ private:
 	std::ostream *m_out = nullptr;
 	int64_t m_recentTimeStamp = 0;
 };
-
-} // namespace utils
-} // namespace core
-} // namespace shv
-
+} // namespace shv::core::utils

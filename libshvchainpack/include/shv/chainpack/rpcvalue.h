@@ -17,8 +17,7 @@
 namespace shv::chainpack { class RpcValue; }
 template <class ...> static constexpr std::false_type not_implemented_for_type [[maybe_unused]] {};
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 /// This implementation of copy-on-write is generic, but apart from the inconvenience of having to refer to the inner object through smart pointer dereferencing,
 /// it suffers from at least one drawback: classes that return references to their internal state, like
@@ -264,7 +263,7 @@ public:
 		MetaData* clone() const;
 	private:
 		MetaData& operator=(const MetaData &o);
-		void swap(MetaData &o);
+		void swap(MetaData &o) noexcept;
 	private:
 		RpcValue::IMap *m_imap = nullptr;
 		RpcValue::Map *m_smap = nullptr;
@@ -306,16 +305,16 @@ public:
 	RpcValue(IMap &&values);          // IMap
 
 	// Implicit constructor: map-like objects (std::map, std::unordered_map, etc)
-	template <class M, typename std::enable_if<
-				  std::is_constructible<RpcValue::String, typename M::key_type>::value
-				  && std::is_constructible<RpcValue, typename M::mapped_type>::value,
-				  int>::type = 0>
+	template <class M, std::enable_if_t<
+				  std::is_constructible_v<RpcValue::String, typename M::key_type>
+				  && std::is_constructible_v<RpcValue, typename M::mapped_type>,
+				  int> = 0>
 	RpcValue(const M & m) : RpcValue(Map(m.begin(), m.end())) {}
 
 	// Implicit constructor: vector-like objects (std::list, std::vector, std::set, etc)
-	template <class V, typename std::enable_if<
-				  std::is_constructible<RpcValue, typename V::value_type>::value,
-				  int>::type = 0>
+	template <class V, std::enable_if_t<
+				  std::is_constructible_v<RpcValue, typename V::value_type>,
+				  int> = 0>
 	RpcValue(const V & v) : RpcValue(List(v.begin(), v.end())) {}
 
 	// This prevents RpcValue(some_pointer) from accidentally producing a bool. Use
@@ -487,7 +486,7 @@ private:
 	RpcValue m_val;
 };
 
-}}
+}
 template<typename T> [[deprecated("Use RpcValue::to<>")]] T rpcvalue_cast(const shv::chainpack::RpcValue &v)
 {
 	return v.to<T>();

@@ -7,8 +7,7 @@
 #include <shv/iotqt/node/shvnode.h>
 #include <shv/iotqt/acl/aclroleaccessrules.h>
 
-namespace shv {
-namespace broker {
+namespace shv::broker {
 
 class EtcAclRootNode : public shv::iotqt::node::MethodsTableNode
 {
@@ -103,4 +102,4 @@ private:
 	LdapConfig m_ldapConfig;
 };
 #endif
-}}
+}

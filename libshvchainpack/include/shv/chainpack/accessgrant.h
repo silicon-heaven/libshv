@@ -8,8 +8,7 @@
 
 #include <optional>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 struct UserLogin;
 
@@ -68,6 +67,4 @@ struct SHVCHAINPACK_DECL_EXPORT AccessGrant
 	std::string toShv2Access() const;
 	std::string toPrettyString() const;
 };
-
-} // namespace chainpack
-} // namespace shv
+} // namespace shv::chainpack

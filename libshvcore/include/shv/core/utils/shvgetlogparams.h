@@ -7,9 +7,7 @@
 
 #include <string>
 
-namespace shv {
-namespace core {
-namespace utils {
+namespace shv::core::utils {
 
 struct SHVCORE_DECL_EXPORT ShvGetLogParams
 {
@@ -50,7 +48,4 @@ struct SHVCORE_DECL_EXPORT ShvGetLogParams
 
 	bool isSinceLast() const;
 };
-
-} // namespace utils
-} // namespace iotqt
-} // namespace shv
+} // namespace shv::core::utils

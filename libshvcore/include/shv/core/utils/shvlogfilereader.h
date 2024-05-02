@@ -12,8 +12,7 @@
 
 namespace shv {
 namespace chainpack { class ChainPackReader; }
-namespace core {
-namespace utils {
+namespace core::utils {
 
 class ShvJournalEntry;
 
@@ -40,6 +39,5 @@ private:
 	ShvJournalEntry m_currentEntry;
 };
 
-} // namespace utils
-} // namespace core
+} // namespace core::utils
 } // namespace shv

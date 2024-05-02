@@ -8,8 +8,7 @@
 
 class QAbstractButton;
 
-namespace shv {
-namespace visu {
+namespace shv::visu {
 
 class LogFilterProxyModel;
 class LogTableModelRow;
@@ -39,7 +38,7 @@ private:
 	typedef QWidget Super;
 public:
 	explicit LogWidget(QWidget *parent = nullptr);
-	~LogWidget();
+	~LogWidget() override;
 
 	Q_SLOT void addLogRow(const LogTableModelRow &row);
 	Q_SLOT void scrollToLastRow();
@@ -66,5 +65,4 @@ private:
 	bool m_isAutoScroll = true;
 };
 
-}}
-
+}

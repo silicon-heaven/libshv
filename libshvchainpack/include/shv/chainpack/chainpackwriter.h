@@ -2,8 +2,7 @@
 
 #include <shv/chainpack/abstractstreamwriter.h>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT ChainPackWriter : public shv::chainpack::AbstractStreamWriter
 {
@@ -44,6 +43,4 @@ private:
 	ChainPackWriter& write_p(const RpcValue::Map &values);
 	ChainPackWriter& write_p(const RpcValue::IMap &values);
 };
-
-} // namespace chainpack
-} // namespace shv
+} // namespace shv::chainpack

@@ -20,8 +20,7 @@
 
 namespace shv {
 namespace chainpack { class RpcValue; }
-namespace core {
-namespace utils {
+namespace core::utils {
 
 class SHVCORE_DECL_EXPORT CLIOptions
 {
@@ -78,6 +77,7 @@ public:
 	Option& optionRef(const std::string &name);
 	const std::map<std::string, Option>& options() const;
 
+	// NOLINTNEXTLINE(modernize-avoid-c-arrays)
 	void parse(int argc, char *argv[]);
 	virtual void parse(const StringList &cmd_line_args);
 	bool isParseError() const;
@@ -138,5 +138,5 @@ protected:
 	void mergeConfig_helper(const std::string &key_prefix, const shv::chainpack::RpcValue &config_map);
 };
 
-}}}
+}}
 

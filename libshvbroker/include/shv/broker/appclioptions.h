@@ -7,8 +7,7 @@
 
 #include <QSet>
 
-namespace shv {
-namespace broker {
+namespace shv::broker {
 
 class SHVBROKER_DECL_EXPORT AppCliOptions : public shv::core::utils::ConfigCLIOptions
 {
@@ -46,5 +45,4 @@ public:
 	CLIOPTION_GETTER_SETTER2(chainpack::RpcValue::List, "ldap.groupMapping", l, setL, dapGroupMapping)
 	CLIOPTION_GETTER_SETTER2(chainpack::RpcValue::List, "azure.groupMapping", a, setA, zureGroupMapping)
 };
-
-}}
+}

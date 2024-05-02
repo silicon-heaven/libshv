@@ -715,8 +715,7 @@ RpcValue string_literals::operator""_cpon(const char* data, size_t size)
 }
 
 RpcValue::Decimal::Num::Num()
-	: mantisa(0)
-	, exponent(-1)
+	: exponent(-1)
 {
 }
 
@@ -1318,7 +1317,7 @@ RpcValue::MetaData *RpcValue::MetaData::clone() const
 	return md;
 }
 
-void RpcValue::MetaData::swap(RpcValue::MetaData &o)
+void RpcValue::MetaData::swap(RpcValue::MetaData &o) noexcept
 {
 	std::swap(m_imap, o.m_imap);
 	std::swap(m_smap, o.m_smap);

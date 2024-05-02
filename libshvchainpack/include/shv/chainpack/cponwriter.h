@@ -4,8 +4,7 @@
 
 #include <vector>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT CponWriterOptions
 {
@@ -83,7 +82,4 @@ private:
 	};
 	std::vector<ContainerState> m_containerStates;
 };
-
-} // namespace chainpack
-} // namespace shv
-
+} // namespace shv::chainpack

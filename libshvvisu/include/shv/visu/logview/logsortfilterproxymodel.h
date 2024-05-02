@@ -7,9 +7,7 @@
 #include <QSortFilterProxyModel>
 #include <optional>
 
-namespace shv {
-namespace visu {
-namespace logview {
+namespace shv::visu::logview {
 
 class SHVVISU_DECL_EXPORT LogSortFilterProxyModel : public QSortFilterProxyModel
 {
@@ -32,5 +30,4 @@ private:
 	int m_shvPathColumn = -1;
 	int m_valueColumn = -1;
 };
-
-}}}
+}

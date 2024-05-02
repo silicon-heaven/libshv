@@ -2,9 +2,7 @@
 
 #include <shv/iotqt/node/shvnode.h>
 
-
-namespace shv {
-namespace broker {
+namespace shv::broker {
 
 namespace rpc { class CommonRpcClientHandle; }
 
@@ -25,5 +23,4 @@ public:
 private:
 	rpc::CommonRpcClientHandle *m_client;
 };
-
-}}
+}

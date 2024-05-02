@@ -12,9 +12,7 @@
 #include <QRect>
 #include <QObject>
 
-namespace shv {
-namespace visu {
-namespace timeline {
+namespace shv::visu::timeline {
 
 class Graph;
 class GraphButtonBox;
@@ -60,7 +58,6 @@ public:
 	};
 public:
 	GraphChannel(Graph *graph);
-	~GraphChannel() = default;
 
 	qsizetype modelIndex() const;
 	void setModelIndex(qsizetype ix);
@@ -115,7 +112,4 @@ protected:
 	qsizetype m_modelIndex = 0;
 };
 
-} // namespace timeline
-} // namespace visu
-} // namespace shv
-
+} // namespace shv::visu::timeline

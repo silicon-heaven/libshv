@@ -8,13 +8,11 @@
 
 class QTimer;
 
-namespace shv { namespace core { namespace utils { class ShvUrl; }}}
-namespace shv { namespace iotqt { namespace rpc { class Socket; }}}
-namespace shv { namespace iotqt { namespace node { class ShvNode; }}}
+namespace shv::core::utils { class ShvUrl; }
+namespace shv::iotqt::rpc { class Socket; }
+namespace shv::iotqt::node { class ShvNode; }
 
-namespace shv {
-namespace broker {
-namespace rpc {
+namespace shv::broker::rpc {
 
 class ClientConnectionOnBroker : public shv::iotqt::rpc::ServerConnection, public CommonRpcClientHandle
 {
@@ -63,5 +61,4 @@ private:
 	QTimer *m_idleWatchDogTimer = nullptr;
 	std::string m_mountPoint;
 };
-
-}}}
+}

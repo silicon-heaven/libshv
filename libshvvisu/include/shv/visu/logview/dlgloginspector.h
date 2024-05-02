@@ -10,13 +10,11 @@
 #include <QTimeZone>
 #endif
 
-namespace shv { namespace chainpack { class RpcValue; }}
-namespace shv { namespace iotqt { namespace rpc { class ClientConnection; }}}
-namespace shv { namespace visu { namespace timeline { class GraphWidget; class GraphModel; class Graph; class ChannelFilterDialog;}}}
+namespace shv::chainpack { class RpcValue; }
+namespace shv::iotqt::rpc { class ClientConnection; }
+namespace shv::visu::timeline { class GraphWidget; class GraphModel; class Graph; class ChannelFilterDialog;}
 
-namespace shv {
-namespace visu {
-namespace logview {
+namespace shv::visu::logview {
 
 namespace Ui {
 class DlgLogInspector;
@@ -30,7 +28,7 @@ class SHVVISU_DECL_EXPORT DlgLogInspector : public QDialog
 	Q_OBJECT
 public:
 	explicit DlgLogInspector(const QString &shv_path, QWidget *parent = nullptr);
-	~DlgLogInspector();
+	~DlgLogInspector() override;
 
 	shv::iotqt::rpc::ClientConnection* rpcConnection();
 	void setRpcConnection(shv::iotqt::rpc::ClientConnection *c);
@@ -72,5 +70,4 @@ private:
 	shv::visu::timeline::Graph *m_graph = nullptr;
 	shv::visu::timeline::GraphWidget *m_graphWidget = nullptr;
 };
-
-}}}
+}

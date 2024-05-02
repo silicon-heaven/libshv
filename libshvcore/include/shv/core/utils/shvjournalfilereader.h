@@ -8,9 +8,7 @@
 #include <string>
 #include <fstream>
 
-namespace shv {
-namespace core {
-namespace utils {
+namespace shv::core::utils {
 
 class SHVCORE_DECL_EXPORT ShvJournalFileReader
 {
@@ -34,7 +32,4 @@ private:
 	int64_t m_snapshotMsec = 0;
 	bool m_inSnapshot = true;
 };
-
-} // namespace utils
-} // namespace core
-} // namespace shv
+} // namespace shv::core::utils

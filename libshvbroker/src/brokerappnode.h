@@ -3,8 +3,7 @@
 #include <shv/iotqt/node/shvnode.h>
 #include <shv/chainpack/rpcvalue.h>
 
-namespace shv {
-namespace broker {
+namespace shv::broker {
 
 class BrokerAppNode : public shv::iotqt::node::MethodsTableNode
 {
@@ -19,5 +18,4 @@ public:
 private:
 	std::vector<shv::chainpack::MetaMethod> m_metaMethods;
 };
-
-}}
+}

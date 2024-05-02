@@ -2,8 +2,7 @@
 
 #include <shv/iotqt/node/shvnode.h>
 
-namespace shv {
-namespace broker {
+namespace shv::broker {
 
 class ClientConnectionNode : public shv::iotqt::node::MethodsTableNode
 {
@@ -16,5 +15,4 @@ public:
 private:
 	int m_clientId = 0;
 };
-
-}}
+}

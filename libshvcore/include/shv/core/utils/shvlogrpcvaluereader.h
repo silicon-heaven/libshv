@@ -3,9 +3,7 @@
 #include "shvlogheader.h"
 #include "shvjournalentry.h"
 
-namespace shv {
-namespace core {
-namespace utils {
+namespace shv::core::utils {
 
 class ShvJournalEntry;
 
@@ -23,12 +21,11 @@ private:
 	ShvLogHeader m_logHeader;
 	ShvJournalEntry m_currentEntry;
 
+	// NOLINTNEXTLINE(cppcoreguidelines-avoid-const-or-ref-data-members)
 	const shv::chainpack::RpcValue m_log;
 	bool m_isThrowExceptions;
 	size_t m_currentIndex = 0;
 	int64_t m_snapshotMsec = -1;
 };
 
-} // namespace utils
-} // namespace core
-} // namespace shv
+} // namespace shv::core::utils

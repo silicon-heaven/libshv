@@ -4,8 +4,7 @@
 
 #include <string>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT SocketRpcDriver : public RpcDriver
 {
@@ -34,5 +33,4 @@ private:
 	std::string m_readBuffer;
 	size_t m_readFrameSize = 0;
 };
-
-}}
+}

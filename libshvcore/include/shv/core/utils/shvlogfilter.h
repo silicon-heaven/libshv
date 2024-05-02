@@ -6,9 +6,7 @@
 #include "patternmatcher.h"
 #include "shvgetlogparams.h"
 
-namespace shv {
-namespace core {
-namespace utils {
+namespace shv::core::utils {
 
 class SHVCORE_DECL_EXPORT ShvLogFilter
 {
@@ -22,7 +20,4 @@ protected:
 	int64_t m_inputFilterSinceMsec = 0LL;
 	int64_t m_inputFilterUntilMsec = 0LL;
 };
-
-}
-}
 }

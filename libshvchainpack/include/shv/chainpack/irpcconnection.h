@@ -3,8 +3,7 @@
 #include <shv/chainpack/rpcmessage.h>
 #include <shv/chainpack/accessgrant.h>
 
-namespace shv {
-namespace chainpack {
+namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT IRpcConnection
 {
@@ -55,6 +54,4 @@ protected:
 	int m_connectionId;
 	ShvApiVersion m_shvApiVersion = ShvApiVersion::V2;
 };
-
-} // namespace chainpack
-} // namespace shv
+} // namespace shv::chainpack
