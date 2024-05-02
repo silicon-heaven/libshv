@@ -45,31 +45,6 @@ doctest::String toString(const RpcValue::DateTime& value) {
 
 DOCTEST_TEST_CASE("RpcValue")
 {
-
-	DOCTEST_SUBCASE("refcnt test")
-	{
-		nDebug() << "================================= RefCnt Test =====================================";
-		auto rpcval = RpcValue::fromCpon(R"(<1:2,2:12,8:"foo",9:[1,2,3],"bar":"baz",>{"META":17,"18":19})");
-		auto rv1 = rpcval;
-		REQUIRE(rpcval.refCnt() == 2);
-		{
-			auto rv2 = rpcval;
-			REQUIRE(rpcval.refCnt() == 3);
-			REQUIRE(rpcval == rv2);
-		}
-		REQUIRE(rpcval.refCnt() == 2);
-		rv1.set("foo", "bar");
-		REQUIRE(rv1.refCnt() == 1);
-		REQUIRE(rpcval.refCnt() == 1);
-		REQUIRE(rv1.at("foo") == RpcValue("bar"));
-		rv1 = rpcval;
-		REQUIRE(rpcval.refCnt() == 2);
-		rpcval.setMetaValue(2, 42);
-		REQUIRE(rv1.refCnt() == 1);
-		REQUIRE(rpcval.refCnt() == 1);
-		REQUIRE(rpcval.metaValue(2) == RpcValue(42));
-		REQUIRE(rv1.metaValue(2) == RpcValue(12));
-	}
 	DOCTEST_SUBCASE("take Meta test")
 	{
 		nDebug() << "================================= takeMeta Test =====================================";
@@ -78,8 +53,6 @@ DOCTEST_TEST_CASE("RpcValue")
 		auto rv2 = rv1;
 		auto rv3 = rv1;
 		rv3.takeMeta();
-		REQUIRE(rpcval.refCnt() == 3);
-		REQUIRE(rv3.refCnt() == 1);
 		REQUIRE(rv1.metaData().isEmpty() == false);
 		REQUIRE(rv3.metaData().isEmpty() == true);
 		REQUIRE(rv3.at("18") == rpcval.at("18"));

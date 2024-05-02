@@ -52,10 +52,6 @@ public:
 	{
 		return m_sp.get() == nullptr;
 	}
-	long refCnt() const
-	{
-		return m_sp.use_count();
-	}
 	const T& operator*() const
 	{
 		return *m_sp;
@@ -449,8 +445,6 @@ public:
 #endif
 	template<typename T> static inline Type guessType();
 	template<typename T> static inline RpcValue fromValue(const T &t);
-
-	long refCnt() const;
 
 	struct Invalid {
 		bool operator==(const Invalid&) const = default;

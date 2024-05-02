@@ -689,17 +689,6 @@ RpcValue RpcValue::fromCpon(const std::string &str, std::string *err)
 	return ret;
 }
 
-long RpcValue::refCnt() const
-{
-	return std::visit([] (const auto& x) {
-		if constexpr (is_instance_of_v<std::remove_cvref_t<decltype(x)>, CowPtr>) {
-			return x.refCnt();
-		} else {
-			return long{1};
-		}
-	}, m_value);
-}
-
 RpcValue string_literals::operator""_cpon(const char* data, size_t size)
 {
 	return RpcValue::fromCpon(std::string{data, size});
