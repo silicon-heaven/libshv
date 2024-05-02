@@ -365,12 +365,12 @@ RpcValue::UInt RpcValue::toUInt() const
 
 int64_t RpcValue::toInt64() const
 {
-	return try_convert_or_default<int64_t>(m_value, 0);
+	return impl_to_int<int64_t>(m_value);
 }
 
 uint64_t RpcValue::toUInt64() const
 {
-	return try_convert_or_default<uint64_t>(m_value, 0);
+	return impl_to_int<uint64_t>(m_value);
 }
 
 template<class T, template<class> class U>
