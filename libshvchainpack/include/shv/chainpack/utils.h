@@ -52,12 +52,6 @@ public:
 	static char fromHex(char c);
 	static std::string fromHex(const std::string &bytes);
 
-	template <typename I>
-	static std::string toString(I n)
-	{
-		return std::to_string(n);
-	}
-
 	template <typename V, typename... T>
 	constexpr static inline auto make_array(T&&... t) -> std::array < V, sizeof...(T) >
 	{

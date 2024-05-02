@@ -28,7 +28,7 @@ ServerConnection::ServerConnection(Socket *socket, QObject *parent)
 	connect(this, &ServerConnection::socketConnectedChanged, [this](bool is_connected) {
 		if(is_connected) {
 			m_helloReceived = m_loginReceived = false;
-			setConnectionName(peerAddress() + ':' + shv::chainpack::Utils::toString(peerPort()));
+			setConnectionName(peerAddress() + ':' + std::to_string(peerPort()));
 		}
 	});
 	QTimer::singleShot(s_initPhaseTimeout, this, [this]() {
@@ -124,7 +124,7 @@ void ServerConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 			shvInfo().nospace() << "Client hello received from: " << socket()->peerAddress().toString().toStdString() << ':' << socket()->peerPort();
 			m_helloReceived = true;
 			shvInfo() << "sending hello response:" << connectionName();
-			m_userLoginContext.serverNounce = shv::chainpack::Utils::toString(std::rand());
+			m_userLoginContext.serverNounce = std::to_string(std::rand());
 			cp::RpcValue::Map params {
 				{"nonce", m_userLoginContext.serverNounce}
 			};
