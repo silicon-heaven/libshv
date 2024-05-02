@@ -105,11 +105,13 @@ public:
 		for (unsigned i = len; i > 0; --i) {
 			val = val * 256 + static_cast<unsigned char>(buff[i - 1]);
 		}
-		if(std::is_signed_v<T> && len < sizeof(T)) {
-			uT mask = ~0;
-			for (unsigned i = 0; i < len; i++)
-				mask <<= 8;
-			val |= mask;
+		if constexpr (std::is_signed_v<T>) {
+			if (len < sizeof(T)) {
+				uT mask = ~0;
+				for (unsigned i = 0; i < len; i++)
+					mask <<= 8;
+				val |= mask;
+			}
 		}
 		return static_cast<T>(val);
 	}
