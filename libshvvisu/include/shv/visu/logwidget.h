@@ -38,7 +38,7 @@ private:
 	typedef QWidget Super;
 public:
 	explicit LogWidget(QWidget *parent = nullptr);
-	~LogWidget();
+	~LogWidget() override;
 
 	Q_SLOT void addLogRow(const LogTableModelRow &row);
 	Q_SLOT void scrollToLastRow();

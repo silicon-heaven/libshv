@@ -18,7 +18,7 @@ class SHVVISU_DECL_EXPORT DataViewWidget : public QWidget
 
 public:
 	explicit DataViewWidget(QWidget *parent = nullptr);
-	~DataViewWidget();
+	~DataViewWidget() override;
 
 	void init(const QString &site_path, timeline::Graph *graph);
 

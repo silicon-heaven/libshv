@@ -28,7 +28,7 @@ class SHVVISU_DECL_EXPORT DlgLogInspector : public QDialog
 	Q_OBJECT
 public:
 	explicit DlgLogInspector(const QString &shv_path, QWidget *parent = nullptr);
-	~DlgLogInspector();
+	~DlgLogInspector() override;
 
 	shv::iotqt::rpc::ClientConnection* rpcConnection();
 	void setRpcConnection(shv::iotqt::rpc::ClientConnection *c);

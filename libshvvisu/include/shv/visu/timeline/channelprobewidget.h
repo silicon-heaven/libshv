@@ -21,7 +21,7 @@ class SHVVISU_DECL_EXPORT ChannelProbeWidget : public QWidget
 
 public:
 	explicit ChannelProbeWidget(ChannelProbe *probe, QWidget *parent);
-	~ChannelProbeWidget();
+	~ChannelProbeWidget() override;
 
 	const ChannelProbe* probe();
 

@@ -14,7 +14,7 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 public:
 	MainWindow(QWidget *parent = nullptr);
-	~MainWindow();
+	~MainWindow() override;
 private slots:
 	void on_actionGenerate_sample_data_triggered();
 

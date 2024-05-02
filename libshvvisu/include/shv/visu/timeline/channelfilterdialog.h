@@ -21,7 +21,7 @@ class SHVVISU_DECL_EXPORT ChannelFilterDialog : public QDialog
 
 public:
 	explicit ChannelFilterDialog(QWidget *parent, const QString &site_path, Graph *graph);
-	~ChannelFilterDialog();
+	~ChannelFilterDialog() override;
 
 	std::optional<ChannelFilter> channelFilter();
 

@@ -58,7 +58,6 @@ public:
 	};
 public:
 	GraphChannel(Graph *graph);
-	~GraphChannel() = default;
 
 	qsizetype modelIndex() const;
 	void setModelIndex(qsizetype ix);

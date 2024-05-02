@@ -20,7 +20,6 @@ public:
 	enum class ButtonId { Invalid = 0, Menu, User };
 public:
 	GraphButtonBox(const QVector<ButtonId> &button_ids, QObject *parent);
-	virtual ~GraphButtonBox() = default;
 
 	Q_SIGNAL void buttonClicked(int button_id);
 
