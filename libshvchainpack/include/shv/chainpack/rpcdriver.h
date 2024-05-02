@@ -37,6 +37,7 @@ protected:
 	virtual void onParseDataException(const shv::chainpack::ParseException &e) = 0;
 	virtual void onRpcMessageReceived(const shv::chainpack::RpcMessage &msg) = 0;
 private:
+	// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 	static int s_defaultRpcTimeoutMsec;
 	Rpc::ProtocolType m_clientProtocolType = Rpc::ProtocolType::ChainPack;
 };

@@ -28,6 +28,7 @@ public:
 protected:
 	void makeWhat();
 protected:
+	// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 	static bool s_abortOnException;
 	std::string m_msg;
 	shv::chainpack::RpcValue m_data;
