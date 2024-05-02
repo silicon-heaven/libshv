@@ -7,10 +7,7 @@
 
 namespace shv::chainpack::meta {
 
-MetaInfo::MetaInfo()
-	: id(0), name(nullptr)
-{
-}
+MetaInfo::MetaInfo() = default;
 
 MetaInfo::MetaInfo(int id_, const char *name_) : id(id_), name(name_)
 {

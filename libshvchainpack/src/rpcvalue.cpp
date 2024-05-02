@@ -715,8 +715,7 @@ RpcValue string_literals::operator""_cpon(const char* data, size_t size)
 }
 
 RpcValue::Decimal::Num::Num()
-	: mantisa(0)
-	, exponent(-1)
+	: exponent(-1)
 {
 }
 

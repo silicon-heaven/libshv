@@ -19,5 +19,5 @@ private:
 	AppCliOptions *m_cliOptions;
 	shv::iotqt::rpc::ClientConnection *m_rpcConnection;
 	int m_subscriptionRpcId;
-	int m_status;
+	int m_status = EXIT_SUCCESS;
 };

@@ -8,10 +8,7 @@ using namespace std;
 
 namespace shv::core::utils {
 
-ShvAlarm::ShvAlarm()
-	: m_isActive(false)
-	, m_severity(Severity::Invalid)
-{}
+ShvAlarm::ShvAlarm() = default;
 
 ShvAlarm::ShvAlarm(const std::string &path,  bool is_active, Severity severity, int level, const std::string &description, const std::string &label)
 	: m_path(path)

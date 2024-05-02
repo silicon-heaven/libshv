@@ -102,6 +102,6 @@ protected:
 		QWidget *channelDropMarker;
 		int draggedChannel;
 	};
-	ChannelHeaderMoveContext *m_channelHeaderMoveContext;
+	ChannelHeaderMoveContext *m_channelHeaderMoveContext = nullptr;
 };
 }

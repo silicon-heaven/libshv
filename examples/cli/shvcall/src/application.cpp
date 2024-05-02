@@ -13,7 +13,6 @@ namespace si = shv::iotqt;
 Application::Application(int &argc, char **argv, AppCliOptions *cli_opts)
 	: Super(argc, argv)
 	, m_cliOptions(cli_opts)
-	, m_status(EXIT_SUCCESS)
 {
 	m_rpcConnection = new si::rpc::ClientConnection(this);
 

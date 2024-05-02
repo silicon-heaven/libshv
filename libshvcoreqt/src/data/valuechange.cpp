@@ -394,7 +394,7 @@ ValueXInterval::ValueXInterval(ValueChange::ValueX min_, ValueChange::ValueX max
 }
 
 ValueXInterval::ValueXInterval(int min_, int max_)
-	: min(min_), max(max_), type(ValueType::Int)
+	: min(min_), max(max_)
 {
 }
 

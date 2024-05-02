@@ -34,7 +34,6 @@ namespace shv::visu::timeline {
 
 GraphWidget::GraphWidget(QWidget *parent)
 	: Super(parent)
-	, m_channelHeaderMoveContext(nullptr)
 {
 	setMouseTracking(true);
 	setContextMenuPolicy(Qt::DefaultContextMenu);

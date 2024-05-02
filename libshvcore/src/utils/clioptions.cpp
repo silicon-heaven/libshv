@@ -22,7 +22,6 @@ namespace shv::core::utils {
 
 CLIOptions::Option::Data::Data(chainpack::RpcValue::Type type_)
 	: type(type_)
-	, mandatory(false)
 {
 }
 
