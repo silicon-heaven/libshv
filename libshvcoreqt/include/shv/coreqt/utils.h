@@ -207,5 +207,6 @@ public:
 	auto end() { return m_data.keyValueEnd(); }
 
 private:
+	// NOLINTNEXTLINE(cppcoreguidelines-avoid-const-or-ref-data-members)
 	T &m_data;
 };

@@ -36,6 +36,7 @@ public:
 	virtual void read(RpcValue::MetaData &meta_data) = 0;
 	virtual void read(RpcValue &val) = 0;
 protected:
+	// NOLINTNEXTLINE(cppcoreguidelines-avoid-const-or-ref-data-members)
 	std::istream &m_in;
 	char m_unpackBuff[1];
 	ccpcp_unpack_context m_inCtx;

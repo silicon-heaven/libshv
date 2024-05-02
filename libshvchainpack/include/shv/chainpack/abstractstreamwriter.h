@@ -30,6 +30,7 @@ public:
 protected:
 	static constexpr bool WRITE_INVALID_AS_NULL = true;
 protected:
+	// NOLINTNEXTLINE(cppcoreguidelines-avoid-const-or-ref-data-members)
 	std::ostream &m_out;
 	char m_packBuff[32];
 	ccpcp_pack_context m_outCtx;
