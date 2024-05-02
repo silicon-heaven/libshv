@@ -37,7 +37,7 @@ public:
 					}
 					return x.to<PropertyType>();
 				};
-			} else {
+			} else { // NOLINT(readability-misleading-indentation)
 				return [] (const chainpack::RpcValue&) {
 					// stub for ReadOnlyPropertyNode, PropertyType must be default constructible anyway
 					return PropertyType{};
