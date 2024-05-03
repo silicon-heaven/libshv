@@ -788,7 +788,7 @@ std:: string RpcError::errorCodeToString(int code)
 	case ErrorCode::MethodCallCancelled: return "SyncMethodCallCancelled";
 	case ErrorCode::MethodCallException: return "MethodCallException";
 	case ErrorCode::Unknown:  return "Unknown";
-	default: return Utils::toString(code);
+	default: return std::to_string(code);
 	};
 }
 

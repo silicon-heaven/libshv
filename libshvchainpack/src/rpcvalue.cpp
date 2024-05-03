@@ -951,7 +951,7 @@ std::string RpcValue::DateTime::toLocalString() const
 	std::string ret(buffer.data());
 	int msecs = static_cast<int>(m_dtm.msec % 1000);
 	if(msecs > 0)
-		ret += '.' + Utils::toString(msecs % 1000);
+		ret += '.' + std::to_string(msecs % 1000);
 	return ret;
 }
 

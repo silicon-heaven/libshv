@@ -338,7 +338,7 @@ DOCTEST_TEST_CASE("ChainPack")
 				wr.writeContainerBegin(RpcValue::Type::List);
 				std::string s("foo-bar");
 				for (size_t i = 0; i < N; ++i) {
-					wr.writeListElement(RpcValue(s + shv::chainpack::Utils::toString(i)));
+					wr.writeListElement(RpcValue(s + std::to_string(i)));
 				}
 				wr.writeContainerEnd();
 			}
@@ -348,7 +348,7 @@ DOCTEST_TEST_CASE("ChainPack")
 			REQUIRE(list.size() == N);
 			for (size_t i = 0; i < list.size(); ++i) {
 				std::string s("foo-bar");
-				REQUIRE(RpcValue(s + shv::chainpack::Utils::toString(i)) == list.at(i));
+				REQUIRE(RpcValue(s + std::to_string(i)) == list.at(i));
 			}
 		}
 	}
