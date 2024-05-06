@@ -42,6 +42,10 @@ static int value_data_cnt = 0;
 namespace {
 auto convert_to_int(const double d)
 {
+	if (std::isnan(d)) {
+		throw std::runtime_error("Can't convert NaN to int");
+	}
+
 	if (std::numeric_limits<RpcValue::Int>::max() <= d) {
 		return std::numeric_limits<RpcValue::Int>::max();
 	}
