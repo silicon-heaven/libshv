@@ -33,7 +33,7 @@ const char *DataChange::valueFlagToString(DataChange::ValueFlag flag)
 	switch (flag) {
 	case ValueFlag::Snapshot: return "Snapshot";
 	case ValueFlag::Spontaneous: return "Spontaneous";
-	case ValueFlag::DirtyValue: return "DirtyValue";
+	case ValueFlag::Provisional: return "Provisional";
 	case ValueFlag::ValueFlagCount: return "ValueFlagCount";
 	}
 	return "???";
@@ -202,14 +202,14 @@ DataChange::ValueFlags DataChange::valueFlags() const
 	return m_valueFlags;
 }
 
-bool DataChange::isDirtyValue() const
+bool DataChange::isProvisional() const
 {
-	return testBit(m_valueFlags, ValueFlag::DirtyValue);
+	return testBit(m_valueFlags, ValueFlag::Provisional);
 }
 
-void DataChange::setDirtyValue(bool b)
+void DataChange::setProvisional(bool b)
 {
-	setBit(m_valueFlags, ValueFlag::DirtyValue, b);
+	setBit(m_valueFlags, ValueFlag::Provisional, b);
 }
 
 
