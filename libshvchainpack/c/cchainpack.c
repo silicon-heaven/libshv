@@ -641,11 +641,11 @@ void cchainpack_unpack_next (ccpcp_unpack_context* unpack_context)
 				offset >>= 1; // sign extension
 				d >>= 7;
 			}
-			if (INT64_MAX / 1000 < d) {
-				UNPACK_ERROR(CCPCP_RC_MALFORMED_INPUT, "DateTime msec value overflow.");
+			if (has_not_msec) {
+				if (__builtin_mul_overflow(d, 1000, &d)) {
+					UNPACK_ERROR(CCPCP_RC_MALFORMED_INPUT, "DateTime msec value overflow.");
+				}
 			}
-			if (has_not_msec)
-				d *= 1000;
 			d += SHV_EPOCH_MSEC;
 
 			unpack_context->item.type = CCPCP_ITEM_DATE_TIME;
