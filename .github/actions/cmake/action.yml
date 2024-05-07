@@ -13,6 +13,9 @@ inputs:
   modules:
     description: "Specify which modules should be installed"
     required: true
+  ccache:
+    description: "Specify which modules should be installed"
+    default: "true"
   additional_cmake_args:
     description: "Additional args to pass to CMake"
     default: ""
@@ -52,6 +55,7 @@ runs:
         modules: ${{ inputs.modules }}
 
     - name: ccache
+      if: inputs.ccache == 'true'
       uses: hendrikmuhs/ccache-action@v1.2.12
       with:
         key: ${{ github.workflow }}-${{ github.job }}
