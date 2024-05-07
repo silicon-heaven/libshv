@@ -56,12 +56,6 @@ runs:
       with:
         key: ${{ github.job }}
 
-    # https://github.com/actions/runner-images/issues/9491#issuecomment-1989718917
-    - name: Fix kernel mmap rnd bits
-      if: runner.os != 'Windows'
-      run: sudo sysctl vm.mmap_rnd_bits=28
-      shell: bash
-
     - name: Configure CMake
       run: |
         CFLAGS="-Werror ${CFLAGS}" \
