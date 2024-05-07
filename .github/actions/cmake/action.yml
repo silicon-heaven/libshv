@@ -54,7 +54,7 @@ runs:
     - name: ccache
       uses: hendrikmuhs/ccache-action@v1.2.12
       with:
-        key: ${{ github.job }}
+        key: ${{ github.workflow }}-${{ github.job }}
 
     - name: Configure CMake
       run: |
