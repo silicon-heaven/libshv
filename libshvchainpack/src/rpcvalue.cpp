@@ -314,11 +314,21 @@ double RpcValue::toDouble() const
 		if constexpr (std::is_same<TypeX, Decimal>()) {
 			return x.toDouble();
 		} else if constexpr (std::is_same<TypeX, Double>() ||
-							 std::is_same<TypeX, Int>() ||
-							 std::is_same<TypeX, UInt>()) {
-			return double{x};
-		} else {
+							 std::is_same<TypeX, int64_t>() ||
+							 std::is_same<TypeX, uint64_t>()) {
+			return static_cast<double>(x);
+		} else if constexpr (std::is_same<TypeX, RpcValue::Invalid>() ||
+				   std::is_same<TypeX, RpcValue::Null>() ||
+				   std::is_same<TypeX, RpcValue::DateTime>() ||
+				   std::is_same<TypeX, RpcValue::Bool>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::String>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::List>>()) {
 			return double{0};
+		} else {
+			static_assert(not_implemented_for_type<TypeX>, "toDouble not implemented for this type");
 		}
 	}, m_value);
 }
@@ -349,8 +359,16 @@ ResultType impl_to_int(const RpcValue::VariantType& value)
 			return static_cast<ResultType>(convert_to_int(x.toDouble()));
 		} else if constexpr (std::is_same<TypeX, RpcValue::DateTime>()) {
 			return static_cast<ResultType>(x.msecsSinceEpoch());
-		} else {
+		} else if constexpr (std::is_same<TypeX, RpcValue::Invalid>() ||
+				   std::is_same<TypeX, RpcValue::Null>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::String>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::List>>()) {
 			return ResultType{0};
+		} else {
+			static_assert(not_implemented_for_type<TypeX>, "impl_to_int not implemented for this type");
 		}
 	}, value);
 }
@@ -390,17 +408,25 @@ inline constexpr bool is_instance_of_v<U<V>,U> = std::true_type{};
 bool RpcValue::toBool() const
 {
 	return std::visit([] (const auto& x) {
-		using Type = std::remove_cvref_t<decltype(x)>;
-		if constexpr (std::is_same_v<Type, DateTime>) {
+		using TypeX = std::remove_cvref_t<decltype(x)>;
+		if constexpr (std::is_same_v<TypeX, DateTime>) {
 			return x.msecsSinceEpoch() != 0;
-		} else if constexpr (std::is_same_v<Type, Decimal>) {
+		} else if constexpr (std::is_same_v<TypeX, Decimal>) {
 			return x.mantisa() != 0;
-		} else if constexpr (std::is_arithmetic_v<Type>) {
+		} else if constexpr (std::is_arithmetic_v<TypeX>) {
 			return x != 0;
-		} else if constexpr (std::is_same_v<Type, bool>) {
+		} else if constexpr (std::is_same_v<TypeX, bool>) {
 			return x;
-		} else {
+		} else if constexpr (std::is_same<TypeX, RpcValue::Invalid>() ||
+							 std::is_same<TypeX, RpcValue::Null>() ||
+							 std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
+							 std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
+							 std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
+							 std::is_same<TypeX, CowPtr<RpcValue::List>>() ||
+							 std::is_same<TypeX, CowPtr<RpcValue::String>>()) {
 			return false;
+		} else {
+			static_assert(not_implemented_for_type<TypeX>, "toBool not implemented for this type");
 		}
 	}, m_value);
 }
@@ -413,10 +439,22 @@ RpcValue::DateTime RpcValue::toDateTime() const
 RpcValue::String RpcValue::toString() const
 {
 	return std::visit([this] (const auto& x) {
-		if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, Blob>()) {
-			return blobToString(x);
-		} else {
+		using TypeX = std::remove_cvref_t<decltype(x)>;
+		if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, CowPtr<Blob>>()) {
+			return blobToString(*x);
+		} else if constexpr (std::is_same<TypeX, CowPtr<RpcValue::String>>()) {
 			return asString();
+		} else if constexpr (std::is_same<TypeX, RpcValue::Invalid>() ||
+				   std::is_same<TypeX, RpcValue::Null>() ||
+				   std::is_arithmetic<TypeX>() ||
+				   std::is_same<TypeX, RpcValue::DateTime>() ||
+				   std::is_same<TypeX, RpcValue::Decimal>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::List>>()) {
+			return std::string();
+		} else {
+			static_assert(not_implemented_for_type<TypeX>, "toString not implemented for this type");
 		}
 	}, m_value);
 }
@@ -476,8 +514,16 @@ size_t RpcValue::count() const
 					  std::is_same<TypeX, CowPtr<IMap>>() ||
 					  std::is_same<TypeX, CowPtr<Map>>()) {
 			return x->size();
-		} else {
+		} else if constexpr (std::is_same<TypeX, RpcValue::Invalid>() ||
+				   std::is_same<TypeX, RpcValue::Null>() ||
+				   std::is_arithmetic<TypeX>() ||
+				   std::is_same<TypeX, CowPtr<String>>() ||
+				   std::is_same<TypeX, CowPtr<Blob>>() ||
+				   std::is_same<TypeX, RpcValue::DateTime>() ||
+				   std::is_same<TypeX, RpcValue::Decimal>()) {
 			return size_t{0};
+		} else {
+			static_assert(not_implemented_for_type<TypeX>, "count() not implemented for this type");
 		}
 	}, m_value);
 }
@@ -499,8 +545,17 @@ RpcValue RpcValue::at(RpcValue::Int ix, const RpcValue& default_value) const
 		} else if constexpr (std::is_same<TypeX, CowPtr<IMap>>()) {
 			auto iter = x->find(ix);
 			return (iter == x->end()) ? default_value : iter->second;
-		} else {
+		} else if constexpr (std::is_same<TypeX, RpcValue::Invalid>() ||
+				   std::is_same<TypeX, RpcValue::Null>() ||
+				   std::is_arithmetic<TypeX>() ||
+				   std::is_same<TypeX, CowPtr<String>>() ||
+				   std::is_same<TypeX, CowPtr<Blob>>() ||
+				   std::is_same<TypeX, CowPtr<Map>>() ||
+				   std::is_same<TypeX, RpcValue::DateTime>() ||
+				   std::is_same<TypeX, RpcValue::Decimal>()) {
 			return default_value;
+		} else {
+			static_assert(not_implemented_for_type<TypeX>, "at(int) not implemented for this type");
 		}
 	}, m_value);
 }
@@ -508,11 +563,22 @@ RpcValue RpcValue::at(RpcValue::Int ix, const RpcValue& default_value) const
 RpcValue RpcValue::at(const std::string& key, const RpcValue& default_value) const
 {
 	return std::visit([key, &default_value] (const auto& x) mutable {
-		if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, CowPtr<Map>>()) {
+		using TypeX = std::remove_cvref_t<decltype(x)>;
+		if constexpr (std::is_same<TypeX, CowPtr<Map>>()) {
 			auto iter = x->find(key);
 			return (iter == x->end()) ? default_value : iter->second;
-		} else {
+		} else if constexpr (std::is_same<TypeX, RpcValue::Invalid>() ||
+				   std::is_same<TypeX, RpcValue::Null>() ||
+				   std::is_arithmetic<TypeX>() ||
+				   std::is_same<TypeX, CowPtr<String>>() ||
+				   std::is_same<TypeX, CowPtr<Blob>>() ||
+				   std::is_same<TypeX, CowPtr<IMap>>() ||
+				   std::is_same<TypeX, CowPtr<List>>() ||
+				   std::is_same<TypeX, RpcValue::DateTime>() ||
+				   std::is_same<TypeX, RpcValue::Decimal>()) {
 			return default_value;
+		} else {
+			static_assert(not_implemented_for_type<TypeX>, "at(const string&) not implemented for this type");
 		}
 	}, m_value);
 }
@@ -522,11 +588,26 @@ template <typename MapType, typename KeyType>
 bool impl_has(const RpcValue::VariantType& value, const KeyType& key)
 {
 	return std::visit([key] (const auto& x) mutable {
-		if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, MapType>()) {
-			auto iter = x->find(key);
-			return (iter != x->end());
-		} else {
+		using TypeX = std::remove_cvref_t<decltype(x)>;
+		if constexpr (std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
+					  std::is_same<TypeX, CowPtr<RpcValue::IMap>>()) {
+			if constexpr (std::is_same<TypeX, MapType>()) {
+				auto iter = x->find(key);
+				return iter != x->end();
+			} else {
+				return false;
+			}
+		} else if constexpr (std::is_same<TypeX, RpcValue::Invalid>() ||
+				   std::is_same<TypeX, RpcValue::Null>() ||
+				   std::is_arithmetic<TypeX>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::String>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::List>>() ||
+				   std::is_same<TypeX, RpcValue::DateTime>() ||
+				   std::is_same<TypeX, RpcValue::Decimal>()) {
 			return false;
+		} else {
+			static_assert(not_implemented_for_type<TypeX>, "impl_has not implemented for this type");
 		}
 	}, value);
 }
@@ -548,23 +629,28 @@ std::string RpcValue::toStdString() const
 		using namespace std::string_literals;
 		using TypeX = std::remove_cvref_t<decltype(x)>;
 		if constexpr (std::is_same<TypeX, Double>() ||
-					  std::is_same<TypeX, UInt>() ||
-					  std::is_same<TypeX, Int>()) {
+					  std::is_same<TypeX, uint64_t>() ||
+					  std::is_same<TypeX, int64_t>()) {
 			return std::to_string(x);
 		} else if constexpr (std::is_same<TypeX, DateTime>()) {
 			return x.toIsoString();
-		} else if constexpr (std::is_same<TypeX, Blob>()) {
-			return blobToString(x);
+		} else if constexpr (std::is_same<TypeX, CowPtr<Blob>>()) {
+			return blobToString(*x);
 		} else if constexpr (std::is_same<TypeX, Decimal>()) {
 			return x.toString();
 		} else if constexpr (std::is_same<TypeX, Bool>()) {
 			return x ? "true"s : "false"s;
 		} else if constexpr (std::is_same<TypeX, Null>()) {
 			return "null"s;
-		} else if constexpr (std::is_same<TypeX, String>()) {
-			return x;
-		} else {
+		} else if constexpr (std::is_same<TypeX, CowPtr<String>>()) {
+			return *x;
+		} else if constexpr (std::is_same<TypeX, RpcValue::Invalid>() ||
+							 std::is_same<TypeX, CowPtr<Map>>() ||
+							 std::is_same<TypeX, CowPtr<IMap>>() ||
+							 std::is_same<TypeX, CowPtr<List>>()) {
 			return std::string();
+		} else {
+			static_assert(not_implemented_for_type<TypeX>, "toStdString not implemented for this type");
 		}
 	}, m_value);
 }
@@ -582,8 +668,19 @@ void impl_set(RpcValue::VariantType& map, const KeyType& key, const RpcValue& va
 			} else {
 				x->erase(key);
 			}
-		} else {
+		} else if constexpr (std::is_same<TypeX, RpcValue::Invalid>() ||
+				   std::is_same<TypeX, RpcValue::Null>() ||
+				   std::is_arithmetic<TypeX>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::List>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::String>>() ||
+				   std::is_same<TypeX, RpcValue::DateTime>() ||
+				   std::is_same<TypeX, RpcValue::Decimal>()) {
 			nError() << " Cannot set value to a non-map RpcValue! Key: " << key;
+		} else {
+			static_assert(not_implemented_for_type<TypeX>, "impl_set() not implemented for this type");
 		}
 	}, map);
 }
@@ -602,10 +699,21 @@ void RpcValue::set(const RpcValue::String &key, const RpcValue &val)
 void RpcValue::append(const RpcValue &val)
 {
 	return std::visit([&val] (auto& x) {
+		using TypeX = std::remove_cvref_t<decltype(x)>;
 		if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, CowPtr<RpcValue::List>>()) {
 			x->emplace_back(val);
-		} else {
+		} else if constexpr (std::is_same<TypeX, RpcValue::Invalid>() ||
+				   std::is_same<TypeX, RpcValue::Null>() ||
+				   std::is_arithmetic<TypeX>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::String>>() ||
+				   std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
+				   std::is_same<TypeX, RpcValue::DateTime>() ||
+				   std::is_same<TypeX, RpcValue::Decimal>()) {
 			nError() << " Cannot set value to a non-list RpcValue!";
+		} else {
+			static_assert(not_implemented_for_type<TypeX>, "append() not implemented for this type");
 		}
 	}, m_value);
 }
@@ -659,7 +767,7 @@ bool RpcValue::operator== (const RpcValue &other) const
 		} else if constexpr (std::is_arithmetic<TypeX>() && std::is_arithmetic<TypeY>()) {
 			if constexpr (std::is_floating_point<TypeX>() || std::is_floating_point<TypeY>()) { // Double promotion.
 				return static_cast<double>(x) == static_cast<double>(y);
-			} else if constexpr (std::is_same_v<TypeX, bool> || std::is_same_v<TypeY, bool>) { // Double promotion.
+			} else if constexpr (std::is_same_v<TypeX, bool> || std::is_same_v<TypeY, bool>) { // Bool conversion.
 				return static_cast<bool>(x) == static_cast<bool>(y);
 			} else { // Comparing int64_t and uint64_t
 				// If the uint64_t is larger than int64_t_max, the comparison atumatically fails.
