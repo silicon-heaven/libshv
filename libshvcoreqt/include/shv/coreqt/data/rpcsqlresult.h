@@ -40,9 +40,11 @@ public:
 	explicit RpcSqlResult() = default;
 	explicit RpcSqlResult(const shv::chainpack::RpcResponse &resp);
 
-	QVariant value(int row, int col) const;
-	QVariant value(int row, const QString &name) const;
 	std::optional<qsizetype> columnIndex(const QString &name) const;
+	QVariant value(qsizetype row, qsizetype col) const;
+	QVariant value(qsizetype row, const QString &name) const;
+	void setValue(qsizetype row, qsizetype col, const QVariant &val);
+	void setValue(qsizetype row, const QString &name, const QVariant &val);
 
 	bool isSelect() const {return !fields.isEmpty();}
 	shv::chainpack::RpcValue toRpcValue() const;

@@ -81,17 +81,35 @@ RpcSqlResult::RpcSqlResult(const shv::chainpack::RpcResponse &resp)
 	}
 }
 
-QVariant RpcSqlResult::value(int row, int col) const
+QVariant RpcSqlResult::value(qsizetype row, qsizetype col) const
 {
 	return rows.value(row).toList().value(col);
 }
 
-QVariant RpcSqlResult::value(int row, const QString &name) const
+QVariant RpcSqlResult::value(qsizetype row, const QString &name) const
 {
 	if (auto ix = columnIndex(name); ix.has_value()) {
 		return rows.value(row).toList().value(ix.value());
 	}
 	return {};
+}
+
+void RpcSqlResult::setValue(qsizetype row, qsizetype col, const QVariant &val)
+{
+	if (row >= 0 && row < rows.count()) {
+		auto r = rows[row].toList();
+		if (col >= 0 && col < r.count()) {
+			r[col] = val;
+			rows[row] = r;
+		}
+	}
+}
+
+void RpcSqlResult::setValue(qsizetype row, const QString &name, const QVariant &val)
+{
+	if (auto ix = columnIndex(name); ix.has_value()) {
+		setValue(row, ix.value(), val);
+	}
 }
 
 std::optional<qsizetype> RpcSqlResult::columnIndex(const QString &name) const
