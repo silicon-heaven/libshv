@@ -47,7 +47,12 @@ ChannelFilterDialog::ChannelFilterDialog(QWidget *parent, const QString &site_pa
 	ui->pbActions->setMenu(view_menu);
 	ui->gbFilterSettings->setChecked(true);
 
-	m_channelsFilterModel->createNodes(graph->channelPaths());
+	QMap<QString, QString> localized_channel_paths;
+
+	if (!graph->style().rawDataVisible())
+		localized_channel_paths = graph->localizedChannelPaths();
+
+	m_channelsFilterModel->createNodes(graph->channelPaths(), localized_channel_paths);
 
 	loadChannelFilterFomGraph();
 	reloadDataViewsCombobox();

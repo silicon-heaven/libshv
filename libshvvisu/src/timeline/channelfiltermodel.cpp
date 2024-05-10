@@ -17,7 +17,7 @@ ChannelFilterModel::ChannelFilterModel(QObject *parent)
 
 ChannelFilterModel::~ChannelFilterModel() = default;
 
-void ChannelFilterModel::createNodes(const QSet<QString> &channels)
+void ChannelFilterModel::createNodes(const QSet<QString> &channels, QMap<QString, QString> localized_paths)
 {
 	beginResetModel();
 
@@ -25,7 +25,7 @@ void ChannelFilterModel::createNodes(const QSet<QString> &channels)
 	sorted_channels.sort(Qt::CaseInsensitive);
 
 	for (const auto &p: sorted_channels) {
-		createNodesForPath(p);
+		createNodesForPath(p, localized_paths);
 	}
 
 	endResetModel();
@@ -90,7 +90,7 @@ QString ChannelFilterModel::shvPathFromItem(QStandardItem *it) const
 		path = shvPathFromItem(parent_it) + '/';
 	}
 
-	path.append(it->text());
+	path.append(it->data(UserData::ShvSubPath).toString());
 
 	return path;
 }
@@ -121,10 +121,10 @@ QStandardItem *ChannelFilterModel::shvPathToItem(const QString &shv_path, QStand
 
 		sl.removeFirst();
 
-		for (int r = 0; r < it->rowCount(); r++){
+		for (int r = 0; r < it->rowCount(); r++) {
 			QStandardItem *child_it = it->child(r, 0);
 
-			if (sub_path == child_it->text()){
+			if (sub_path == child_it->data(UserData::ShvSubPath).toString()) {
 				return (sl.empty()) ? child_it : shvPathToItem(sl.join("/"), child_it);
 			}
 		}
@@ -133,9 +133,15 @@ QStandardItem *ChannelFilterModel::shvPathToItem(const QString &shv_path, QStand
 	return nullptr;
 }
 
-void ChannelFilterModel::createNodesForPath(const QString &path)
+void ChannelFilterModel::createNodesForPath(const QString &path, QMap<QString, QString> localized_paths)
 {
 	QStringList path_list = path.split("/");
+	QStringList localized_path_list;
+
+	if (localized_paths.contains(path)) {
+		localized_path_list = localized_paths.value(path).split("/");
+	}
+
 	QStandardItem *parent_item = invisibleRootItem();
 
 	for(int i = 0; i < path_list.size(); i++) {
@@ -143,7 +149,13 @@ void ChannelFilterModel::createNodesForPath(const QString &path)
 		QStandardItem *it = shvPathToItem(sub_path, invisibleRootItem());
 
 		if (!it) {
-			auto *item = new QStandardItem(path_list.at(i));
+			QString label = path_list.at(i);
+			if (path_list.size() == localized_path_list.size()) {
+				label = localized_path_list.at(i);
+			}
+
+			auto *item = new QStandardItem(label);
+			item->setData(path_list.at(i), UserData::ShvSubPath);
 			item->setCheckable(true);
 			item->setFlags(item->flags() & ~Qt::ItemIsEditable);
 			bool has_valid_log_entry = (sub_path == path);

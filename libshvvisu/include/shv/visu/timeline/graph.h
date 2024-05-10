@@ -66,6 +66,7 @@ public:
 		SHV_VARIANTMAP_FIELD2(double, v, setV, erticalHeaderWidth, 15) // units
 		SHV_VARIANTMAP_FIELD2(bool, s, setS, eparateChannels, true)
 		SHV_VARIANTMAP_FIELD2(bool, y, setY, AxisVisible, true)
+		SHV_VARIANTMAP_FIELD2(bool, r, setR, awDataVisible, true)
 
 		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorForeground, QColor(0xc8, 0xc8, 0xc8))
 		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorPanel, QColor(0x41, 0x43, 0x43))
@@ -128,6 +129,7 @@ public:
 
 	void showAllChannels();
 	QSet<QString> channelPaths();
+	QMap<QString, QString> localizedChannelPaths();
 	QSet<QString> flatChannels();
 	const std::optional<ChannelFilter> &channelFilter() const;
 	void setChannelFilter(const std::optional<ChannelFilter> &filter);
@@ -214,6 +216,7 @@ public:
 
 	Q_SIGNAL void presentationDirty(const QRect &rect);
 	void emitPresentationDirty(const QRect &rect);
+	Q_SIGNAL void styleChanged();
 	Q_SIGNAL void layoutChanged();
 	Q_SIGNAL void channelFilterChanged();
 	Q_SIGNAL void channelContextMenuRequest(int channel_index, const QPoint &mouse_pos);

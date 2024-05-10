@@ -1185,7 +1185,7 @@ RpcValue ShvTypeInfo::applyTypeDescription(const chainpack::RpcValue &val, const
 		RpcValue::Map map;
 		for(const ShvFieldDescr &fld : type_descr.fields()) {
 			RpcValue result = fld.bitfieldValue(val.toUInt64());
-			result = applyTypeDescription(result, fld.typeName());
+			result = applyTypeDescription(result, fld.typeName(), translate_enums);
 			map[fld.name()] = result;
 		}
 		return map;

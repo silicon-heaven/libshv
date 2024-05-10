@@ -58,6 +58,11 @@ void GraphWidget::setGraph(Graph *g)
 	connect(m_graph, &Graph::layoutChanged, this, [this]() {
 		makeLayout();
 	});
+
+	connect(m_graph, &Graph::styleChanged, this, [this]() {
+		update();
+	});
+
 	connect(m_graph, &Graph::graphContextMenuRequest, this, &GraphWidget::showGraphContextMenu);
 	connect(m_graph, &Graph::channelContextMenuRequest, this, &GraphWidget::showChannelContextMenu);
 }

@@ -227,8 +227,19 @@ QSet<QString> Graph::channelPaths()
 {
 	QSet<QString> ret;
 
-	for (int i = 0; i < m_channels.count(); ++i) {
-		ret.insert(m_channels[i]->shvPath());
+	for (const auto &ch: m_channels) {
+		ret.insert(ch->shvPath());
+	}
+
+	return ret;
+}
+
+QMap<QString, QString> Graph::localizedChannelPaths()
+{
+	QMap<QString, QString> ret;
+
+	for (const auto &ch: m_channels) {
+		ret[ch->shvPath()] = m_model->channelInfo(ch->modelIndex()).localizedShvPath;
 	}
 
 	return ret;
@@ -238,8 +249,7 @@ QSet<QString> Graph::flatChannels()
 {
 	QSet<QString> ret;
 
-	for (qsizetype i = 0; i < m_channels.count(); ++i) {
-		GraphChannel *ch = m_channels[i];
+	for (const auto &ch: m_channels) {
 		if(isChannelFlat(ch)) {
 			ret.insert(ch->shvPath());
 		}
@@ -638,6 +648,7 @@ const Graph::Style& Graph::style() const
 void Graph::setStyle(const Graph::Style &st)
 {
 	m_style = st;
+	emit styleChanged();
 }
 
 void Graph::setDefaultChannelStyle(const GraphChannel::Style &st)
@@ -1411,7 +1422,8 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 		QTextOption path_row_text_option(Qt::AlignmentFlag::AlignBottom);
 		path_row_text_option.setWrapMode(QTextOption::NoWrap);
 		QRect path_rect(text_rect.left(), text_rect.bottom() - row_height, text_rect.width(), row_height);
-		text = elidedText(chi.shvPath, font, path_rect);
+
+		text = elidedText((m_style.rawDataVisible())? chi.shvPath: chi.localizedShvPath, font, path_rect);
 		painter->drawText(path_rect, text, path_row_text_option);
 	}
 

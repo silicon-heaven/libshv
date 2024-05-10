@@ -26,6 +26,7 @@ public:
 
 private:
 	void onShowChannelFilterClicked();
+	void onShowRawDataClicked();
 
 	timeline::Graph *m_graph = nullptr;
 	QString m_sitePath;

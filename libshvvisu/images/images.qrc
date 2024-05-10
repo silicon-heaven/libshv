@@ -18,6 +18,8 @@
 	<file>media-step-backward.svg</file>
 	<file>media-step-forward.svg</file>
 	<file>media-stop.svg</file>
+	<file>raw.svg</file>
+	<file>raw-off.svg</file>
 	<file>settings.svg</file>
 	<file>zoom-fitall.svg</file>
 	<file>zoom-fitheight.svg</file>

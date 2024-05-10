@@ -334,6 +334,16 @@ void GraphModel::setChannelName(qsizetype channel_ix, const QString &name)
 	}
 }
 
+void GraphModel::setLocalizedChannelPath(qsizetype channel_ix, const QString &path)
+{
+	if (channel_ix < m_channelsInfo.count()) {
+		m_channelsInfo[channel_ix].localizedShvPath = path;
+	}
+	else {
+		shvWarning() << "Cannot find channel with index" << channel_ix;
+	}
+}
+
 QString GraphModel::typeDescrFieldName(const shv::core::utils::ShvTypeDescr &type_descr, int field_index)
 {
 	for (const auto &field : type_descr.fields()) {

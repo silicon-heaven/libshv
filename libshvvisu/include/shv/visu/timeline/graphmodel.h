@@ -24,6 +24,7 @@ public:
 	{
 	public:
 		QString shvPath;
+		QString localizedShvPath;
 		QString name;
 		shv::core::utils::ShvTypeDescr typeDescr;
 	};
@@ -43,6 +44,8 @@ public:
 	virtual qsizetype channelCount() const;
 	const ChannelInfo& channelInfo(qsizetype channel_ix) const;
 	void setChannelName(qsizetype channel_ix, const QString &name);
+	void setLocalizedChannelPath(qsizetype channel_ix, const QString &path);
+
 	QString typeDescrFieldName( const shv::core::utils::ShvTypeDescr &type_descr, int field_index);
 	const shv::core::utils::ShvTypeInfo &typeInfo() const;
 	void setTypeInfo(const shv::core::utils::ShvTypeInfo &type_info);
