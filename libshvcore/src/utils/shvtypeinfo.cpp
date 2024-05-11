@@ -4,9 +4,9 @@
 #include <shv/core/utils.h>
 #include <shv/core/log.h>
 
-#include<shv/chainpack/metamethod.h>
+#include <shv/chainpack/metamethod.h>
 
-#include <cassert>
+#include <algorithm>
 
 using namespace std;
 using namespace shv::chainpack;
