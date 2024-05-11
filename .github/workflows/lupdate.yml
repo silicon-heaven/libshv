@@ -25,6 +25,7 @@ jobs:
         with:
           qt_version: 6.5.3
           use_qt6: ON
+          ccache: 'false'
           modules: qtserialport qtwebsockets
 
       - name: Refresh translation files
