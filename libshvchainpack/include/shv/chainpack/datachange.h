@@ -28,7 +28,7 @@ public:
 public:
 	enum GetValueAgeOption {DONT_CARE_TS = -2, USE_CACHE = -1, RELOAD_FORCE, RELOAD_OLDER};
 	static constexpr int NO_SHORT_TIME = -1;
-	enum ValueFlag {Snapshot = 0, Spontaneous, DirtyValue, ValueFlagCount};
+	enum ValueFlag {Snapshot = 0, Spontaneous, Provisional, ValueFlagCount};
 	using ValueFlags = unsigned;
 	static constexpr ValueFlags NO_VALUE_FLAGS = 0;
 	static const char* valueFlagToString(ValueFlag flag);
@@ -58,8 +58,8 @@ public:
 	void setValueFlags(ValueFlags st);
 	ValueFlags valueFlags() const;
 
-	bool isDirtyValue() const;
-	void setDirtyValue(bool b);
+	bool isProvisional() const;
+	void setProvisional(bool b);
 
 	bool isSpontaneous() const;
 	void setSpontaneous(bool b);
