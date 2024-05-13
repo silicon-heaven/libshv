@@ -193,7 +193,7 @@ chainpack::RpcValue LocalFSNode::ndRead(const QString &path, qint64 offset, qint
 	if(f.open(QFile::ReadOnly)) {
 		qint64 sz = f.size() - offset;
 		if(sz <= 0)
-			return {};
+			return RpcValue::Blob{};
 		sz = std::min(sz, size);
 		f.seek(offset);
 		RpcValue::Blob blob;
