@@ -1403,7 +1403,7 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 
 	QRect text_rect = ch->m_layout.verticalHeaderRect.adjusted(2*header_inset, header_inset, -header_inset, -header_inset);
 
-	if (chi.name.isEmpty()) {
+	if (chi.name.isEmpty() || m_style.rawDataVisible()) {
 		painter->drawText(text_rect, chi.shvPath);
 	}
 	else {

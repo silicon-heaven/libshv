@@ -21,7 +21,9 @@ public:
 
 	QColor color() const;
 	QString shvPath() const;
+	QString localizedShvPath() const;
 	qsizetype channelIndex() const;
+	bool isRawDataVisible() const;
 
 	void setCurrentTime(timemsec_t time);
 	timemsec_t currentTime() const;

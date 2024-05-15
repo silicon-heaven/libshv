@@ -154,7 +154,7 @@ public:
 	QPoint dataToPos(qsizetype ch_ix, const Sample &s) const;
 
 	QString timeToStringTZ(timemsec_t time) const;
-	QVariantMap sampleValues(qsizetype channel_ix, const Sample &s) const;
+	virtual QVariantMap sampleValues(qsizetype channel_ix, const Sample &s) const;
 	const QRect& rect() const;
 	const QRect& miniMapRect() const;
 	const QRect& cornerCellRect() const;

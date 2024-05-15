@@ -29,7 +29,7 @@
    <item>
     <widget class="QToolButton" name="pbShowRawData">
      <property name="toolTip">
-      <string>Show filter dialog</string>
+      <string>Show/hide raw data</string>
      </property>
      <property name="text">
       <string>...</string>

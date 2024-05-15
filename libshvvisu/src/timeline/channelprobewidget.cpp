@@ -17,7 +17,12 @@ ChannelProbeWidget::ChannelProbeWidget(ChannelProbe *probe, QWidget *parent) :
 	ui->setupUi(this);
 	m_probe = probe;
 
-	ui->lblTitle->setText(m_probe->shvPath());
+	if (m_probe->isRawDataVisible()) {
+		ui->lblTitle->setText(m_probe->shvPath());
+	}
+	else {
+		ui->lblTitle->setText(m_probe->localizedShvPath());
+	}
 
 	ui->edCurentTime->setStyleSheet("background-color: white");
 	ui->fHeader->setStyleSheet("background-color:" + m_probe->color().name() + ";");
@@ -144,27 +149,40 @@ void ChannelProbeWidget::loadValues()
 	QVariantMap values = m_probe->sampleValues();
 	auto pv = values.value(Graph::KEY_SAMPLE_PRETTY_VALUE);
 #if QT_VERSION_MAJOR >= 6
-	if(pv.typeId() != QMetaType::QVariantMap) {
+	if(pv.typeId() == QMetaType::QVariantMap) {
 #else
-	if(pv.type() != QVariant::Map) {
+	if(pv.type() == QVariant::Map) {
 #endif
-		pv = QVariantMap{{ m_probe->shvPath().split('/').last(), pv.toString() }};
+		auto m = pv.toMap();
+		QMapIterator<QString, QVariant> i(m);
+		while (i.hasNext()) {
+			i.next();
+			int ix = ui->twData->rowCount();
+			ui->twData->insertRow(ix);
+
+			auto *item = new QTableWidgetItem(i.key());
+			item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+			ui->twData->setItem(ix, DataTableColumn::ColProperty, item);
+
+			item = new QTableWidgetItem(i.value().toString());
+			item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+			ui->twData->setItem(ix, DataTableColumn::ColValue, item);
+		}
 	}
-	auto m = pv.toMap();
-	QMapIterator<QString, QVariant> i(m);
-	while (i.hasNext()) {
-		i.next();
+	else {
 		int ix = ui->twData->rowCount();
 		ui->twData->insertRow(ix);
 
-		auto *item = new QTableWidgetItem(i.key());
+		auto *item = new QTableWidgetItem();
 		item->setFlags(item->flags() & ~Qt::ItemIsEditable);
 		ui->twData->setItem(ix, DataTableColumn::ColProperty, item);
+		ui->twData->hideColumn(DataTableColumn::ColProperty);
 
-		item = new QTableWidgetItem(i.value().toString());
+		item = new QTableWidgetItem(pv.toString());
 		item->setFlags(item->flags() & ~Qt::ItemIsEditable);
 		ui->twData->setItem(ix, DataTableColumn::ColValue, item);
 	}
+
 }
 
 ChannelProbeWidget::FrameSection ChannelProbeWidget::getFrameSection()
