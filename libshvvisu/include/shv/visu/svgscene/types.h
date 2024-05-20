@@ -28,6 +28,7 @@ struct SHVVISU_DECL_EXPORT Types
 	static const QString ATTR_ID;
 	static const QString ATTR_CHILD_ID;
 	static const QString ATTR_SHV_PATH;
+	static const QString ATTR_SHV_PROPERTY_PATH;
 	static const QString ATTR_SHV_TYPE;
 	static const QString ATTR_SHV_VISU_TYPE;
 	static const QString ATTR_SHV_GRAPHICS_TYPE;
