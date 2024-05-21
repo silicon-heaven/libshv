@@ -64,9 +64,9 @@ public:
 		SHV_VARIANTMAP_FIELD2(double, y, setY, AxisWidth, 2.5) // units
 		SHV_VARIANTMAP_FIELD2(double, m, setM, iniMapHeight, 2) // units
 		SHV_VARIANTMAP_FIELD2(double, v, setV, erticalHeaderWidth, 15) // units
-		SHV_VARIANTMAP_FIELD2(bool, s, setS, eparateChannels, true)
-		SHV_VARIANTMAP_FIELD2(bool, y, setY, AxisVisible, true)
-		SHV_VARIANTMAP_FIELD2(bool, r, setR, awDataVisible, true)
+		SHV_VARIANTMAP_FIELD2(bool, is, set, SeparateChannels, true)
+		SHV_VARIANTMAP_FIELD2(bool, is, set, YAxisVisible, true)
+		SHV_VARIANTMAP_FIELD2(bool, is, set, RawDataVisible, true)
 
 		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorForeground, QColor(0xc8, 0xc8, 0xc8))
 		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorPanel, QColor(0x41, 0x43, 0x43))

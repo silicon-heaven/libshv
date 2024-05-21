@@ -26,7 +26,7 @@ ChannelFilterDialog::ChannelFilterDialog(QWidget *parent, const QString &site_pa
 	m_sitePath = site_path;
 	m_graph = graph;
 
-	m_channelsFilterModel = new ChannelFilterModel(this);
+	m_channelsFilterModel = new ChannelFilterModel(this, m_graph);
 
 	m_channelsFilterProxyModel = new ChannelFilterSortFilterProxyModel(this);
 	m_channelsFilterProxyModel->setSourceModel(m_channelsFilterModel);
@@ -47,12 +47,7 @@ ChannelFilterDialog::ChannelFilterDialog(QWidget *parent, const QString &site_pa
 	ui->pbActions->setMenu(view_menu);
 	ui->gbFilterSettings->setChecked(true);
 
-	QMap<QString, QString> localized_channel_paths;
-
-	if (!graph->style().rawDataVisible())
-		localized_channel_paths = graph->localizedChannelPaths();
-
-	m_channelsFilterModel->createNodes(graph->channelPaths(), localized_channel_paths);
+	m_channelsFilterModel->createNodes();
 
 	loadChannelFilterFomGraph();
 	reloadDataViewsCombobox();

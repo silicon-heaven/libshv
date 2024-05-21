@@ -85,6 +85,10 @@
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Show/hide raw data</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>shv::visu::logview::DlgLogInspector</name>

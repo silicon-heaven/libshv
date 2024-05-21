@@ -39,7 +39,7 @@ void DataViewWidget::init(const QString &site_path, timeline::Graph *graph)
 		ui->pbShowChannelFilterDialog->setIcon(m_graph->channelFilter()? QIcon(QStringLiteral(":/shv/visu/images/filter.svg")): QIcon(QStringLiteral(":/shv/visu/images/filter-off.svg")));
 	});
 
-	ui->pbShowRawData->setIcon(m_graph->style().rawDataVisible()? QIcon(QStringLiteral(":/shv/visu/images/raw.svg")): QIcon(QStringLiteral(":/shv/visu/images/raw-off.svg")));
+	ui->pbShowRawData->setIcon(m_graph->style().isRawDataVisible()? QIcon(QStringLiteral(":/shv/visu/images/raw.svg")): QIcon(QStringLiteral(":/shv/visu/images/raw-off.svg")));
 }
 
 void DataViewWidget::onShowChannelFilterClicked()
@@ -56,10 +56,10 @@ void DataViewWidget::onShowChannelFilterClicked()
 void DataViewWidget::onShowRawDataClicked()
 {
 	tl::Graph::Style graph_style = m_graph->style();
-	graph_style.setRawDataVisible(!m_graph->style().rawDataVisible());
+	graph_style.setRawDataVisible(!m_graph->style().isRawDataVisible());
 	m_graph->setStyle(graph_style);
 
-	ui->pbShowRawData->setIcon(m_graph->style().rawDataVisible()? QIcon(QStringLiteral(":/shv/visu/images/raw.svg")): QIcon(QStringLiteral(":/shv/visu/images/raw-off.svg")));
+	ui->pbShowRawData->setIcon(m_graph->style().isRawDataVisible()? QIcon(QStringLiteral(":/shv/visu/images/raw.svg")): QIcon(QStringLiteral(":/shv/visu/images/raw-off.svg")));
 }
 
 }

@@ -8,27 +8,60 @@
 
 namespace shv::visu::timeline {
 
-ChannelFilterModel::ChannelFilterModel(QObject *parent)
+ChannelFilterModel::ChannelFilterModel(QObject *parent, Graph *graph)
 	: Super(parent)
 {
+	m_graph = graph;
 	setColumnCount(1);
 	setHorizontalHeaderLabels(QStringList{QString()});
 }
 
 ChannelFilterModel::~ChannelFilterModel() = default;
 
-void ChannelFilterModel::createNodes(const QSet<QString> &channels, QMap<QString, QString> localized_paths)
+void ChannelFilterModel::createNodes()
 {
 	beginResetModel();
 
+	const auto channels = m_graph->channelPaths();
 	QStringList sorted_channels = QStringList(channels.begin(), channels.end());
 	sorted_channels.sort(Qt::CaseInsensitive);
 
+	QMap<QString, QString> localized_channel_paths;
+
+	if (!m_graph->style().isRawDataVisible())
+		localized_channel_paths = m_graph->localizedChannelPaths();
+
 	for (const auto &p: sorted_channels) {
-		createNodesForPath(p, localized_paths);
+		createNodesForPath(p, localized_channel_paths);
 	}
 
 	endResetModel();
+}
+
+QVariant ChannelFilterModel::data(const QModelIndex &index, int role) const
+{
+	switch (role) {
+	case Qt::DisplayRole: {
+		if (index.isValid()) {
+			QStandardItem *it = itemFromIndex(index);
+			return (m_graph->style().isRawDataVisible())? it->data(UserData::DirName): it->data(UserData::LocalizedDirName);
+		}
+	}
+	};
+	return Super::data(index, role);
+}
+
+bool ChannelFilterModel::setData(const QModelIndex &ix, const QVariant &val, int role)
+{
+	bool ret = Super::setData(ix, val, role);
+
+	if (role == Qt::CheckStateRole) {
+		QStandardItem *it = itemFromIndex(ix);
+		setChildItemsCheckedState(it, static_cast<Qt::CheckState>(val.toInt()));
+		fixChildItemsCheckBoxesIntegrity(topVisibleParentItem(it));
+	}
+
+	return ret;
 }
 
 QSet<QString> ChannelFilterModel::permittedChannels()
@@ -90,7 +123,7 @@ QString ChannelFilterModel::shvPathFromItem(QStandardItem *it) const
 		path = shvPathFromItem(parent_it) + '/';
 	}
 
-	path.append(it->data(UserData::ShvSubPath).toString());
+	path.append(it->data(UserData::DirName).toString());
 
 	return path;
 }
@@ -124,7 +157,7 @@ QStandardItem *ChannelFilterModel::shvPathToItem(const QString &shv_path, QStand
 		for (int r = 0; r < it->rowCount(); r++) {
 			QStandardItem *child_it = it->child(r, 0);
 
-			if (sub_path == child_it->data(UserData::ShvSubPath).toString()) {
+			if (sub_path == child_it->data(UserData::DirName).toString()) {
 				return (sl.empty()) ? child_it : shvPathToItem(sl.join("/"), child_it);
 			}
 		}
@@ -149,13 +182,14 @@ void ChannelFilterModel::createNodesForPath(const QString &path, QMap<QString, Q
 		QStandardItem *it = shvPathToItem(sub_path, invisibleRootItem());
 
 		if (!it) {
-			QString label = path_list.at(i);
+			QString dir_name = path_list.at(i);
+			auto *item = new QStandardItem(dir_name);
+			item->setData(dir_name, UserData::DirName);
+
 			if (path_list.size() == localized_path_list.size()) {
-				label = localized_path_list.at(i);
+				item->setData(localized_path_list.at(i), UserData::LocalizedDirName);
 			}
 
-			auto *item = new QStandardItem(label);
-			item->setData(path_list.at(i), UserData::ShvSubPath);
 			item->setCheckable(true);
 			item->setFlags(item->flags() & ~Qt::ItemIsEditable);
 			bool has_valid_log_entry = (sub_path == path);
@@ -170,19 +204,6 @@ void ChannelFilterModel::createNodesForPath(const QString &path, QMap<QString, Q
 			parent_item = it;
 		}
 	}
-}
-
-bool ChannelFilterModel::setData(const QModelIndex &ix, const QVariant &val, int role)
-{
-	bool ret = Super::setData(ix, val, role);
-
-	if (role == Qt::CheckStateRole) {
-		QStandardItem *it = itemFromIndex(ix);
-		setChildItemsCheckedState(it, static_cast<Qt::CheckState>(val.toInt()));
-		fixChildItemsCheckBoxesIntegrity(topVisibleParentItem(it));
-	}
-
-	return ret;
 }
 
 void ChannelFilterModel::setChildItemsCheckedState(QStandardItem *it, Qt::CheckState check_state)

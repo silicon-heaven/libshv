@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../shvvisuglobal.h"
+#include "graph.h"
 
 #include <QStandardItemModel>
 #include <shv/core/stringview.h>
@@ -18,17 +19,19 @@ private:
 	using Super = QStandardItemModel;
 
 public:
-	ChannelFilterModel(QObject *parent = nullptr);
+	ChannelFilterModel(QObject *parent, Graph *graph);
 	~ChannelFilterModel() Q_DECL_OVERRIDE;
 
-	void createNodes(const QSet<QString> &channels, QMap<QString, QString> localized_paths);
+	void createNodes();
+	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+	bool setData ( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
 
 	QSet<QString> permittedChannels();
 	void setPermittedChannels(const QSet<QString> &channels);
 	void setItemCheckState(const QModelIndex &mi, Qt::CheckState check_state);
 	void fixCheckBoxesIntegrity();
 protected:
-	enum UserData {ValidLogEntry = Qt::UserRole + 1, ShvSubPath};
+	enum UserData {ValidLogEntry = Qt::UserRole + 1, DirName, LocalizedDirName};
 
 	QString shvPathFromIndex(const QModelIndex &mi);
 	QModelIndex shvPathToIndex(const QString &shv_path);
@@ -39,12 +42,12 @@ protected:
 	void createNodesForPath(const QString &path, QMap<QString, QString> localized_paths = {});
 
 	void selectedChannels_helper(QSet<QString> *channels, QStandardItem *it);
-	bool setData ( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
 	void setChildItemsCheckedState(QStandardItem *it, Qt::CheckState check_state);
 	void fixChildItemsCheckBoxesIntegrity(QStandardItem *it);
 	bool hasCheckedChild(QStandardItem *it);
 
 	QStandardItem* topVisibleParentItem(QStandardItem *it);
+	Graph *m_graph = nullptr;
 };
 
 }

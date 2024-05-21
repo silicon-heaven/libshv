@@ -96,7 +96,7 @@ qsizetype ChannelProbe::channelIndex() const
 
 bool ChannelProbe::isRawDataVisible() const
 {
-	return m_graph->style().rawDataVisible();
+	return m_graph->style().isRawDataVisible();
 }
 
 }
