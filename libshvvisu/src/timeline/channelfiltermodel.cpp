@@ -166,7 +166,7 @@ QStandardItem *ChannelFilterModel::shvPathToItem(const QString &shv_path, QStand
 	return nullptr;
 }
 
-void ChannelFilterModel::createNodesForPath(const QString &path, QMap<QString, QString> localized_paths)
+void ChannelFilterModel::createNodesForPath(const QString &path, const QMap<QString, QString> &localized_paths)
 {
 	QStringList path_list = path.split("/");
 	QStringList localized_path_list;
