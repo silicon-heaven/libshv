@@ -154,15 +154,17 @@ void ChannelProbeWidget::loadValues()
 	if(pv.type() == QVariant::Map) {
 #endif
 		auto m = pv.toMap();
-		for (const auto &[key, val] : m.asKeyValueRange()) {
+		QMapIterator<QString, QVariant> i(m);
+		while (i.hasNext()) {
+			i.next();
 			int ix = ui->twData->rowCount();
 			ui->twData->insertRow(ix);
 
-			auto *item = new QTableWidgetItem(key);
+			auto *item = new QTableWidgetItem(i.key());
 			item->setFlags(item->flags() & ~Qt::ItemIsEditable);
 			ui->twData->setItem(ix, DataTableColumn::ColProperty, item);
 
-			item = new QTableWidgetItem(val.toString());
+			item = new QTableWidgetItem(i.value().toString());
 			item->setFlags(item->flags() & ~Qt::ItemIsEditable);
 			ui->twData->setItem(ix, DataTableColumn::ColValue, item);
 		}
