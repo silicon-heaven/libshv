@@ -5,7 +5,7 @@
     <name>shv::visu::ErrorLogModel</name>
     <message>
         <source>Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Poziom</translation>
     </message>
     <message>
         <source>Time stamp</source>
@@ -13,176 +13,176 @@
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiadomość</translation>
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Dane</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::LogWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>formularz</translation>
     </message>
     <message>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtr</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyczyść</translation>
     </message>
     <message>
         <source>Resize columns to fit content</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień rozmiar kolumn, aby dopasować je do treści</translation>
     </message>
     <message>
         <source>Event log options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opcje dziennika zdarzeń</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <source>Maximal log length</source>
-        <translation type="unfinished"></translation>
+        <translation>Maksymalna długość dziennika</translation>
     </message>
     <message>
         <source>Get number</source>
-        <translation type="unfinished"></translation>
+        <translation>Uzyskaj numer</translation>
     </message>
     <message>
         <source>Maximal log row count:</source>
-        <translation type="unfinished"></translation>
+        <translation>Maksymalna liczba wierszy dziennika:</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::LogWidgetTableView</name>
     <message>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiuj</translation>
     </message>
     <message>
         <source>Ctrl+C</source>
         <comment>Copy selection</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+C</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::logview::DataViewWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Formularz</translation>
     </message>
     <message>
         <source>Show filter dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż okno dialogowe filtra</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::logview::DlgLogInspector</name>
     <message>
         <source>ChainPack</source>
-        <translation type="unfinished"></translation>
+        <translation>Chainpack</translation>
     </message>
     <message>
         <source>Cpon</source>
-        <translation type="unfinished"></translation>
+        <translation>Cpon</translation>
     </message>
     <message>
         <source>CSV</source>
-        <translation type="unfinished"></translation>
+        <translation>CSV</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Ostrzeżenie</translation>
     </message>
     <message>
         <source>Invalid ChainPack file: </source>
-        <translation type="unfinished"></translation>
+        <translation>Nieprawidłowy plik Chainpack </translation>
     </message>
     <message>
         <source>Invalid CPON file: </source>
-        <translation type="unfinished"></translation>
+        <translation>Nieprawidłowy plik CPON </translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kopiuj</translation>
     </message>
     <message>
         <source>Loadfile</source>
-        <translation type="unfinished"></translation>
+        <translation>Wgraj plik</translation>
     </message>
     <message>
         <source>Cannot open file &apos;%1&apos; for read.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można otworzyć pliku &apos;%1&apos; do odczytu.</translation>
     </message>
     <message>
         <source>Savefile</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz plik</translation>
     </message>
     <message>
         <source>Cannot open file &apos;%1&apos; for write.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można otworzyć pliku &apos;%1&apos; do odczytania.</translation>
     </message>
     <message>
         <source>Log inspector</source>
-        <translation type="unfinished"></translation>
+        <translation>Inspekcja dziennika</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation>TextLabel</translation>
     </message>
     <message>
         <source>&amp;Since</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Since</translation>
     </message>
     <message>
         <source>Not defined</source>
-        <translation type="unfinished"></translation>
+        <translation>Niezdefiniowany</translation>
     </message>
     <message>
         <source>yyyy-MM-dd hh:mm:ss</source>
-        <translation type="unfinished"></translation>
+        <translation>yyyy-MM-dd hh:mm:ss</translation>
     </message>
     <message>
         <source>&amp;Until</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Until</translation>
     </message>
     <message>
         <source>Time zone</source>
-        <translation type="unfinished"></translation>
+        <translation>Strefa czasowa</translation>
     </message>
     <message>
         <source>&amp;Options</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Opcje</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Pobierz</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opcje</translation>
     </message>
     <message>
         <source> sec</source>
-        <translation type="unfinished"></translation>
+        <translation> Sekunda</translation>
     </message>
     <message>
         <source>Max record count</source>
-        <translation type="unfinished"></translation>
+        <translation>Maksymalna liczba rekordów</translation>
     </message>
     <message>
         <source>SHV &amp;Path</source>
-        <translation type="unfinished"></translation>
+        <translation>SHV &amp;Path</translation>
     </message>
     <message>
         <source>paths dict</source>
@@ -210,50 +210,50 @@
     </message>
     <message>
         <source>with snapshot</source>
-        <translation type="unfinished"></translation>
+        <translation>z snapshotem</translation>
     </message>
     <message>
         <source>with type info</source>
-        <translation type="unfinished"></translation>
+        <translation>z informacją o rodzaju</translation>
     </message>
     <message>
         <source>Graph</source>
-        <translation type="unfinished"></translation>
+        <translation>Graficzny</translation>
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Dane</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Info</translation>
     </message>
     <message>
         <source>Resize columns to fit width</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień rozmiar kolumn, aby dopasować je do szerokości</translation>
     </message>
     <message>
         <source>Load data</source>
-        <translation type="unfinished"></translation>
+        <translation>Załaduj dane</translation>
     </message>
     <message>
         <source>Save data</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz dane</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::logview::LogModel</name>
     <message>
         <source>DateTime</source>
-        <translation type="unfinished"></translation>
+        <translation>data i godzina</translation>
     </message>
     <message>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation>ścieżka</translation>
     </message>
     <message>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Wartość</translation>
     </message>
     <message>
         <source>ShortTime</source>
@@ -261,7 +261,7 @@
     </message>
     <message>
         <source>Domain</source>
-        <translation type="unfinished"></translation>
+        <translation>Domena</translation>
     </message>
     <message>
         <source>ValueFlags</source>
