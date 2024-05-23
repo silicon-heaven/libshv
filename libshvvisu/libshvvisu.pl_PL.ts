@@ -360,141 +360,141 @@
     </message>
     <message>
         <source>Matching text</source>
-        <translation type="unfinished"></translation>
+        <translation>Pasujący tekst</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::timeline::ChannelProbeWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Formularz</translation>
     </message>
     <message>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Tytuł</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::timeline::Graph</name>
     <message>
         <source>%1.%2 sec</source>
-        <translation type="unfinished"></translation>
+        <translation>%1.%2 sec</translation>
     </message>
     <message>
         <source>%1:%2.%3 min</source>
-        <translation type="unfinished"></translation>
+        <translation>%1:%2.%3 min</translation>
     </message>
     <message>
         <source>%1:%2:%3</source>
         <comment>time</comment>
-        <translation type="unfinished"></translation>
+        <translation>%1:%2:%3</translation>
     </message>
     <message>
         <source>%1 day %1:%2:%3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 dzien %1:%2:%3</translation>
     </message>
     <message>
         <source>t1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>t1: %1</translation>
     </message>
     <message>
         <source>duration: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>czas trwania : %1</translation>
     </message>
     <message>
         <source>y1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>y1: %1</translation>
     </message>
     <message>
         <source>diff: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>roznica: %1</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::timeline::GraphWidget</name>
     <message>
         <source>Path:</source>
-        <translation type="unfinished"></translation>
+        <translation>ścieżka:</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nazwa:</translation>
     </message>
     <message>
         <source>Zoom X axis to selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Powiększ oś X do zaznaczenia</translation>
     </message>
     <message>
         <source>Zoom channel to selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Powiększ kanał do zaznaczenia</translation>
     </message>
     <message>
         <source>Show selection info</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż informacje o wyborze</translation>
     </message>
     <message>
         <source>t1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>t1: %1</translation>
     </message>
     <message>
         <source>t2: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>t2: %2</translation>
     </message>
     <message>
         <source>duration: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>czas trwania: %1</translation>
     </message>
     <message>
         <source>y1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>y1: %1</translation>
     </message>
     <message>
         <source>y2: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>y2: %2</translation>
     </message>
     <message>
         <source>diff: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>roznica : %1</translation>
     </message>
     <message>
         <source>Selection info</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz informacje</translation>
     </message>
     <message>
         <source>Normal size</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalny rozmiar</translation>
     </message>
     <message>
         <source>Maximize</source>
-        <translation type="unfinished"></translation>
+        <translation>Maksymalizuj</translation>
     </message>
     <message>
         <source>Set probe (Ctrl + Left mouse)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw sondę (Ctrl + lewy przycisk myszy)</translation>
     </message>
     <message>
         <source>Add probe (Ctrl + Shift + Left mouse)</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj sondę (Ctrl + Shift + Lewa mysz)</translation>
     </message>
     <message>
         <source>Reset X-zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Zresetuj przyblizenie X</translation>
     </message>
     <message>
         <source>Reset Y-zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Zresetuj przybliżenie Y</translation>
     </message>
     <message>
         <source>Hide Y axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukryj oś Y</translation>
     </message>
     <message>
         <source>Show Y axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż oś Y</translation>
     </message>
 </context>
 </TS>
