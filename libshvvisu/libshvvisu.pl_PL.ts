@@ -198,11 +198,11 @@
     </message>
     <message>
         <source>Timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>Przekroczenie limitu czasu</translation>
     </message>
     <message>
         <source>Path pa&amp;ttern</source>
-        <translation type="unfinished"></translation>
+        <translation>Path pa&amp;ttern</translation>
     </message>
     <message>
         <source>use &amp;history provider</source>
@@ -269,62 +269,62 @@
     </message>
     <message>
         <source>UserId</source>
-        <translation type="unfinished"></translation>
+        <translation>UserID</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::timeline::ChannelFilterDialog</name>
     <message>
         <source>Discard changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Odrzuć zmiany</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz</translation>
     </message>
     <message>
         <source>Save as</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz jako</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportuj</translation>
     </message>
     <message>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Importuj</translation>
     </message>
     <message>
         <source>Input file name</source>
-        <translation type="unfinished"></translation>
+        <translation>Wpisz nazwe pliku</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Bład</translation>
     </message>
     <message>
         <source>Cannot open graph setting file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można otworzyć pliku konfiguracji wykresu.</translation>
     </message>
     <message>
         <source>Import as</source>
-        <translation type="unfinished"></translation>
+        <translation>Importuj jako</translation>
     </message>
     <message>
         <source>Input view name</source>
-        <translation type="unfinished"></translation>
+        <translation>Wprowadź nazwe</translation>
     </message>
     <message>
         <source>Failed to save view: name is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Niepowodzenie zapisania: Nazwa jest pusta.</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozszerz</translation>
     </message>
     <message>
         <source>Collapse</source>
@@ -332,31 +332,31 @@
     </message>
     <message>
         <source>Expand all nodes</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozwiń wszystkie węzły</translation>
     </message>
     <message>
         <source>Channels filter dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Okno dialogowe filtra kanałów</translation>
     </message>
     <message>
         <source>Channel filter is enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtr kanałow jest aktywny</translation>
     </message>
     <message>
         <source>Data view</source>
-        <translation type="unfinished"></translation>
+        <translation>Widok danych</translation>
     </message>
     <message>
         <source>Check channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Sprawdz kanały</translation>
     </message>
     <message>
         <source>Uncheck channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Odznacz kanały</translation>
     </message>
     <message>
         <source>Uncheck channels without data changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Odznacz kanały bez zmian danych</translation>
     </message>
     <message>
         <source>Matching text</source>
