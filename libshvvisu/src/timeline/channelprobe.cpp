@@ -83,9 +83,20 @@ QString ChannelProbe::shvPath() const
 	return m_graph->model()->channelInfo(ch->modelIndex()).shvPath;
 }
 
+QString ChannelProbe::localizedShvPath() const
+{
+	const GraphChannel *ch = m_graph->channelAt(m_channelIndex);
+	return m_graph->model()->channelInfo(ch->modelIndex()).localizedShvPath;
+}
+
 qsizetype ChannelProbe::channelIndex() const
 {
 	return m_channelIndex;
+}
+
+bool ChannelProbe::isRawDataVisible() const
+{
+	return m_graph->style().isRawDataVisible();
 }
 
 }

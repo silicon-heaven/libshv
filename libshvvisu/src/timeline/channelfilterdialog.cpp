@@ -26,7 +26,7 @@ ChannelFilterDialog::ChannelFilterDialog(QWidget *parent, const QString &site_pa
 	m_sitePath = site_path;
 	m_graph = graph;
 
-	m_channelsFilterModel = new ChannelFilterModel(this);
+	m_channelsFilterModel = new ChannelFilterModel(this, m_graph);
 
 	m_channelsFilterProxyModel = new ChannelFilterSortFilterProxyModel(this);
 	m_channelsFilterProxyModel->setSourceModel(m_channelsFilterModel);
@@ -47,7 +47,7 @@ ChannelFilterDialog::ChannelFilterDialog(QWidget *parent, const QString &site_pa
 	ui->pbActions->setMenu(view_menu);
 	ui->gbFilterSettings->setChecked(true);
 
-	m_channelsFilterModel->createNodes(graph->channelPaths());
+	m_channelsFilterModel->createNodes();
 
 	loadChannelFilterFomGraph();
 	reloadDataViewsCombobox();

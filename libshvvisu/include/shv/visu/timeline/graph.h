@@ -64,8 +64,9 @@ public:
 		SHV_VARIANTMAP_FIELD2(double, y, setY, AxisWidth, 2.5) // units
 		SHV_VARIANTMAP_FIELD2(double, m, setM, iniMapHeight, 2) // units
 		SHV_VARIANTMAP_FIELD2(double, v, setV, erticalHeaderWidth, 15) // units
-		SHV_VARIANTMAP_FIELD2(bool, s, setS, eparateChannels, true)
-		SHV_VARIANTMAP_FIELD2(bool, y, setY, AxisVisible, true)
+		SHV_VARIANTMAP_FIELD2(bool, is, set, SeparateChannels, true)
+		SHV_VARIANTMAP_FIELD2(bool, is, set, YAxisVisible, true)
+		SHV_VARIANTMAP_FIELD2(bool, is, set, RawDataVisible, true)
 
 		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorForeground, QColor(0xc8, 0xc8, 0xc8))
 		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorPanel, QColor(0x41, 0x43, 0x43))
@@ -128,6 +129,7 @@ public:
 
 	void showAllChannels();
 	QSet<QString> channelPaths();
+	QMap<QString, QString> localizedChannelPaths();
 	QSet<QString> flatChannels();
 	const std::optional<ChannelFilter> &channelFilter() const;
 	void setChannelFilter(const std::optional<ChannelFilter> &filter);
@@ -152,7 +154,7 @@ public:
 	QPoint dataToPos(qsizetype ch_ix, const Sample &s) const;
 
 	QString timeToStringTZ(timemsec_t time) const;
-	QVariantMap sampleValues(qsizetype channel_ix, const Sample &s) const;
+	virtual QVariantMap sampleValues(qsizetype channel_ix, const Sample &s) const;
 	const QRect& rect() const;
 	const QRect& miniMapRect() const;
 	const QRect& cornerCellRect() const;
@@ -214,6 +216,7 @@ public:
 
 	Q_SIGNAL void presentationDirty(const QRect &rect);
 	void emitPresentationDirty(const QRect &rect);
+	Q_SIGNAL void styleChanged();
 	Q_SIGNAL void layoutChanged();
 	Q_SIGNAL void channelFilterChanged();
 	Q_SIGNAL void channelContextMenuRequest(int channel_index, const QPoint &mouse_pos);
