@@ -17,7 +17,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include <regex>
+#include <ranges>
 
 #define logWShvJournal() shvCWarning("ShvJournal")
 #define logIShvJournal() shvCInfo("ShvJournal")
@@ -599,7 +599,9 @@ chainpack::RpcValue ShvFileJournal::getLog(const JournalContext &journal_context
 {
 	std::vector<std::function<ShvJournalFileReader()>> readers;
 	{
-		for (auto it = shv::core::utils::newestMatchingFileIt(journal_context.files, params); it != journal_context.files.cend(); ++it) {
+		std::vector<int64_t> non_empty_files;
+		std::ranges::copy_if(journal_context.files, std::back_inserter(non_empty_files), [&journal_context] (const auto& ms)  {return file_size(journal_context.fileMsecToFilePath(ms)) > 0;});
+		for (auto it = shv::core::utils::newestMatchingFileIt(non_empty_files, params); it != non_empty_files.cend(); ++it) {
 			readers.emplace_back([full_file_name = journal_context.fileMsecToFilePath(*it)] {
 				return shv::core::utils::ShvJournalFileReader(full_file_name);
 			});
