@@ -103,6 +103,7 @@ public:
 
 class SHVIOTQT_DECL_EXPORT MethodsTableNode : public shv::iotqt::node::ShvNode
 {
+	Q_OBJECT
 	using Super = shv::iotqt::node::ShvNode;
 public:
 	explicit MethodsTableNode(const std::string &node_id, const std::vector<shv::chainpack::MetaMethod> *methods, shv::iotqt::node::ShvNode *parent = nullptr);

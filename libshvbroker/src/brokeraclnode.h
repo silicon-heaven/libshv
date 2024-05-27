@@ -20,6 +20,7 @@ public:
 
 class BrokerAclNode : public shv::iotqt::node::MethodsTableNode
 {
+	Q_OBJECT
 	using Super = shv::iotqt::node::MethodsTableNode;
 public:
 	BrokerAclNode(const std::string &config_name, shv::iotqt::node::ShvNode *parent = nullptr);
