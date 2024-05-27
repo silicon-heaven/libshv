@@ -24,4 +24,3 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/shv" TYPE INCLUDE)
 
 install(TARGETS libshvchainpack-c EXPORT libshvConfig)
 export(TARGETS libshvchainpack-c NAMESPACE libshvchainpack-c:: FILE "${CMAKE_CURRENT_BINARY_DIR}/libshvConfig.cmake")
-install(EXPORT libshvConfig DESTINATION "share/libshv/cmake" NAMESPACE libshv::)
