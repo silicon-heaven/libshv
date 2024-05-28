@@ -49,7 +49,8 @@ QVariant ChannelFilterModel::data(const QModelIndex &index, int role) const
 				return it->data(UserData::DirName);
 			}
 
-			return (it->data(UserData::LocalizedDirName).toString().isEmpty())? it->data(UserData::DirName): it->data(UserData::LocalizedDirName);
+			auto locname = it->data(UserData::LocalizedDirName).toString();
+			return (locname.isEmpty())? it->data(UserData::DirName): locname;
 		}
 	}
 	};
