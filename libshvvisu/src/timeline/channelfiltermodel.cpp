@@ -26,7 +26,7 @@ void ChannelFilterModel::createNodes()
 	QStringList sorted_channels = QStringList(channels.begin(), channels.end());
 	sorted_channels.sort(Qt::CaseInsensitive);
 
-	QMap<QString, QString> localized_channel_paths;
+	QMap<QString, QStringList> localized_channel_paths;
 
 	if (!m_graph->style().isRawDataVisible())
 		localized_channel_paths = m_graph->localizedChannelPaths();
@@ -44,7 +44,13 @@ QVariant ChannelFilterModel::data(const QModelIndex &index, int role) const
 	case Qt::DisplayRole: {
 		if (index.isValid()) {
 			QStandardItem *it = itemFromIndex(index);
-			return (m_graph->style().isRawDataVisible())? it->data(UserData::DirName): it->data(UserData::LocalizedDirName);
+
+			if (m_graph->style().isRawDataVisible()) {
+				return it->data(UserData::DirName);
+			}
+
+			auto locname = it->data(UserData::LocalizedDirName).toString();
+			return (locname.isEmpty())? it->data(UserData::DirName): locname;
 		}
 	}
 	};
@@ -166,15 +172,10 @@ QStandardItem *ChannelFilterModel::shvPathToItem(const QString &shv_path, QStand
 	return nullptr;
 }
 
-void ChannelFilterModel::createNodesForPath(const QString &path, const QMap<QString, QString> &localized_paths)
+void ChannelFilterModel::createNodesForPath(const QString &path, const QMap<QString, QStringList> &localized_paths)
 {
 	QStringList path_list = path.split("/");
-	QStringList localized_path_list;
-
-	if (localized_paths.contains(path)) {
-		localized_path_list = localized_paths.value(path).split("/");
-	}
-
+	QStringList localized_path_list = localized_paths.value(path);
 	QStandardItem *parent_item = invisibleRootItem();
 
 	for(int i = 0; i < path_list.size(); i++) {

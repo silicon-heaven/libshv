@@ -37,7 +37,7 @@ protected:
 	QString shvPathFromItem(QStandardItem *it) const;
 	QStandardItem* shvPathToItem(const QString &shv_path, QStandardItem *it);
 
-	void createNodesForPath(const QString &path, const QMap<QString, QString> &localized_paths);
+	void createNodesForPath(const QString &path, const QMap<QString, QStringList> &localized_paths);
 
 	void selectedChannels_helper(QSet<QString> *channels, QStandardItem *it);
 	void setChildItemsCheckedState(QStandardItem *it, Qt::CheckState check_state);
