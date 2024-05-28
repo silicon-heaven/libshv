@@ -234,9 +234,9 @@ QSet<QString> Graph::channelPaths()
 	return ret;
 }
 
-QMap<QString, QString> Graph::localizedChannelPaths()
+QMap<QString, QStringList> Graph::localizedChannelPaths()
 {
-	QMap<QString, QString> ret;
+	QMap<QString, QStringList> ret;
 
 	for (const auto &ch: m_channels) {
 		ret[ch->shvPath()] = m_model->channelInfo(ch->modelIndex()).localizedShvPath;
@@ -1423,7 +1423,7 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 		path_row_text_option.setWrapMode(QTextOption::NoWrap);
 		QRect path_rect(text_rect.left(), text_rect.bottom() - row_height, text_rect.width(), row_height);
 
-		text = elidedText((m_style.isRawDataVisible())? chi.shvPath: chi.localizedShvPath, font, path_rect);
+		text = elidedText((m_style.isRawDataVisible())? chi.shvPath: chi.localizedShvPath.join("/"), font, path_rect);
 		painter->drawText(path_rect, text, path_row_text_option);
 	}
 

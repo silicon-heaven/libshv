@@ -129,7 +129,7 @@ public:
 
 	void showAllChannels();
 	QSet<QString> channelPaths();
-	QMap<QString, QString> localizedChannelPaths();
+	QMap<QString, QStringList> localizedChannelPaths();
 	QSet<QString> flatChannels();
 	const std::optional<ChannelFilter> &channelFilter() const;
 	void setChannelFilter(const std::optional<ChannelFilter> &filter);

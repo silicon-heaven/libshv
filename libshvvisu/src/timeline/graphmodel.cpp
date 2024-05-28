@@ -336,7 +336,7 @@ void GraphModel::setChannelName(qsizetype channel_ix, const QString &name)
 	}
 }
 
-void GraphModel::setLocalizedChannelPath(qsizetype channel_ix, const QString &path)
+void GraphModel::setLocalizedChannelPath(qsizetype channel_ix, const QStringList &path)
 {
 	if (channel_ix < m_channelsInfo.count()) {
 		m_channelsInfo[channel_ix].localizedShvPath = path;

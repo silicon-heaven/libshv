@@ -86,7 +86,7 @@ QString ChannelProbe::shvPath() const
 QString ChannelProbe::localizedShvPath() const
 {
 	const GraphChannel *ch = m_graph->channelAt(m_channelIndex);
-	return m_graph->model()->channelInfo(ch->modelIndex()).localizedShvPath;
+	return m_graph->model()->channelInfo(ch->modelIndex()).localizedShvPath.join("/");
 }
 
 qsizetype ChannelProbe::channelIndex() const
