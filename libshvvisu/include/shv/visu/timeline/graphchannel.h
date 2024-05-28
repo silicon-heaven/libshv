@@ -26,7 +26,7 @@ public:
 	class SHVVISU_DECL_EXPORT Style : public QVariantMap
 	{
 	public:
-		struct Interpolation { enum Enum {None = 0, Line, Stepped};};
+		struct Interpolation { enum Enum {None = 0, Line, Stepped, Histogram};};
 		struct LineAreaStyle { enum Enum {Blank = 0, Filled};};
 		static constexpr double DEFAULT_HEIGHT_MIN = 2.5;
 

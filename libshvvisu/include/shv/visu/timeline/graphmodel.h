@@ -26,7 +26,10 @@ public:
 		shv::core::utils::ShvTypeDescr typeDescr;
 	};
 
+	enum ModelType {Timeline, Histogram};
+
 	SHV_FIELD_BOOL_IMPL2(a, A, utoCreateChannels, true)
+	SHV_FIELD_IMPL2(int, m, M, odelType, ModelType::Timeline)
 
 public:
 	explicit GraphModel(QObject *parent = nullptr);

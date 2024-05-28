@@ -663,78 +663,94 @@ QVariantMap Graph::mergeMaps(const QVariantMap &base, const QVariantMap &overlay
 
 void Graph::makeXAxis()
 {
-	shvLogFuncFrame();
-	static constexpr int64_t MSec = 1;
-	static constexpr int64_t Sec = 1000 * MSec;
-	static constexpr int64_t Min = 60 * Sec;
-	static constexpr int64_t Hour = 60 * Min;
-	static constexpr int64_t Day = 24 * Hour;
-	static constexpr int64_t Month = 30 * Day;
-	static constexpr int64_t Year = 365 * Day;
-	static const std::map<int64_t, XAxis> intervals
-	{
-		{1 * MSec, {0, 1, XAxis::LabelScale::MSec}},
-		{2 * MSec, {0, 2, XAxis::LabelScale::MSec}},
-		{5 * MSec, {0, 5, XAxis::LabelScale::MSec}},
-		{10 * MSec, {0, 5, XAxis::LabelScale::MSec}},
-		{20 * MSec, {0, 5, XAxis::LabelScale::MSec}},
-		{50 * MSec, {0, 5, XAxis::LabelScale::MSec}},
-		{100 * MSec, {0, 5, XAxis::LabelScale::MSec}},
-		{200 * MSec, {0, 5, XAxis::LabelScale::MSec}},
-		{500 * MSec, {0, 5, XAxis::LabelScale::MSec}},
-		{1 * Sec, {0, 1, XAxis::LabelScale::Sec}},
-		{2 * Sec, {0, 2, XAxis::LabelScale::Sec}},
-		{5 * Sec, {0, 5, XAxis::LabelScale::Sec}},
-		{10 * Sec, {0, 5, XAxis::LabelScale::Sec}},
-		{20 * Sec, {0, 5, XAxis::LabelScale::Sec}},
-		{30 * Sec, {0, 3, XAxis::LabelScale::Sec}},
-		{1 * Min, {0, 1, XAxis::LabelScale::Min}},
-		{2 * Min, {0, 2, XAxis::LabelScale::Min}},
-		{5 * Min, {0, 5, XAxis::LabelScale::Min}},
-		{10 * Min, {0, 5, XAxis::LabelScale::Min}},
-		{20 * Min, {0, 5, XAxis::LabelScale::Min}},
-		{30 * Min, {0, 3, XAxis::LabelScale::Min}},
-		{1 * Hour, {0, 1, XAxis::LabelScale::Hour}},
-		{2 * Hour, {0, 2, XAxis::LabelScale::Hour}},
-		{3 * Hour, {0, 3, XAxis::LabelScale::Hour}},
-		{6 * Hour, {0, 6, XAxis::LabelScale::Hour}},
-		{12 * Hour, {0, 6, XAxis::LabelScale::Hour}},
-		{1 * Day, {0, 1, XAxis::LabelScale::Day}},
-		{2 * Day, {0, 2, XAxis::LabelScale::Day}},
-		{5 * Day, {0, 5, XAxis::LabelScale::Day}},
-		{10 * Day, {0, 5, XAxis::LabelScale::Day}},
-		{20 * Day, {0, 5, XAxis::LabelScale::Day}},
-		{1 * Month, {0, 1, XAxis::LabelScale::Month}},
-		{3 * Month, {0, 1, XAxis::LabelScale::Month}},
-		{6 * Month, {0, 1, XAxis::LabelScale::Month}},
-		{1 * Year, {0, 1, XAxis::LabelScale::Year}},
-		{2 * Year, {0, 1, XAxis::LabelScale::Year}},
-		{5 * Year, {0, 1, XAxis::LabelScale::Year}},
-		{10 * Year, {0, 1, XAxis::LabelScale::Year}},
-		{20 * Year, {0, 1, XAxis::LabelScale::Year}},
-		{50 * Year, {0, 1, XAxis::LabelScale::Year}},
-		{100 * Year, {0, 1, XAxis::LabelScale::Year}},
-		{200 * Year, {0, 1, XAxis::LabelScale::Year}},
-		{500 * Year, {0, 1, XAxis::LabelScale::Year}},
-		{1000 * Year, {0, 1, XAxis::LabelScale::Year}},
-	};
-	int tick_units = 5;
-	int tick_px = u2px(tick_units);
-	timemsec_t t1 = posToTime(0);
-	timemsec_t t2 = posToTime(tick_px);
-	int64_t interval = t2 - t1;
-	if(interval > 0) {
-		auto lb = intervals.lower_bound(interval);
-		if(lb == intervals.end())
-			lb = --intervals.end();
-		XAxis &axis = m_state.xAxis;
-		axis = lb->second;
-		axis.tickInterval = lb->first;
-		shvDebug() << "interval:" << axis.tickInterval;
+	if (m_model->modelType() == GraphModel::ModelType::Timeline) {
+		shvLogFuncFrame();
+		static constexpr int64_t MSec = 1;
+		static constexpr int64_t Sec = 1000 * MSec;
+		static constexpr int64_t Min = 60 * Sec;
+		static constexpr int64_t Hour = 60 * Min;
+		static constexpr int64_t Day = 24 * Hour;
+		static constexpr int64_t Month = 30 * Day;
+		static constexpr int64_t Year = 365 * Day;
+		static const std::map<int64_t, XAxis> intervals
+			{
+			 {1 * MSec, {0, 1, XAxis::LabelScale::MSec}},
+			 {2 * MSec, {0, 2, XAxis::LabelScale::MSec}},
+			 {5 * MSec, {0, 5, XAxis::LabelScale::MSec}},
+			 {10 * MSec, {0, 5, XAxis::LabelScale::MSec}},
+			 {20 * MSec, {0, 5, XAxis::LabelScale::MSec}},
+			 {50 * MSec, {0, 5, XAxis::LabelScale::MSec}},
+			 {100 * MSec, {0, 5, XAxis::LabelScale::MSec}},
+			 {200 * MSec, {0, 5, XAxis::LabelScale::MSec}},
+			 {500 * MSec, {0, 5, XAxis::LabelScale::MSec}},
+			 {1 * Sec, {0, 1, XAxis::LabelScale::Sec}},
+			 {2 * Sec, {0, 2, XAxis::LabelScale::Sec}},
+			 {5 * Sec, {0, 5, XAxis::LabelScale::Sec}},
+			 {10 * Sec, {0, 5, XAxis::LabelScale::Sec}},
+			 {20 * Sec, {0, 5, XAxis::LabelScale::Sec}},
+			 {30 * Sec, {0, 3, XAxis::LabelScale::Sec}},
+			 {1 * Min, {0, 1, XAxis::LabelScale::Min}},
+			 {2 * Min, {0, 2, XAxis::LabelScale::Min}},
+			 {5 * Min, {0, 5, XAxis::LabelScale::Min}},
+			 {10 * Min, {0, 5, XAxis::LabelScale::Min}},
+			 {20 * Min, {0, 5, XAxis::LabelScale::Min}},
+			 {30 * Min, {0, 3, XAxis::LabelScale::Min}},
+			 {1 * Hour, {0, 1, XAxis::LabelScale::Hour}},
+			 {2 * Hour, {0, 2, XAxis::LabelScale::Hour}},
+			 {3 * Hour, {0, 3, XAxis::LabelScale::Hour}},
+			 {6 * Hour, {0, 6, XAxis::LabelScale::Hour}},
+			 {12 * Hour, {0, 6, XAxis::LabelScale::Hour}},
+			 {1 * Day, {0, 1, XAxis::LabelScale::Day}},
+			 {2 * Day, {0, 2, XAxis::LabelScale::Day}},
+			 {5 * Day, {0, 5, XAxis::LabelScale::Day}},
+			 {10 * Day, {0, 5, XAxis::LabelScale::Day}},
+			 {20 * Day, {0, 5, XAxis::LabelScale::Day}},
+			 {1 * Month, {0, 1, XAxis::LabelScale::Month}},
+			 {3 * Month, {0, 1, XAxis::LabelScale::Month}},
+			 {6 * Month, {0, 1, XAxis::LabelScale::Month}},
+			 {1 * Year, {0, 1, XAxis::LabelScale::Year}},
+			 {2 * Year, {0, 1, XAxis::LabelScale::Year}},
+			 {5 * Year, {0, 1, XAxis::LabelScale::Year}},
+			 {10 * Year, {0, 1, XAxis::LabelScale::Year}},
+			 {20 * Year, {0, 1, XAxis::LabelScale::Year}},
+			 {50 * Year, {0, 1, XAxis::LabelScale::Year}},
+			 {100 * Year, {0, 1, XAxis::LabelScale::Year}},
+			 {200 * Year, {0, 1, XAxis::LabelScale::Year}},
+			 {500 * Year, {0, 1, XAxis::LabelScale::Year}},
+			 {1000 * Year, {0, 1, XAxis::LabelScale::Year}},
+			 };
+		int tick_units = 5;
+		int tick_px = u2px(tick_units);
+		timemsec_t t1 = posToTime(0);
+		timemsec_t t2 = posToTime(tick_px);
+		int64_t interval = t2 - t1;
+		if(interval > 0) {
+			auto lb = intervals.lower_bound(interval);
+			if(lb == intervals.end())
+				lb = --intervals.end();
+			XAxis &axis = m_state.xAxis;
+			axis = lb->second;
+			axis.tickInterval = lb->first;
+			shvDebug() << "interval:" << axis.tickInterval;
+		}
+		else {
+			XAxis &axis = m_state.xAxis;
+			axis.tickInterval = 0;
+		}
 	}
-	else {
-		XAxis &axis = m_state.xAxis;
-		axis.tickInterval = 0;
+	else if (m_model->modelType() == GraphModel::ModelType::Histogram) {
+		int tick_units = 5;
+		int tick_px = u2px(tick_units);
+		timemsec_t t1 = posToTime(0);
+		timemsec_t t2 = posToTime(tick_px);
+		int64_t interval = t2 - t1;
+		if (interval <= 0) {
+			interval = 1;
+		}
+
+		m_state.xAxis.labelScale = XAxis::LabelScale::Value;
+		m_state.xAxis.tickInterval = interval;
+		m_state.xAxis.subtickEvery = 0;
 	}
 }
 
@@ -819,6 +835,11 @@ QString Graph::elidedText(const QString &text, const QFont &font, const QRect &r
 	return res;
 }
 
+int Graph::histogramColumnWidth()
+{
+	return timeToPos(1) - timeToPos(0);
+}
+
 std::pair<Sample, int> Graph::posToSample(const QPoint &pos) const
 {
 	auto ch_ix = posToChannel(pos);
@@ -898,13 +919,13 @@ QRect Graph::southFloatingBarRect() const
 Graph::CrossHairPos::CrossHairPos() = default;
 
 Graph::CrossHairPos::CrossHairPos(qsizetype ch_ix, const QPoint &pos)
-	: channelIndex(ch_ix), possition(pos)
+	: channelIndex(ch_ix), position(pos)
 {
 }
 
 bool Graph::CrossHairPos::isValid() const
 {
-	return channelIndex >= 0 && !possition.isNull();
+	return channelIndex >= 0 && !position.isNull();
 }
 
 int Graph::u2px(double u) const
@@ -1566,6 +1587,10 @@ void Graph::drawXAxis(QPainter *painter)
 			text = QStringLiteral("%1").arg(dt.year());
 			break;
 		}
+		case XAxis::LabelScale::Value: {
+			text = QStringLiteral("%1").arg(t);
+			break;
+		}
 		}
 		QRect r = fm.boundingRect(text);
 		int inset = u2px(0.2);
@@ -1597,14 +1622,21 @@ void Graph::drawXAxis(QPainter *painter)
 			text = QStringLiteral("year");
 			break;
 		}
+		case XAxis::LabelScale::Value: {
+			text = QStringLiteral("");
+			break;
 		}
-		text = '[' + text + ']';
-		QRect r = fm.boundingRect(text);
-		int inset = u2px(0.2);
-		r.adjust(-inset, 0, inset, 0);
-		r.moveTopLeft(m_layout.xAxisRect.topRight() + QPoint{-r.width() - u2px(0.2), 2*tick_len});
-		painter->fillRect(r, m_style.colorPanel());
-		painter->drawText(r, text);
+		}
+
+		if (!text.isEmpty()) {
+			text = '[' + text + ']';
+			QRect r = fm.boundingRect(text);
+			int inset = u2px(0.2);
+			r.adjust(-inset, 0, inset, 0);
+			r.moveTopLeft(m_layout.xAxisRect.topRight() + QPoint{-r.width() - u2px(0.2), 2*tick_len});
+			painter->fillRect(r, m_style.colorPanel());
+			painter->drawText(r, text);
+		}
 	}
 	auto current_time = m_state.currentTime;
 	if(current_time > 0) {
@@ -2117,6 +2149,15 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 								painter->drawLine(QPoint{prev_point.x, prev_point.y2}, current_point);
 							}
 						}
+						else if(interpolation == GraphChannel::Style::Interpolation::Histogram) {
+							auto bar_width = histogramColumnWidth() - line_pen.width();
+							painter->setPen(line_pen);
+							QPoint p(prev_point.x - bar_width / 2, prev_point.y2);
+							QRect bar_rect = QRect(p, QPoint(p.x() + bar_width, x_axis_y));
+							QBrush brush(line_pen.color().lighter());
+							painter->fillRect(bar_rect, brush);
+							painter->drawRect(bar_rect);
+						}
 					}
 				}
 				prev_point = current_point;
@@ -2130,12 +2171,20 @@ void Graph::drawCrossHairTimeMarker(QPainter *painter)
 {
 	if(!crossHairPos().isValid())
 		return;
-	auto crossbar_pos = crossHairPos().possition;
+	auto crossbar_pos = crossHairPos().position;
 	if(m_layout.xAxisRect.left() >= crossbar_pos.x() || m_layout.xAxisRect.right() <= crossbar_pos.x()) {
 		return;
 	}
 	QColor color = m_style.colorCrossHair();
-	timemsec_t time = posToTime(crossHairPos().possition.x());
+	timemsec_t time;
+
+	if (m_model->modelType() == GraphModel::ModelType::Histogram) {
+		time = posToTime(crossHairPos().position.x() + histogramColumnWidth() / 2);
+	}
+	else {
+		time = posToTime(crossHairPos().position.x());
+	}
+
 	int x = timeToPos(time);
 	QPoint p1{x, m_layout.xAxisRect.top()};
 	int tick_len = u2px(m_state.xAxis.tickLen)*2;
@@ -2150,7 +2199,16 @@ void Graph::drawCrossHairTimeMarker(QPainter *painter)
 		pp.lineTo(r.topLeft());
 		painter->fillPath(pp, color);
 	}
-	QString text = timeToStringTZ(time);
+
+	QString text;
+
+	if (m_model->modelType() == GraphModel::ModelType::Timeline) {
+		text = timeToStringTZ(time);
+	}
+	else if (m_model->modelType() == GraphModel::ModelType::Histogram) {
+		text = QString::number(time);
+	}
+
 	p1.setY(p1.y() - tick_len);
 	auto c_text = color;
 	auto c_background = effectiveStyle().colorBackground();
@@ -2174,7 +2232,7 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 {
 	if(!crossHairPos().isValid())
 		return;
-	auto crossbar_pos = crossHairPos().possition;
+	auto crossbar_pos = crossHairPos().position;
 	const GraphChannel *ch = channelAt(channel_ix);
 	if(ch->graphDataGridRect().left() >= crossbar_pos.x() || ch->graphDataGridRect().right() <= crossbar_pos.x()) {
 		return;

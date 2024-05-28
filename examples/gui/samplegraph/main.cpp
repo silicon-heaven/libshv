@@ -19,8 +19,8 @@ int main(int argc, char *argv[])
 
 	QCoreApplication::setOrganizationName("Elektroline");
 	QCoreApplication::setOrganizationDomain("elektroline.cz");
-	QCoreApplication::setApplicationName("sampleshvbroker");
-	QCoreApplication::setApplicationVersion("0.0.1");
+	QCoreApplication::setApplicationName("samplegraph");
+	QCoreApplication::setApplicationVersion("0.0.2");
 
 	NecroLog::setCLIOptions(argc, argv);
 

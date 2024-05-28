@@ -1,6 +1,9 @@
 add_executable(samplegraph
 	main.cpp
 	mainwindow.cpp
+	timelinegraphwidget.h timelinegraphwidget.cpp timelinegraphwidget.ui
+	histogramgraphwidget.h histogramgraphwidget.cpp histogramgraphwidget.ui
+
 	)
 
 target_link_libraries(samplegraph PRIVATE libshvvisu)

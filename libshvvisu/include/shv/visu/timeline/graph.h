@@ -160,7 +160,7 @@ public:
 	struct SHVVISU_DECL_EXPORT CrossHairPos
 	{
 		qsizetype channelIndex = -1;
-		QPoint possition;
+		QPoint position;
 
 		CrossHairPos();
 		CrossHairPos(qsizetype ch_ix, const QPoint &pos);
@@ -279,6 +279,7 @@ protected:
 
 	void moveSouthFloatingBarBottom(int bottom);
 	QString elidedText(const QString &text, const QFont &font, const QRect &rect);
+	int histogramColumnWidth();
 protected:
 	QVariantMap toolTipValues(const QPoint &pos) const;
 protected:
@@ -297,7 +298,7 @@ protected:
 
 	struct SHVVISU_DECL_EXPORT XAxis
 	{
-		enum class LabelScale {MSec, Sec, Min, Hour, Day, Month, Year};
+		enum class LabelScale {MSec, Sec, Min, Hour, Day, Month, Year, Value};
 		timemsec_t tickInterval = 0;
 		int subtickEvery = 1;
 		double tickLen = 0.15;

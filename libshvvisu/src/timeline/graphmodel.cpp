@@ -222,25 +222,32 @@ void GraphModel::appendValue(qsizetype channel, Sample &&sample)
 		shvError() << "Invalid channel index:" << channel;
 		return;
 	}
-	if(sample.time <= 0) {
-		shvWarning() << "ignoring value with timestamp <= 0, timestamp:" << sample.time;
-		return;
-	}
-	ChannelSamples &samples = m_samples[channel];
-	if(!samples.isEmpty() && samples.last().time > sample.time) {
-		shvWarning() << channelInfo(channel).shvPath << "channel:" << channel
-					 << "ignoring value with lower timestamp than last value (check possibly wrong short-time correction):"
-					 << samples.last().time << shv::chainpack::RpcValue::DateTime::fromMSecsSinceEpoch(samples.last().time).toIsoString()
-					 << "val:"
-					 << sample.time << shv::chainpack::RpcValue::DateTime::fromMSecsSinceEpoch(sample.time).toIsoString();
-		return;
-	}
-	if (!samples.isEmpty()
+
+	if (modelType() == ModelType::Timeline) {
+		if(sample.time <= 0) {
+			shvWarning() << "ignoring value with timestamp <= 0, timestamp:" << sample.time;
+			return;
+		}
+		ChannelSamples &samples = m_samples[channel];
+		if(!samples.isEmpty() && samples.last().time > sample.time) {
+			shvWarning() << channelInfo(channel).shvPath << "channel:" << channel
+						 << "ignoring value with lower timestamp than last value (check possibly wrong short-time correction):"
+						 << samples.last().time << shv::chainpack::RpcValue::DateTime::fromMSecsSinceEpoch(samples.last().time).toIsoString()
+						 << "val:"
+						 << sample.time << shv::chainpack::RpcValue::DateTime::fromMSecsSinceEpoch(sample.time).toIsoString();
+			return;
+		}
+		if (!samples.isEmpty()
 			&& channelInfo(channel).typeDescr.sampleType() == shv::core::utils::ShvTypeDescr::SampleType::Continuous
 			&& samples.last().value == sample.value) {
-		return;
+			return;
+		}
+		samples.push_back(std::move(sample));
 	}
-	samples.push_back(std::move(sample));
+	else if (modelType() == ModelType::Histogram) {
+		ChannelSamples &samples = m_samples[channel];
+		samples.push_back(std::move(sample));
+	}
 }
 
 void GraphModel::appendValueShvPath(const std::string &shv_path, Sample &&sample)

@@ -15,14 +15,9 @@ class MainWindow : public QMainWindow
 public:
 	MainWindow(QWidget *parent = nullptr);
 	~MainWindow() override;
-private slots:
-	void on_actionGenerate_sample_data_triggered();
 
 private:
-	void generateSampleData();
-private:
+	void onGenerateSamplesClicked();
+
 	Ui::MainWindow *ui;
-	shv::visu::timeline::GraphModel *m_graphModel = nullptr;
-	shv::visu::timeline::Graph *m_graph = nullptr;
-	shv::visu::timeline::GraphWidget *m_graphWidget = nullptr;
 };
