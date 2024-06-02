@@ -153,6 +153,11 @@ shv::chainpack::RpcValue stringListToRpcValue(const QStringList &sl)
 	return shv::chainpack::RpcValue(ret);
 }
 
+QString qVariantToPrettyString(const QVariant &v, const QString &indent)
+{
+	return QString::fromStdString(qVariantToRpcValue(v).toCpon(indent.toStdString()));
+}
+
 } // namespace shv
 
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=109503

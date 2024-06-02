@@ -14,6 +14,7 @@ SHVCOREQT_DECL_EXPORT QVariant rpcValueToQVariant(const chainpack::RpcValue &v, 
 SHVCOREQT_DECL_EXPORT chainpack::RpcValue qVariantToRpcValue(const QVariant &v, bool *ok = nullptr);
 SHVCOREQT_DECL_EXPORT QStringList rpcValueToStringList(const shv::chainpack::RpcValue &rpcval);
 SHVCOREQT_DECL_EXPORT shv::chainpack::RpcValue stringListToRpcValue(const QStringList &sl);
+SHVCOREQT_DECL_EXPORT QString qVariantToPrettyString(const QVariant &v, const QString &indent = {});
 
 }
 
