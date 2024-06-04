@@ -89,7 +89,7 @@ void TimelineGraphWidget::generateSampleData(int count)
 	std::uniform_real_distribution<> val_distrib(min_val, max_val);
 
 	vector<int64_t> times;
-	for (int n=0; n<sample_cnt+2; ++n)
+	for (int n = 0; n < sample_cnt+2; ++n)
 		times.push_back(time_distrib(gen));
 	sort(times.begin(), times.end());
 
@@ -143,11 +143,13 @@ void TimelineGraphWidget::generateSampleData(int count)
 	{
 		//generate sparse data
 		const auto step = times.size() / 5;
-		for(size_t j=step; j<times.size() - 3; j+=step) {
-			m_graphModel->appendValue(Channel::SparseData, tl::Sample{times[j] + 00, val_distrib(gen)});
-			m_graphModel->appendValue(Channel::SparseData, tl::Sample{times[j] + 10, val_distrib(gen)});
-			m_graphModel->appendValue(Channel::SparseData, tl::Sample{times[j] + 20, val_distrib(gen)});
-			m_graphModel->appendValue(Channel::SparseData, tl::Sample{times[j] + 30, val_distrib(gen)});
+		if (step > 0) {
+			for(size_t j=step; j<times.size() - 3; j+=step) {
+				m_graphModel->appendValue(Channel::SparseData, tl::Sample{times[j] + 00, val_distrib(gen)});
+				m_graphModel->appendValue(Channel::SparseData, tl::Sample{times[j] + 10, val_distrib(gen)});
+				m_graphModel->appendValue(Channel::SparseData, tl::Sample{times[j] + 20, val_distrib(gen)});
+				m_graphModel->appendValue(Channel::SparseData, tl::Sample{times[j] + 30, val_distrib(gen)});
+			}
 		}
 	}
 	m_graphModel->endAppendValues();

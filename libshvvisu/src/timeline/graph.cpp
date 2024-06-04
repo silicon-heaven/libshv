@@ -2292,7 +2292,7 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 		{
 			/// draw info
 			QString info_text;
-			if(selectionRect().isValid()) {
+			if(selectionRect().isValid() && (m_model->modelType() == GraphModel::ModelType::Timeline)) {
 				/// show selection info
 				auto sel_rect = selectionRect();
 				auto ch1_ix = posToChannel(sel_rect.bottomLeft());

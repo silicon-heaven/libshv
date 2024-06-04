@@ -45,7 +45,7 @@ HistogramGraphWidget::~HistogramGraphWidget()
 
 void HistogramGraphWidget::generateSampleData(int count)
 {
-	enum Channel {Histogram1 = 0, Histogram2, CHANNEL_COUNT};
+	enum Channel {Histogram = 0, CHANNEL_COUNT};
 
 	m_graphModel->clear();
 	m_graphModel->appendChannel("Histogram", {}, {});
@@ -59,13 +59,13 @@ void HistogramGraphWidget::generateSampleData(int count)
 		if (n == 2) { //test empty space
 			continue;
 		}
-		m_graphModel->appendValue(Channel::Histogram1, shv::visu::timeline::Sample{n, val_distrib(gen)}, true);
+		m_graphModel->appendValue(Channel::Histogram, shv::visu::timeline::Sample{n, val_distrib(gen)});
 	}
 
 	m_graphModel->endAppendValues();
 	m_graph->createChannelsFromModel(shv::visu::timeline::Graph::SortChannels::No);
 
-	shv::visu::timeline::GraphChannel *ch = m_graph->channelAt(Channel::Histogram1);
+	shv::visu::timeline::GraphChannel *ch = m_graph->channelAt(Channel::Histogram);
 	shv::visu::timeline::GraphChannel::Style style = ch->style();
 
 	style.setInterpolation(tl::GraphChannel::Style::Interpolation::Histogram);
