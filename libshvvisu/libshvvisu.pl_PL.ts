@@ -9,7 +9,7 @@
     </message>
     <message>
         <source>Time stamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Godzina</translation>
     </message>
     <message>
         <source>Message</source>
