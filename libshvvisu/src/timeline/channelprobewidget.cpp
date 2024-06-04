@@ -4,8 +4,6 @@
 #include <shv/visu/timeline/channelprobe.h>
 #include <shv/visu/timeline/graph.h>
 
-#include <shv/core/log.h>
-
 #include <QMouseEvent>
 
 namespace shv::visu::timeline {
@@ -182,7 +180,6 @@ void ChannelProbeWidget::loadValues()
 		item->setFlags(item->flags() & ~Qt::ItemIsEditable);
 		ui->twData->setItem(ix, DataTableColumn::ColValue, item);
 	}
-
 }
 
 ChannelProbeWidget::FrameSection ChannelProbeWidget::getFrameSection()

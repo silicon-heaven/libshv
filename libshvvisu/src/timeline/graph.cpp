@@ -905,9 +905,7 @@ QVariantMap Graph::sampleValues(qsizetype channel_ix, const shv::visu::timeline:
 		ret[KEY_SAMPLE_PRETTY_VALUE] = qv;
 	}
 	else {
-		if (auto m = s.value.toMap(); !m.isEmpty()) {
-			ret[KEY_SAMPLE_PRETTY_VALUE] = m;
-		}
+		ret[KEY_SAMPLE_PRETTY_VALUE] = s.value;
 	}
 	return ret;
 }
