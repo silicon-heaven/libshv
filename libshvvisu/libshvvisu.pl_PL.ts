@@ -9,7 +9,7 @@
     </message>
     <message>
         <source>Time stamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Godzina</translation>
     </message>
     <message>
         <source>Message</source>
@@ -84,6 +84,10 @@
     <message>
         <source>...</source>
         <translation>...</translation>
+    </message>
+    <message>
+        <source>Show/hide raw data</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

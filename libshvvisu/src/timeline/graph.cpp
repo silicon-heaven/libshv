@@ -227,8 +227,19 @@ QSet<QString> Graph::channelPaths()
 {
 	QSet<QString> ret;
 
-	for (int i = 0; i < m_channels.count(); ++i) {
-		ret.insert(m_channels[i]->shvPath());
+	for (const auto &ch: m_channels) {
+		ret.insert(ch->shvPath());
+	}
+
+	return ret;
+}
+
+QMap<QString, QStringList> Graph::localizedChannelPaths()
+{
+	QMap<QString, QStringList> ret;
+
+	for (const auto &ch: m_channels) {
+		ret[ch->shvPath()] = m_model->channelInfo(ch->modelIndex()).localizedShvPath;
 	}
 
 	return ret;
@@ -238,8 +249,7 @@ QSet<QString> Graph::flatChannels()
 {
 	QSet<QString> ret;
 
-	for (qsizetype i = 0; i < m_channels.count(); ++i) {
-		GraphChannel *ch = m_channels[i];
+	for (const auto &ch: m_channels) {
 		if(isChannelFlat(ch)) {
 			ret.insert(ch->shvPath());
 		}
@@ -330,7 +340,7 @@ void Graph::setYAxisVisible(bool is_visible)
 
 bool Graph::isYAxisVisible()
 {
-	return 	m_style.yAxisVisible();
+	return 	m_style.isYAxisVisible();
 }
 
 timemsec_t Graph::miniMapPosToTime(int pos) const
@@ -646,6 +656,7 @@ const Graph::Style& Graph::style() const
 void Graph::setStyle(const Graph::Style &st)
 {
 	m_style = st;
+	emit styleChanged();
 }
 
 void Graph::setDefaultChannelStyle(const GraphChannel::Style &st)
@@ -1012,7 +1023,7 @@ void Graph::makeLayout(const QRect &pref_rect)
 	x_axis_pos += u2px(m_style.leftMargin());
 	x_axis_pos += u2px(m_style.verticalHeaderWidth());
 
-	if (m_style.yAxisVisible())
+	if (m_style.isYAxisVisible())
 		x_axis_pos += u2px(m_style.yAxisWidth());
 
 	grid_w -= x_axis_pos;
@@ -1090,7 +1101,7 @@ void Graph::makeLayout(const QRect &pref_rect)
 
 		ch->m_layout.yAxisRect = ch->m_layout.verticalHeaderRect;
 		ch->m_layout.yAxisRect.moveLeft(ch->m_layout.verticalHeaderRect.right());
-		ch->m_layout.yAxisRect.setWidth((m_style.yAxisVisible()) ? u2px(m_style.yAxisWidth()) : 0);
+		ch->m_layout.yAxisRect.setWidth((m_style.isYAxisVisible()) ? u2px(m_style.yAxisWidth()) : 0);
 
 		widget_height += ch->m_layout.graphAreaRect.height();
 		if(i > 0)
@@ -1430,7 +1441,7 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 
 	QRect text_rect = ch->m_layout.verticalHeaderRect.adjusted(2*header_inset, header_inset, -header_inset, -header_inset);
 
-	if (chi.name.isEmpty()) {
+	if (chi.name.isEmpty() || m_style.isRawDataVisible()) {
 		painter->drawText(text_rect, chi.shvPath);
 	}
 	else {
@@ -1449,7 +1460,8 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 		QTextOption path_row_text_option(Qt::AlignmentFlag::AlignBottom);
 		path_row_text_option.setWrapMode(QTextOption::NoWrap);
 		QRect path_rect(text_rect.left(), text_rect.bottom() - row_height, text_rect.width(), row_height);
-		text = elidedText(chi.shvPath, font, path_rect);
+
+		text = elidedText((m_style.isRawDataVisible())? chi.shvPath: chi.localizedShvPath.join("/"), font, path_rect);
 		painter->drawText(path_rect, text, path_row_text_option);
 	}
 

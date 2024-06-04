@@ -280,6 +280,7 @@ if(NOT DEFINED BUILT_COMPONENTS)
 	message(FATAL_ERROR "All components have been disabled, nothing to build.")
 endif()
 
+install(EXPORT libshvConfig DESTINATION share/libshv/cmake NAMESPACE libshv::)
 list(JOIN BUILT_COMPONENTS ", " BUILT_COMPONENTS_STR)
 
 message(STATUS "Enabled SHV components: ${BUILT_COMPONENTS_STR}")
