@@ -20,7 +20,6 @@
 #include <QWindow>
 #include <QDrag>
 #include <QMimeData>
-#include <cmath>
 #include <QMessageBox>
 #include <QToolTip>
 
@@ -84,9 +83,12 @@ void GraphWidget::makeLayout(const QSize &preferred_size)
 	m_graphPreferredSize = preferred_size;
 	graph()->makeLayout(QRect(QPoint(), preferred_size));
 	QSize sz = graph()->rect().size();
+	shvDebug() << "preferred size:" << preferred_size.width() << 'x' << preferred_size.height();
 	shvDebug() << "new size:" << sz.width() << 'x' << sz.height();
-	if(sz.width() > 0)
+	if(sz.width() > 0 && sz.height() > 0) {
 		setMinimumSize(sz);
+		setMaximumSize(sz);
+	}
 	update();
 }
 
