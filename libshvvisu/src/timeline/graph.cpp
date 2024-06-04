@@ -347,8 +347,12 @@ int Graph::miniMapTimeToPos(timemsec_t time) const
 
 timemsec_t Graph::posToTime(int pos) const
 {
+	int p = pos;
+	if (m_model->modelType() == GraphModel::ModelType::Histogram) {
+		p += histogramColumnWidth() / 2;
+	}
 	auto pos2time = posToTimeFn(QPoint{m_layout.xAxisRect.left(), m_layout.xAxisRect.right()}, xRangeZoom());
-	return pos2time? pos2time(pos): 0;
+	return pos2time? pos2time(p): 0;
 }
 
 int Graph::timeToPos(timemsec_t time) const
@@ -387,6 +391,10 @@ Sample Graph::timeToSample(qsizetype channel_ix, timemsec_t time) const
 		double d = s1.value.toDouble() + static_cast<double>(time - s1.time) * (s2.value.toDouble() - s1.value.toDouble()) / static_cast<double>(s2.time - s1.time);
 		return Sample(time, d);
 	}
+	else if (interpolation == GraphChannel::Style::Interpolation::Histogram) {
+		return m->sampleAt(model_ix, ix1);
+	}
+
 	return Sample();
 }
 
@@ -738,7 +746,7 @@ void Graph::makeXAxis()
 			axis.tickInterval = 0;
 		}
 	}
-	else if (m_model->modelType() == GraphModel::ModelType::Histogram) {
+	else {
 		int tick_units = 5;
 		int tick_px = u2px(tick_units);
 		timemsec_t t1 = posToTime(0);
@@ -835,9 +843,14 @@ QString Graph::elidedText(const QString &text, const QFont &font, const QRect &r
 	return res;
 }
 
-int Graph::histogramColumnWidth()
+int Graph::histogramColumnWidth() const
 {
 	return timeToPos(1) - timeToPos(0);
+}
+
+int Graph::miniMapHistogramColumnWidth() const
+{
+	return miniMapTimeToPos(1) - miniMapTimeToPos(0);
 }
 
 std::pair<Sample, int> Graph::posToSample(const QPoint &pos) const
@@ -947,33 +960,37 @@ double Graph::px2u(int px) const
 
 QString Graph::durationToString(timemsec_t duration)
 {
-	static constexpr timemsec_t SEC = 1000;
-	static constexpr timemsec_t MIN = 60 * SEC;
-	static constexpr timemsec_t HOUR = 60 * MIN;
-	static constexpr timemsec_t DAY = 24 * HOUR;
-	if(duration < MIN) {
-		return tr("%1.%2 sec").arg(duration / SEC).arg(duration % SEC, 3, 10, QChar('0'));
+	if (m_model->modelType() == GraphModel::ModelType::Timeline) {
+		static constexpr timemsec_t SEC = 1000;
+		static constexpr timemsec_t MIN = 60 * SEC;
+		static constexpr timemsec_t HOUR = 60 * MIN;
+		static constexpr timemsec_t DAY = 24 * HOUR;
+		if(duration < MIN) {
+			return tr("%1.%2 sec").arg(duration / SEC).arg(duration % SEC, 3, 10, QChar('0'));
+		}
+		if(duration < HOUR) {
+			const auto min = duration / MIN;
+			const auto sec = (duration % MIN) / SEC;
+			const auto msec = duration % SEC;
+			auto ret = tr("%1:%2.%3 min").arg(min).arg(sec, 2, 10, QChar('0')).arg(msec, 3, 10, QChar('0'));
+			return ret;
+		}
+		if(duration < DAY) {
+			const auto hour = duration / HOUR;
+			const auto min = (duration % HOUR) / MIN;
+			const auto sec = (duration % MIN) / SEC;
+			return tr("%1:%2:%3", "time").arg(hour).arg(min, 2, 10, QChar('0')).arg(sec, 2, 10, QChar('0'));
+		}
+		{
+			const auto day = duration / DAY;
+			const auto hour = (duration % DAY) / HOUR;
+			const auto min = (duration % HOUR) / MIN;
+			const auto sec = (duration % MIN) / SEC;
+			return tr("%1 day %2:%3:%4").arg(day).arg(hour).arg(min, 2, 10, QChar('0')).arg(sec, 2, 10, QChar('0'));
+		}
 	}
-	if(duration < HOUR) {
-		const auto min = duration / MIN;
-		const auto sec = (duration % MIN) / SEC;
-		const auto msec = duration % SEC;
-		auto ret = tr("%1:%2.%3 min").arg(min).arg(sec, 2, 10, QChar('0')).arg(msec, 3, 10, QChar('0'));
-		return ret;
-	}
-	if(duration < DAY) {
-		const auto hour = duration / HOUR;
-		const auto min = (duration % HOUR) / MIN;
-		const auto sec = (duration % MIN) / SEC;
-		return tr("%1:%2:%3", "time").arg(hour).arg(min, 2, 10, QChar('0')).arg(sec, 2, 10, QChar('0'));
-	}
-	{
-		const auto day = duration / DAY;
-		const auto hour = (duration % DAY) / HOUR;
-		const auto min = (duration % HOUR) / MIN;
-		const auto sec = (duration % MIN) / SEC;
-		return tr("%1 day %1:%2:%3").arg(day).arg(hour).arg(min, 2, 10, QChar('0')).arg(sec, 2, 10, QChar('0'));
-	}
+
+	return QString::number(duration);
 }
 
 namespace {
@@ -1336,8 +1353,8 @@ void Graph::drawMiniMap(QPainter *painter)
 		shvDebug() << "creating minimap cache";
 		m_miniMapCache = QPixmap(m_layout.miniMapRect.width(), m_layout.miniMapRect.height());
 		QRect mm_rect(QPoint(), m_layout.miniMapRect.size());
-		int inset = mm_rect.height() / 10;
-		mm_rect.adjust(0, inset, 0, -inset);
+		//int inset = mm_rect.height() / 10;
+		//mm_rect.adjust(0, inset, 0, -inset);
 		QPainter p(&m_miniMapCache);
 		QPainter *painter2 = &p;
 		painter2->fillRect(mm_rect, m_defaultChannelStyle.colorBackground());
@@ -2150,7 +2167,13 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 							}
 						}
 						else if(interpolation == GraphChannel::Style::Interpolation::Histogram) {
-							auto bar_width = histogramColumnWidth() - line_pen.width();
+							int bar_width;
+
+							if (dest_rect.isEmpty())
+								bar_width = histogramColumnWidth() - line_pen.width();
+							else // draw minimap
+								bar_width = miniMapHistogramColumnWidth() - line_pen.width();
+
 							painter->setPen(line_pen);
 							QPoint p(prev_point.x - bar_width / 2, prev_point.y2);
 							QRect bar_rect = QRect(p, QPoint(p.x() + bar_width, x_axis_y));
@@ -2176,14 +2199,7 @@ void Graph::drawCrossHairTimeMarker(QPainter *painter)
 		return;
 	}
 	QColor color = m_style.colorCrossHair();
-	timemsec_t time;
-
-	if (m_model->modelType() == GraphModel::ModelType::Histogram) {
-		time = posToTime(crossHairPos().position.x() + histogramColumnWidth() / 2);
-	}
-	else {
-		time = posToTime(crossHairPos().position.x());
-	}
+	timemsec_t time = posToTime(crossHairPos().position.x());
 
 	int x = timeToPos(time);
 	QPoint p1{x, m_layout.xAxisRect.top()};
@@ -2200,14 +2216,7 @@ void Graph::drawCrossHairTimeMarker(QPainter *painter)
 		painter->fillPath(pp, color);
 	}
 
-	QString text;
-
-	if (m_model->modelType() == GraphModel::ModelType::Timeline) {
-		text = timeToStringTZ(time);
-	}
-	else if (m_model->modelType() == GraphModel::ModelType::Histogram) {
-		text = QString::number(time);
-	}
+	QString text = timeToStringTZ(time);
 
 	p1.setY(p1.y() - tick_len);
 	auto c_text = color;
@@ -2292,7 +2301,7 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 		{
 			/// draw info
 			QString info_text;
-			if(selectionRect().isValid() && (m_model->modelType() == GraphModel::ModelType::Timeline)) {
+			if(selectionRect().isValid()) {
 				/// show selection info
 				auto sel_rect = selectionRect();
 				auto ch1_ix = posToChannel(sel_rect.bottomLeft());
@@ -2303,8 +2312,16 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 				auto t2 = posToTime(sel_rect.right());
 				auto y1 = ch1->posToValue(sel_rect.bottom());
 				auto y2 = ch2->posToValue(sel_rect.top());
-				info_text = tr("t1: %1").arg(timeToStringTZ(t1));
-				info_text += '\n' + tr("duration: %1").arg(durationToString(t2 - t1));
+
+				if (m_model->modelType() == GraphModel::ModelType::Timeline) {
+					info_text = tr("t1: %1").arg(timeToStringTZ(t1));
+					info_text += '\n' + tr("duration: %1").arg(durationToString(t2 - t1));
+				}
+				else {
+					info_text = tr("x1: %1").arg(timeToStringTZ(t1));
+					info_text += '\n' + tr("width: %1").arg(durationToString(t2 - t1));
+				}
+
 				if(ch1 == ch2) {
 					info_text += '\n' + tr("y1: %1").arg(y1);
 					info_text += '\n' + tr("diff: %1").arg(y2 - y1);
@@ -2460,13 +2477,17 @@ void Graph::applyCustomChannelStyle(GraphChannel *channel)
 
 QString Graph::timeToStringTZ(timemsec_t time) const
 {
-	QDateTime dt = QDateTime::fromMSecsSinceEpoch(time);
-#if SHVVISU_HAS_TIMEZONE
-	if(m_timeZone.isValid())
-		dt = dt.toTimeZone(m_timeZone);
-#endif
-	QString text = dt.toString(Qt::ISODate);
-	return text;
+	if (m_model->modelType() == GraphModel::ModelType::Timeline) {
+		QDateTime dt = QDateTime::fromMSecsSinceEpoch(time);
+	#if SHVVISU_HAS_TIMEZONE
+		if(m_timeZone.isValid())
+			dt = dt.toTimeZone(m_timeZone);
+	#endif
+		QString text = dt.toString(Qt::ISODate);
+		return text;
+	}
+
+	return QString::number(time);
 }
 
 void Graph::saveVisualSettings(const QString &settings_id, const QString &name) const

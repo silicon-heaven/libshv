@@ -17,9 +17,7 @@ void GraphView::makeLayout()
 {
 	if(auto *w = qobject_cast<GraphWidget*>(widget())) {
 		auto size = geometry().size();
-		//size -= QSize(15, 15);
 		w->makeLayout(size); // space for scroll bar
-
 		auto scrollbar_visible = (w->geometry().size() != size);
 
 		//Set horizontal scroll bar allways off, use minimap instead

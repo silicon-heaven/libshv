@@ -244,7 +244,7 @@ void GraphModel::appendValue(qsizetype channel, Sample &&sample)
 		}
 		samples.push_back(std::move(sample));
 	}
-	else if (modelType() == ModelType::Histogram) {
+	else {
 		ChannelSamples &samples = m_samples[channel];
 		samples.push_back(std::move(sample));
 	}

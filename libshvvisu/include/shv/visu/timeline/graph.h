@@ -203,7 +203,7 @@ public:
 	double u2pxf(double u) const;
 	double px2u(int px) const;
 
-	static QString durationToString(timemsec_t duration);
+	QString durationToString(timemsec_t duration);
 
 	static std::function<QPoint (const Sample &s, TypeId meta_type_id)> dataToPointFn(const DataRect &src, const QRect &dest);
 	static std::function<Sample (const QPoint &)> pointToDataFn(const QRect &src, const DataRect &dest);
@@ -279,7 +279,8 @@ protected:
 
 	void moveSouthFloatingBarBottom(int bottom);
 	QString elidedText(const QString &text, const QFont &font, const QRect &rect);
-	int histogramColumnWidth();
+	int histogramColumnWidth() const;
+	int miniMapHistogramColumnWidth() const;
 protected:
 	QVariantMap toolTipValues(const QPoint &pos) const;
 protected:
