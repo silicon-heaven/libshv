@@ -344,7 +344,11 @@ const DesiredType& try_convert_or_default(const RpcValue::VariantType& value, co
 	return default_value;
 }
 
+#ifdef __ANDROID__
+template <typename ResultType>
+#else
 template <std::integral ResultType>
+#endif
 ResultType impl_to_int(const RpcValue::VariantType& value)
 {
 	return std::visit([] (const auto& x) {
