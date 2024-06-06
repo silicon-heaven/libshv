@@ -21,7 +21,6 @@ public:
 
 private:
 	Ui::HistogramGraphWidget *ui;
-
 	shv::visu::timeline::GraphModel *m_graphModel = nullptr;
 	shv::visu::timeline::Graph *m_graph = nullptr;
 	shv::visu::timeline::GraphWidget *m_graphWidget = nullptr;

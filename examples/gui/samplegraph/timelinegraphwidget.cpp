@@ -17,9 +17,6 @@ TimelineGraphWidget::TimelineGraphWidget(QWidget *parent)
 	, ui(new Ui::TimelineGraphWidget)
 {
 	ui->setupUi(this);
-	//connect(ui->samplesCount, &QSpinBox::editingFinished, this, &TimelineGraphWidget::on_actionGenerate_sample_data_triggered);
-
-	//ui->btGenerateSamples->setDefaultAction(ui->actionGenerate_sample_data);
 
 	m_graphModel = new tl::GraphModel(this);
 	m_graphWidget = new tl::GraphWidget();
@@ -31,10 +28,8 @@ TimelineGraphWidget::TimelineGraphWidget(QWidget *parent)
 
 	m_graph = new tl::Graph(this);
 	tl::Graph::Style graph_style = m_graph->style();
-	// graph_style.setYAxisVisible(false);
 	m_graph->setStyle(graph_style);
 	tl::GraphChannel::Style channel_style = m_graph->defaultChannelStyle();
-	//channel_style.setColorGrid(QColor());
 	m_graph->setDefaultChannelStyle(channel_style);
 	m_graph->setModel(m_graphModel);
 	m_graphWidget->setGraph(m_graph);
