@@ -15,7 +15,7 @@ class HistogramGraphWidget : public QWidget
 
 public:
 	explicit HistogramGraphWidget(QWidget *parent = nullptr);
-	~HistogramGraphWidget();
+	~HistogramGraphWidget() override;
 
 	void generateSampleData(int count);
 
