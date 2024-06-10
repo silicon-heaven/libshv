@@ -99,6 +99,27 @@ jobs:
 
       - name: Build and test
         uses: ./.github/actions/build-and-test
+
+  android:
+    name: Qt 6.6.3 / Android
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup CMake
+        uses: ./.github/actions/cmake
+        with:
+          qt_version: 6.6.3
+          qt_arch: android_arm64_v8a
+          use_qt6: ON
+          modules: qtserialport qtwebsockets
+          additional_cmake_args: -DLIBSHV_WITH_LDAP=OFF
+
+      - name: Build and test
+        uses: ./.github/actions/build-and-test
+
   nix:
     name: Qt 6.6.2 / NixOS
     runs-on: ubuntu-22.04
