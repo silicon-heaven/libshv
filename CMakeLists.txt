@@ -47,6 +47,7 @@ set(LIBSHV_PROJECT_TRANSLATIONS
 	pl_PL
 	sr_RS
 	de_DE
+	sk_SK
 )
 
 function(libshv_set_translations target langs)

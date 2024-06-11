@@ -153,10 +153,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>yyyy-MM-dd hh:mm:ss</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Until</source>
         <translation type="unfinished"></translation>
     </message>
