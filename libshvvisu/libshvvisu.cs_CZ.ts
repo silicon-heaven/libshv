@@ -348,15 +348,15 @@
     </message>
     <message>
         <source>Check channels</source>
-        <translation>Zaškrtnout všechny kanály</translation>
+        <translation>Označit vše</translation>
     </message>
     <message>
         <source>Uncheck channels</source>
-        <translation>Zrušit zaškrtnutí všech kanálů</translation>
+        <translation>Zrušit všechna označení</translation>
     </message>
     <message>
         <source>Uncheck channels without data changes</source>
-        <translation>Zrušit zaškrtnutí kanálů beze změn</translation>
+        <translation>Zrušit označení kanálů beze změn</translation>
     </message>
     <message>
         <source>Matching text</source>
