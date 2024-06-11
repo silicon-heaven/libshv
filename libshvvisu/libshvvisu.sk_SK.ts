@@ -5,496 +5,496 @@
     <name>shv::visu::ErrorLogModel</name>
     <message>
         <source>Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Úroveň</translation>
     </message>
     <message>
         <source>Time stamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Časová pečiatka</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Správa</translation>
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Data</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::LogWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Formulár</translation>
     </message>
     <message>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmazať</translation>
     </message>
     <message>
         <source>Resize columns to fit content</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmeniť veľkosť stĺpcov podľa obsahu</translation>
     </message>
     <message>
         <source>Event log options</source>
-        <translation type="unfinished"></translation>
+        <translation>Možnosti logu udalostí</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <source>Maximal log length</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximálna dĺžka logu</translation>
     </message>
     <message>
         <source>Get number</source>
-        <translation type="unfinished"></translation>
+        <translation>Získať číslo</translation>
     </message>
     <message>
         <source>Maximal log row count:</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximálny počet riadkov logu:</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::LogWidgetTableView</name>
     <message>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopírovať</translation>
     </message>
     <message>
         <source>Ctrl+C</source>
         <comment>Copy selection</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+C</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::logview::DataViewWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Formulár</translation>
     </message>
     <message>
         <source>Show/hide raw data</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobraziť/skryť surová data</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <source>Show filter dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobraziť dialógové okno filtra</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::logview::DlgLogInspector</name>
     <message>
         <source>Log inspector</source>
-        <translation type="unfinished"></translation>
+        <translation>Inšpektor logu</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation>TextLabel</translation>
     </message>
     <message>
         <source>&amp;Since</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Od</translation>
     </message>
     <message>
         <source>Not defined</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie je definované</translation>
     </message>
     <message>
         <source>&amp;Until</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Do</translation>
     </message>
     <message>
         <source>Time zone</source>
-        <translation type="unfinished"></translation>
+        <translation>Časové pásmo</translation>
     </message>
     <message>
         <source>&amp;Options</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Možnosti</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Stiahnuť</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Možnosti</translation>
     </message>
     <message>
         <source> sec</source>
-        <translation type="unfinished"></translation>
+        <translation> sek</translation>
     </message>
     <message>
         <source>Max record count</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximálny počet záznamov</translation>
     </message>
     <message>
         <source>SHV &amp;Path</source>
-        <translation type="unfinished"></translation>
+        <translation>SHV &amp;Cesta</translation>
     </message>
     <message>
         <source>paths dict</source>
-        <translation type="unfinished"></translation>
+        <translation>cesty dikt</translation>
     </message>
     <message>
         <source>Path pattern is regex</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzor cesty je regex</translation>
     </message>
     <message>
         <source>&amp;regex</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;regex</translation>
     </message>
     <message>
         <source>Timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>Čas vypršal</translation>
     </message>
     <message>
         <source>Path pa&amp;ttern</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Vzor cesty</translation>
     </message>
     <message>
         <source>use &amp;history provider</source>
-        <translation type="unfinished"></translation>
+        <translation>použite &amp;poskytovateľa histórie</translation>
     </message>
     <message>
         <source>with snapshot</source>
-        <translation type="unfinished"></translation>
+        <translation>so snímkou</translation>
     </message>
     <message>
         <source>with type info</source>
-        <translation type="unfinished"></translation>
+        <translation>s informáciami o type</translation>
     </message>
     <message>
         <source>Graph</source>
-        <translation type="unfinished"></translation>
+        <translation>Graf</translation>
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Data</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Info</translation>
     </message>
     <message>
         <source>Resize columns to fit width</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmeniť veľkosť stĺpcov na šírku</translation>
     </message>
     <message>
         <source>Load data</source>
-        <translation type="unfinished"></translation>
+        <translation>Načítať dáta</translation>
     </message>
     <message>
         <source>Save data</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložiť dáta</translation>
     </message>
     <message>
         <source>ChainPack</source>
-        <translation type="unfinished"></translation>
+        <translation>ChainPack</translation>
     </message>
     <message>
         <source>Cpon</source>
-        <translation type="unfinished"></translation>
+        <translation>Cpon</translation>
     </message>
     <message>
         <source>CSV</source>
-        <translation type="unfinished"></translation>
+        <translation>CSV</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Varovanie</translation>
     </message>
     <message>
         <source>Invalid ChainPack file: </source>
-        <translation type="unfinished"></translation>
+        <translation>Neplatný súbor ChainPack: </translation>
     </message>
     <message>
         <source>Invalid CPON file: </source>
-        <translation type="unfinished"></translation>
+        <translation>Neplatný súbor CPON: </translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kopírovať</translation>
     </message>
     <message>
         <source>Loadfile</source>
-        <translation type="unfinished"></translation>
+        <translation>Načítať súbor</translation>
     </message>
     <message>
         <source>Cannot open file &apos;%1&apos; for read.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie je možné otvoriť súbor &apos;%1&apos; na čítanie.</translation>
     </message>
     <message>
         <source>Savefile</source>
-        <translation type="unfinished"></translation>
+        <translation>Uloženie súboru</translation>
     </message>
     <message>
         <source>Cannot open file &apos;%1&apos; for write.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie je možné otvoriť súbor &apos;%1&apos; na zápis.</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::logview::LogModel</name>
     <message>
         <source>DateTime</source>
-        <translation type="unfinished"></translation>
+        <translation>DatumČas</translation>
     </message>
     <message>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Cesta</translation>
     </message>
     <message>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Hodnota</translation>
     </message>
     <message>
         <source>ShortTime</source>
-        <translation type="unfinished"></translation>
+        <translation>ShortTime</translation>
     </message>
     <message>
         <source>Domain</source>
-        <translation type="unfinished"></translation>
+        <translation>Doména</translation>
     </message>
     <message>
         <source>ValueFlags</source>
-        <translation type="unfinished"></translation>
+        <translation>ValueFlags</translation>
     </message>
     <message>
         <source>UserId</source>
-        <translation type="unfinished"></translation>
+        <translation>UživatelskéId</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::timeline::ChannelFilterDialog</name>
     <message>
         <source>Channels filter dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Dialógové okno filtra kanálov</translation>
     </message>
     <message>
         <source>Channel filter is enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter kanálov je povolený</translation>
     </message>
     <message>
         <source>Data view</source>
-        <translation type="unfinished"></translation>
+        <translation>Dátový pohľad</translation>
     </message>
     <message>
         <source>Check channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Označiť všetko</translation>
     </message>
     <message>
         <source>Uncheck channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušiť všetkých označení</translation>
     </message>
     <message>
         <source>Uncheck channels without data changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušiť označenie kanálov bez zmien</translation>
     </message>
     <message>
         <source>Matching text</source>
-        <translation type="unfinished"></translation>
+        <translation>Zodpovedajúci text</translation>
     </message>
     <message>
         <source>Discard changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušiť zmeny</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložiť</translation>
     </message>
     <message>
         <source>Save as</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložiť ako</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstrániť</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Export</translation>
     </message>
     <message>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Import</translation>
     </message>
     <message>
         <source>Input file name</source>
-        <translation type="unfinished"></translation>
+        <translation>Názov vstupného súboru</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Chyba</translation>
     </message>
     <message>
         <source>Cannot open graph setting file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie je možné otvoriť súbor s nastavením grafu.</translation>
     </message>
     <message>
         <source>Import as</source>
-        <translation type="unfinished"></translation>
+        <translation>Importovať ako</translation>
     </message>
     <message>
         <source>Input view name</source>
-        <translation type="unfinished"></translation>
+        <translation>Názov pohľadu</translation>
     </message>
     <message>
         <source>Failed to save view: name is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodarilo sa uložiť pohľad: názov je prázdny.</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozšíriť</translation>
     </message>
     <message>
         <source>Collapse</source>
-        <translation type="unfinished"></translation>
+        <translation>Zbaliť</translation>
     </message>
     <message>
         <source>Expand all nodes</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbaliť všetky uzly</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::timeline::ChannelProbeWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Formulár</translation>
     </message>
     <message>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Názov</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::timeline::Graph</name>
     <message>
         <source>%1.%2 sec</source>
-        <translation type="unfinished"></translation>
+        <translation>%1.%2 sek.</translation>
     </message>
     <message>
         <source>%1:%2.%3 min</source>
-        <translation type="unfinished"></translation>
+        <translation>%1:%2.%3 min</translation>
     </message>
     <message>
         <source>%1:%2:%3</source>
         <comment>time</comment>
-        <translation type="unfinished"></translation>
+        <translation>%1:%2:%3</translation>
     </message>
     <message>
         <source>%1 day %1:%2:%3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 deň %1:%2:%3</translation>
     </message>
     <message>
         <source>t1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>t1: %1</translation>
     </message>
     <message>
         <source>duration: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>trvanie: %1</translation>
     </message>
     <message>
         <source>y1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>y1: %1</translation>
     </message>
     <message>
         <source>diff: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>rozdiel: %1</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::timeline::GraphWidget</name>
     <message>
         <source>Path:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cesta:</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Názov:</translation>
     </message>
     <message>
         <source>Zoom X axis to selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Priblížiť os X na výber</translation>
     </message>
     <message>
         <source>Zoom channel to selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Priblížiť kanál na výber</translation>
     </message>
     <message>
         <source>Show selection info</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobraziť informácie o výbere</translation>
     </message>
     <message>
         <source>t1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>t1: %1</translation>
     </message>
     <message>
         <source>t2: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>t2: %2</translation>
     </message>
     <message>
         <source>duration: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>trvanie: %1</translation>
     </message>
     <message>
         <source>y1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>y1: %1</translation>
     </message>
     <message>
         <source>y2: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>y2: %2</translation>
     </message>
     <message>
         <source>diff: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>rozdiel: %1</translation>
     </message>
     <message>
         <source>Selection info</source>
-        <translation type="unfinished"></translation>
+        <translation>Informácie o výbere</translation>
     </message>
     <message>
         <source>Normal size</source>
-        <translation type="unfinished"></translation>
+        <translation>Normálna veľkosť</translation>
     </message>
     <message>
         <source>Maximize</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximalizovať</translation>
     </message>
     <message>
         <source>Set probe (Ctrl + Left mouse)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastaviť sondu (Ctrl + ľavá myš)</translation>
     </message>
     <message>
         <source>Add probe (Ctrl + Shift + Left mouse)</source>
-        <translation type="unfinished"></translation>
+        <translation>Pridať sondu (Ctrl + Shift + ľavá myš)</translation>
     </message>
     <message>
         <source>Reset X-zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Resetovať X-zoom</translation>
     </message>
     <message>
         <source>Reset Y-zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Resetovať Y-zoom</translation>
     </message>
     <message>
         <source>Hide Y axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Skryť os Y</translation>
     </message>
     <message>
         <source>Show Y axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobraziť os Y</translation>
     </message>
 </context>
 </TS>
