@@ -153,10 +153,6 @@
         <translation>Niezdefiniowany</translation>
     </message>
     <message>
-        <source>yyyy-MM-dd hh:mm:ss</source>
-        <translation>yyyy-MM-dd hh:mm:ss</translation>
-    </message>
-    <message>
         <source>&amp;Until</source>
         <translation>&amp;Until</translation>
     </message>

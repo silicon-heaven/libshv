@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="it_IT">
+<TS version="2.1" language="sk_SK">
 <context>
     <name>shv::visu::ErrorLogModel</name>
     <message>
@@ -78,7 +78,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show filter dialog</source>
+        <source>Show/hide raw data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -86,56 +86,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show/hide raw data</source>
+        <source>Show filter dialog</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>shv::visu::logview::DlgLogInspector</name>
-    <message>
-        <source>ChainPack</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cpon</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>CSV</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Warning</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid ChainPack file: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid CPON file: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Loadfile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cannot open file &apos;%1&apos; for read.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Savefile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cannot open file &apos;%1&apos; for write.</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Log inspector</source>
         <translation type="unfinished"></translation>
@@ -240,6 +196,50 @@
         <source>Save data</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>ChainPack</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cpon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid ChainPack file: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid CPON file: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loadfile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open file &apos;%1&apos; for read.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Savefile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open file &apos;%1&apos; for write.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>shv::visu::logview::LogModel</name>
@@ -274,6 +274,34 @@
 </context>
 <context>
     <name>shv::visu::timeline::ChannelFilterDialog</name>
+    <message>
+        <source>Channels filter dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Channel filter is enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Data view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Uncheck channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Uncheck channels without data changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Matching text</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>Discard changes</source>
         <translation type="unfinished"></translation>
@@ -332,34 +360,6 @@
     </message>
     <message>
         <source>Expand all nodes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Channels filter dialog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Channel filter is enabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Data view</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Check channels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Uncheck channels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Uncheck channels without data changes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Matching text</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
