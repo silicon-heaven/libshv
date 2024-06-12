@@ -87,7 +87,7 @@
     </message>
     <message>
         <source>Show/hide raw data</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobrazit/schovat surová data</translation>
     </message>
 </context>
 <context>
