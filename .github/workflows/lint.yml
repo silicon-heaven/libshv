@@ -33,6 +33,8 @@ jobs:
         with:
           submodules: true
 
+      - uses: mjp41/workaround8649@c8550b715ccdc17f89c8d5c28d7a48eeff9c94a8
+
       - name: Run clazy
         uses: ./.github/actions/run-linter
         with:
