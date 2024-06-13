@@ -31,11 +31,6 @@ runs:
         packages: ninja-build doctest-dev libgl1-mesa-dev libpulse-dev libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-util1 libxcb-xinerama0 libxkbcommon-x11-0 libldap-dev clazy
         version: 1.0
 
-    - name: Install trompeloeil
-      if: runner.os != 'Windows'
-      run: curl -o trompeloeil.deb http://de.archive.ubuntu.com/ubuntu/pool/universe/t/trompeloeil-cpp/libtrompeloeil-cpp-dev_43-3_amd64.deb && sudo dpkg -i trompeloeil.deb
-      shell: bash
-
     # Windows deps
     - name: Install Windows deps
       if: runner.os == 'Windows'

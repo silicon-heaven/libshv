@@ -13,8 +13,8 @@ on:
 
 jobs:
   ubuntu-qt6:
-    name: Qt 6.5.3 / Ubuntu 22.04
-    runs-on: ubuntu-22.04
+    name: Qt 6.5.3 / Ubuntu 24.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
