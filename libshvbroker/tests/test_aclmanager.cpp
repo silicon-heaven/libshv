@@ -204,7 +204,7 @@ DOCTEST_TEST_CASE("accessGrantForShvPath")
 	bool is_request_from_master_broker = false;
 
 	bool expected_valid;
-	auto expected_access_level = static_cast<shv::chainpack::AccessLevel>(-1);
+	auto expected_access_level = static_cast<shv::chainpack::AccessLevel>(-1); // NOLINT(clang-analyzer-optin.core.EnumCastOutOfRange)
 
 	std::vector<std::unique_ptr<trompeloeil::expectation>> expectations;
 
