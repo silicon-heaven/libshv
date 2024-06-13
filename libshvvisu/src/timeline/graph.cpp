@@ -56,6 +56,9 @@ bool Graph::DataRect::isValid() const
 Graph::Graph(QObject *parent)
 	: QObject(parent)
 {
+#if SHVVISU_HAS_TIMEZONE
+	m_timeZone = QTimeZone::utc();
+#endif
 
 }
 
