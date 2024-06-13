@@ -42,4 +42,4 @@ to print help
 ### ShvSpy
 https://github.com/silicon-heaven/shvspy
 
-Gui tool to inspect shv tree and to call shv methods. Prtable binaries an be downloaded from CI [Actions](https://github.com/silicon-heaven/shvspy/actions).
+Gui tool to inspect shv tree and to call shv methods. Latest version can be downloaded from [here](https://github.com/silicon-heaven/shvspy/releases/tag/nightly). There is also a [WebAssembly](https://silicon-heaven.github.io/shvspy/) version.
