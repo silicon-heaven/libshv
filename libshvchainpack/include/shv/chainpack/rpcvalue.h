@@ -305,16 +305,13 @@ public:
 	RpcValue(IMap &&values);          // IMap
 
 	// Implicit constructor: map-like objects (std::map, std::unordered_map, etc)
-	template <class M, std::enable_if_t<
-				  std::is_constructible_v<RpcValue::String, typename M::key_type>
-				  && std::is_constructible_v<RpcValue, typename M::mapped_type>,
-				  int> = 0>
+	template <class M>
+		requires std::constructible_from<RpcValue::String, typename M::key_type> && std::constructible_from<RpcValue, typename M::mapped_type>
 	RpcValue(const M & m) : RpcValue(Map(m.begin(), m.end())) {}
 
 	// Implicit constructor: vector-like objects (std::list, std::vector, std::set, etc)
-	template <class V, std::enable_if_t<
-				  std::is_constructible_v<RpcValue, typename V::value_type>,
-				  int> = 0>
+	template <class V>
+		requires std::constructible_from<RpcValue, typename V::value_type>
 	RpcValue(const V & v) : RpcValue(List(v.begin(), v.end())) {}
 
 	// This prevents RpcValue(some_pointer) from accidentally producing a bool. Use
