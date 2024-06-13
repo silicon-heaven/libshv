@@ -72,17 +72,18 @@ bool ShvJournalFileReader::next()
 				fld = StringView(line).substr(ix1, ix2 - ix1);
 				ix1 = ix2 + 1;
 			}
+
 			switch(column) {
 			case Column::Timestamp: {
 				std::string dtstr = std::string{fld};
 				size_t len;
 				cp::RpcValue::DateTime dt = cp::RpcValue::DateTime::fromUtcString(dtstr, &len);
 				if(len == 0) {
-					logWShvJournal() << "invalid date time string:" << dtstr << "line will be ignored";
+					logWShvJournal() << "invalid date time string:" << dtstr << "line will be ignored:" << line << "file:" << m_fileName;
 					goto next_line;
 				}
 				if(len >= line.size() || line[len] != ShvFileJournal::FIELD_SEPARATOR) {
-					logWShvJournal() << "invalid date time string:" << dtstr << "correct date time should end with field separator on position:" << len << ", line will be ignored";
+					logWShvJournal() << "invalid date time string:" << dtstr << "correct date time should end with field separator on position:" << len << ", line will be ignored:" << line << "file:" << m_fileName;
 					goto next_line;
 				}
 				m_currentEntry.epochMsec = dt.msecsSinceEpoch();
@@ -90,7 +91,7 @@ bool ShvJournalFileReader::next()
 			}
 			case Column::Path: {
 				if(fld.empty()) {
-					logWShvJournal() << "skipping invalid line with empy path, line:" << line;
+					logWShvJournal() << "skipping invalid line with empy path, line:" << line << "file:" << m_fileName;
 					goto next_line;
 				}
 				m_currentEntry.path = std::string{fld};
@@ -100,7 +101,7 @@ bool ShvJournalFileReader::next()
 				std::string err;
 				m_currentEntry.value = cp::RpcValue::fromCpon(std::string{fld}, &err);
 				if(!err.empty()) {
-					logWShvJournal().nospace() << "Invalid CPON value: '" << fld << '\'';
+					logWShvJournal().nospace() << "Invalid CPON value: '" << fld << "\' line: " << line << "file:" << m_fileName;
 					goto next_line;
 				}
 				break;
