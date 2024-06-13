@@ -13,11 +13,13 @@ on:
 
 jobs:
   ubuntu-qt5:
-    name: Qt 5.15.2 / Ubuntu 22.04
-    runs-on: ubuntu-22.04
+    name: Qt 5.15.2 / Ubuntu 24.04
+    runs-on: ubuntu-24.04
     env:
       CFLAGS: -fsanitize=address,undefined
       CXXFLAGS: -fsanitize=address,undefined
+      CC: gcc-13
+      CXX: g++-13
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,11 +36,13 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   ubuntu-qt6-5:
-    name: Qt 6.5.3 / Ubuntu 22.04
-    runs-on: ubuntu-22.04
+    name: Qt 6.5.3 / Ubuntu 24.04
+    runs-on: ubuntu-24.04
     env:
       CFLAGS: -fsanitize=address,undefined
       CXXFLAGS: -fsanitize=address,undefined
+      CC: gcc-13
+      CXX: g++-13
     steps:
       - uses: actions/checkout@v4
         with:
@@ -55,11 +59,13 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   ubuntu-qt6-7:
-    name: Qt 6.7.3 / Ubuntu 22.04
-    runs-on: ubuntu-22.04
+    name: Qt 6.7.3 / Ubuntu 24.04
+    runs-on: ubuntu-24.04
     env:
       CFLAGS: -fsanitize=address,undefined
       CXXFLAGS: -fsanitize=address,undefined
+      CC: gcc-13
+      CXX: g++-13
     steps:
       - uses: actions/checkout@v4
         with:
@@ -102,7 +108,7 @@ jobs:
 
   android:
     name: Qt 6.7.3 / Android
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -122,7 +128,7 @@ jobs:
 
   nix:
     name: Qt 6.6.2 / NixOS
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
