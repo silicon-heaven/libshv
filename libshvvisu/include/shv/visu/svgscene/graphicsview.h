@@ -24,6 +24,11 @@ protected:
 	void mousePressEvent(QMouseEvent *ev) Q_DECL_OVERRIDE;
 	void mouseReleaseEvent(QMouseEvent *ev) Q_DECL_OVERRIDE;
 	void mouseMoveEvent(QMouseEvent *ev) Q_DECL_OVERRIDE;
+
+#ifdef ANDROID
+	bool event(QEvent *event) override;
+#endif
+
 private:
 	QPoint m_dragMouseStartPos;
 };
