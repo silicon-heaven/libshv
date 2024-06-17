@@ -395,7 +395,7 @@
     </message>
     <message>
         <source>%1 day %1:%2:%3</source>
-        <translation>%1 dzien %1:%2:%3</translation>
+        <translation type="vanished">%1 dzien %1:%2:%3</translation>
     </message>
     <message>
         <source>t1: %1</source>
@@ -412,6 +412,18 @@
     <message>
         <source>diff: %1</source>
         <translation>roznica: %1</translation>
+    </message>
+    <message>
+        <source>%1 day %2:%3:%4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x1: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>width: %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -442,7 +454,7 @@
     </message>
     <message>
         <source>t2: %2</source>
-        <translation>t2: %2</translation>
+        <translation type="vanished">t2: %2</translation>
     </message>
     <message>
         <source>duration: %1</source>
@@ -454,7 +466,7 @@
     </message>
     <message>
         <source>y2: %2</source>
-        <translation>y2: %2</translation>
+        <translation type="vanished">y2: %2</translation>
     </message>
     <message>
         <source>diff: %1</source>
@@ -495,6 +507,26 @@
     <message>
         <source>Show Y axis</source>
         <translation>Pokaż oś Y</translation>
+    </message>
+    <message>
+        <source>t2: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x1: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x2: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>width: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>y2: %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

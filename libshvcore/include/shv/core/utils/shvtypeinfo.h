@@ -91,7 +91,7 @@ public:
 		Map,
 		IMap,
 	};
-	enum class SampleType {Invalid = 0, Continuous , Discrete};
+	enum class SampleType {Invalid = 0, Continuous, Discrete};
 
 	ShvTypeDescr();
 	ShvTypeDescr(const std::string &type_name);

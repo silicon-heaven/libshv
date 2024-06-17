@@ -32,11 +32,17 @@ timemsec_t ChannelProbe::currentTime() const
 
 QString ChannelProbe::currentTimeIsoFormat() const
 {
-	QDateTime dt = QDateTime::fromMSecsSinceEpoch(m_currentTime);
+	if (m_graph->model()->xAxisType() == GraphModel::XAxisType::Timeline) {
+		QDateTime dt = QDateTime::fromMSecsSinceEpoch(m_currentTime);
 #if SHVVISU_HAS_TIMEZONE
-	dt = dt.toTimeZone(m_graph->timeZone());
+		if (m_graph->timeZone().isValid())
+			dt = dt.toTimeZone(m_graph->timeZone());
 #endif
-	return dt.toString(Qt::ISODateWithMs);
+
+		return dt.toString(Qt::ISODateWithMs);
+	}
+
+	return QString::number(m_currentTime);
 }
 
 void ChannelProbe::nextSample()

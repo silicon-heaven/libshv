@@ -162,7 +162,7 @@ public:
 	struct SHVVISU_DECL_EXPORT CrossHairPos
 	{
 		qsizetype channelIndex = -1;
-		QPoint possition;
+		QPoint position;
 
 		CrossHairPos();
 		CrossHairPos(qsizetype ch_ix, const QPoint &pos);
@@ -205,7 +205,7 @@ public:
 	double u2pxf(double u) const;
 	double px2u(int px) const;
 
-	static QString durationToString(timemsec_t duration);
+	QString durationToString(timemsec_t duration);
 
 	static std::function<QPoint (const Sample &s, TypeId meta_type_id)> dataToPointFn(const DataRect &src, const QRect &dest);
 	static std::function<Sample (const QPoint &)> pointToDataFn(const QRect &src, const DataRect &dest);
@@ -300,7 +300,7 @@ protected:
 
 	struct SHVVISU_DECL_EXPORT XAxis
 	{
-		enum class LabelScale {MSec, Sec, Min, Hour, Day, Month, Year};
+		enum class LabelScale {MSec, Sec, Min, Hour, Day, Month, Year, Value};
 		timemsec_t tickInterval = 0;
 		int subtickEvery = 1;
 		double tickLen = 0.15;

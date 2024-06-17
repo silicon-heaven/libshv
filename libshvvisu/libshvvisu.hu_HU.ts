@@ -394,10 +394,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 day %1:%2:%3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>t1: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -411,6 +407,18 @@
     </message>
     <message>
         <source>diff: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 day %2:%3:%4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x1: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>width: %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -441,19 +449,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>t2: %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>duration: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>y1: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>y2: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -494,6 +494,26 @@
     </message>
     <message>
         <source>Show Y axis</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>t2: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x1: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x2: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>width: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>y2: %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

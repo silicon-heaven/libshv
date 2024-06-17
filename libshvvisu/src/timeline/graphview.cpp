@@ -15,14 +15,20 @@ GraphView::GraphView(QWidget *parent)
 
 void GraphView::makeLayout()
 {
-	int scroll_bar_width = 0;
-	if (auto *sb = verticalScrollBar(); sb) {
-		if (sb->isVisible()) {
-			scroll_bar_width = sb->width();
-		}
-	}
 	if(auto *w = qobject_cast<GraphWidget*>(widget())) {
-		w->makeLayout(geometry().size() - QSize(scroll_bar_width, 0)); // space for scroll bar
+		auto size = geometry().size();
+		w->makeLayout(size); // space for scroll bar
+		auto scrollbar_visible = (w->geometry().size() != size);
+
+		//Set horizontal scroll bar allways off, use minimap instead
+		setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
+		setVerticalScrollBarPolicy((scrollbar_visible)? Qt::ScrollBarPolicy::ScrollBarAlwaysOn: Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
+
+		if (auto *sb = verticalScrollBar(); sb) {
+			sb->setVisible(scrollbar_visible);
+		}
+
+		shvDebug() << "w geometry" << w->geometry().width() << "h" << w->geometry().height();
 	}
 }
 

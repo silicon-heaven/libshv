@@ -20,7 +20,6 @@
 #include <QWindow>
 #include <QDrag>
 #include <QMimeData>
-#include <cmath>
 #include <QMessageBox>
 #include <QToolTip>
 
@@ -89,9 +88,12 @@ void GraphWidget::makeLayout(const QSize &preferred_size)
 	m_graphPreferredSize = preferred_size;
 	graph()->makeLayout(QRect(QPoint(), preferred_size));
 	QSize sz = graph()->rect().size();
+	shvDebug() << "preferred size:" << preferred_size.width() << 'x' << preferred_size.height();
 	shvDebug() << "new size:" << sz.width() << 'x' << sz.height();
-	if(sz.width() > 0)
+	if(sz.width() > 0 && sz.height() > 0) {
 		setMinimumSize(sz);
+		setMaximumSize(sz);
+	}
 	update();
 }
 
@@ -744,6 +746,7 @@ void GraphWidget::showGraphSelectionContextMenu(const QPoint &mouse_pos)
 	if (sel_ch1 != sel_ch2 || sel_ch1 < 0) {
 		act_zoom_channel->setEnabled(false);
 	}
+
 	menu.addAction(tr("Show selection info"), this, [this]() {
 		auto sel_rect = m_graph->selectionRect();
 		auto ch1_ix = m_graph->posToChannel(sel_rect.bottomLeft());
@@ -754,15 +757,26 @@ void GraphWidget::showGraphSelectionContextMenu(const QPoint &mouse_pos)
 		auto t2 = m_graph->posToTime(sel_rect.right());
 		auto y1 = ch1->posToValue(sel_rect.bottom());
 		auto y2 = ch2->posToValue(sel_rect.top());
-		QString s = tr("t1: %1").arg(m_graph->timeToStringTZ(t1));
-		s += '\n' + tr("t2: %2").arg(m_graph->timeToStringTZ(t2));
-		s += '\n' + tr("duration: %1").arg(shv::visu::timeline::Graph::durationToString(t2 - t1));
+		QString s;
+
+		if (m_graph->model()->xAxisType() == GraphModel::XAxisType::Timeline) {
+			s = tr("t1: %1").arg(m_graph->timeToStringTZ(t1));
+			s += '\n' + tr("t2: %1").arg(m_graph->timeToStringTZ(t2));
+			s += '\n' + tr("duration: %1").arg(m_graph->durationToString(t2 - t1));
+		}
+		else {
+			s = tr("x1: %1").arg(m_graph->timeToStringTZ(t1));
+			s += '\n' + tr("x2: %1").arg(m_graph->timeToStringTZ(t2));
+			s += '\n' + tr("width: %1").arg(m_graph->durationToString(t2 - t1));
+		}
+
 		s += '\n' + tr("y1: %1").arg(y1);
-		s += '\n' + tr("y2: %2").arg(y2);
+		s += '\n' + tr("y2: %1").arg(y2);
 		if(ch1 == ch2)
 			s += '\n' + tr("diff: %1").arg(y2 - y1);
 		QMessageBox::information(this, tr("Selection info"), s);
 	});
+
 	menu.exec(mapToGlobal(mouse_pos));
 }
 

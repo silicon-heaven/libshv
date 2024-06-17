@@ -33,6 +33,9 @@
        </item>
        <item>
         <widget class="QSpinBox" name="samplesCount">
+         <property name="minimum">
+          <number>10</number>
+         </property>
          <property name="maximum">
           <number>1000000</number>
          </property>
@@ -45,6 +48,10 @@
         <widget class="QToolButton" name="btGenerateSamples">
          <property name="text">
           <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../libshvvisu/images/images.qrc">
+           <normaloff>:/shv/visu/images/media-play.svg</normaloff>:/shv/visu/images/media-play.svg</iconset>
          </property>
          <property name="autoRaise">
           <bool>true</bool>
@@ -68,63 +75,36 @@
      </widget>
     </item>
     <item>
-     <widget class="shv::visu::timeline::GraphView" name="graphView">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>1</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
+     <widget class="QTabWidget" name="twGraph">
+      <property name="currentIndex">
+       <number>0</number>
       </property>
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>1405</width>
-         <height>742</height>
-        </rect>
-       </property>
+      <widget class="TimelineGraphWidget" name="tabTimeline">
+       <attribute name="title">
+        <string>Timeline</string>
+       </attribute>
+      </widget>
+      <widget class="HistogramGraphWidget" name="tabHistogram">
+       <attribute name="title">
+        <string>Histogram</string>
+       </attribute>
       </widget>
      </widget>
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1425</width>
-     <height>26</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuGraph">
-    <property name="title">
-     <string>Graph</string>
-    </property>
-    <addaction name="actionGenerate_sample_data"/>
-   </widget>
-   <addaction name="menuGraph"/>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionGenerate_sample_data">
-   <property name="icon">
-    <iconset resource="../../../libshvvisu/images/images.qrc">
-     <normaloff>:/shv/visu/images/media-play.svg</normaloff>:/shv/visu/images/media-play.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Generate sample data</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>shv::visu::timeline::GraphView</class>
-   <extends>QScrollArea</extends>
-   <header location="global">shv/visu/timeline/graphview.h</header>
+   <class>TimelineGraphWidget</class>
+   <extends>QWidget</extends>
+   <header>timelinegraphwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>HistogramGraphWidget</class>
+   <extends>QWidget</extends>
+   <header>histogramgraphwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
