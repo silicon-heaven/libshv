@@ -12,10 +12,6 @@
 #include <QVariant>
 #include <QDateTime>
 
-#if defined(__cpp_lib_ranges)
-#include <ranges>
-#endif
-
 namespace shv::coreqt {
 
 QVariant Utils::rpcValueToQVariant(const chainpack::RpcValue &v, bool *ok)
@@ -170,12 +166,8 @@ QJsonValue utils::rpcValueToJson(const shv::chainpack::RpcValue& v)
 	}
 	case shv::chainpack::RpcValue::Type::List: {
 		QJsonArray arr;
-#if defined(__cpp_lib_ranges)
-		std::ranges::transform(v.asList(), std::back_inserter(arr), [] (const shv::chainpack::RpcValue& elem) { return rpcValueToJson(elem); });
-#else
-		auto list = v.asList();
-		std::transform(list.begin(), list.end(), std::back_inserter(arr), [] (const shv::chainpack::RpcValue& elem) { return rpcValueToJson(elem); });
-#endif
+		const auto& list = v.asList();
+		std::transform(list.cbegin(), list.cend(), std::back_inserter(arr), [] (const shv::chainpack::RpcValue& elem) { return rpcValueToJson(elem); });
 		return arr;
 	}
 	case shv::chainpack::RpcValue::Type::Map: {

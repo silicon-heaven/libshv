@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="cs_CZ">
+<TS version="2.1" language="sk_SK">
 <context>
     <name>shv::visu::ErrorLogModel</name>
     <message>
@@ -9,11 +9,11 @@
     </message>
     <message>
         <source>Time stamp</source>
-        <translation>Časová značka</translation>
+        <translation>Časová pečiatka</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation>Zpráva</translation>
+        <translation>Správa</translation>
     </message>
     <message>
         <source>Data</source>
@@ -24,23 +24,23 @@
     <name>shv::visu::LogWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulář</translation>
+        <translation>Formulár</translation>
     </message>
     <message>
         <source>Filter</source>
-        <translation>Filtr</translation>
+        <translation>Filter</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation>Smazat</translation>
+        <translation>Zmazať</translation>
     </message>
     <message>
         <source>Resize columns to fit content</source>
-        <translation>Přizpůsobit šířku sloupců obsahu</translation>
+        <translation>Zmeniť veľkosť stĺpcov podľa obsahu</translation>
     </message>
     <message>
         <source>Event log options</source>
-        <translation>Nastavení záznamu událostí</translation>
+        <translation>Možnosti logu udalostí</translation>
     </message>
     <message>
         <source>...</source>
@@ -48,22 +48,22 @@
     </message>
     <message>
         <source>Maximal log length</source>
-        <translation>Maximální délka logu</translation>
+        <translation>Maximálna dĺžka logu</translation>
     </message>
     <message>
         <source>Get number</source>
-        <translation>Získat číslo</translation>
+        <translation>Získať číslo</translation>
     </message>
     <message>
         <source>Maximal log row count:</source>
-        <translation>Maximální počet řádků logu:</translation>
+        <translation>Maximálny počet riadkov logu:</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::LogWidgetTableView</name>
     <message>
         <source>Copy</source>
-        <translation>Kopírovat</translation>
+        <translation>Kopírovať</translation>
     </message>
     <message>
         <source>Ctrl+C</source>
@@ -75,74 +75,30 @@
     <name>shv::visu::logview::DataViewWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulář</translation>
+        <translation>Formulár</translation>
     </message>
     <message>
-        <source>Show filter dialog</source>
-        <translation>Zobrazit dialogové okno filtru</translation>
+        <source>Show/hide raw data</source>
+        <translation>Zobraziť/skryť surová data</translation>
     </message>
     <message>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <source>Show/hide raw data</source>
-        <translation>Zobrazit/schovat surová data</translation>
+        <source>Show filter dialog</source>
+        <translation>Zobraziť dialógové okno filtra</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::logview::DlgLogInspector</name>
     <message>
-        <source>ChainPack</source>
-        <translation>ChainPack</translation>
-    </message>
-    <message>
-        <source>Cpon</source>
-        <translation>Cpon</translation>
-    </message>
-    <message>
-        <source>CSV</source>
-        <translation>CSV</translation>
-    </message>
-    <message>
-        <source>Warning</source>
-        <translation>Varování</translation>
-    </message>
-    <message>
-        <source>Invalid ChainPack file: </source>
-        <translation>Neplatný soubor ChainPack: </translation>
-    </message>
-    <message>
-        <source>Invalid CPON file: </source>
-        <translation>Neplatný soubor CPON: </translation>
-    </message>
-    <message>
-        <source>&amp;Copy</source>
-        <translation>&amp;Kopírovat</translation>
-    </message>
-    <message>
-        <source>Loadfile</source>
-        <translation>Načístsoubor</translation>
-    </message>
-    <message>
-        <source>Cannot open file &apos;%1&apos; for read.</source>
-        <translation>Nelze otevřít soubor &apos;%1&apos; pro čtení.</translation>
-    </message>
-    <message>
-        <source>Savefile</source>
-        <translation>Uložení souboru</translation>
-    </message>
-    <message>
-        <source>Cannot open file &apos;%1&apos; for write.</source>
-        <translation>Nelze otevřít soubor &apos;%1&apos; pro zápis.</translation>
-    </message>
-    <message>
         <source>Log inspector</source>
-        <translation>Log inspektor</translation>
+        <translation>Inšpektor logu</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>TextovýPopisek</translation>
+        <translation>TextLabel</translation>
     </message>
     <message>
         <source>&amp;Since</source>
@@ -150,7 +106,7 @@
     </message>
     <message>
         <source>Not defined</source>
-        <translation>Nedefinováno</translation>
+        <translation>Nie je definované</translation>
     </message>
     <message>
         <source>&amp;Until</source>
@@ -166,7 +122,7 @@
     </message>
     <message>
         <source>Download</source>
-        <translation>Stáhnout</translation>
+        <translation>Stiahnuť</translation>
     </message>
     <message>
         <source>Options</source>
@@ -174,11 +130,11 @@
     </message>
     <message>
         <source> sec</source>
-        <translation> s</translation>
+        <translation> sek</translation>
     </message>
     <message>
         <source>Max record count</source>
-        <translation>Maximální počet záznamů</translation>
+        <translation>Maximálny počet záznamov</translation>
     </message>
     <message>
         <source>SHV &amp;Path</source>
@@ -186,7 +142,7 @@
     </message>
     <message>
         <source>paths dict</source>
-        <translation>cesty dict</translation>
+        <translation>cesty dikt</translation>
     </message>
     <message>
         <source>Path pattern is regex</source>
@@ -198,7 +154,7 @@
     </message>
     <message>
         <source>Timeout</source>
-        <translation>Timeout</translation>
+        <translation>Čas vypršal</translation>
     </message>
     <message>
         <source>Path pa&amp;ttern</source>
@@ -206,15 +162,15 @@
     </message>
     <message>
         <source>use &amp;history provider</source>
-        <translation>použít &amp;history provider</translation>
+        <translation>použite &amp;poskytovateľa histórie</translation>
     </message>
     <message>
         <source>with snapshot</source>
-        <translation>se snímkem</translation>
+        <translation>so snímkou</translation>
     </message>
     <message>
         <source>with type info</source>
-        <translation>s informacemi o typu</translation>
+        <translation>s informáciami o type</translation>
     </message>
     <message>
         <source>Graph</source>
@@ -230,15 +186,59 @@
     </message>
     <message>
         <source>Resize columns to fit width</source>
-        <translation>Přizpůsobit šířku sloupců</translation>
+        <translation>Zmeniť veľkosť stĺpcov na šírku</translation>
     </message>
     <message>
         <source>Load data</source>
-        <translation>Načíst data</translation>
+        <translation>Načítať dáta</translation>
     </message>
     <message>
         <source>Save data</source>
-        <translation>Uložit data</translation>
+        <translation>Uložiť dáta</translation>
+    </message>
+    <message>
+        <source>ChainPack</source>
+        <translation>ChainPack</translation>
+    </message>
+    <message>
+        <source>Cpon</source>
+        <translation>Cpon</translation>
+    </message>
+    <message>
+        <source>CSV</source>
+        <translation>CSV</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation>Varovanie</translation>
+    </message>
+    <message>
+        <source>Invalid ChainPack file: </source>
+        <translation>Neplatný súbor ChainPack: </translation>
+    </message>
+    <message>
+        <source>Invalid CPON file: </source>
+        <translation>Neplatný súbor CPON: </translation>
+    </message>
+    <message>
+        <source>&amp;Copy</source>
+        <translation>&amp;Kopírovať</translation>
+    </message>
+    <message>
+        <source>Loadfile</source>
+        <translation>Načítať súbor</translation>
+    </message>
+    <message>
+        <source>Cannot open file &apos;%1&apos; for read.</source>
+        <translation>Nie je možné otvoriť súbor &apos;%1&apos; na čítanie.</translation>
+    </message>
+    <message>
+        <source>Savefile</source>
+        <translation>Uloženie súboru</translation>
+    </message>
+    <message>
+        <source>Cannot open file &apos;%1&apos; for write.</source>
+        <translation>Nie je možné otvoriť súbor &apos;%1&apos; na zápis.</translation>
     </message>
 </context>
 <context>
@@ -269,38 +269,66 @@
     </message>
     <message>
         <source>UserId</source>
-        <translation>UživatelskéID</translation>
+        <translation>UživatelskéId</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::timeline::ChannelFilterDialog</name>
     <message>
+        <source>Channels filter dialog</source>
+        <translation>Dialógové okno filtra kanálov</translation>
+    </message>
+    <message>
+        <source>Channel filter is enabled</source>
+        <translation>Filter kanálov je povolený</translation>
+    </message>
+    <message>
+        <source>Data view</source>
+        <translation>Dátový pohľad</translation>
+    </message>
+    <message>
+        <source>Check channels</source>
+        <translation>Označiť všetko</translation>
+    </message>
+    <message>
+        <source>Uncheck channels</source>
+        <translation>Zrušiť všetkých označení</translation>
+    </message>
+    <message>
+        <source>Uncheck channels without data changes</source>
+        <translation>Zrušiť označenie kanálov bez zmien</translation>
+    </message>
+    <message>
+        <source>Matching text</source>
+        <translation>Zodpovedajúci text</translation>
+    </message>
+    <message>
         <source>Discard changes</source>
-        <translation>Zahodit změny</translation>
+        <translation>Zrušiť zmeny</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation>Uložit</translation>
+        <translation>Uložiť</translation>
     </message>
     <message>
         <source>Save as</source>
-        <translation>Uložit jako</translation>
+        <translation>Uložiť ako</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Smazat</translation>
+        <translation>Odstrániť</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation>Exportovat</translation>
+        <translation>Export</translation>
     </message>
     <message>
         <source>Import</source>
-        <translation>Importovat</translation>
+        <translation>Import</translation>
     </message>
     <message>
         <source>Input file name</source>
-        <translation>Název vstupního souboru</translation>
+        <translation>Názov vstupného súboru</translation>
     </message>
     <message>
         <source>Error</source>
@@ -308,70 +336,42 @@
     </message>
     <message>
         <source>Cannot open graph setting file.</source>
-        <translation>Nelze otevřít soubor s nastavením grafu.</translation>
+        <translation>Nie je možné otvoriť súbor s nastavením grafu.</translation>
     </message>
     <message>
         <source>Import as</source>
-        <translation>Importovat jako</translation>
+        <translation>Importovať ako</translation>
     </message>
     <message>
         <source>Input view name</source>
-        <translation>Název pohledu</translation>
+        <translation>Názov pohľadu</translation>
     </message>
     <message>
         <source>Failed to save view: name is empty.</source>
-        <translation>Nepodařilo se uložit pohled: název je prázdný.</translation>
+        <translation>Nepodarilo sa uložiť pohľad: názov je prázdny.</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Rozbalit</translation>
+        <translation>Rozšíriť</translation>
     </message>
     <message>
         <source>Collapse</source>
-        <translation>Sbalit</translation>
+        <translation>Zbaliť</translation>
     </message>
     <message>
         <source>Expand all nodes</source>
-        <translation>Rozbalit všechny uzly</translation>
-    </message>
-    <message>
-        <source>Channels filter dialog</source>
-        <translation>Filtr kanálů</translation>
-    </message>
-    <message>
-        <source>Channel filter is enabled</source>
-        <translation>Filtr kanálů je povolen</translation>
-    </message>
-    <message>
-        <source>Data view</source>
-        <translation>Datový pohled</translation>
-    </message>
-    <message>
-        <source>Check channels</source>
-        <translation>Označit vše</translation>
-    </message>
-    <message>
-        <source>Uncheck channels</source>
-        <translation>Zrušit všechna označení</translation>
-    </message>
-    <message>
-        <source>Uncheck channels without data changes</source>
-        <translation>Zrušit označení kanálů beze změn</translation>
-    </message>
-    <message>
-        <source>Matching text</source>
-        <translation>Odpovídající text</translation>
+        <translation>Rozbaliť všetky uzly</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::timeline::ChannelProbeWidget</name>
     <message>
         <source>Form</source>
-        <translation>Formulář</translation>
+        <translation>Formulár</translation>
     </message>
     <message>
         <source>Title</source>
-        <translation>Název</translation>
+        <translation>Názov</translation>
     </message>
     <message>
         <source>...</source>
@@ -382,7 +382,7 @@
     <name>shv::visu::timeline::Graph</name>
     <message>
         <source>%1.%2 sec</source>
-        <translation>%1.%2 s</translation>
+        <translation>%1.%2 sek.</translation>
     </message>
     <message>
         <source>%1:%2.%3 min</source>
@@ -395,7 +395,7 @@
     </message>
     <message>
         <source>%1 day %1:%2:%3</source>
-        <translation type="vanished">%1 den %1:%2:%3</translation>
+        <translation>%1 deň %1:%2:%3</translation>
     </message>
     <message>
         <source>t1: %1</source>
@@ -403,7 +403,7 @@
     </message>
     <message>
         <source>duration: %1</source>
-        <translation>trvání: %1</translation>
+        <translation>trvanie: %1</translation>
     </message>
     <message>
         <source>y1: %1</source>
@@ -411,19 +411,7 @@
     </message>
     <message>
         <source>diff: %1</source>
-        <translation>rozdíl: %1</translation>
-    </message>
-    <message>
-        <source>%1 day %2:%3:%4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x1: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>width: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>rozdiel: %1</translation>
     </message>
 </context>
 <context>
@@ -434,19 +422,19 @@
     </message>
     <message>
         <source>Name:</source>
-        <translation>Název:</translation>
+        <translation>Názov:</translation>
     </message>
     <message>
         <source>Zoom X axis to selection</source>
-        <translation>Zvětšení osy X na výběr</translation>
+        <translation>Priblížiť os X na výber</translation>
     </message>
     <message>
         <source>Zoom channel to selection</source>
-        <translation>Přiblížení kanálu k výběru</translation>
+        <translation>Priblížiť kanál na výber</translation>
     </message>
     <message>
         <source>Show selection info</source>
-        <translation>Zobrazit informace o výběru</translation>
+        <translation>Zobraziť informácie o výbere</translation>
     </message>
     <message>
         <source>t1: %1</source>
@@ -454,11 +442,11 @@
     </message>
     <message>
         <source>t2: %2</source>
-        <translation type="vanished">t2: %2</translation>
+        <translation>t2: %2</translation>
     </message>
     <message>
         <source>duration: %1</source>
-        <translation>trvání: %1</translation>
+        <translation>trvanie: %1</translation>
     </message>
     <message>
         <source>y1: %1</source>
@@ -466,67 +454,47 @@
     </message>
     <message>
         <source>y2: %2</source>
-        <translation type="vanished">y2: %2</translation>
+        <translation>y2: %2</translation>
     </message>
     <message>
         <source>diff: %1</source>
-        <translation>rozdíl: %1</translation>
+        <translation>rozdiel: %1</translation>
     </message>
     <message>
         <source>Selection info</source>
-        <translation>Informace o výběru</translation>
+        <translation>Informácie o výbere</translation>
     </message>
     <message>
         <source>Normal size</source>
-        <translation>Normální velikost</translation>
+        <translation>Normálna veľkosť</translation>
     </message>
     <message>
         <source>Maximize</source>
-        <translation>Maximalizovat</translation>
+        <translation>Maximalizovať</translation>
     </message>
     <message>
         <source>Set probe (Ctrl + Left mouse)</source>
-        <translation>Umístit sondu (Ctrl + levá myš)</translation>
+        <translation>Nastaviť sondu (Ctrl + ľavá myš)</translation>
     </message>
     <message>
         <source>Add probe (Ctrl + Shift + Left mouse)</source>
-        <translation>Přidat sondu (Ctrl + Shift + levá myš)</translation>
+        <translation>Pridať sondu (Ctrl + Shift + ľavá myš)</translation>
     </message>
     <message>
         <source>Reset X-zoom</source>
-        <translation>Resetovat X-zoom</translation>
+        <translation>Resetovať X-zoom</translation>
     </message>
     <message>
         <source>Reset Y-zoom</source>
-        <translation>Resetovat Y-zoom</translation>
+        <translation>Resetovať Y-zoom</translation>
     </message>
     <message>
         <source>Hide Y axis</source>
-        <translation>Schovat osu Y</translation>
+        <translation>Skryť os Y</translation>
     </message>
     <message>
         <source>Show Y axis</source>
-        <translation>Zobrazit osu Y</translation>
-    </message>
-    <message>
-        <source>t2: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x1: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>x2: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>width: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>y2: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobraziť os Y</translation>
     </message>
 </context>
 </TS>

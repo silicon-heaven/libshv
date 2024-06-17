@@ -5,7 +5,6 @@
 #if SHVVISU_HAS_TIMEZONE
 #include <QTimeZone>
 #endif
-#include <QDebug>
 
 namespace shv::visu {
 

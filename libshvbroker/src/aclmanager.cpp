@@ -247,13 +247,13 @@ std::vector<std::string> AclManager::userFlattenRoles(const std::string &user_na
 		auto& flattenRoles = m_cache.userFlattenRoles.emplace(user_name, std::vector<std::string>{}).first->second;
 		QQueue<std::string> role_q;
 		auto enqueue = [&role_q, &flattenRoles] (const auto& role) {
-			if (std::ranges::find(flattenRoles, role) != flattenRoles.end() || role_q.contains(role)) {
+			if (std::find(flattenRoles.cbegin(), flattenRoles.cend(), role) != flattenRoles.end() || role_q.contains(role)) {
 				shvDebug() << "Duplicate role detected:" << role;
 				return;
 			}
 			role_q.enqueue(role);
 		};
-		std::ranges::for_each(roles, enqueue);
+		std::for_each(roles.cbegin(), roles.cend(), enqueue);
 		while (!role_q.empty()) {
 			auto cur = role_q.dequeue();
 			flattenRoles.emplace_back(cur);
