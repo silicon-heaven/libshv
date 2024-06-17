@@ -4,12 +4,20 @@
 
 #include <QMouseEvent>
 
+#ifdef ANDROID
+#include <QGestureEvent>
+#include <QScroller>
+#endif
+
 namespace shv::visu::svgscene {
 
 GraphicsView::GraphicsView(QWidget *parent)
 	: Super(parent)
 {
-
+#ifdef ANDROID
+	QScroller::grabGesture(viewport(), QScroller::LeftMouseButtonGesture);
+	grabGesture(Qt::PinchGesture);
+#endif
 }
 
 void GraphicsView::zoomToFit()
@@ -96,5 +104,26 @@ void GraphicsView::mouseMoveEvent(QMouseEvent* ev)
 	}
 	Super::mouseMoveEvent(ev);
 }
+
+#ifdef ANDROID
+bool GraphicsView::event(QEvent *event)
+{
+	if (event->type() == QEvent::Gesture) {
+		auto *gesture_event = static_cast<QGestureEvent*>(event);
+		if (QGesture *gesture = gesture_event->gesture(Qt::PinchGesture)) {
+			auto *pinch_gesture = static_cast<QPinchGesture *>(gesture);
+
+			qreal scale = pinch_gesture->lastScaleFactor();
+
+			if (scale < 1) {
+				scale = 1 / scale;
+				scale = -scale;
+			}
+			zoom(scale, pinch_gesture->centerPoint().toPoint());
+		}
+	}
+	return Super::event(event);
+}
+#endif
 
 }
