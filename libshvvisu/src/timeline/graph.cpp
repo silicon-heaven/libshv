@@ -56,7 +56,7 @@ bool Graph::DataRect::isValid() const
 Graph::Graph(QObject *parent)
 	: QObject(parent)
 {
-
+	m_timeZone = QTimeZone::utc();
 }
 
 Graph::~Graph()
@@ -358,8 +358,8 @@ int Graph::miniMapTimeToPos(timemsec_t time) const
 timemsec_t Graph::posToTime(int pos) const
 {
 	int p = pos;
-	if (m_model->modelType() == GraphModel::ModelType::Histogram) {
-		p += histogramColumnWidth() / 2;
+	if (m_model->xAxisType() == GraphModel::XAxisType::Histogram) {
+		p += (timeToPos(1) - timeToPos(0)) / 2;
 	}
 	auto pos2time = posToTimeFn(QPoint{m_layout.xAxisRect.left(), m_layout.xAxisRect.right()}, xRangeZoom());
 	return pos2time? pos2time(p): 0;
@@ -379,6 +379,11 @@ Sample Graph::timeToSample(qsizetype channel_ix, timemsec_t time) const
 	qsizetype ix1 = m->lessOrEqualTimeIndex(model_ix, time);
 	if(ix1 < 0)
 		return Sample();
+
+	if (m_model->xAxisType() == GraphModel::XAxisType::Histogram) {
+		return m->sampleAt(model_ix, ix1);
+	}
+
 	int interpolation = ch->m_effectiveStyle.interpolation();
 	if(interpolation == GraphChannel::Style::Interpolation::None) {
 		Sample s = m->sampleAt(model_ix, ix1);
@@ -400,9 +405,6 @@ Sample Graph::timeToSample(qsizetype channel_ix, timemsec_t time) const
 			return Sample();
 		double d = s1.value.toDouble() + static_cast<double>(time - s1.time) * (s2.value.toDouble() - s1.value.toDouble()) / static_cast<double>(s2.time - s1.time);
 		return Sample(time, d);
-	}
-	else if (interpolation == GraphChannel::Style::Interpolation::Histogram) {
-		return m->sampleAt(model_ix, ix1);
 	}
 
 	return Sample();
@@ -682,7 +684,7 @@ QVariantMap Graph::mergeMaps(const QVariantMap &base, const QVariantMap &overlay
 
 void Graph::makeXAxis()
 {
-	if (m_model->modelType() == GraphModel::ModelType::Timeline) {
+	if (m_model->xAxisType() == GraphModel::XAxisType::Timeline) {
 		shvLogFuncFrame();
 		static constexpr int64_t MSec = 1;
 		static constexpr int64_t Sec = 1000 * MSec;
@@ -758,18 +760,24 @@ void Graph::makeXAxis()
 		}
 	}
 	else {
-		int tick_units = 5;
+		int tick_units = 10;
 		int tick_px = u2px(tick_units);
 		timemsec_t t1 = posToTime(0);
 		timemsec_t t2 = posToTime(tick_px);
 		int64_t interval = t2 - t1;
+
 		if (interval <= 0) {
 			interval = 1;
 		}
 
-		m_state.xAxis.labelScale = XAxis::LabelScale::Value;
 		m_state.xAxis.tickInterval = interval;
 		m_state.xAxis.subtickEvery = 0;
+
+		if (interval > 2) {
+			m_state.xAxis.subtickEvery = 2;
+		}
+
+		m_state.xAxis.labelScale = XAxis::LabelScale::Value;
 	}
 }
 
@@ -852,16 +860,6 @@ QString Graph::elidedText(const QString &text, const QFont &font, const QRect &r
 	}
 
 	return res;
-}
-
-int Graph::histogramColumnWidth() const
-{
-	return timeToPos(1) - timeToPos(0);
-}
-
-int Graph::miniMapHistogramColumnWidth() const
-{
-	return miniMapTimeToPos(1) - miniMapTimeToPos(0);
 }
 
 std::pair<Sample, int> Graph::posToSample(const QPoint &pos) const
@@ -969,7 +967,7 @@ double Graph::px2u(int px) const
 
 QString Graph::durationToString(timemsec_t duration)
 {
-	if (m_model->modelType() == GraphModel::ModelType::Timeline) {
+	if (m_model->xAxisType() == GraphModel::XAxisType::Timeline) {
 		static constexpr timemsec_t SEC = 1000;
 		static constexpr timemsec_t MIN = 60 * SEC;
 		static constexpr timemsec_t HOUR = 60 * MIN;
@@ -1551,7 +1549,7 @@ void Graph::drawXAxis(QPainter *painter)
 	painter->drawLine(m_layout.xAxisRect.topLeft(), m_layout.xAxisRect.topRight());
 
 	const XRange range = xRangeZoom();
-	if(axis.subtickEvery > 1) {
+	if((axis.subtickEvery > 1) && (axis.tickInterval / axis.subtickEvery > 0)) {
 		timemsec_t subtick_interval = axis.tickInterval / axis.subtickEvery;
 		timemsec_t t0 = range.min / subtick_interval;
 		t0 *= subtick_interval;
@@ -1580,8 +1578,7 @@ void Graph::drawXAxis(QPainter *painter)
 #endif
 			QDateTime dt = QDateTime::fromMSecsSinceEpoch(epoch_msec);
 #if SHVVISU_HAS_TIMEZONE
-			if(m_timeZone.isValid())
-				dt = dt.toTimeZone(m_timeZone);
+			dt = dt.toTimeZone(m_timeZone);
 #endif
 			return dt;
 		};
@@ -2010,7 +2007,30 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 	painter->setClipRect(clip_rect);
 	painter->setPen(line_pen);
 
-	if (channel_info.typeDescr.sampleType() == shv::core::utils::ShvTypeDescr::SampleType::Discrete) {
+	if(m_model->xAxisType() == GraphModel::XAxisType::Histogram) {
+		int bar_width = sample2point(Sample{1, 0}, channel_meta_type_id).x() - sample2point(Sample{0, 0}, channel_meta_type_id).x();
+
+		auto ix1 = graph_model->greaterOrEqualTimeIndex(model_ix, xrange.min);
+		auto ix2 = graph_model->lessOrEqualTimeIndex(model_ix, xrange.max);
+		int x_axis_y = sample2point(Sample{xrange.min, 0}, channel_meta_type_id).y();
+		std::optional<int> last_x;
+
+		for (auto i = ix1; i <= ix2; ++i) {
+			Sample sample = graph_model->sampleAt(model_ix, i);
+			auto current_point = sample2point(sample, channel_meta_type_id);
+			if (last_x && last_x.value() == current_point.x()) {
+				continue;
+			}
+
+			painter->setPen(line_pen);
+			QPoint p(current_point.x() - bar_width / 2, current_point.y());
+			QRect bar_rect = QRect(p, QPoint(p.x() + bar_width, x_axis_y));
+			QBrush brush(line_pen.color().lighter());
+			painter->fillRect(bar_rect, brush);
+			painter->drawRect(bar_rect);
+		}
+	}
+	else if (channel_info.typeDescr.sampleType() == shv::core::utils::ShvTypeDescr::SampleType::Discrete) {
 		auto ix1 = graph_model->greaterOrEqualTimeIndex(model_ix, xrange.min);
 		auto ix2 = graph_model->lessOrEqualTimeIndex(model_ix, xrange.max);
 		std::optional<int> last_x;
@@ -2176,21 +2196,6 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 								painter->drawLine(QPoint{prev_point.x, prev_point.y2}, current_point);
 							}
 						}
-						else if(interpolation == GraphChannel::Style::Interpolation::Histogram) {
-							int bar_width;
-
-							if (dest_rect.isEmpty())
-								bar_width = histogramColumnWidth() - line_pen.width();
-							else // draw minimap
-								bar_width = miniMapHistogramColumnWidth() - line_pen.width();
-
-							painter->setPen(line_pen);
-							QPoint p(prev_point.x - bar_width / 2, prev_point.y2);
-							QRect bar_rect = QRect(p, QPoint(p.x() + bar_width, x_axis_y));
-							QBrush brush(line_pen.color().lighter());
-							painter->fillRect(bar_rect, brush);
-							painter->drawRect(bar_rect);
-						}
 					}
 				}
 				prev_point = current_point;
@@ -2323,7 +2328,7 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 				auto y1 = ch1->posToValue(sel_rect.bottom());
 				auto y2 = ch2->posToValue(sel_rect.top());
 
-				if (m_model->modelType() == GraphModel::ModelType::Timeline) {
+				if (m_model->xAxisType() == GraphModel::XAxisType::Timeline) {
 					info_text = tr("t1: %1").arg(timeToStringTZ(t1));
 					info_text += '\n' + tr("duration: %1").arg(durationToString(t2 - t1));
 				}
@@ -2487,7 +2492,7 @@ void Graph::applyCustomChannelStyle(GraphChannel *channel)
 
 QString Graph::timeToStringTZ(timemsec_t time) const
 {
-	if (m_model->modelType() == GraphModel::ModelType::Timeline) {
+	if (m_model->xAxisType() == GraphModel::XAxisType::Timeline) {
 		QDateTime dt = QDateTime::fromMSecsSinceEpoch(time);
 	#if SHVVISU_HAS_TIMEZONE
 		if(m_timeZone.isValid())

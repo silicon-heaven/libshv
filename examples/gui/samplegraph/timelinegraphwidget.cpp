@@ -84,7 +84,7 @@ void TimelineGraphWidget::generateSampleData(int count)
 	std::uniform_real_distribution<> val_distrib(min_val, max_val);
 
 	vector<int64_t> times;
-	for (int n = 0; n < sample_cnt+2; ++n)
+	for (int n = 0; n < sample_cnt; ++n)
 		times.push_back(time_distrib(gen));
 	sort(times.begin(), times.end());
 

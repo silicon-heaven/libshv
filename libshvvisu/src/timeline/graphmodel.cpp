@@ -223,7 +223,7 @@ void GraphModel::appendValue(qsizetype channel, Sample &&sample)
 		return;
 	}
 
-	if (modelType() == ModelType::Timeline) {
+	if (xAxisType() == XAxisType::Timeline) {
 		if(sample.time <= 0) {
 			shvWarning() << "ignoring value with timestamp <= 0, timestamp:" << sample.time;
 			return;

@@ -759,7 +759,7 @@ void GraphWidget::showGraphSelectionContextMenu(const QPoint &mouse_pos)
 		auto y2 = ch2->posToValue(sel_rect.top());
 		QString s;
 
-		if (m_graph->model()->modelType() == GraphModel::ModelType::Timeline) {
+		if (m_graph->model()->xAxisType() == GraphModel::XAxisType::Timeline) {
 			s = tr("t1: %1").arg(m_graph->timeToStringTZ(t1));
 			s += '\n' + tr("t2: %1").arg(m_graph->timeToStringTZ(t2));
 			s += '\n' + tr("duration: %1").arg(m_graph->durationToString(t2 - t1));

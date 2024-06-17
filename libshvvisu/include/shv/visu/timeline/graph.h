@@ -282,8 +282,6 @@ protected:
 
 	void moveSouthFloatingBarBottom(int bottom);
 	QString elidedText(const QString &text, const QFont &font, const QRect &rect);
-	int histogramColumnWidth() const;
-	int miniMapHistogramColumnWidth() const;
 protected:
 	QVariantMap toolTipValues(const QPoint &pos) const;
 protected:

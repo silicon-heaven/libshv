@@ -32,7 +32,7 @@ timemsec_t ChannelProbe::currentTime() const
 
 QString ChannelProbe::currentTimeIsoFormat() const
 {
-	if (m_graph->model()->modelType() == GraphModel::ModelType::Timeline) {
+	if (m_graph->model()->xAxisType() == GraphModel::XAxisType::Timeline) {
 		QDateTime dt = QDateTime::fromMSecsSinceEpoch(m_currentTime);
 #if SHVVISU_HAS_TIMEZONE
 		if (m_graph->timeZone().isValid())

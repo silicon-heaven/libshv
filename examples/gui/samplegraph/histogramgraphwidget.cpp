@@ -19,7 +19,7 @@ HistogramGraphWidget::HistogramGraphWidget(QWidget *parent)
 	ui->setupUi(this);
 
 	m_graphModel = new tl::GraphModel(this);
-	m_graphModel->setModelType(shv::visu::timeline::GraphModel::ModelType::Histogram);
+	m_graphModel->setXAxisType(shv::visu::timeline::GraphModel::XAxisType::Histogram);
 	m_graphWidget = new tl::GraphWidget();
 
 	ui->graphView->setBackgroundRole(QPalette::Dark);
@@ -54,7 +54,7 @@ void HistogramGraphWidget::generateSampleData(int count)
 	std::uniform_int_distribution<> val_distrib(0, 20);
 
 	for (int n = 0; n < count; n++) {
-		if (n == 2) { //test empty space
+		if (n == 2) { // skip value to test missing data
 			continue;
 		}
 		m_graphModel->appendValue(Channel::Histogram, shv::visu::timeline::Sample{n, val_distrib(gen)});
@@ -65,8 +65,6 @@ void HistogramGraphWidget::generateSampleData(int count)
 
 	shv::visu::timeline::GraphChannel *ch = m_graph->channelAt(Channel::Histogram);
 	shv::visu::timeline::GraphChannel::Style style = ch->style();
-
-	style.setInterpolation(tl::GraphChannel::Style::Interpolation::Histogram);
 	style.setColor(Qt::blue);
 	ch->setStyle(style);
 
