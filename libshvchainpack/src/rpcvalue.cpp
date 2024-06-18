@@ -1011,7 +1011,7 @@ RpcValue::DateTime RpcValue::DateTime::fromUtcString(const std::string &utc_date
 	DateTime ret;
 	auto len = parse_ISO_DateTime(utc_date_time_str, tm, msec, epoch_msec, utc_offset);
 	if(len == 0) {
-		nError() << "Invalid date time string:" << utc_date_time_str;
+		nInfo() << "Invalid date time string:" << utc_date_time_str;
 		if(plen)
 			*plen = 0;
 		return ret;
