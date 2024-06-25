@@ -87,7 +87,7 @@
     </message>
     <message>
         <source>Show filter dialog</source>
-        <translation>Zobraziť dialógové okno filtra</translation>
+        <translation>Zobraziť filter kanálov</translation>
     </message>
 </context>
 <context>
@@ -276,7 +276,7 @@
     <name>shv::visu::timeline::ChannelFilterDialog</name>
     <message>
         <source>Channels filter dialog</source>
-        <translation>Dialógové okno filtra kanálov</translation>
+        <translation>Filter kanálov</translation>
     </message>
     <message>
         <source>Channel filter is enabled</source>
