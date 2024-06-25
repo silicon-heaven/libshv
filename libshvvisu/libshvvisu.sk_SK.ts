@@ -234,7 +234,7 @@
     </message>
     <message>
         <source>Savefile</source>
-        <translation>Uloženie súboru</translation>
+        <translation>Uložiť súbor</translation>
     </message>
     <message>
         <source>Cannot open file &apos;%1&apos; for write.</source>
@@ -486,7 +486,7 @@
     </message>
     <message>
         <source>Set probe (Ctrl + Left mouse)</source>
-        <translation>Nastaviť sondu (Ctrl + ľavá myš)</translation>
+        <translation>Umiestniť sondu (Ctrl + ľavá myš)</translation>
     </message>
     <message>
         <source>Add probe (Ctrl + Shift + Left mouse)</source>
