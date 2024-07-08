@@ -101,6 +101,27 @@ namespace shv {
 namespace chainpack { class RpcValue; }
 namespace coreqt {
 
+namespace utils {
+template <class T>
+T findParent(const QObject *_o, bool throw_exc = shv::core::Exception::Throw)
+{
+	T t = nullptr;
+	auto *o = _o;
+	while(o) {
+		o = o->parent();
+		if(!o)
+			break;
+		t = qobject_cast<T>(o);
+		if(t)
+			break;
+	}
+	if(!t && throw_exc) {
+		SHV_EXCEPTION("Object has not any parent of requested type.");
+	}
+	return t;
+}
+}
+
 class SHVCOREQT_DECL_EXPORT Utils
 {
 
@@ -117,22 +138,8 @@ public:
 	static std::vector<uint8_t> compressGZip(const std::vector<uint8_t> &data);
 
 	template <class T>
-	static T findParent(const QObject *_o, bool throw_exc = shv::core::Exception::Throw)
-	{
-		T t = nullptr;
-		auto *o = _o;
-		while(o) {
-			o = o->parent();
-			if(!o)
-				break;
-			t = qobject_cast<T>(o);
-			if(t)
-				break;
-		}
-		if(!t && throw_exc) {
-			SHV_EXCEPTION("Object has not any parent of requested type.");
-		}
-		return t;
+	static T findParent(const QObject *o, bool throw_exc = shv::core::Exception::Throw) {
+		return shv::coreqt::utils::findParent<T>(o, throw_exc);
 	}
 };
 
@@ -196,17 +203,3 @@ auto findLongestPrefix(const QMap<QString, Value>& map, QString value) -> typena
 } // namespace coreqt
 } // namespace shv
 
-template <typename T>
-class asKeyValueRange
-{
-public:
-	asKeyValueRange(T &data) : m_data{data} {}
-
-	auto begin() { return m_data.keyValueBegin(); }
-
-	auto end() { return m_data.keyValueEnd(); }
-
-private:
-	// NOLINTNEXTLINE(cppcoreguidelines-avoid-const-or-ref-data-members)
-	T &m_data;
-};
