@@ -415,15 +415,15 @@
     </message>
     <message>
         <source>%1 day %2:%3:%4</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 deň %2:%3:%4</translation>
     </message>
     <message>
         <source>x1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>x1: %1</translation>
     </message>
     <message>
         <source>width: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>šírka: %1</translation>
     </message>
 </context>
 <context>
@@ -510,19 +510,19 @@
     </message>
     <message>
         <source>t2: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>t2: %1</translation>
     </message>
     <message>
         <source>x1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>x1: %1</translation>
     </message>
     <message>
         <source>x2: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>x2: %1</translation>
     </message>
     <message>
         <source>width: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>šírka: %1</translation>
     </message>
     <message>
         <source>y2: %1</source>
