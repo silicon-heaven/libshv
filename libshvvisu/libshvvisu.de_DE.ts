@@ -68,7 +68,7 @@
     <message>
         <source>Ctrl+C</source>
         <comment>Copy selection</comment>
-        <translation>Ctrl+C</translation>
+        <translation>Strg+C</translation>
     </message>
 </context>
 <context>
@@ -474,11 +474,11 @@
     </message>
     <message>
         <source>Set probe (Ctrl + Left mouse)</source>
-        <translation>Sonde setzen (Ctrl + linke Maustaste)</translation>
+        <translation>Sonde setzen (Strg + linke Maustaste)</translation>
     </message>
     <message>
         <source>Add probe (Ctrl + Shift + Left mouse)</source>
-        <translation>Sonde hinzufügen (Ctrl + Shift + linke Maustaste)</translation>
+        <translation>Sonde hinzufügen (Strg + Shift + linke Maustaste)</translation>
     </message>
     <message>
         <source>Reset X-zoom</source>
