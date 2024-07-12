@@ -5,516 +5,516 @@
     <name>shv::visu::ErrorLogModel</name>
     <message>
         <source>Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Niveau</translation>
     </message>
     <message>
         <source>Time stamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitstempel</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Nachricht</translation>
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Daten</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::LogWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Formular</translation>
     </message>
     <message>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <source>Resize columns to fit content</source>
-        <translation type="unfinished"></translation>
+        <translation>Spaltengröße an den Inhalt anpassen</translation>
     </message>
     <message>
         <source>Event log options</source>
-        <translation type="unfinished"></translation>
+        <translation>Ereignisprotokolloptionen</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <source>Maximal log length</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Loglänge</translation>
     </message>
     <message>
         <source>Get number</source>
-        <translation type="unfinished"></translation>
+        <translation>Nummer abrufen</translation>
     </message>
     <message>
         <source>Maximal log row count:</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Anzahl an Logzeilen:</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::LogWidgetTableView</name>
     <message>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopieren</translation>
     </message>
     <message>
         <source>Ctrl+C</source>
         <comment>Copy selection</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+C</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::logview::DataViewWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Formular</translation>
     </message>
     <message>
         <source>Show filter dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Filterdialog anzeigen</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <source>Show/hide raw data</source>
-        <translation type="unfinished"></translation>
+        <translation>Rohdaten anzeigen/ausblenden</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::logview::DlgLogInspector</name>
     <message>
         <source>ChainPack</source>
-        <translation type="unfinished"></translation>
+        <translation>ChainPack</translation>
     </message>
     <message>
         <source>Cpon</source>
-        <translation type="unfinished"></translation>
+        <translation>Cpon</translation>
     </message>
     <message>
         <source>CSV</source>
-        <translation type="unfinished"></translation>
+        <translation>CSV</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Warnung</translation>
     </message>
     <message>
         <source>Invalid ChainPack file: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige ChainPack-Datei: </translation>
     </message>
     <message>
         <source>Invalid CPON file: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige CPON-Datei: </translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kopieren</translation>
     </message>
     <message>
         <source>Loadfile</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei laden</translation>
     </message>
     <message>
         <source>Cannot open file &apos;%1&apos; for read.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei &apos;%1&apos; kann nicht zum Lesen geöffnet werden.</translation>
     </message>
     <message>
         <source>Savefile</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei speichern</translation>
     </message>
     <message>
         <source>Cannot open file &apos;%1&apos; for write.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei &apos;%1&apos; kann nicht zum Schreiben geöffnet werden.</translation>
     </message>
     <message>
         <source>Log inspector</source>
-        <translation type="unfinished"></translation>
+        <translation>Log-Inspektor</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation>TextLabel</translation>
     </message>
     <message>
         <source>&amp;Since</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Seit</translation>
     </message>
     <message>
         <source>Not defined</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht definiert</translation>
     </message>
     <message>
         <source>&amp;Until</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Bis</translation>
     </message>
     <message>
         <source>Time zone</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitzone</translation>
     </message>
     <message>
         <source>&amp;Options</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Optionen</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Herunterladen</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Optionen</translation>
     </message>
     <message>
         <source> sec</source>
-        <translation type="unfinished"></translation>
+        <translation> sec</translation>
     </message>
     <message>
         <source>Max record count</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Eintraganzahl</translation>
     </message>
     <message>
         <source>SHV &amp;Path</source>
-        <translation type="unfinished"></translation>
+        <translation>SHV &amp;Pfad</translation>
     </message>
     <message>
         <source>paths dict</source>
-        <translation type="unfinished"></translation>
+        <translation>Pfade dict</translation>
     </message>
     <message>
         <source>Path pattern is regex</source>
-        <translation type="unfinished"></translation>
+        <translation>Pfadmuster ist Regex</translation>
     </message>
     <message>
         <source>&amp;regex</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;regex</translation>
     </message>
     <message>
         <source>Timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>Timeout</translation>
     </message>
     <message>
         <source>Path pa&amp;ttern</source>
-        <translation type="unfinished"></translation>
+        <translation>Pfadmuster</translation>
     </message>
     <message>
         <source>use &amp;history provider</source>
-        <translation type="unfinished"></translation>
+        <translation>History-Provider verwenden</translation>
     </message>
     <message>
         <source>with snapshot</source>
-        <translation type="unfinished"></translation>
+        <translation>mit Schnappschuss</translation>
     </message>
     <message>
         <source>with type info</source>
-        <translation type="unfinished"></translation>
+        <translation>mit Typ-Info</translation>
     </message>
     <message>
         <source>Graph</source>
-        <translation type="unfinished"></translation>
+        <translation>Diagramm</translation>
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Daten</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Info</translation>
     </message>
     <message>
         <source>Resize columns to fit width</source>
-        <translation type="unfinished"></translation>
+        <translation>Spaltengröße an die Breite anpassen</translation>
     </message>
     <message>
         <source>Load data</source>
-        <translation type="unfinished"></translation>
+        <translation>Daten laden</translation>
     </message>
     <message>
         <source>Save data</source>
-        <translation type="unfinished"></translation>
+        <translation>Daten speichern</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::logview::LogModel</name>
     <message>
         <source>DateTime</source>
-        <translation type="unfinished"></translation>
+        <translation>DatumZeit</translation>
     </message>
     <message>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Pfad</translation>
     </message>
     <message>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Wert</translation>
     </message>
     <message>
         <source>ShortTime</source>
-        <translation type="unfinished"></translation>
+        <translation>KurzeZeit</translation>
     </message>
     <message>
         <source>Domain</source>
-        <translation type="unfinished"></translation>
+        <translation>Domäne</translation>
     </message>
     <message>
         <source>ValueFlags</source>
-        <translation type="unfinished"></translation>
+        <translation>ValueFlags</translation>
     </message>
     <message>
         <source>UserId</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzer-ID</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::timeline::ChannelFilterDialog</name>
     <message>
         <source>Discard changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Änderungen verwerfen</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichern</translation>
     </message>
     <message>
         <source>Save as</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichern als</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportieren</translation>
     </message>
     <message>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Importieren</translation>
     </message>
     <message>
         <source>Input file name</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateinamen eingeben</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler</translation>
     </message>
     <message>
         <source>Cannot open graph setting file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Grafikeinstellungsdatei kann nicht geöffnet werden.</translation>
     </message>
     <message>
         <source>Import as</source>
-        <translation type="unfinished"></translation>
+        <translation>Importieren als</translation>
     </message>
     <message>
         <source>Input view name</source>
-        <translation type="unfinished"></translation>
+        <translation>Ansichtnament eingeben</translation>
     </message>
     <message>
         <source>Failed to save view: name is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ansicht kann nicht gespeichert werden: Name ist leer.</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation>Erweitern</translation>
     </message>
     <message>
         <source>Collapse</source>
-        <translation type="unfinished"></translation>
+        <translation>Zusammenwickeln</translation>
     </message>
     <message>
         <source>Expand all nodes</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Knoten erweitern</translation>
     </message>
     <message>
         <source>Channels filter dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanalfilter</translation>
     </message>
     <message>
         <source>Channel filter is enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanalfilter ist aktiviert</translation>
     </message>
     <message>
         <source>Data view</source>
-        <translation type="unfinished"></translation>
+        <translation>Datenansicht</translation>
     </message>
     <message>
         <source>Check channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Alles auswählen</translation>
     </message>
     <message>
         <source>Uncheck channels</source>
-        <translation type="unfinished"></translation>
+        <translation>Alles abwählen</translation>
     </message>
     <message>
         <source>Uncheck channels without data changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanäle ohne Datenänderung abwählen</translation>
     </message>
     <message>
         <source>Matching text</source>
-        <translation type="unfinished"></translation>
+        <translation>Passender Text</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::timeline::ChannelProbeWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Formular</translation>
     </message>
     <message>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::timeline::Graph</name>
     <message>
         <source>%1.%2 sec</source>
-        <translation type="unfinished"></translation>
+        <translation>%1,%2 Sek.</translation>
     </message>
     <message>
         <source>%1:%2.%3 min</source>
-        <translation type="unfinished"></translation>
+        <translation>%1:%2.%3 Minuten</translation>
     </message>
     <message>
         <source>%1:%2:%3</source>
         <comment>time</comment>
-        <translation type="unfinished"></translation>
+        <translation>%1:%2:%3</translation>
     </message>
     <message>
         <source>t1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>t1: %1</translation>
     </message>
     <message>
         <source>duration: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Dauer: %1</translation>
     </message>
     <message>
         <source>y1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>y1: %1</translation>
     </message>
     <message>
         <source>diff: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Unterschied: %1</translation>
     </message>
     <message>
         <source>%1 day %2:%3:%4</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Tag %2:%3:%4</translation>
     </message>
     <message>
         <source>x1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>x1: %1</translation>
     </message>
     <message>
         <source>width: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Breite: %1</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::timeline::GraphWidget</name>
     <message>
         <source>Path:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pfad:</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Name:</translation>
     </message>
     <message>
         <source>Zoom X axis to selection</source>
-        <translation type="unfinished"></translation>
+        <translation>X-Achse auf Auswahl zoomen</translation>
     </message>
     <message>
         <source>Zoom channel to selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoomkanal zur Auswahl</translation>
     </message>
     <message>
         <source>Show selection info</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswahlinfo anzeigen</translation>
     </message>
     <message>
         <source>t1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>t1: %1</translation>
     </message>
     <message>
         <source>duration: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Dauer: %1</translation>
     </message>
     <message>
         <source>y1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>y1: %1</translation>
     </message>
     <message>
         <source>diff: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Unterschied: %1</translation>
     </message>
     <message>
         <source>Selection info</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswahlinfo</translation>
     </message>
     <message>
         <source>Normal size</source>
-        <translation type="unfinished"></translation>
+        <translation>Normale Größe</translation>
     </message>
     <message>
         <source>Maximize</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximieren</translation>
     </message>
     <message>
         <source>Set probe (Ctrl + Left mouse)</source>
-        <translation type="unfinished"></translation>
+        <translation>Sonde setzen (Ctrl + linke Maustaste)</translation>
     </message>
     <message>
         <source>Add probe (Ctrl + Shift + Left mouse)</source>
-        <translation type="unfinished"></translation>
+        <translation>Sonde hinzufügen (Ctrl + Shift + linke Maustaste)</translation>
     </message>
     <message>
         <source>Reset X-zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>X-Zoom zurücksetzen</translation>
     </message>
     <message>
         <source>Reset Y-zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Y-Zoom zurücksetzen</translation>
     </message>
     <message>
         <source>Hide Y axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Y-Achse ausblenden</translation>
     </message>
     <message>
         <source>Show Y axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Y-Achse anzeigen</translation>
     </message>
     <message>
         <source>t2: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>t2: %1</translation>
     </message>
     <message>
         <source>x1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>x1: %1</translation>
     </message>
     <message>
         <source>x2: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>x2: %1</translation>
     </message>
     <message>
         <source>width: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Breite: %1</translation>
     </message>
     <message>
         <source>y2: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>y2: %1</translation>
     </message>
 </context>
 </TS>
