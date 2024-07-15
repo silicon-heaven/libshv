@@ -1016,7 +1016,7 @@ std::string ShvTypeInfo::findSystemPath(const std::string &shv_path) const
 	string current_root;
 	string ret;
 	for(const auto& [shv_root_path, system_path] : m_systemPathsRoots) {
-		if(String::startsWith(shv_path, shv_root_path)) {
+		if(shv_path.starts_with(shv_root_path)) {
 			if(shv_root_path.empty() || shv_path.size() == shv_root_path.size() || shv_path[shv_root_path.size()] == '/') {
 				if(current_root.empty() || shv_root_path.size() > current_root.size()) {
 					// fing longest match

@@ -374,7 +374,7 @@ void ShvFileJournal::convertLog1JournalDir()
 		}
 		int n_files = 0;
 		std::string fn = entry.path().filename().string();
-		if(!shv::core::String::endsWith(fn, ext))
+		if(!fn.ends_with(ext))
 			continue;
 		if(n_files++ == 0)
 			shvInfo() << "======= Journal1 format file(s) found, converting to format 2";
@@ -437,7 +437,7 @@ void ShvFileJournal::updateJournalStatus()
 			continue;
 		}
 		std::string fn = entry.path().filename().string();
-		if(!shv::core::String::endsWith(fn, ext))
+		if(!fn.ends_with(ext))
 			continue;
 		try {
 			int64_t msec = m_journalContext.fileNameToFileMsec(fn);

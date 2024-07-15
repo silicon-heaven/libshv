@@ -50,7 +50,7 @@ bool is_wild_card_pattern(const string path)
 	static const string SLASH_ASTERISKS = "/**";
 	if(path == ASTERISKS)
 		return true;
-	return shv::core::String::endsWith(path, SLASH_ASTERISKS);
+	return path.ends_with(SLASH_ASTERISKS);
 }
 }
 
