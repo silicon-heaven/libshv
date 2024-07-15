@@ -374,7 +374,7 @@ void ShvFileJournal::convertLog1JournalDir()
 		}
 		int n_files = 0;
 		std::string fn = entry.path().filename().string();
-		if(!shv::core::String::endsWith(fn, ext))
+		if(!fn.ends_with(ext))
 			continue;
 		if(n_files++ == 0)
 			shvInfo() << "======= Journal1 format file(s) found, converting to format 2";
@@ -402,7 +402,7 @@ void ShvFileJournal::convertLog1JournalDir()
 						shvWarning() << "cannot read date time from first line of file:" << fn << "line:" << s;
 					}
 					else {
-						std::string new_fn = journal_dir + '/' + m_journalContext.fileMsecToFileName(file_msec);
+						std::string new_fn = journal_dir + '/' + JournalContext::fileMsecToFileName(file_msec);
 						shvInfo() << "renaming" << fn << "->" << new_fn;
 						if (std::rename(fn.c_str(), new_fn.c_str())) {
 							shvError() << "cannot rename:" << fn << "to:" << new_fn;
@@ -437,7 +437,7 @@ void ShvFileJournal::updateJournalStatus()
 			continue;
 		}
 		std::string fn = entry.path().filename().string();
-		if(!shv::core::String::endsWith(fn, ext))
+		if(!fn.ends_with(ext))
 			continue;
 		try {
 			int64_t msec = m_journalContext.fileNameToFileMsec(fn);

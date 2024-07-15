@@ -30,16 +30,6 @@ public:
 	std::string::size_type indexOf(char needle) const;
 	size_t lastIndexOf(char c) const;
 
-	bool startsWith(const std::string &with) const;
-	bool startsWith(const char c) const;
-	static bool startsWith(const std::string & str, const std::string &with);
-	static bool startsWith(const std::string & str, const char c);
-
-	bool endsWith(const std::string &with) const;
-	bool endsWith(const char c) const;
-	static bool endsWith(const std::string & str, const std::string &with);
-	static bool endsWith(const std::string & str, const char c);
-
 	static constexpr auto WhiteSpaceChars = " \t\n\r\f\v";
 	static std::string& rtrim(std::string& s, const char* t = WhiteSpaceChars);
 	static std::string& ltrim(std::string& s, const char* t = WhiteSpaceChars);

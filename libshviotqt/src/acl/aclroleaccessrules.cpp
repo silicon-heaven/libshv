@@ -50,7 +50,7 @@ bool is_wild_card_pattern(const string path)
 	static const string SLASH_ASTERISKS = "/**";
 	if(path == ASTERISKS)
 		return true;
-	return shv::core::String::endsWith(path, SLASH_ASTERISKS);
+	return path.ends_with(SLASH_ASTERISKS);
 }
 }
 
@@ -71,7 +71,7 @@ bool AclAccessRule::isPathMethodMatch(std::string_view shv_path, const string &m
 	shv::core::StringView sub_path(path);
 	// trim "**"
 	sub_path = sub_path.substr(0, sub_path.length() - 2);
-	if(sub_path.length() > 0)
+	if(!sub_path.empty())
 		sub_path = sub_path.substr(0, sub_path.length() - 1); // trim '/'
 	if(shv::core::utils::ShvPath::startsWithPath(shv_path, sub_path)) {
 		return (method.empty() || method == method_);

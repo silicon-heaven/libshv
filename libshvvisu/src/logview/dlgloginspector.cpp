@@ -321,7 +321,7 @@ void DlgLogInspector::downloadLog()
 {
 	std::string shv_path = shvPath().toStdString();
 	if(ui->chkUseHistoryProvider->isChecked()) {
-		if(shv::core::String::startsWith(shv_path, "shv/"))
+		if(shv_path.starts_with("shv/"))
 			shv_path = "history" + shv_path.substr(3);
 	}
 	showInfo(QString::fromStdString("Downloading data from " + shv_path));

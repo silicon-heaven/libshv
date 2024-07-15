@@ -61,49 +61,6 @@ size_t String::lastIndexOf(char c) const
 	return std::string::npos;
 }
 
-bool String::startsWith(const std::string &with) const
-{
-	return startsWith(*this, with);
-}
-
-bool String::startsWith(const char c) const
-{
-	return startsWith(*this, c);
-}
-
-bool String::startsWith(const std::string & str, const std::string &with)
-{
-	return str.rfind(with, 0) == 0;
-}
-
-bool String::startsWith(const std::string & str, const char c)
-{
-	return !str.empty() && str[0] == c;
-}
-
-bool String::endsWith(const std::string &with) const
-{
-	return endsWith(*this, with);
-}
-
-bool String::endsWith(const char c) const
-{
-	return endsWith(*this, c);
-}
-
-bool String::endsWith(const std::string &str, const std::string &with)
-{
-	if(str.size() < with.size())
-		return false;
-	auto ix = str.find(with, str.size() - with.size());
-	return ix == (str.size() - with.size());
-}
-
-bool String::endsWith(const std::string & str, const char c)
-{
-	return !str.empty() && str[str.size() - 1] == c;
-}
-
 std::string String::mid(size_t pos, size_t cnt) const
 {
 	if(pos < size())

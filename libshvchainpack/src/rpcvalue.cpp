@@ -702,7 +702,7 @@ void RpcValue::set(const RpcValue::String &key, const RpcValue &val)
 
 void RpcValue::append(const RpcValue &val)
 {
-	return std::visit([&val] (auto& x) {
+	std::visit([&val] (auto& x) {
 		using TypeX = std::remove_cvref_t<decltype(x)>;
 		if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, CowPtr<RpcValue::List>>()) {
 			x->emplace_back(val);

@@ -857,7 +857,7 @@ QString Graph::elidedText(const QString &text, const QFont &font, const QRect &r
 		res = text;
 	}
 	else {
-		int row_count = static_cast<int>(rect.height() / fm.height());
+		int row_count = rect.height() / fm.height();
 		res = fm.elidedText(text, Qt::TextElideMode::ElideLeft, row_count * rect.width() - fm.averageCharWidth());
 	}
 
