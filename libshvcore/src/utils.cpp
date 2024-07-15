@@ -184,7 +184,7 @@ StringViewList utils::split(StringView strv, char delim, char quote, SplitBehavi
 		return ret;
 	while(true) {
 		StringView token = getToken(strv, delim, quote);
-		if(split_behavior == SplitBehavior::KeepEmptyParts || token.length()) {
+		if(split_behavior == SplitBehavior::KeepEmptyParts || !token.empty()) {
 			if(quotes_behavior == QuoteBehavior::RemoveQuotes && token.size() >= 2 && token.at(0) == quote && token.at(token.size() - 1) == quote) {
 				ret.push_back(token.substr(1, token.size() - 2));
 			}

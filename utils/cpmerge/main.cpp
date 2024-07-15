@@ -41,14 +41,14 @@ int main(int argc, char *argv[])
 	shv::chainpack::RpcValue template_config = shv::chainpack::CponReader(fis).read(&err);
 	fis.close();
 
-	if (err.length() > 0){
+	if (!err.empty()){
 		std::cerr << err << std::endl;
 		return 2;
 	}
 
 	shv::chainpack::RpcValue overlay_config = shv::chainpack::CponReader(std::cin).read(&err);
 
-	if (err.length() > 0){
+	if (!err.empty()){
 		std::cerr << err << std::endl;
 		return 3;
 	}
