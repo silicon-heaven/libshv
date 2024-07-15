@@ -402,7 +402,7 @@ void ShvFileJournal::convertLog1JournalDir()
 						shvWarning() << "cannot read date time from first line of file:" << fn << "line:" << s;
 					}
 					else {
-						std::string new_fn = journal_dir + '/' + m_journalContext.fileMsecToFileName(file_msec);
+						std::string new_fn = journal_dir + '/' + JournalContext::fileMsecToFileName(file_msec);
 						shvInfo() << "renaming" << fn << "->" << new_fn;
 						if (std::rename(fn.c_str(), new_fn.c_str())) {
 							shvError() << "cannot rename:" << fn << "to:" << new_fn;
