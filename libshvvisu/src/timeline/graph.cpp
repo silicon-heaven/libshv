@@ -1374,7 +1374,7 @@ void Graph::drawMiniMap(QPainter *painter)
 			ch_st.setLineAreaStyle(GraphChannel::Style::LineAreaStyle::Blank);
 			ch_st.setHideDiscreteValuesInfo(true);
 			DataRect drect{xRange(), ch->yRange()};
-			drawSamples(painter2, i, drect, mm_rect, ch_st);
+			drawSamplesMinimap(painter2, i, drect, mm_rect, ch_st);
 		}
 	}
 	painter->drawPixmap(m_layout.miniMapRect.topLeft(), m_miniMapCache);
@@ -2205,6 +2205,11 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 		}
 	}
 	painter->restore();
+}
+
+void Graph::drawSamplesMinimap(QPainter *painter, int channel_ix, const DataRect &src_rect, const QRect &dest_rect, const GraphChannel::Style &channel_style)
+{
+	drawSamples(painter, channel_ix, src_rect, dest_rect, channel_style);
 }
 
 void Graph::drawCrossHairTimeMarker(QPainter *painter)
