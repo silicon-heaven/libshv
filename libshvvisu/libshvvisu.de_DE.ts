@@ -438,7 +438,7 @@
     </message>
     <message>
         <source>Zoom channel to selection</source>
-        <translation>Zoomkanal zur Auswahl</translation>
+        <translation>Zoom Kanal zur Auswahl</translation>
     </message>
     <message>
         <source>Show selection info</source>
