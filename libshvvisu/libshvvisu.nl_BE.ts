@@ -377,6 +377,14 @@
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Property</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>shv::visu::timeline::Graph</name>
