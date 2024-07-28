@@ -33,8 +33,8 @@ ChannelProbeWidget::ChannelProbeWidget(ChannelProbe *probe, QWidget *parent) :
 	setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
 
 	ui->twData->setColumnCount(DataTableColumn::ColCount);
-	ui->twData->setHorizontalHeaderItem(DataTableColumn::ColProperty, new QTableWidgetItem("Property"));
-	ui->twData->setHorizontalHeaderItem(DataTableColumn::ColValue, new QTableWidgetItem("Value"));
+	ui->twData->setHorizontalHeaderItem(DataTableColumn::ColProperty, new QTableWidgetItem(tr("Property")));
+	ui->twData->setHorizontalHeaderItem(DataTableColumn::ColValue, new QTableWidgetItem(tr("Value")));
 	ui->twData->verticalHeader()->setDefaultSectionSize(static_cast<int>(fontMetrics().lineSpacing() * 1.3));
 
 	installEventFilter(this);
