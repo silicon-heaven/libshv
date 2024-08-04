@@ -86,6 +86,7 @@ public:
 
 	static constexpr auto DIR_APP_BROKER = ".app/broker";
 	static constexpr auto DIR_APP_BROKER_CURRENTCLIENT = ".app/broker/currentClient";
+	static constexpr auto DIR_BROKER_CURRENTCLIENT = ".broker/currentClient";
 
 	static constexpr auto JSONRPC_REQUEST_ID = "id";
 	static constexpr auto JSONRPC_METHOD = PAR_METHOD;

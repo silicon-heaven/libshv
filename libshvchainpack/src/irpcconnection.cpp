@@ -124,15 +124,13 @@ int IRpcConnection::callMethodSubscribe(int rq_id, const std::string &shv_path, 
 {
 	logSubscriptionsD() << "call subscribe for connection id:" << connectionId() << "path:" << shv_path << "method:" << method << "source:" << source;
 	if(m_shvApiVersion == ShvApiVersion::V3) {
-		auto path = shv_path + "/**";
+		auto path = shv_path;
+		auto ri = path + ':' + (source.empty()? "*": source) + ':' + (method.empty()? "*": method);
 		return callShvMethod(rq_id
-							 , Rpc::DIR_APP_BROKER_CURRENTCLIENT
+							 , Rpc::DIR_BROKER_CURRENTCLIENT
 							 , Rpc::METH_SUBSCRIBE
-							 , RpcValue::Map{
-								 {Rpc::PAR_PATHS, path},
-								 {Rpc::PAR_METHODS, method},
-								 {Rpc::PAR_SOURCE, source},
-							 });
+							 , RpcValue::List{ ri, 0 }
+							 );
 	}
 	return callShvMethod(rq_id
 						 , Rpc::DIR_BROKER_APP
@@ -154,15 +152,13 @@ int IRpcConnection::callMethodUnsubscribe(int rq_id, const std::string &shv_path
 {
 	logSubscriptionsD() << "call unsubscribe for connection id:" << connectionId() << "path:" << shv_path << "method:" << method << "source:" << source;
 	if(m_shvApiVersion == ShvApiVersion::V3) {
-		auto path = shv_path + "/**";
+		auto path = shv_path;
+		auto ri = path + ':' + (source.empty()? "*": source) + ':' + (method.empty()? "*": method);
 		return callShvMethod(rq_id
-							 , Rpc::DIR_APP_BROKER_CURRENTCLIENT
+							 , Rpc::DIR_BROKER_CURRENTCLIENT
 							 , Rpc::METH_UNSUBSCRIBE
-							 , RpcValue::Map{
-								 {Rpc::PAR_PATHS, path},
-								 {Rpc::PAR_METHODS, method},
-								 {Rpc::PAR_SOURCE, source},
-							 });
+							 , RpcValue::List{ ri, 0 }
+							 );
 	}
 	return callShvMethod(rq_id
 						 , Rpc::DIR_BROKER_APP
