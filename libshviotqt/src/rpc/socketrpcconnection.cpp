@@ -87,7 +87,6 @@ void SocketRpcConnection::onReadyRead()
 	for (const auto &frame : frames) {
 		onFrameDataRead(frame);
 	};
-	emit socketDataReadyRead();
 }
 
 void SocketRpcConnection::onParseDataException(const chainpack::ParseException &e)

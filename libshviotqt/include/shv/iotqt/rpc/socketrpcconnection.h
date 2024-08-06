@@ -37,7 +37,6 @@ public:
 	Q_SIGNAL void socketConnectedChanged(bool is_connected);
 	Q_SIGNAL void socketError(const QString &error_msg);
 	Q_SIGNAL void sslErrors(const QList<QSslError> &errors);
-	Q_SIGNAL void socketDataReadyRead();
 	void ignoreSslErrors();
 
 	std::string peerAddress() const;

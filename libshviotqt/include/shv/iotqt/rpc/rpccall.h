@@ -46,8 +46,6 @@ public:
 	void abort();
 	virtual void onRpcMessageReceived(const shv::chainpack::RpcMessage &msg);
 private:
-	void onConnectionDataReadyRead();
-private:
 	CallBackFunction m_callBackFunction;
 	QTimer *m_timeoutTimer = nullptr;
 	bool m_isFinished = false;

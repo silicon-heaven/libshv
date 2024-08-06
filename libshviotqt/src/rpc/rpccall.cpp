@@ -18,18 +18,7 @@ RpcResponseCallBack::RpcResponseCallBack(ClientConnection *conn, int rq_id, QObj
 {
 	setRequestId(rq_id);
 	connect(conn, &ClientConnection::rpcMessageReceived, this, &RpcResponseCallBack::onRpcMessageReceived);
-	connect(conn, &ClientConnection::socketDataReadyRead, this, &RpcResponseCallBack::onConnectionDataReadyRead);
 	setTimeout(shv::iotqt::rpc::ClientConnection::defaultRpcTimeoutMsec());
-}
-
-void RpcResponseCallBack::onConnectionDataReadyRead()
-{
-	// restart timeout timer everytime when some data are read
-	// jumbo messages can time-out withou this simply because
-	// they are received too long
-	if(m_timeoutTimer && m_timeoutTimer->isActive()) {
-		m_timeoutTimer->start();
-	}
 }
 
 void RpcResponseCallBack::start()
