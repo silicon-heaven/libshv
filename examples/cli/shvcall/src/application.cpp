@@ -14,7 +14,7 @@ Application::Application(int &argc, char **argv, AppCliOptions *cli_opts)
 	: Super(argc, argv)
 	, m_cliOptions(cli_opts)
 {
-	m_rpcConnection = new si::rpc::ClientConnection(this);
+	m_rpcConnection = new si::rpc::DeviceConnection(this);
 
 	m_rpcConnection->setCliOptions(cli_opts);
 
@@ -84,6 +84,12 @@ void Application::onShvStateChanged()
 					return;
 				}
 			});
+			return;
+		}
+
+		if (m_cliOptions->shouldEmit()) {
+			m_rpcConnection->sendShvSignal(m_cliOptions->path(), m_cliOptions->method(), m_cliOptions->params());
+			m_rpcConnection->close();
 			return;
 		}
 
