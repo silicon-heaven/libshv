@@ -56,6 +56,10 @@ function(libshv_set_translations target langs)
 	endforeach()
 
 	if(LIBSHV_USE_QT6)
+        if(NOT "${PROJECT_TRANSLATIONS_DIR}" STREQUAL "")
+            set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION ${PROJECT_TRANSLATIONS_DIR})
+        endif()
+
 		qt_add_lupdate("${target}" TS_FILES ${TS_FILES} OPTIONS  "-locations" "none")
 		qt_add_lrelease("${target}" TS_FILES ${TS_FILES} QM_FILES_OUTPUT_VARIABLE QM_FILES)
 	else()
