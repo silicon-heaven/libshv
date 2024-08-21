@@ -1170,18 +1170,19 @@ ShvTypeInfo ShvTypeInfo::fromRpcValue(const RpcValue &v)
 	return ret;
 }
 
-RpcValue ShvTypeInfo::applyTypeDescription(const shv::chainpack::RpcValue &val, const std::string &type_name, bool translate_enums) const
+RpcValue ShvTypeInfo::applyTypeDescription(const shv::chainpack::RpcValue &val, const std::string &type_name, bool translate_enums, bool recursive_bitfields) const
 {
 	ShvTypeDescr td = findTypeDescription(type_name);
-	return applyTypeDescription(val, td, translate_enums);
+	return applyTypeDescription(val, td, translate_enums, recursive_bitfields);
 }
 
-RpcValue ShvTypeInfo::applyTypeDescription(const chainpack::RpcValue &val, const ShvTypeDescr &type_descr, bool translate_enums) const
+RpcValue ShvTypeInfo::applyTypeDescription(const chainpack::RpcValue &val, const ShvTypeDescr &type_descr, bool translate_enums, bool recursive_bitfields) const
 {
 	switch(type_descr.type()) {
 	case ShvTypeDescr::Type::Invalid:
 		return val;
 	case ShvTypeDescr::Type::BitField: {
+		if (recursive_bitfields) {
 		RpcValue::Map map;
 		for(const ShvFieldDescr &fld : type_descr.fields()) {
 			RpcValue result = fld.bitfieldValue(val.toUInt64());
@@ -1189,6 +1190,8 @@ RpcValue ShvTypeInfo::applyTypeDescription(const chainpack::RpcValue &val, const
 			map[fld.name()] = result;
 		}
 		return map;
+	}
+		return val;
 	}
 	case ShvTypeDescr::Type::Enum: {
 		int ival = val.toInt();
@@ -1228,7 +1231,7 @@ RpcValue ShvTypeInfo::applyTypeDescription(const chainpack::RpcValue &val, const
 		if(val.isMap()) {
 			RpcValue::Map map;
 			for (const auto &v: val.asMap()) {
-				map[v.first] = applyTypeDescription(v.second, type_descr.field(v.first).typeName(), translate_enums);
+				map[v.first] = applyTypeDescription(v.second, type_descr.field(v.first).typeName(), translate_enums, recursive_bitfields);
 			}
 			return map;
 		}
