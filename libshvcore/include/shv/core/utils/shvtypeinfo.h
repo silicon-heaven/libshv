@@ -249,8 +249,8 @@ public:
 	chainpack::RpcValue toRpcValue() const;
 	static ShvTypeInfo fromRpcValue(const chainpack::RpcValue &v);
 
-	shv::chainpack::RpcValue applyTypeDescription(const shv::chainpack::RpcValue &val, const std::string &type_name, bool translate_enums = true) const;
-	shv::chainpack::RpcValue applyTypeDescription(const shv::chainpack::RpcValue &val, const ShvTypeDescr &type_descr, bool translate_enums = true) const;
+	shv::chainpack::RpcValue applyTypeDescription(const shv::chainpack::RpcValue &val, const std::string &type_name, bool translate_enums = true, bool recursive_bitfields = true) const;
+	shv::chainpack::RpcValue applyTypeDescription(const shv::chainpack::RpcValue &val, const ShvTypeDescr &type_descr, bool translate_enums = true, bool recursive_bitfields = true) const;
 
 	void forEachDeviceProperty(const std::string &device_type, std::function<void (const ShvPropertyDescr &)> fn) const;
 	void forEachProperty(std::function<void (const std::string &shv_path, const ShvPropertyDescr &)> fn) const;
