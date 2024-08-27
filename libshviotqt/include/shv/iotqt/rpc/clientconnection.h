@@ -31,7 +31,7 @@ public:
 	SHV_FIELD_BOOL_IMPL2(p, P, eerVerify, true)
 	SHV_FIELD_IMPL(std::string, p, P, assword)
 	SHV_FIELD_IMPL(shv::chainpack::IRpcConnection::LoginType, l, L, oginType)
-	SHV_FIELD_IMPL(shv::chainpack::RpcValue, c, C, onnectionOptions)
+	SHV_FIELD_IMPL2(shv::chainpack::RpcValue, c, C, onnectionOptions, shv::chainpack::RpcValue::Map())
 	SHV_FIELD_IMPL2(int, h, H, eartBeatInterval, 60)
 
 public:
