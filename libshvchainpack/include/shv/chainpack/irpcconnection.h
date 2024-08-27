@@ -29,6 +29,7 @@ public:
 	virtual void onRpcMessageReceived(const shv::chainpack::RpcMessage &msg) = 0;
 
 	int nextRequestId();
+	ShvApiVersion shvApiVersion() { return m_shvApiVersion; }
 	void setShvApiVersion(ShvApiVersion ver) { m_shvApiVersion = ver; }
 
 	void sendSignal(std::string method, const shv::chainpack::RpcValue &params = shv::chainpack::RpcValue());
