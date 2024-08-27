@@ -62,6 +62,7 @@ public:
 
 	static constexpr auto SIG_VAL_CHANGED = "chng";
 	static constexpr auto SIG_VAL_FASTCHANGED = "fastchng";
+	static constexpr auto SIG_VAL_FCHANGED = "fchng";
 	static constexpr auto SIG_SERVICE_VAL_CHANGED = "svcchng";
 	static constexpr auto SIG_MOUNTED_CHANGED = "mntchng";
 	static constexpr auto SIG_COMMAND_LOGGED = "cmdlog";

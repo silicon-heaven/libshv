@@ -192,11 +192,9 @@ void SerialFrameWriter::addFrame(const std::string &frame_data)
 
 void SerialFrameWriter::resetCommunication()
 {
-	QByteArray ba;
-	ba.append(static_cast<char>(STX));
-	ba.append(static_cast<char>(ETX));
-	ba.append('\0');
-	m_messageDataToWrite << ba;
+	QByteArray data_to_write;
+	data_to_write.append(static_cast<char>(00));
+	addFrame(data_to_write.toStdString());
 }
 
 //======================================================
