@@ -129,7 +129,7 @@ int IRpcConnection::callMethodSubscribe(int rq_id, const std::string &shv_path, 
 		return callShvMethod(rq_id
 							 , Rpc::DIR_BROKER_CURRENTCLIENT
 							 , Rpc::METH_SUBSCRIBE
-							 , RpcValue::List{ ri, 0 }
+							 , RpcValue::List{ ri, nullptr }
 							 );
 	}
 	return callShvMethod(rq_id
@@ -157,7 +157,7 @@ int IRpcConnection::callMethodUnsubscribe(int rq_id, const std::string &shv_path
 		return callShvMethod(rq_id
 							 , Rpc::DIR_BROKER_CURRENTCLIENT
 							 , Rpc::METH_UNSUBSCRIBE
-							 , RpcValue::List{ ri, 0 }
+							 , ri
 							 );
 	}
 	return callShvMethod(rq_id
