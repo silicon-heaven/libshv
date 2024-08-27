@@ -282,8 +282,6 @@ void SerialPortSocket::connectToHost(const QUrl &url)
 	m_port->setPortName(url.path());
 	shvInfo() << "opening serial port:" << m_port->portName();
 	if(m_port->open(QIODevice::ReadWrite)) {
-		shvInfo() << "Ok";
-		resetCommunication();
 		setState(QAbstractSocket::ConnectedState);
 	}
 	else {
