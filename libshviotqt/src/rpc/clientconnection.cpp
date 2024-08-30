@@ -339,7 +339,9 @@ void ClientConnection::onRpcMessageReceived(const chainpack::RpcMessage &rpc_msg
 		}
 	}
 	if(isLoginPhase()) {
-		processLoginPhase(rpc_msg);
+		if (rpc_msg.isResponse()) {
+			processLoginPhase(rpc_msg);
+		}
 		return;
 	}
 	if(rpc_msg.isResponse()) {
