@@ -439,6 +439,7 @@ void ClientConnection::onSocketConnectedChanged(bool is_connected)
 	}
 	else {
 		shvInfo() << objectName() << "connection id:" << connectionId() << "Socket disconnected from RPC server";
+		socket()->resetCommunication();
 		setState(State::NotConnected);
 	}
 }
