@@ -253,6 +253,8 @@ void ClientConnection::closeOrAbort(bool is_abort)
 	shvInfo() << "close connection, abort:" << is_abort;
 	m_checkBrokerConnectedTimer->stop();
 	if(m_socket) {
+		m_socket->resetCommunication();
+
 		if(is_abort)
 			abortSocket();
 		else
@@ -439,7 +441,6 @@ void ClientConnection::onSocketConnectedChanged(bool is_connected)
 	}
 	else {
 		shvInfo() << objectName() << "connection id:" << connectionId() << "Socket disconnected from RPC server";
-		socket()->resetCommunication();
 		setState(State::NotConnected);
 	}
 }
