@@ -253,6 +253,8 @@ void ClientConnection::closeOrAbort(bool is_abort)
 	shvInfo() << "close connection, abort:" << is_abort;
 	m_checkBrokerConnectedTimer->stop();
 	if(m_socket) {
+		m_socket->resetCommunication();
+
 		if(is_abort)
 			abortSocket();
 		else
