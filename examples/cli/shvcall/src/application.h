@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QCoreApplication>
-#include <shv/iotqt/rpc/clientconnection.h>
+#include <shv/iotqt/rpc/deviceconnection.h>
 
 class AppCliOptions;
 
@@ -17,7 +17,7 @@ private:
 	void onShvStateChanged();
 
 	AppCliOptions *m_cliOptions;
-	shv::iotqt::rpc::ClientConnection *m_rpcConnection;
+	shv::iotqt::rpc::DeviceConnection *m_rpcConnection;
 	int m_subscriptionRpcId;
 	int m_status = EXIT_SUCCESS;
 };

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <shv/iotqt/rpc/clientappclioptions.h>
+#include <shv/iotqt/rpc/deviceappclioptions.h>
 
-class AppCliOptions : public shv::iotqt::rpc::ClientAppCliOptions
+class AppCliOptions : public shv::iotqt::rpc::DeviceAppCliOptions
 {
 	using Super = shv::iotqt::rpc::ClientAppCliOptions;
 
@@ -16,4 +16,6 @@ public:
 	CLIOPTION_GETTER_SETTER(bool, isC, setC, ponOutput)
 	CLIOPTION_GETTER_SETTER(bool, s, setS, houldSubscribe)
 	CLIOPTION_GETTER_SETTER(std::string, s, setS, ubscribeFormat)
+
+	CLIOPTION_GETTER_SETTER(bool, s, setS, houldEmit)
 };
