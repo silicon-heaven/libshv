@@ -436,6 +436,12 @@ void ClientConnection::onSocketConnectedChanged(bool is_connected)
 			setState(State::BrokerConnected);
 		}
 		else {
+			QTimer::singleShot(cp::RpcDriver::defaultRpcTimeoutMsec(), this, [this] () {
+				if (state() != State::BrokerConnected) {
+					// login timeout
+					close();
+				}
+			});
 			sendHello();
 		}
 	}
