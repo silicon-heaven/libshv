@@ -55,17 +55,46 @@ void FrameWriter::flushToWebSocket(QWebSocket *socket)
 }
 #endif
 
+
+//======================================================
+// FrameReader
+//======================================================
+int FrameReader::tryToGetResponseRqId(std::istringstream &in)
+{
+	using namespace chainpack;
+	static constexpr auto protocol_chainpack = static_cast<int>(shv::chainpack::Rpc::ProtocolType::ChainPack);
+	if (auto b = in.get(); b == protocol_chainpack) {
+		chainpack::ChainPackReader rd(in);
+		try {
+			RpcValue::MetaData meta_data;
+			rd.read(meta_data);
+			if (RpcMessage::isResponse(meta_data)) {
+				if (auto rqid = RpcMessage::requestId(meta_data).toInt(); rqid > 0) {
+					return rqid;
+				}
+			}
+		}
+		catch (ParseException &e) {
+			// ignore read errro, meta not availble or corrupted
+			// frame parser will catch it later on
+		}
+	}
+	return 0;
+}
+
 //======================================================
 // StreamFrameReader
 //======================================================
-void StreamFrameReader::addData(std::string_view data)
+QList<int> StreamFrameReader::addData(std::string_view data)
 {
+	using namespace chainpack;
+	QList<int> response_request_ids;
 	m_readBuffer += data;
-	shvDebug() << "received:\n" << chainpack::utils::hexDump(data);
+	shvDebug() << "received:\n" << utils::hexDump(data);
 	while (true) {
 		std::istringstream in(m_readBuffer);
 		int err_code;
-		auto frame_size = static_cast<size_t>(chainpack::ChainPackReader::readUIntData(in, &err_code));
+		auto frame_size = static_cast<size_t>(ChainPackReader::readUIntData(in, &err_code));
 		if(err_code == CCPCP_RC_BUFFER_UNDERFLOW) {
 			// not enough data
 			break;
@@ -78,6 +107,9 @@ void StreamFrameReader::addData(std::string_view data)
 			throw std::runtime_error("Read RPC message length data error.");
 		}
 		auto consumed_len = static_cast<size_t>(len);
+		if (auto rqid = tryToGetResponseRqId(in); rqid > 0) {
+			response_request_ids << rqid;
+		}
 		if (consumed_len + frame_size <= m_readBuffer.size()) {
 			auto frame = std::string(m_readBuffer, consumed_len, frame_size);
 			m_readBuffer = std::string(m_readBuffer, consumed_len + frame_size);
@@ -87,6 +119,7 @@ void StreamFrameReader::addData(std::string_view data)
 			break;
 		}
 	}
+	return response_request_ids;
 }
 
 //======================================================
@@ -222,7 +255,10 @@ void TcpSocket::onDataReadyRead()
 {
 	auto ba = m_socket->readAll();
 	std::string_view data(ba.constData(), ba.size());
-	m_frameReader.addData(data);
+	for (auto rqid : m_frameReader.addData(data)) {
+		emit responseMetaReceived(rqid);
+	}
+	emit dataChunkReceived();
 	if (!m_frameReader.isEmpty()) {
 		emit readyRead();
 	}
@@ -261,6 +297,5 @@ void SslSocket::ignoreSslErrors()
 	auto *ssl_socket = qobject_cast<QSslSocket *>(m_socket);
 	ssl_socket->ignoreSslErrors();
 }
-
 #endif
 } // namespace shv

@@ -36,9 +36,15 @@ SerialFrameReader::SerialFrameReader(CrcCheck crc)
 
 }
 
-void SerialFrameReader::addData(std::string_view data)
+QList<int> SerialFrameReader::addData(std::string_view data)
 {
 	shvDebug() << "===> received:" << data.size() << "bytes:" << chainpack::utils::hexArray(data.data(), data.size());
+	QList<int> response_request_ids;
+	auto check_response_id = [this, &response_request_ids]() {
+		if (auto resp_rqid = tryToGetResponseRqId(m_readBuffer); resp_rqid > 0) {
+			response_request_ids << resp_rqid;
+		}
+	};
 	auto add_byte = [this](string &buff, uint8_t b) {
 		if (inEscape()) {
 			switch (b) {
@@ -46,7 +52,7 @@ void SerialFrameReader::addData(std::string_view data)
 			case EETX: buff += static_cast<char>(ETX); break;
 			case EATX: buff += static_cast<char>(ATX); break;
 			case EESC: buff += static_cast<char>(ESC); break;
-			default: throw std::runtime_error("Invalid escap sequention");
+			default: throw std::runtime_error("Invalid escape sequence");
 			}
 		}
 		else {
@@ -80,6 +86,7 @@ void SerialFrameReader::addData(std::string_view data)
 					setState(ReadState::WaitingForCrc);
 				}
 				else {
+					check_response_id();
 					finishFrame();
 				}
 				continue;
@@ -93,12 +100,15 @@ void SerialFrameReader::addData(std::string_view data)
 			add_byte(m_crcBuffer, b);
 			m_recentByte = b;
 			if (m_crcBuffer.size() == 4) {
+				check_response_id();
 				finishFrame();
 			}
 			continue;
 		}
 		}
 	}
+	check_response_id();
+	return response_request_ids;
 }
 
 bool SerialFrameReader::inEscape() const
@@ -143,8 +153,8 @@ void SerialFrameReader::finishFrame()
 			return;
 		}
 	}
-	auto protocol = static_cast<char>(shv::chainpack::Rpc::ProtocolType::ChainPack);
-	if (m_readBuffer.empty() || m_readBuffer[0] != protocol) {
+	static constexpr auto protocol_chainpack = static_cast<char>(shv::chainpack::Rpc::ProtocolType::ChainPack);
+	if (m_readBuffer.empty() || m_readBuffer[0] != protocol_chainpack) {
 		logSerialPortSocketD() << "Protocol type Error";
 		setState(ReadState::WaitingForStx);
 		return;
@@ -152,6 +162,12 @@ void SerialFrameReader::finishFrame()
 	shvDebug() << "ADD FRAME:" << chainpack::utils::hexArray(m_readBuffer.data(), m_readBuffer.size());
 	m_frames.emplace_back(m_readBuffer.data(), m_readBuffer.size());
 	setState(ReadState::WaitingForStx);
+}
+
+int SerialFrameReader::tryToGetResponseRqId(const std::string &s)
+{
+	std::istringstream in(s);
+	return FrameReader::tryToGetResponseRqId(in);
 }
 
 //======================================================
@@ -344,7 +360,10 @@ void SerialPortSocket::onDataReadyRead()
 {
 	auto ba = m_port->readAll();
 	string_view escaped_data(ba.constData(), ba.size());
-	m_frameReader.addData(escaped_data);
+	for (auto rqid : m_frameReader.addData(escaped_data)) {
+		emit responseMetaReceived(rqid);
+	}
+	emit dataChunkReceived();
 	if (!m_frameReader.isEmpty()) {
 		emit readyRead();
 	}

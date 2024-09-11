@@ -158,7 +158,10 @@ void LocalSocket::onDataReadyRead()
 {
 	auto ba = m_socket->readAll();
 	std::string_view escaped_data(ba.constData(), ba.size());
-	m_frameReader->addData(escaped_data);
+	for (auto rqid : m_frameReader->addData(escaped_data)) {
+		emit responseMetaReceived(rqid);
+	}
+	emit dataChunkReceived();
 	if (!m_frameReader->isEmpty()) {
 		emit readyRead();
 	}
