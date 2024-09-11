@@ -236,6 +236,7 @@ public:
 		MetaData(RpcValue::IMap &&imap, RpcValue::Map &&smap);
 		~MetaData();
 
+		MetaData& operator=(const MetaData &o);
 		MetaData& operator =(MetaData &&o) noexcept;
 
 		int metaTypeId() const;
@@ -260,13 +261,12 @@ public:
 		std::string toPrettyString() const;
 		std::string toString(const std::string &indent = std::string()) const;
 
-		MetaData* clone() const;
+		//MetaData* clone() const;
 	private:
-		MetaData& operator=(const MetaData &o);
 		void swap(MetaData &o) noexcept;
 	private:
-		RpcValue::IMap *m_imap = nullptr;
-		RpcValue::Map *m_smap = nullptr;
+		RpcValue::IMap m_imap;
+		RpcValue::Map m_smap;
 	};
 
 	// Constructors for the various types of JSON value.

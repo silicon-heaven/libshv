@@ -1182,10 +1182,8 @@ RpcValue::MetaData::MetaData(const RpcValue::MetaData &o)
 #ifdef DEBUG_RPCVAL
 	logDebugRpcVal() << ++cnt << "+++MM copy" << this << "<------" << &o;
 #endif
-	if(o.m_imap && !o.m_imap->empty())
-		m_imap = new RpcValue::IMap(*o.m_imap);
-	if(o.m_smap && !o.m_smap->empty())
-		m_smap = new RpcValue::Map(*o.m_smap);
+	m_imap = o.m_imap;
+	m_smap = o.m_smap;
 }
 
 RpcValue::MetaData::MetaData(RpcValue::MetaData &&o) noexcept
@@ -1202,8 +1200,7 @@ RpcValue::MetaData::MetaData(RpcValue::IMap &&imap)
 #ifdef DEBUG_RPCVAL
 	logDebugRpcVal() << ++cnt << "+++MM move imap" << this;
 #endif
-	if(!imap.empty())
-		m_imap = new RpcValue::IMap(std::move(imap));
+	m_imap = std::move(imap);
 }
 
 RpcValue::MetaData::MetaData(RpcValue::Map &&smap)
@@ -1211,8 +1208,7 @@ RpcValue::MetaData::MetaData(RpcValue::Map &&smap)
 #ifdef DEBUG_RPCVAL
 	logDebugRpcVal() << ++cnt << "+++MM move smap" << this;
 #endif
-	if(!smap.empty())
-		m_smap = new RpcValue::Map(std::move(smap));
+	m_smap = std::move(smap);
 }
 
 RpcValue::MetaData::MetaData(RpcValue::IMap &&imap, RpcValue::Map &&smap)
@@ -1220,10 +1216,8 @@ RpcValue::MetaData::MetaData(RpcValue::IMap &&imap, RpcValue::Map &&smap)
 #ifdef DEBUG_RPCVAL
 	logDebugRpcVal() << ++cnt << "+++MM move imap smap" << this;
 #endif
-	if(!imap.empty())
-		m_imap = new RpcValue::IMap(std::move(imap));
-	if(!smap.empty())
-		m_smap = new RpcValue::Map(std::move(smap));
+	m_imap = std::move(imap);
+	m_smap = std::move(smap);
 }
 
 RpcValue::MetaData::~MetaData()
@@ -1231,11 +1225,9 @@ RpcValue::MetaData::~MetaData()
 #ifdef DEBUG_RPCVAL
 	logDebugRpcVal() << cnt-- << "---MM cnt:" << size() << this;
 #endif
-	delete m_imap;
-	delete m_smap;
 }
 
-RpcValue::MetaData &RpcValue::MetaData::operator =(RpcValue::MetaData &&o) noexcept
+RpcValue::MetaData &RpcValue::MetaData::operator=(RpcValue::MetaData &&o) noexcept
 {
 #ifdef DEBUG_RPCVAL
 	logDebugRpcVal() << "===MM op= move ref" << this;
@@ -1252,11 +1244,8 @@ RpcValue::MetaData &RpcValue::MetaData::operator=(const RpcValue::MetaData &o)
 	if (this == &o) {
 		return *this;
 	}
-
-	if(o.m_imap && !o.m_imap->empty())
-		m_imap = new RpcValue::IMap(*o.m_imap);
-	if(o.m_smap && !o.m_smap->empty())
-		m_smap = new RpcValue::Map(*o.m_smap);
+	m_imap = o.m_imap;
+	m_smap = o.m_smap;
 	return *this;
 }
 
@@ -1352,32 +1341,26 @@ const RpcValue &RpcValue::MetaData::valref(const String &key) const
 void RpcValue::MetaData::setValue(RpcValue::Int key, const RpcValue &val)
 {
 	if(val.isValid()) {
-		if(!m_imap)
-			m_imap = new RpcValue::IMap();
-		(*m_imap)[key] = val;
+		m_imap[key] = val;
 	}
 	else {
-		if(m_imap)
-			m_imap->erase(key);
+		m_imap.erase(key);
 	}
 }
 
 void RpcValue::MetaData::setValue(const RpcValue::String &key, const RpcValue &val)
 {
 	if(val.isValid()) {
-		if(!m_smap)
-			m_smap = new RpcValue::Map();
-		(*m_smap)[key] = val;
+		m_smap[key] = val;
 	}
 	else {
-		if(m_smap)
-			m_smap->erase(key);
+		m_smap.erase(key);
 	}
 }
 
 size_t RpcValue::MetaData::size() const
 {
-	return (m_imap? m_imap->size(): 0) + (m_smap? m_smap->size(): 0);
+	return m_imap.size() + m_smap.size();
 }
 
 bool RpcValue::MetaData::isEmpty() const
@@ -1392,14 +1375,12 @@ bool RpcValue::MetaData::operator==(const RpcValue::MetaData &o) const
 
 const RpcValue::IMap &RpcValue::MetaData::iValues() const
 {
-	static RpcValue::IMap m;
-	return m_imap? *m_imap: m;
+	return m_imap;
 }
 
 const RpcValue::Map &RpcValue::MetaData::sValues() const
 {
-	static RpcValue::Map m;
-	return m_smap? *m_smap: m;
+	return m_smap;
 }
 
 std::string RpcValue::MetaData::toPrettyString() const
@@ -1427,11 +1408,11 @@ std::string RpcValue::MetaData::toString(const std::string &indent) const
 	return out.str();
 }
 
-RpcValue::MetaData *RpcValue::MetaData::clone() const
-{
-	auto *md = new MetaData(*this);
-	return md;
-}
+//RpcValue::MetaData *RpcValue::MetaData::clone() const
+//{
+//	auto *md = new MetaData(*this);
+//	return md;
+//}
 
 void RpcValue::MetaData::swap(RpcValue::MetaData &o) noexcept
 {
