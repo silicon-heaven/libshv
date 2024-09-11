@@ -59,24 +59,28 @@ void FrameWriter::flushToWebSocket(QWebSocket *socket)
 //======================================================
 // FrameReader
 //======================================================
-int FrameReader::tryToGetResponseRqId(std::istringstream &in)
+int FrameReader::tryToReadMeta(std::istringstream &in)
 {
-	using namespace chainpack;
-	static constexpr auto protocol_chainpack = static_cast<int>(shv::chainpack::Rpc::ProtocolType::ChainPack);
-	if (auto b = in.get(); b == protocol_chainpack) {
-		chainpack::ChainPackReader rd(in);
-		try {
-			RpcValue::MetaData meta_data;
-			rd.read(meta_data);
-			if (RpcMessage::isResponse(meta_data)) {
-				if (auto rqid = RpcMessage::requestId(meta_data).toInt(); rqid > 0) {
-					return rqid;
+	if (!m_dataStart.has_value()) {
+		using namespace chainpack;
+		static constexpr auto protocol_chainpack = static_cast<int>(shv::chainpack::Rpc::ProtocolType::ChainPack);
+		if (auto b = in.get(); b == protocol_chainpack) {
+			chainpack::ChainPackReader rd(in);
+			try {
+				m_meta = {};
+				rd.read(m_meta);
+				m_dataStart = static_cast<size_t>(in.tellg());
+				if (chainpack::RpcMessage::isResponse(m_meta)) {
+					if (auto rqid = chainpack::RpcMessage::requestId(m_meta).toInt(); rqid > 0) {
+						return rqid;
+					}
 				}
+				return 0;
 			}
-		}
-		catch (ParseException &e) {
-			// ignore read errro, meta not availble or corrupted
-			// frame parser will catch it later on
+			catch (ParseException &e) {
+				// ignore read errro, meta not availble or corrupted
+				// frame parser will catch it later on
+			}
 		}
 	}
 	return 0;
@@ -107,13 +111,18 @@ QList<int> StreamFrameReader::addData(std::string_view data)
 			throw std::runtime_error("Read RPC message length data error.");
 		}
 		auto consumed_len = static_cast<size_t>(len);
-		if (auto rqid = tryToGetResponseRqId(in); rqid > 0) {
+		if (auto rqid = tryToReadMeta(in); rqid > 0) {
 			response_request_ids << rqid;
 		}
 		if (consumed_len + frame_size <= m_readBuffer.size()) {
-			auto frame = std::string(m_readBuffer, consumed_len, frame_size);
+			if (!m_dataStart.has_value()) {
+				throw std::runtime_error("Read RPC message meta data error.");
+			}
+			auto frame_data = std::string(m_readBuffer, m_dataStart.value(), frame_size);
 			m_readBuffer = std::string(m_readBuffer, consumed_len + frame_size);
-			m_frames.push_back(std::move(frame));
+			m_frames.emplace_back(std::move(m_meta), std::move(frame_data));
+			m_meta = {};
+			m_dataStart = {};
 		}
 		else {
 			break;
@@ -236,7 +245,7 @@ quint16 TcpSocket::peerPort() const
 	return m_socket->peerPort();
 }
 
-std::vector<std::string> TcpSocket::takeFrames()
+std::vector<chainpack::RpcFrame> TcpSocket::takeFrames()
 {
 	return m_frameReader.takeFrames();
 }

@@ -30,7 +30,6 @@ protected:
 	virtual bool isOpen() = 0;
 
 	virtual void writeFrameData(const std::string &frame_data) = 0;
-	/// call it when new data arrived
 	virtual void onFrameDataRead(const std::string &frame_data);
 
 	virtual void onRpcFrameReceived(RpcFrame &&frame);

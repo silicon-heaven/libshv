@@ -1220,13 +1220,6 @@ RpcValue::MetaData::MetaData(RpcValue::IMap &&imap, RpcValue::Map &&smap)
 	m_smap = std::move(smap);
 }
 
-RpcValue::MetaData::~MetaData()
-{
-#ifdef DEBUG_RPCVAL
-	logDebugRpcVal() << cnt-- << "---MM cnt:" << size() << this;
-#endif
-}
-
 RpcValue::MetaData &RpcValue::MetaData::operator=(RpcValue::MetaData &&o) noexcept
 {
 #ifdef DEBUG_RPCVAL

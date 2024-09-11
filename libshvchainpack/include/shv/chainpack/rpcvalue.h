@@ -234,7 +234,7 @@ public:
 		MetaData(RpcValue::IMap &&imap);
 		MetaData(RpcValue::Map &&smap);
 		MetaData(RpcValue::IMap &&imap, RpcValue::Map &&smap);
-		~MetaData();
+		~MetaData() = default;
 
 		MetaData& operator=(const MetaData &o);
 		MetaData& operator =(MetaData &&o) noexcept;
