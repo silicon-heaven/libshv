@@ -41,8 +41,9 @@ QList<int> SerialFrameReader::addData(std::string_view data)
 	shvDebug() << "===> received:" << data.size() << "bytes:" << chainpack::utils::hexArray(data.data(), data.size());
 	QList<int> response_request_ids;
 	auto check_response_id = [this, &response_request_ids]() {
-		if (auto resp_rqid = tryToGetResponseRqId(m_readBuffer); resp_rqid > 0) {
-			response_request_ids << resp_rqid;
+		std::istringstream in(m_readBuffer);
+		if (auto rqid = tryToReadMeta(in); rqid > 0) {
+			response_request_ids << rqid;
 		}
 	};
 	auto add_byte = [this](string &buff, uint8_t b) {
@@ -125,6 +126,8 @@ void SerialFrameReader::setState(ReadState state)
 	}
 	case ReadState::WaitingForEtx: {
 		m_readBuffer = {};
+		m_meta = {};
+		m_dataStart = {};
 		m_crcDigest.reset();
 		break;
 	}
@@ -153,21 +156,15 @@ void SerialFrameReader::finishFrame()
 			return;
 		}
 	}
-	static constexpr auto protocol_chainpack = static_cast<char>(shv::chainpack::Rpc::ProtocolType::ChainPack);
-	if (m_readBuffer.empty() || m_readBuffer[0] != protocol_chainpack) {
-		logSerialPortSocketD() << "Protocol type Error";
+	if (!m_dataStart.has_value()) {
+		logSerialPortSocketD() << "Protocol type or read meta Error";
 		setState(ReadState::WaitingForStx);
 		return;
 	}
 	shvDebug() << "ADD FRAME:" << chainpack::utils::hexArray(m_readBuffer.data(), m_readBuffer.size());
-	m_frames.emplace_back(m_readBuffer.data(), m_readBuffer.size());
+	auto frame_data = std::string(m_readBuffer, m_dataStart.value(), m_readBuffer.size());
+	m_frames.emplace_back(std::move(m_meta), std::move(frame_data));
 	setState(ReadState::WaitingForStx);
-}
-
-int SerialFrameReader::tryToGetResponseRqId(const std::string &s)
-{
-	std::istringstream in(s);
-	return FrameReader::tryToGetResponseRqId(in);
 }
 
 //======================================================
@@ -345,7 +342,7 @@ quint16 SerialPortSocket::peerPort() const
 	return 0;
 }
 
-std::vector<std::string> SerialPortSocket::takeFrames()
+std::vector<chainpack::RpcFrame> SerialPortSocket::takeFrames()
 {
 	return m_frameReader.takeFrames();
 }

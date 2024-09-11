@@ -63,7 +63,7 @@ quint16 WebSocket::peerPort() const
 	return m_socket->peerPort();
 }
 
-std::vector<std::string> WebSocket::takeFrames()
+std::vector<chainpack::RpcFrame> WebSocket::takeFrames()
 {
 	return m_frameReader.takeFrames();
 }

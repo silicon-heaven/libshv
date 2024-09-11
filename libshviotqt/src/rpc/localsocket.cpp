@@ -98,7 +98,7 @@ LocalSocket::~LocalSocket()
 	delete m_frameWriter;
 }
 
-std::vector<std::string> LocalSocket::takeFrames()
+std::vector<chainpack::RpcFrame> LocalSocket::takeFrames()
 {
 	return m_frameReader->takeFrames();
 }

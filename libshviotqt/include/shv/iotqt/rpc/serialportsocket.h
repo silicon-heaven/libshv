@@ -26,7 +26,6 @@ private:
 	bool inEscape() const;
 	void setState(ReadState state);
 	void finishFrame();
-	static int tryToGetResponseRqId(const std::string &s);
 private:
 	ReadState m_readState = ReadState::WaitingForStx;
 	uint8_t m_recentByte = 0;
@@ -58,7 +57,7 @@ class SHVIOTQT_DECL_EXPORT SerialPortSocket : public Socket
 public:
 	SerialPortSocket(QSerialPort *port, QObject *parent = nullptr);
 
-	std::vector<std::string> takeFrames() override;
+	std::vector<chainpack::RpcFrame> takeFrames() override;
 	void writeFrameData(const std::string &frame_data) override;
 
 	void setReceiveTimeout(int millis);

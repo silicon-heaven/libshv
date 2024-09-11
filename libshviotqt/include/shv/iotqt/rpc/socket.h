@@ -2,6 +2,8 @@
 
 #include "../shviotqtglobal.h"
 
+#include <shv/chainpack/rpcmessage.h>
+
 #include <QObject>
 #include <QAbstractSocket>
 #include <QSslSocket>
@@ -24,15 +26,18 @@ public:
 	virtual ~FrameReader() = default;
 	virtual QList<int> addData(std::string_view data) = 0;
 	bool isEmpty() const { return m_frames.empty(); }
-	std::vector<std::string> takeFrames() {
+	std::vector<chainpack::RpcFrame> takeFrames() {
 		auto frames = std::move(m_frames);
 		m_frames = {};
 		return frames;
 	}
 protected:
-	static int tryToGetResponseRqId(std::istringstream &in);
+	int tryToReadMeta(std::istringstream &in);
 protected:
-	std::vector<std::string> m_frames;
+	std::vector<chainpack::RpcFrame> m_frames;
+	chainpack::RpcValue::MetaData m_meta;
+	std::optional<size_t> m_dataStart;
+
 };
 
 class FrameWriter
@@ -92,7 +97,7 @@ public:
 	virtual QHostAddress peerAddress() const = 0;
 	virtual quint16 peerPort() const = 0;
 
-	virtual std::vector<std::string> takeFrames() = 0;
+	virtual std::vector<chainpack::RpcFrame> takeFrames() = 0;
 	virtual void writeFrameData(const std::string &frame_data) = 0;
 
 	virtual void ignoreSslErrors() = 0;
@@ -118,7 +123,7 @@ class SHVIOTQT_DECL_EXPORT TcpSocket : public Socket
 public:
 	TcpSocket(QTcpSocket *socket, QObject *parent = nullptr);
 
-	std::vector<std::string> takeFrames() override;
+	std::vector<chainpack::RpcFrame> takeFrames() override;
 	void writeFrameData(const std::string &frame_data) override;
 
 	void connectToHost(const QUrl &url) override;

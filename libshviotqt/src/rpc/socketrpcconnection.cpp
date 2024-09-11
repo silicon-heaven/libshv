@@ -86,9 +86,9 @@ void SocketRpcConnection::connectToHost(const QUrl &url)
 void SocketRpcConnection::onReadyRead()
 {
 	auto frames = socket()->takeFrames();
-	for (const auto &frame : frames) {
-		onFrameDataRead(frame);
-	};
+	for (auto begin = std::make_move_iterator(frames.begin()), end = std::make_move_iterator(frames.end()); begin != end; ++begin) {
+		onRpcFrameReceived(*begin);
+	}
 }
 
 void SocketRpcConnection::onParseDataException(const chainpack::ParseException &e)
