@@ -91,7 +91,10 @@ void WebSocket::onTextMessageReceived(const QString &message)
 {
 	shvDebug() << "text message received:" << message;
 	auto ba = message.toUtf8();
-	m_frameReader.addData(std::string_view(ba.constData(), ba.size()));
+	for (auto rqid : m_frameReader.addData(std::string_view(ba.constData(), ba.size()))) {
+		emit responseMetaReceived(rqid);
+	}
+	emit dataChunkReceived();
 	if (!m_frameReader.isEmpty()) {
 		emit readyRead();
 	}
@@ -100,7 +103,10 @@ void WebSocket::onTextMessageReceived(const QString &message)
 void WebSocket::onBinaryMessageReceived(const QByteArray &message)
 {
 	shvDebug() << "binary message received:" << message;
-	m_frameReader.addData(std::string_view(message.constData(), message.size()));
+	for (auto rqid : m_frameReader.addData(std::string_view(message.constData(), message.size()))) {
+		emit responseMetaReceived(rqid);
+	}
+	emit dataChunkReceived();
 	if (!m_frameReader.isEmpty()) {
 		emit readyRead();
 	}

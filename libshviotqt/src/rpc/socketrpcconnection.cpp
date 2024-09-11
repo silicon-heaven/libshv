@@ -33,6 +33,8 @@ void SocketRpcConnection::setSocket(Socket *socket)
 {
 	socket->setParent(nullptr);
 	m_socket = socket;
+	connect(socket, &Socket::responseMetaReceived, this, &SocketRpcConnection::responseMetaReceived);
+	connect(socket, &Socket::dataChunkReceived, this, &SocketRpcConnection::dataChunkReceived);
 	connect(socket, &Socket::sslErrors, this, &SocketRpcConnection::sslErrors);
 	connect(socket, &Socket::error, this, [this](QAbstractSocket::SocketError /*socket_error*/) {
 		shvWarning() << "Socket error:" << m_socket->errorString();

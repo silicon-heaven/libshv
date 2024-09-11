@@ -20,12 +20,13 @@ public:
 	SerialFrameReader(CrcCheck crc);
 	~SerialFrameReader() override = default;
 
-	void addData(std::string_view data) override;
+	QList<int> addData(std::string_view data) override;
 	ReadState readState() const { return m_readState; }
 private:
 	bool inEscape() const;
 	void setState(ReadState state);
 	void finishFrame();
+	static int tryToGetResponseRqId(const std::string &s);
 private:
 	ReadState m_readState = ReadState::WaitingForStx;
 	uint8_t m_recentByte = 0;

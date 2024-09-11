@@ -46,8 +46,12 @@ public:
 	void abort();
 	virtual void onRpcMessageReceived(const shv::chainpack::RpcMessage &msg);
 private:
+	void onResponseMetaReceived(int request_id);
+	void onDataChunkReceived();
+private:
 	CallBackFunction m_callBackFunction;
 	QTimer *m_timeoutTimer = nullptr;
+	bool m_responseMetaReceived = false;
 	bool m_isFinished = false;
 };
 

@@ -37,6 +37,11 @@ public:
 	Q_SIGNAL void socketConnectedChanged(bool is_connected);
 	Q_SIGNAL void socketError(const QString &error_msg);
 	Q_SIGNAL void sslErrors(const QList<QSslError> &errors);
+
+	// following two signals allows correct RPC call timeout implementation
+	Q_SIGNAL void responseMetaReceived(int request_id);
+	Q_SIGNAL void dataChunkReceived();
+
 	void ignoreSslErrors();
 
 	std::string peerAddress() const;

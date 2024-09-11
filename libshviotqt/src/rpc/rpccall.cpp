@@ -18,6 +18,8 @@ RpcResponseCallBack::RpcResponseCallBack(ClientConnection *conn, int rq_id, QObj
 {
 	setRequestId(rq_id);
 	connect(conn, &ClientConnection::rpcMessageReceived, this, &RpcResponseCallBack::onRpcMessageReceived);
+	connect(conn, &ClientConnection::responseMetaReceived, this, &RpcResponseCallBack::onResponseMetaReceived);
+	connect(conn, &ClientConnection::dataChunkReceived, this, &RpcResponseCallBack::onDataChunkReceived);
 	setTimeout(shv::iotqt::rpc::ClientConnection::defaultRpcTimeoutMsec());
 }
 
@@ -108,6 +110,29 @@ void RpcResponseCallBack::onRpcMessageReceived(const chainpack::RpcMessage &msg)
 	else
 		emit finished(rsp);
 	deleteLater();
+}
+
+void RpcResponseCallBack::onResponseMetaReceived(int request_id)
+{
+	if(m_isFinished)
+		return;
+	if(request_id == requestId()) {
+		m_responseMetaReceived = true;
+		if(m_timeoutTimer) {
+			// response is being received
+			m_timeoutTimer->start();
+		}
+	}
+}
+
+void RpcResponseCallBack::onDataChunkReceived()
+{
+	if(m_isFinished)
+		return;
+	if(m_timeoutTimer && m_responseMetaReceived) {
+		// response is being received
+		m_timeoutTimer->start();
+	}
 }
 
 //===================================================

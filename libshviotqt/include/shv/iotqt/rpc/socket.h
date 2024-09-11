@@ -22,13 +22,15 @@ namespace shv::iotqt::rpc {
 class FrameReader {
 public:
 	virtual ~FrameReader() = default;
-	virtual void addData(std::string_view data) = 0;
+	virtual QList<int> addData(std::string_view data) = 0;
 	bool isEmpty() const { return m_frames.empty(); }
 	std::vector<std::string> takeFrames() {
 		auto frames = std::move(m_frames);
 		m_frames = {};
 		return frames;
 	}
+protected:
+	static int tryToGetResponseRqId(std::istringstream &in);
 protected:
 	std::vector<std::string> m_frames;
 };
@@ -52,7 +54,7 @@ class StreamFrameReader : public FrameReader
 public:
 	~StreamFrameReader() override = default;
 
-	void addData(std::string_view data) override;
+	QList<int> addData(std::string_view data) override;
 private:
 	std::string m_readBuffer;
 };
@@ -100,6 +102,8 @@ public:
 	Q_SIGNAL void connected();
 	Q_SIGNAL void disconnected();
 	Q_SIGNAL void readyRead();
+	Q_SIGNAL void responseMetaReceived(int request_id);
+	Q_SIGNAL void dataChunkReceived();
 
 	Q_SIGNAL void stateChanged(QAbstractSocket::SocketState state);
 	Q_SIGNAL void error(QAbstractSocket::SocketError socket_error);
