@@ -85,7 +85,19 @@ function(add_shviotqt_serialportsocket_test test_name)
 	add_test(NAME test_iotqt_${test_name} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:test_iotqt_${test_name}>)
 endfunction(add_shviotqt_serialportsocket_test)
 
+function(add_shviotqt_test test_name)
+	add_executable(
+		test_iotqt_${test_name}
+		tests/test_${test_name}.cpp
+	)
+	target_compile_definitions(test_iotqt_${test_name} PRIVATE DEF_FILES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests/files")
+	target_link_libraries(test_iotqt_${test_name} libshviotqt doctest::doctest)
+	add_test(NAME test_iotqt_${test_name} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:test_iotqt_${test_name}>)
+endfunction(add_shviotqt_test)
+
 if(BUILD_TESTING)
+	add_shviotqt_test(frame_reader)
+
 	add_shviotqt_serialportsocket_test(serialportsocket)
 	file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test_serialportsocket")
 	target_compile_definitions(test_iotqt_serialportsocket PRIVATE TESTS_DIR="${CMAKE_CURRENT_BINARY_DIR}/test_serialportsocket")
