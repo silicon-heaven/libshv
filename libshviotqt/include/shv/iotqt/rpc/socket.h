@@ -21,7 +21,7 @@ namespace shv::chainpack { class ParseException; }
 
 namespace shv::iotqt::rpc {
 
-class FrameReader {
+class SHVIOTQT_DECL_EXPORT FrameReader {
 public:
 	virtual ~FrameReader() = default;
 	virtual QList<int> addData(std::string_view data) = 0;
@@ -40,7 +40,7 @@ protected:
 
 };
 
-class FrameWriter
+class SHVIOTQT_DECL_EXPORT FrameWriter
 {
 public:
 	virtual ~FrameWriter() = default;
@@ -54,7 +54,7 @@ protected:
 	QList<QByteArray> m_messageDataToWrite;
 };
 
-class StreamFrameReader : public FrameReader
+class SHVIOTQT_DECL_EXPORT StreamFrameReader : public FrameReader
 {
 public:
 	~StreamFrameReader() override = default;
@@ -64,7 +64,7 @@ private:
 	std::string m_readBuffer;
 };
 
-class StreamFrameWriter : public FrameWriter
+class SHVIOTQT_DECL_EXPORT StreamFrameWriter : public FrameWriter
 {
 public:
 	~StreamFrameWriter() override = default;
