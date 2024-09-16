@@ -11,7 +11,7 @@ class QTimer;
 
 namespace shv::iotqt::rpc {
 
-class SerialFrameReader : public FrameReader
+class SHVIOTQT_DECL_EXPORT SerialFrameReader : public FrameReader
 {
 public:
 	enum class ReadState {WaitingForStx, WaitingForEtx, WaitingForCrc};
@@ -35,7 +35,7 @@ private:
 	bool m_withCrcCheck = true;
 };
 
-class SerialFrameWriter : public FrameWriter
+class SHVIOTQT_DECL_EXPORT SerialFrameWriter : public FrameWriter
 {
 public:
 	enum class CrcCheck {No, Yes};
