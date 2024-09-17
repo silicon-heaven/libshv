@@ -1088,7 +1088,7 @@ void Graph::makeLayout(const QRect &pref_rect)
 	// shift channel rects
 	int widget_height = 0;
 	widget_height += u2px(m_style.topMargin());
-	for (auto i = visible_channels.count() - 1; i >= 0; --i) {
+	for (auto i = 0; i < visible_channels.count(); ++i) {
 		GraphChannel *ch = channelAt(visible_channels[i]);
 
 		ch->m_layout.graphAreaRect.moveTop(widget_height);
@@ -1102,8 +1102,9 @@ void Graph::makeLayout(const QRect &pref_rect)
 		ch->m_layout.yAxisRect.setWidth((m_style.isYAxisVisible()) ? u2px(m_style.yAxisWidth()) : 0);
 
 		widget_height += ch->m_layout.graphAreaRect.height();
-		if(i > 0)
+		if (i + 1 < visible_channels.count()) {
 			widget_height += u2px(m_style.channelSpacing());
+		}
 	}
 
 	// make data area rect a bit slimmer to not clip wide graph line
