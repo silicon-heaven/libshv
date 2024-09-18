@@ -285,11 +285,10 @@ bool ClientConnection::isBrokerConnected() const
 }
 
 static constexpr std::string_view::size_type MAX_LOG_LEN = 1024;
-static const auto TOPIC_RPC_MSG = "RpcMsg";
 
 void ClientConnection::sendRpcMessage(const cp::RpcMessage &rpc_msg)
 {
-	if(NecroLog::shouldLog(NecroLog::Level::Message, NecroLog::LogContext(__FILE__, __LINE__, TOPIC_RPC_MSG))) {
+	if(NecroLog::shouldLog(NecroLog::Level::Message, NecroLog::LogContext(__FILE__, __LINE__, chainpack::Rpc::TOPIC_RPC_MSG))) {
 		if(isShvPathMutedInLog(rpc_msg.shvPath().asString(), rpc_msg.method().asString())) {
 			if(rpc_msg.isRequest()) {
 				auto rq_id = rpc_msg.requestId().toInt64();
@@ -299,8 +298,8 @@ void ClientConnection::sendRpcMessage(const cp::RpcMessage &rpc_msg)
 			}
 		}
 		else {
-			NecroLog::create(NecroLog::Level::Message, NecroLog::LogContext(__FILE__, __LINE__, TOPIC_RPC_MSG))
-				<< SND_LOG_ARROW
+			NecroLog::create(NecroLog::Level::Message, NecroLog::LogContext(__FILE__, __LINE__, chainpack::Rpc::TOPIC_RPC_MSG))
+				<< chainpack::Rpc::SND_LOG_ARROW
 				<< "client id:" << connectionId()
 				<< std::string_view(m_rawRpcMessageLog? rpc_msg.toCpon(): rpc_msg.toPrettyString()).substr(0, MAX_LOG_LEN);
 		}
@@ -310,7 +309,7 @@ void ClientConnection::sendRpcMessage(const cp::RpcMessage &rpc_msg)
 
 void ClientConnection::onRpcMessageReceived(const chainpack::RpcMessage &rpc_msg)
 {
-	if(NecroLog::shouldLog(NecroLog::Level::Message, NecroLog::LogContext(__FILE__, __LINE__, TOPIC_RPC_MSG))) {
+	if(NecroLog::shouldLog(NecroLog::Level::Message, NecroLog::LogContext(__FILE__, __LINE__, chainpack::Rpc::TOPIC_RPC_MSG))) {
 		bool skip_log = false;
 		if(rpc_msg.isResponse()) {
 			QElapsedTimer now;
@@ -334,8 +333,8 @@ void ClientConnection::onRpcMessageReceived(const chainpack::RpcMessage &rpc_msg
 			skip_log = isShvPathMutedInLog(rpc_msg.shvPath().asString(), rpc_msg.method().asString());
 		}
 		if(!skip_log) {
-			NecroLog::create(NecroLog::Level::Message, NecroLog::LogContext(__FILE__, __LINE__, TOPIC_RPC_MSG))
-				<< cp::RpcDriver::RCV_LOG_ARROW
+			NecroLog::create(NecroLog::Level::Message, NecroLog::LogContext(__FILE__, __LINE__, chainpack::Rpc::TOPIC_RPC_MSG))
+				<< chainpack::Rpc::RCV_LOG_ARROW
 				<< "client id:" << connectionId()
 				<< std::string_view(m_rawRpcMessageLog? rpc_msg.toCpon(): rpc_msg.toPrettyString()).substr(0, MAX_LOG_LEN);
 		}

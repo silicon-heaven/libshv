@@ -32,7 +32,7 @@ void RpcDriver::sendRpcMessage(const RpcMessage &msg)
 
 void RpcDriver::sendRpcFrame(RpcFrame &&frame)
 {
-	logRpcRawMsg() << SND_LOG_ARROW
+	logRpcRawMsg() << Rpc::SND_LOG_ARROW
 				   << "protocol:"  << Rpc::protocolTypeToString(frame.protocol)
 				   << "send raw meta + data: " << frame.meta.toPrettyString()
 				   << Utils::toHex(frame.data, 0, 250);

@@ -162,7 +162,7 @@ void SerialFrameReader::finishFrame()
 		return;
 	}
 	shvDebug() << "ADD FRAME:" << chainpack::utils::hexArray(m_readBuffer.data(), m_readBuffer.size());
-	auto frame_data = std::string(m_readBuffer, m_dataStart.value(), m_readBuffer.size());
+	auto frame_data = std::string(m_readBuffer, m_dataStart.value());
 	m_frames.emplace_back(std::move(m_meta), std::move(frame_data));
 	setState(ReadState::WaitingForStx);
 }
@@ -205,6 +205,10 @@ void SerialFrameWriter::addFrame(const std::string &frame_data)
 
 void SerialFrameWriter::resetCommunication()
 {
+	NecroLog::create(NecroLog::Level::Message, NecroLog::LogContext(__FILE__, __LINE__, shv::chainpack::Rpc::TOPIC_RPC_MSG))
+		<< shv::chainpack::Rpc::SND_LOG_ARROW
+		<< "<RESET_SESSION>";
+
 	QByteArray data_to_write;
 	data_to_write.append(static_cast<char>(00));
 	addFrame(data_to_write.toStdString());

@@ -112,7 +112,7 @@ void ClientConnectionOnBroker::setIdleWatchDogTimeOut(int sec)
 
 void ClientConnectionOnBroker::sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg)
 {
-	logRpcMsg() << SND_LOG_ARROW
+	logRpcMsg() << chainpack::Rpc::SND_LOG_ARROW
 				<< "client id:" << connectionId()
 				<< rpc_msg.toPrettyString();
 	chainpack::RpcDriver::sendRpcMessage(rpc_msg);
@@ -120,7 +120,7 @@ void ClientConnectionOnBroker::sendRpcMessage(const shv::chainpack::RpcMessage &
 
 void ClientConnectionOnBroker::sendRpcFrame(chainpack::RpcFrame &&frame)
 {
-	logRpcMsg() << SND_LOG_ARROW
+	logRpcMsg() << chainpack::Rpc::SND_LOG_ARROW
 				<< "client id:" << connectionId()
 				<< RpcDriver::frameToPrettyCpon(frame);
 	chainpack::RpcDriver::sendRpcFrame(std::move(frame));
@@ -142,7 +142,7 @@ string ClientConnectionOnBroker::toSubscribedPath(const string &signal_path) con
 
 void ClientConnectionOnBroker::onRpcFrameReceived(chainpack::RpcFrame &&frame)
 {
-	logRpcMsg() << RCV_LOG_ARROW
+	logRpcMsg() << chainpack::Rpc::RCV_LOG_ARROW
 				<< "client id:" << connectionId()
 				<< RpcDriver::frameToPrettyCpon(frame);
 	try {

@@ -12,6 +12,11 @@ public:
 
 	static constexpr auto OPT_IDLE_WD_TIMEOUT = "idleWatchDogTimeOut";
 
+	static constexpr auto SND_LOG_ARROW = "<==S";
+	static constexpr auto RCV_LOG_ARROW = "R==>";
+
+	static constexpr auto TOPIC_RPC_MSG = "RpcMsg";
+
 	static constexpr auto KEY_OPTIONS = "options";
 	static constexpr auto KEY_CLIENT_ID = "clientId";
 	static constexpr auto KEY_MOUT_POINT = "mountPoint";

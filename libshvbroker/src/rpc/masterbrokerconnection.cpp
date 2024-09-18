@@ -86,7 +86,7 @@ bool MasterBrokerConnection::isMasterBrokerConnection() const
 
 void MasterBrokerConnection::sendRpcFrame(chainpack::RpcFrame &&frame)
 {
-	logRpcMsg() << SND_LOG_ARROW
+	logRpcMsg() << chainpack::Rpc::SND_LOG_ARROW
 				<< "client id:" << connectionId()
 				<< RpcDriver::frameToPrettyCpon(frame);
 	Super::sendRpcFrame(std::move(frame));
@@ -134,7 +134,7 @@ const std::string& MasterBrokerConnection::exportedShvPath() const
 
 void MasterBrokerConnection::onRpcFrameReceived(chainpack::RpcFrame &&frame)
 {
-	logRpcMsg() << RpcDriver::RCV_LOG_ARROW
+	logRpcMsg() << chainpack::Rpc::RCV_LOG_ARROW
 				<< "client id:" << connectionId()
 				<< RpcDriver::frameToPrettyCpon(frame);
 	try {

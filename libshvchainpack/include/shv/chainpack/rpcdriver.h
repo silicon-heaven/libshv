@@ -13,9 +13,6 @@ class ParseException;
 class SHVCHAINPACK_DECL_EXPORT RpcDriver
 {
 public:
-	static constexpr auto SND_LOG_ARROW = "<==S";
-	static constexpr auto RCV_LOG_ARROW = "R==>";
-public:
 	explicit RpcDriver();
 	virtual ~RpcDriver();
 
