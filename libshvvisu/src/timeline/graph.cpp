@@ -2017,19 +2017,21 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 		int x_axis_y = sample2point(Sample{xrange.min, 0}, channel_meta_type_id).y();
 		std::optional<int> last_x;
 
-		for (auto i = ix1; i <= ix2; ++i) {
-			Sample sample = graph_model->sampleAt(model_ix, i);
-			auto current_point = sample2point(sample, channel_meta_type_id);
-			if (last_x && last_x.value() == current_point.x()) {
-				continue;
-			}
+		if (ix1 >= 0 && ix2 >= 0) {
+			for (auto i = ix1; i <= ix2; ++i) {
+				Sample sample = graph_model->sampleAt(model_ix, i);
+				auto current_point = sample2point(sample, channel_meta_type_id);
+				if (last_x && last_x.value() == current_point.x()) {
+					continue;
+				}
 
-			painter->setPen(line_pen);
-			QPoint p(current_point.x() - bar_width / 2, current_point.y());
-			QRect bar_rect = QRect(p, QPoint(p.x() + bar_width, x_axis_y));
-			QBrush brush(line_pen.color().lighter());
-			painter->fillRect(bar_rect, brush);
-			painter->drawRect(bar_rect);
+				painter->setPen(line_pen);
+				QPoint p(current_point.x() - bar_width / 2, current_point.y());
+				QRect bar_rect = QRect(p, QPoint(p.x() + bar_width, x_axis_y));
+				QBrush brush(line_pen.color().lighter());
+				painter->fillRect(bar_rect, brush);
+				painter->drawRect(bar_rect);
+			}
 		}
 	}
 	else if (channel_info.typeDescr.sampleType() == shv::core::utils::ShvTypeDescr::SampleType::Discrete) {
