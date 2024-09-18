@@ -69,7 +69,12 @@ int FrameReader::tryToReadMeta(std::istringstream &in)
 			try {
 				m_meta = {};
 				rd.read(m_meta);
-				m_dataStart = static_cast<size_t>(in.tellg());
+				auto data_start = in.tellg();
+				if (data_start == -1) {
+					// meta was read without error, but without closing brackets
+					return 0;
+				}
+				m_dataStart = static_cast<size_t>(data_start);
 				if (chainpack::RpcMessage::isResponse(m_meta)) {
 					if (auto rqid = chainpack::RpcMessage::requestId(m_meta).toInt(); rqid > 0) {
 						return rqid;
