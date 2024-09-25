@@ -533,11 +533,11 @@ void GraphWidget::moveDropMarker(const QPoint &mouse_pos)
 	int ix = moveChannelTragetIndex(mouse_pos);
 	if (ix < gr->channelCount()) {
 		QRect ch_rect = gr->channelAt(ix)->verticalHeaderRect();
-		m_channelHeaderMoveContext->channelDropMarker->move(ch_rect.left(), ch_rect.bottom() - m_channelHeaderMoveContext->channelDropMarker->height() / 2);
+		m_channelHeaderMoveContext->channelDropMarker->move(ch_rect.left(), ch_rect.top() - m_channelHeaderMoveContext->channelDropMarker->height() / 2);
 	}
 	else {
 		QRect ch_rect = gr->channelAt(ix - 1)->verticalHeaderRect();
-		m_channelHeaderMoveContext->channelDropMarker->move(ch_rect.left(), ch_rect.top() - m_channelHeaderMoveContext->channelDropMarker->height() / 2);
+		m_channelHeaderMoveContext->channelDropMarker->move(ch_rect.left(), ch_rect.bottom() - m_channelHeaderMoveContext->channelDropMarker->height() / 2);
 	}
 }
 
@@ -548,7 +548,7 @@ int GraphWidget::moveChannelTragetIndex(const QPoint &mouse_pos) const
 		const GraphChannel *ch = gr->channelAt(i);
 		QRect ch_rect = ch->verticalHeaderRect();
 		if (ch_rect.contains(mouse_pos)) {
-			if (mouse_pos.y() - ch_rect.top() > ch_rect.bottom() - mouse_pos.y()) {
+			if (mouse_pos.y() - ch_rect.top() <= ch_rect.bottom() - mouse_pos.y()) {
 				return i;
 			}
 			int j = i;
@@ -562,8 +562,10 @@ int GraphWidget::moveChannelTragetIndex(const QPoint &mouse_pos) const
 					return j;
 				}
 			}
-
 		}
+	}
+	if (gr->channelCount() && mouse_pos.y() > gr->channelAt(gr->channelCount() - 1)->verticalHeaderRect().bottom()) {
+		return static_cast<int>(gr->channelCount());
 	}
 	return 0;
 }
