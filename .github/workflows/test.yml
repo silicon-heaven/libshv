@@ -55,7 +55,7 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   ubuntu-qt6-7:
-    name: Qt 6.7.2 / Ubuntu 22.04
+    name: Qt 6.7.3 / Ubuntu 22.04
     runs-on: ubuntu-22.04
     env:
       CFLAGS: -fsanitize=address,undefined
@@ -68,7 +68,7 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.7.2
+          qt_version: 6.7.3
           qt_arch: linux_gcc_64
           use_qt6: ON
           modules: qtserialport qtwebsockets
@@ -101,7 +101,7 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   android:
-    name: Qt 6.7.2 / Android
+    name: Qt 6.7.3 / Android
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -111,7 +111,7 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.7.2
+          qt_version: 6.7.3
           qt_arch: android_arm64_v8a
           use_qt6: ON
           modules: qtserialport qtwebsockets
