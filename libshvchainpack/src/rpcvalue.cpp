@@ -954,11 +954,6 @@ int RpcValue::DateTime::utcOffsetMin() const
 	return m_dtm.tz * 15;
 }
 
-int RpcValue::DateTime::minutesFromUtc() const
-{
-	return utcOffsetMin();
-}
-
 bool RpcValue::DateTime::isZero() const
 {
 	return msecsSinceEpoch() == 0;
@@ -1048,11 +1043,6 @@ void RpcValue::DateTime::setUtcOffsetMin(int utc_offset_min)
 	m_dtm.tz = (utc_offset_min / 15) & 0x7F;
 #pragma GCC diagnostic pop
 }
-void RpcValue::DateTime::setTimeZone(int utc_offset_min)
-{
-	setUtcOffsetMin(utc_offset_min);
-}
-
 
 std::string RpcValue::DateTime::toLocalString() const
 {

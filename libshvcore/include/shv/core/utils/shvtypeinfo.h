@@ -142,7 +142,6 @@ class SHVCORE_DECL_EXPORT ShvPropertyDescr : public ShvFieldDescr
 public:
 	ShvPropertyDescr();
 	ShvPropertyDescr(const std::string &name, const std::string &type_name);
-	[[deprecated]] ShvPropertyDescr(const std::string &type_name);
 
 	std::vector<ShvMethodDescr> methods() const;
 	ShvMethodDescr method(const std::string &name) const;
@@ -214,11 +213,6 @@ public:
 	ShvTypeInfo& setExtraTags(const std::string &node_path, const shv::chainpack::RpcValue &tags);
 	shv::chainpack::RpcValue extraTags(const std::string &node_path) const;
 
-	[[deprecated("setTypeDescription(const ShvTypeDescr &type_descr, const std::string &type_name) is deprecated, use setTypeDescription(const std::string &type_name, const ShvTypeDescr &type_descr)")]] ShvTypeInfo& setTypeDescription(const ShvTypeDescr &type_descr, const std::string &type_name)
-	{
-		setTypeDescription(type_name, type_descr);
-		return *this;
-	}
 	ShvTypeInfo& setTypeDescription(const std::string &type_name, const ShvTypeDescr &type_descr);
 
 	ShvPropertyDescr propertyDescriptionForPath(const std::string &shv_path, std::string *p_field_name = nullptr) const;
@@ -271,16 +265,4 @@ private:
 	std::map<std::string, chainpack::RpcValue> m_blacklistedPaths; // shv-path -> blacklist
 	std::map<std::string, ShvPropertyDescr> m_propertyDeviations; // should be empty, devices should not have different property descriptions for same device-type
 };
-
-// backward compatibility
-using ShvLogMethodDescr [[deprecated("ShvLogMethodDescr is deprecated, use ShvMethodDescr instead")]] = ShvMethodDescr;
-using ShvLogFieldDescr [[deprecated("ShvLogFieldDescr is deprecated, use ShvFieldDescr instead")]] = ShvFieldDescr;
-using ShvLogTypeDescr [[deprecated("ShvLogTypeDescr is deprecated, use ShvTypeDescr instead")]] = ShvTypeDescr;
-using ShvLogNodeDescr [[deprecated("ShvLogNodeDescr is deprecated, use ShvPropertyDescr instead")]] = ShvPropertyDescr;
-using ShvNodeDescr [[deprecated("ShvNodeDescr is deprecated, use ShvPropertyDescr instead")]] = ShvPropertyDescr;
-using ShvLogTypeInfo [[deprecated("ShvLogTypeInfo is deprecated, use ShvTypeInfo instead")]] = ShvTypeInfo;
-using ShvLogPathDescr [[deprecated("ShvLogPathDescr is deprecated, use ShvPropertyDescr instead")]] = ShvPropertyDescr;
-using ShvLogTypeDescrField [[deprecated("ShvLogTypeDescrField is deprecated, use ShvFieldDescr instead")]] = ShvFieldDescr;
-
-
 } // namespace shv::core::utils

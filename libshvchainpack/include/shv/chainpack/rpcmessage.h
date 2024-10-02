@@ -278,7 +278,6 @@ public:
 	static RpcResponse forRequest(const RpcValue::MetaData &meta);
 	static RpcResponse forRequest(const RpcRequest &rq);
 public:
-	[[deprecated("Use RpcMessage::hasResult")]] bool hasRetVal() const;
 
 	bool hasResult() const;
 	bool isSuccess() const;
