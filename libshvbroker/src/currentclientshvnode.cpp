@@ -28,7 +28,6 @@ const string M_MOUNT_POINT = "mountPoint";
 const string M_USER_ROLES = "userRoles";
 const string M_USER_PROFILE = "userProfile";
 const string M_CHANGE_PASSWORD = "changePassword";
-const string M_ACCES_LEVEL_FOR_METHOD_CALL = "accesLevelForMethodCall"; // deprecated typo
 const string M_ACCESS_LEVEL_FOR_METHOD_CALL = "accessLevelForMethodCall";
 const string M_ACCESS_GRANT_FOR_METHOD_CALL = "accessGrantForMethodCall";
 }
@@ -44,7 +43,6 @@ CurrentClientShvNode::CurrentClientShvNode(shv::iotqt::node::ShvNode *parent)
 		{M_USER_PROFILE, cp::MetaMethod::Flag::None, {}, "RpcValue", cp::AccessLevel::Read},
 		{M_ACCESS_GRANT_FOR_METHOD_CALL, cp::MetaMethod::Flag::None, "List", "String", cp::AccessLevel::Read, {}, R"(params: ["shv_path", "method"])"},
 		{M_ACCESS_LEVEL_FOR_METHOD_CALL, cp::MetaMethod::Flag::None, "List", "Int", cp::AccessLevel::Read, {}, "deprecated, use accessGrantForMethodCall instead"},
-		{M_ACCES_LEVEL_FOR_METHOD_CALL, cp::MetaMethod::Flag::None, "List", "Int", cp::AccessLevel::Read, {}, "deprecated, use accessGrantForMethodCall instead"},
 		{M_CHANGE_PASSWORD, cp::MetaMethod::Flag::None, "List", "Bool", cp::AccessLevel::Write, {} , R"(params: ["old_password", "new_password"], old and new passwords can be plain or SHA1)"},
 	}
 {
@@ -115,7 +113,7 @@ shv::chainpack::RpcValue CurrentClientShvNode::callMethodRq(const shv::chainpack
 			}
 			return nullptr;
 		}
-		if(method == M_ACCESS_LEVEL_FOR_METHOD_CALL || method == M_ACCES_LEVEL_FOR_METHOD_CALL) {
+		if(method == M_ACCESS_LEVEL_FOR_METHOD_CALL) {
 			int client_id = rq.peekCallerId();
 			auto *app = shv::broker::BrokerApp::instance();
 			auto *cli = app->clientById(client_id);
