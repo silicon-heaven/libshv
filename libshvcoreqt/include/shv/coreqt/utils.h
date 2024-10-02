@@ -132,8 +132,6 @@ public:
 	static chainpack::RpcValue qVariantToRpcValue(const QVariant &v, bool *ok = nullptr);
 	static QStringList rpcValueToStringList(const shv::chainpack::RpcValue &rpcval);
 	static shv::chainpack::RpcValue stringListToRpcValue(const QStringList &sl);
-	[[deprecated("Use shv::coreqt::utils::joinPath")]] static QString joinPath(const QString &p1, const QString &p2);
-	[[deprecated("Use shv::coreqt::utils::joinPath")]] static QString joinPath(const QString &p1, const QString &p2, const QString &p3);
 
 	static std::vector<uint8_t> compressGZip(const std::vector<uint8_t> &data);
 

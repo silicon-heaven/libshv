@@ -550,11 +550,6 @@ ShvPropertyDescr::ShvPropertyDescr(const std::string &name, const std::string &t
 {
 }
 
-[[deprecated]] ShvPropertyDescr::ShvPropertyDescr(const std::string &type_name)
-{
-	setTypeName(type_name);
-}
-
 std::vector<ShvMethodDescr> ShvPropertyDescr::methods() const
 {
 	std::vector<ShvMethodDescr> ret;

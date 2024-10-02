@@ -88,8 +88,7 @@ public:
 			AccessGrant,
 			DataChange,
 			NodeDrop,
-			ValueNotAvailable [[deprecated("Use Null instead")]], // DEPRECATED WE ARE USING null INSTEAD
-			ShvJournalEntry,
+			ShvJournalEntry = 8,
 			NodePropertyMap,
 		};
 	};

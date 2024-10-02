@@ -34,8 +34,6 @@ public:
 
 	void sendSignal(std::string method, const shv::chainpack::RpcValue &params = shv::chainpack::RpcValue());
 	void sendShvSignal(const std::string &shv_path, std::string method, const shv::chainpack::RpcValue &params = shv::chainpack::RpcValue());
-	[[deprecated("Use sendSignal instead")]] void sendNotify(std::string method, const shv::chainpack::RpcValue &params = shv::chainpack::RpcValue());
-	[[deprecated("Use sendShvSignal instead")]] void sendShvNotify(const std::string &shv_path, std::string method, const shv::chainpack::RpcValue &params = shv::chainpack::RpcValue());
 
 	void sendResponse(const shv::chainpack::RpcValue &request_id, const shv::chainpack::RpcValue &result);
 	void sendError(const shv::chainpack::RpcValue &request_id, const shv::chainpack::RpcResponse::Error &error);

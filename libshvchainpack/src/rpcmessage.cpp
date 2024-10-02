@@ -890,11 +890,6 @@ RpcResponse RpcResponse::forRequest(const RpcRequest &rq)
 	return forRequest(rq.metaData());
 }
 
-bool RpcResponse::hasRetVal() const
-{
-	return error().isValid() || result().isValid();
-}
-
 bool RpcResponse::hasResult() const
 {
 	return error().isValid() || result().isValid();

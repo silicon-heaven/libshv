@@ -54,16 +54,6 @@ QString utils::joinPath(const QString &p1, const QString &p2)
 	return sv1.toString() + '/' + sv2.toString();
 }
 
-QString Utils::joinPath(const QString &p1, const QString &p2)
-{
-	return utils::joinPath(p1, p2);
-}
-
-QString Utils::joinPath(const QString &p1, const QString &p2, const QString &p3)
-{
-	return utils::joinPath(p1, p2, p3);
-}
-
 bool Utils::isValueNotAvailable(const QVariant &val)
 {
 	return !val.isValid();
