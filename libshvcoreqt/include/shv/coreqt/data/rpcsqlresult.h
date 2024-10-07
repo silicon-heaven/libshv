@@ -1,5 +1,7 @@
 #pragma once
 
+#include <shv/coreqt/shvcoreqtglobal.h>
+
 #include <shv/chainpack/rpcvalue.h>
 
 #include <QVector>
@@ -14,7 +16,7 @@ namespace shv::chainpack { class RpcResponse; }
 
 namespace shv::coreqt::data {
 
-class RpcSqlField
+class SHVCOREQT_DECL_EXPORT RpcSqlField
 {
 public:
 	QString name;
@@ -27,7 +29,7 @@ public:
 	static RpcSqlField fromVariant(const QVariant &v);
 };
 
-class RpcSqlResult
+class SHVCOREQT_DECL_EXPORT RpcSqlResult
 {
 public:
 	int numRowsAffected = 0;
