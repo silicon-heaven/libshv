@@ -174,10 +174,6 @@ if(LIBSHV_WITH_COREQT)
 
 		function(qt_add_library target)
 			add_library(${target} ${ARGN})
-			if(WIN32)
-				target_compile_definitions(${target} PRIVATE UNICODE)
-				target_compile_definitions(${target} PRIVATE _UNICODE)
-			endif()
 		endfunction()
 
 		function(qt_add_executable)
