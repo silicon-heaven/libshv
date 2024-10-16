@@ -48,7 +48,6 @@ public:
 	virtual void open();
 	void close() override;
 	void abort() override;
-	void reset();
 
 	void setCliOptions(const ClientAppCliOptions *cli_opts);
 
@@ -73,6 +72,7 @@ public:
 	void setRawRpcMessageLog(bool b);
 protected:
 	bool isShvPathMutedInLog(const std::string &shv_path, const std::string &method) const;
+	void onSocketError() override;
 public:
 	/// IRpcConnection interface implementation
 	void sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg) override;

@@ -53,6 +53,7 @@ protected:
 
 	Socket* socket();
 	void onReadyRead();
+	virtual void onSocketError();
 
 	void onParseDataException(const shv::chainpack::ParseException &e) override;
 protected:

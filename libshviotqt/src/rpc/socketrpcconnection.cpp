@@ -36,10 +36,8 @@ void SocketRpcConnection::setSocket(Socket *socket)
 	connect(socket, &Socket::responseMetaReceived, this, &SocketRpcConnection::responseMetaReceived);
 	connect(socket, &Socket::dataChunkReceived, this, &SocketRpcConnection::dataChunkReceived);
 	connect(socket, &Socket::sslErrors, this, &SocketRpcConnection::sslErrors);
-	connect(socket, &Socket::error, this, [this](QAbstractSocket::SocketError /*socket_error*/) {
-		shvWarning() << "Socket error:" << m_socket->errorString();
-		emit socketError(m_socket->errorString());
-	});
+	connect(socket, &Socket::error, this, &SocketRpcConnection::onSocketError);
+
 	bool is_test_run = QCoreApplication::instance() == nullptr;
 	connect(socket, &Socket::readyRead, this, &SocketRpcConnection::onReadyRead, is_test_run? Qt::AutoConnection: Qt::QueuedConnection);
 	connect(socket, &Socket::connected, this, [this]() {
@@ -89,6 +87,12 @@ void SocketRpcConnection::onReadyRead()
 	for (auto begin = std::make_move_iterator(frames.begin()), end = std::make_move_iterator(frames.end()); begin != end; ++begin) {
 		onRpcFrameReceived(*begin);
 	}
+}
+
+void SocketRpcConnection::onSocketError()
+{
+	shvWarning() << "Socket error:" << m_socket->errorString();
+	emit socketError(m_socket->errorString());
 }
 
 void SocketRpcConnection::onParseDataException(const chainpack::ParseException &e)
