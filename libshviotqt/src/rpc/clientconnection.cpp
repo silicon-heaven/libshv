@@ -158,16 +158,6 @@ void ClientConnection::abort()
 	closeOrAbort(true);
 }
 
-void ClientConnection::reset()
-{
-	closeOrAbort(true);
-	open();
-
-	if(m_checkBrokerConnectedInterval > 0) {
-		m_checkBrokerConnectedTimer->start(m_checkBrokerConnectedInterval);
-	}
-}
-
 void ClientConnection::setCliOptions(const ClientAppCliOptions *cli_opts)
 {
 	if(!cli_opts)
@@ -452,7 +442,7 @@ void ClientConnection::onSocketConnectedChanged(bool is_connected)
 			QTimer::singleShot(cp::RpcDriver::defaultRpcTimeoutMsec(), this, [this] () {
 				if (state() != State::BrokerConnected) {
 					// login timeout
-					close();
+					restartIfAutoConnect();
 				}
 			});
 			sendHello();
@@ -537,6 +527,12 @@ bool ClientConnection::isShvPathMutedInLog(const std::string &shv_path, const st
 	return false;
 }
 
+void ClientConnection::onSocketError()
+{
+	Super::onSocketError();
+	restartIfAutoConnect();
+}
+
 bool ClientConnection::isAutoConnect() const
 {
 	return m_checkBrokerConnectedInterval > 0;
@@ -544,10 +540,12 @@ bool ClientConnection::isAutoConnect() const
 
 void ClientConnection::restartIfAutoConnect()
 {
-	if(isAutoConnect())
+	if(isAutoConnect()) {
 		setState(State::ConnectionError);
-	else
+	}
+	else {
 		close();
+	}
 }
 
 const string &ClientConnection::pingShvPath() const
