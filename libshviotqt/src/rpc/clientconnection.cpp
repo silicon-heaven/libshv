@@ -158,6 +158,16 @@ void ClientConnection::abort()
 	closeOrAbort(true);
 }
 
+void ClientConnection::reset()
+{
+	closeOrAbort(true);
+	open();
+
+	if(m_checkBrokerConnectedInterval > 0) {
+		m_checkBrokerConnectedTimer->start(m_checkBrokerConnectedInterval);
+	}
+}
+
 void ClientConnection::setCliOptions(const ClientAppCliOptions *cli_opts)
 {
 	if(!cli_opts)
@@ -251,14 +261,17 @@ void ClientConnection::open()
 void ClientConnection::closeOrAbort(bool is_abort)
 {
 	shvInfo() << "close connection, abort:" << is_abort;
-	m_checkBrokerConnectedTimer->stop();
-	if(m_socket) {
-		m_socket->resetCommunication();
 
-		if(is_abort)
+	m_checkBrokerConnectedTimer->stop();
+
+	if(m_socket) {
+		if(is_abort) {
+			m_socket->resetCommunication();
 			abortSocket();
-		else
+		}
+		else {
 			closeSocket();
+		}
 		m_socket->deleteLater();
 		m_socket = nullptr;
 	}
