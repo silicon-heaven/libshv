@@ -48,6 +48,7 @@ public:
 	virtual void open();
 	void close() override;
 	void abort() override;
+	void reset();
 
 	void setCliOptions(const ClientAppCliOptions *cli_opts);
 
