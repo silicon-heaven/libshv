@@ -266,12 +266,13 @@ void ClientConnection::closeOrAbort(bool is_abort)
 
 	if(m_socket) {
 		if(is_abort) {
-			m_socket->resetCommunication();
 			abortSocket();
 		}
 		else {
+			m_socket->resetCommunication();
 			closeSocket();
 		}
+
 		m_socket->deleteLater();
 		m_socket = nullptr;
 	}
