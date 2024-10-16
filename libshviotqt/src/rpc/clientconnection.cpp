@@ -158,6 +158,18 @@ void ClientConnection::abort()
 	closeOrAbort(true);
 }
 
+void ClientConnection::reopen()
+{
+	if(isAutoConnect()) {
+		closeSocket();
+		restartIfAutoConnect();
+	}
+	else {
+		close();
+		open();
+	}
+}
+
 void ClientConnection::setCliOptions(const ClientAppCliOptions *cli_opts)
 {
 	if(!cli_opts)
