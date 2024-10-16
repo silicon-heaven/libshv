@@ -259,7 +259,9 @@ void ClientConnection::closeOrAbort(bool is_abort)
 			abortSocket();
 		}
 		else {
-			m_socket->resetCommunication();
+			if (isSocketConnected()) {
+				m_socket->resetCommunication();
+			}
 			closeSocket();
 		}
 
