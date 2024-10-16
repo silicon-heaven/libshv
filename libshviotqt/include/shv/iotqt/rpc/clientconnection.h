@@ -72,7 +72,7 @@ public:
 	void setRawRpcMessageLog(bool b);
 protected:
 	bool isShvPathMutedInLog(const std::string &shv_path, const std::string &method) const;
-	void onSocketError() override;
+	void onSocketError(QAbstractSocket::SocketError socket_error) override;
 public:
 	/// IRpcConnection interface implementation
 	void sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg) override;

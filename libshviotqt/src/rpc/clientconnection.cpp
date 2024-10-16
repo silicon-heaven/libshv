@@ -529,9 +529,9 @@ bool ClientConnection::isShvPathMutedInLog(const std::string &shv_path, const st
 	return false;
 }
 
-void ClientConnection::onSocketError()
+void ClientConnection::onSocketError(QAbstractSocket::SocketError socket_error)
 {
-	Super::onSocketError();
+	Super::onSocketError(socket_error);
 	restartIfAutoConnect();
 }
 

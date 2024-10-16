@@ -89,9 +89,9 @@ void SocketRpcConnection::onReadyRead()
 	}
 }
 
-void SocketRpcConnection::onSocketError()
+void SocketRpcConnection::onSocketError(QAbstractSocket::SocketError socket_error)
 {
-	shvWarning() << "Socket error:" << m_socket->errorString();
+	shvWarning() << "Socket error:" << socket_error << m_socket->errorString();
 	emit socketError(m_socket->errorString());
 }
 

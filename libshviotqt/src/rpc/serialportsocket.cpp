@@ -232,12 +232,15 @@ SerialPortSocket::SerialPortSocket(QSerialPort *port, QObject *parent)
 		case QSerialPort::NoError:
 			break;
 		case QSerialPort::DeviceNotFoundError:
+			shvDebug() << "DeviceNotFoundError";
 			emit error(QAbstractSocket::HostNotFoundError);
 			break;
 		case QSerialPort::PermissionError:
+			shvDebug() << "PermissionError";
 			emit error(QAbstractSocket::SocketAccessError);
 			break;
 		case QSerialPort::OpenError:
+			shvDebug() << "OpenError";
 			emit error(QAbstractSocket::ConnectionRefusedError);
 			break;
 #if QT_VERSION_MAJOR < 6
@@ -246,22 +249,31 @@ SerialPortSocket::SerialPortSocket(QSerialPort *port, QObject *parent)
 		case QSerialPort::BreakConditionError:
 #endif
 		case QSerialPort::WriteError:
+			shvDebug() << "WriteError";
+			emit error(QAbstractSocket::OperationError);
+			break;
 		case QSerialPort::ReadError:
+			shvDebug() << "ReadError";
 			emit error(QAbstractSocket::OperationError);
 			break;
 		case QSerialPort::ResourceError:
+			shvDebug() << "ResourceError";
 			emit error(QAbstractSocket::SocketResourceError);
 			break;
 		case QSerialPort::UnsupportedOperationError:
+			shvDebug() << "UnsupportedOperationError";
 			emit error(QAbstractSocket::OperationError);
 			break;
 		case QSerialPort::UnknownError:
+			shvDebug() << "UnknownError";
 			emit error(QAbstractSocket::UnknownSocketError);
 			break;
 		case QSerialPort::TimeoutError:
+			shvDebug() << "TimeoutError";
 			emit error(QAbstractSocket::SocketTimeoutError);
 			break;
 		case QSerialPort::NotOpenError:
+			shvDebug() << "NotOpenError";
 			emit error(QAbstractSocket::SocketAccessError);
 			break;
 		}

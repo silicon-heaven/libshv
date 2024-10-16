@@ -6,6 +6,7 @@
 #include <shv/chainpack/rpcdriver.h>
 
 #include <QObject>
+#include <QAbstractSocket>
 
 class QSslError;
 class QTcpSocket;
@@ -53,7 +54,7 @@ protected:
 
 	Socket* socket();
 	void onReadyRead();
-	virtual void onSocketError();
+	virtual void onSocketError(QAbstractSocket::SocketError socket_error);
 
 	void onParseDataException(const shv::chainpack::ParseException &e) override;
 protected:
