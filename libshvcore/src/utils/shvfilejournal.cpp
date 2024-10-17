@@ -606,7 +606,7 @@ chainpack::RpcValue ShvFileJournal::getLog(const JournalContext &journal_context
 			});
 		}
 	}
-	return shv::core::utils::getLog(readers, params, ignore_record_count_limit);
+	return shv::core::utils::getLog(readers, params, shv::chainpack::RpcValue::DateTime::now(), ignore_record_count_limit);
 }
 
 chainpack::RpcValue ShvFileJournal::getSnapShotMap()

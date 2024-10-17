@@ -177,7 +177,7 @@ void ShvMemoryJournal::append(const ShvJournalEntry &entry)
 
 chainpack::RpcValue ShvMemoryJournal::getLog(const ShvGetLogParams &params, IgnoreRecordCountLimit ignore_record_count_limit)
 {
-	return shv::core::utils::getLog(m_entries, params, ignore_record_count_limit);
+	return shv::core::utils::getLog(m_entries, params, shv::chainpack::RpcValue::DateTime::now(), ignore_record_count_limit);
 }
 
 bool ShvMemoryJournal::hasSnapshot() const

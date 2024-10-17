@@ -123,7 +123,7 @@ concept LogReader = requires(Type x)
 };
 
 template <LogReader Type>
-[[nodiscard]] chainpack::RpcValue impl_get_log(const std::vector<std::function<Type()>>& readers, const ShvGetLogParams& orig_params, IgnoreRecordCountLimit ignore_record_count_limit)
+[[nodiscard]] chainpack::RpcValue impl_get_log(const std::vector<std::function<Type()>>& readers, const ShvGetLogParams& orig_params, const shv::chainpack::RpcValue::DateTime& now, IgnoreRecordCountLimit ignore_record_count_limit)
 {
 	logIGetLog() << "========================= getLog ==================";
 	logIGetLog() << "params:" << orig_params.toRpcValue().toCpon();
@@ -242,13 +242,19 @@ exit_nested_loop:
 		first_unmatching_entry = ShvJournalEntry::fromRpcValueList(result_entries.back().asList(), unmap_path);
 	}
 
-	// If there isn't an unmatched entry, we can't be sure we have all the entries from the last ms in result_entries.
-	// We must remove all of them and they'll become the first_unmatching_entry.
+	// There isn't an unmatched entry, so that means we're going to supply all of the source data to the end. The
+	// problem is that there could be missing entries from the end, that have the same timestamp as our last entry. This
+	// could happen e.g. because we didn't sync all of the data yet.
+	//
+	// For this, we have the `now` parameter. This parameter signalizes how old an entry must be, for the set of the
+	// same-timestamp entries to be considered complete.
 	if (!ctx.params.isSinceLast() && !result_entries.empty() && !first_unmatching_entry.has_value()) {
 		first_unmatching_entry = ShvJournalEntry::fromRpcValueList(result_entries.back().asList(), unmap_path);
-		std::erase_if(result_entries, [compare_with = first_unmatching_entry.value().dateTime(), &unmap_path] (const RpcValue& entry) {
-			return ShvJournalEntry::fromRpcValueList(entry.asList(), unmap_path).dateTime() == compare_with;
-		});
+		if (std::abs(first_unmatching_entry->dateTime().msecsSinceEpoch() - now.msecsSinceEpoch()) < 1000) {
+			std::erase_if(result_entries, [compare_with = first_unmatching_entry.value().dateTime(), &unmap_path] (const RpcValue& entry) {
+				return ShvJournalEntry::fromRpcValueList(entry.asList(), unmap_path).dateTime() == compare_with;
+			});
+		}
 	}
 
 	if (result_entries.empty()) {
@@ -278,21 +284,21 @@ exit_nested_loop:
 }
 }
 
-[[nodiscard]] chainpack::RpcValue getLog(const std::vector<std::function<ShvJournalFileReader()>>& readers, const ShvGetLogParams& params, IgnoreRecordCountLimit ignore_record_count_limit)
+[[nodiscard]] chainpack::RpcValue getLog(const std::vector<std::function<ShvJournalFileReader()>>& readers, const ShvGetLogParams& params, const shv::chainpack::RpcValue::DateTime& now, IgnoreRecordCountLimit ignore_record_count_limit)
 {
-	return impl_get_log(readers, params, ignore_record_count_limit);
+	return impl_get_log(readers, params, now, ignore_record_count_limit);
 }
 
-[[nodiscard]] chainpack::RpcValue getLog(const std::vector<std::function<ShvLogRpcValueReader()>>& readers, const ShvGetLogParams& params, IgnoreRecordCountLimit ignore_record_count_limit)
+[[nodiscard]] chainpack::RpcValue getLog(const std::vector<std::function<ShvLogRpcValueReader()>>& readers, const ShvGetLogParams& params, const shv::chainpack::RpcValue::DateTime& now, IgnoreRecordCountLimit ignore_record_count_limit)
 {
-	return impl_get_log(readers, params, ignore_record_count_limit);
+	return impl_get_log(readers, params, now, ignore_record_count_limit);
 }
 
-[[nodiscard]] chainpack::RpcValue getLog(const std::vector<ShvJournalEntry>& entries, const ShvGetLogParams &params, IgnoreRecordCountLimit ignore_record_count_limit)
+[[nodiscard]] chainpack::RpcValue getLog(const std::vector<ShvJournalEntry>& entries, const ShvGetLogParams &params, const shv::chainpack::RpcValue::DateTime& now, IgnoreRecordCountLimit ignore_record_count_limit)
 {
 	std::vector<std::function<ShvLogVectorReader()>> readers;
 	readers.emplace_back([&entries] { return ShvLogVectorReader(entries); });
-	return impl_get_log(readers, params, ignore_record_count_limit);
+	return impl_get_log(readers, params, now, ignore_record_count_limit);
 }
 
 std::vector<int64_t>::const_iterator newestMatchingFileIt(const std::vector<int64_t>& files, const ShvGetLogParams& params)
