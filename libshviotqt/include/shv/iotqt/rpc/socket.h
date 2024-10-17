@@ -82,7 +82,7 @@ public:
 	enum class Scheme { Tcp = 0, Ssl, WebSocket, WebSocketSecure, SerialPort, LocalSocket, LocalSocketSerial };
 public:
 	explicit Socket(QObject *parent = nullptr);
-	virtual ~Socket();
+	~Socket() override;
 
 	static const char* schemeToString(Scheme schema);
 	static Scheme schemeFromString(const std::string &schema);
