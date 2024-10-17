@@ -266,9 +266,6 @@ void ClientConnection::closeOrAbort(bool is_abort)
 			}
 			closeSocket();
 		}
-
-		m_socket->deleteLater();
-		m_socket = nullptr;
 	}
 	setState(State::NotConnected);
 }
