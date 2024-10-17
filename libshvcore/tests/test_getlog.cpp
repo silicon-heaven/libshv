@@ -131,6 +131,7 @@ DOCTEST_TEST_CASE("getLog")
 					"2022-07-07T18:06:17.869Z",
 					"2022-07-07T18:06:17.872Z",
 					"2022-07-07T18:06:17.874Z",
+					"2022-07-07T18:06:17.880Z",
 				};
 			}
 
@@ -139,6 +140,7 @@ DOCTEST_TEST_CASE("getLog")
 				expected_timestamps = {
 					"2022-07-07T18:06:17.872Z",
 					"2022-07-07T18:06:17.874Z",
+					"2022-07-07T18:06:17.880Z",
 				};
 				get_log_params.since = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.872Z");
 			}
@@ -165,6 +167,7 @@ DOCTEST_TEST_CASE("getLog")
 						"2022-07-07T18:06:17.869Z",
 						"2022-07-07T18:06:17.872Z",
 						"2022-07-07T18:06:17.874Z",
+						"2022-07-07T18:06:17.880Z",
 					};
 					get_log_params.until = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.900");
 				}
@@ -184,7 +187,7 @@ DOCTEST_TEST_CASE("getLog")
 
 			}
 			std::vector<std::string> actual_timestamps;
-			shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params));
+			shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromUtcString("2024-07-07T18:06:20.850")));
 			for (const auto& entry : as_vector(entries)) {
 				actual_timestamps.push_back(RpcValue::DateTime::fromMSecsSinceEpoch(entry.epochMsec).toIsoString());
 			}
@@ -205,6 +208,7 @@ DOCTEST_TEST_CASE("getLog")
 					"zone1/pme/TSH1-1/switchRightCounterPermanent",
 					"zone1/system/sig/plcDisconnected",
 					"zone1/zone/Zone1/plcDisconnected",
+					"zone1/pme/TSH1-1/switchRightCounterPermanent",
 				};
 			}
 
@@ -213,6 +217,7 @@ DOCTEST_TEST_CASE("getLog")
 				get_log_params.pathPattern = "zone1/pme/TSH1-1/switchRightCounterPermanent";
 				expected_paths = {
 					// There are two entries with this path
+					"zone1/pme/TSH1-1/switchRightCounterPermanent",
 					"zone1/pme/TSH1-1/switchRightCounterPermanent",
 				};
 			}
@@ -226,11 +231,12 @@ DOCTEST_TEST_CASE("getLog")
 					"zone1/pme/TSH1-1/switchRightCounterPermanent",
 					"zone1/system/sig/plcDisconnected",
 					"zone1/zone/Zone1/plcDisconnected",
+					"zone1/pme/TSH1-1/switchRightCounterPermanent",
 				};
 			}
 
 			std::vector<std::string> actual_paths;
-			shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params));
+			shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromUtcString("2024-07-07T18:06:20.850")));
 			for (const auto& entry : as_vector(entries)) {
 				actual_paths.push_back(entry.path);
 			}
@@ -245,21 +251,21 @@ DOCTEST_TEST_CASE("getLog")
 
 			DOCTEST_SUBCASE("default")
 			{
-				expected_count = 6;
+				expected_count = 7;
 				expected_record_count_limit_hit = false;
 			}
 
 			DOCTEST_SUBCASE("1000")
 			{
 				get_log_params.recordCountLimit = 1000;
-				expected_count = 6;
+				expected_count = 7;
 				expected_record_count_limit_hit = false;
 			}
 
 			DOCTEST_SUBCASE("7")
 			{
 				get_log_params.recordCountLimit = 7;
-				expected_count = 6;
+				expected_count = 7;
 				expected_record_count_limit_hit = false;
 			}
 
@@ -277,7 +283,7 @@ DOCTEST_TEST_CASE("getLog")
 				expected_record_count_limit_hit = true;
 			}
 
-			shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params));
+			shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromUtcString("2024-07-07T18:06:20.850")));
 
 			REQUIRE(entries.logHeader().recordCountLimitHit() == expected_record_count_limit_hit);
 			REQUIRE(as_vector(entries).size() == expected_count);
@@ -310,9 +316,9 @@ DOCTEST_TEST_CASE("getLog")
 			get_log_params.withPathsDict = true;
 		}
 
-		shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params));
+		shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromUtcString("2024-07-07T18:06:20.850")));
 		REQUIRE(entries.logHeader().withPathsDict() == get_log_params.withPathsDict);
-		REQUIRE(as_vector(entries).size() == 6); // Verify all entries were read correctly
+		REQUIRE(as_vector(entries).size() == 7); // Verify all entries were read correctly
 	}
 
 	DOCTEST_SUBCASE("withSnapshot")
@@ -342,6 +348,7 @@ DOCTEST_TEST_CASE("getLog")
 					make_entry("2022-07-07T18:06:17.784Z", "value2", 1, true),
 					make_entry("2022-07-07T18:06:17.784Z", "value3", 3, true),
 					make_entry("2022-07-07T18:06:17.800Z", "value3", 200, false),
+					make_entry("2022-07-07T18:06:17.950Z", "value2", 10, false),
 				};
 			}
 
@@ -350,6 +357,7 @@ DOCTEST_TEST_CASE("getLog")
 				get_log_params.since = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.800");
 				expected_entries = {
 					make_entry("2022-07-07T18:06:17.800Z", "value3", 200, false),
+					make_entry("2022-07-07T18:06:17.950Z", "value2", 10, false),
 				};
 			}
 		}
@@ -365,6 +373,7 @@ DOCTEST_TEST_CASE("getLog")
 					make_entry("2022-07-07T18:06:17.784Z", "value2", 1, true),
 					make_entry("2022-07-07T18:06:17.784Z", "value3", 3, true),
 					make_entry("2022-07-07T18:06:17.800Z", "value3", 200, false),
+					make_entry("2022-07-07T18:06:17.950Z", "value2", 10, false),
 				};
 			}
 
@@ -378,6 +387,7 @@ DOCTEST_TEST_CASE("getLog")
 						make_entry("2022-07-07T18:06:17.850Z", "value1", 0, true),
 						make_entry("2022-07-07T18:06:17.850Z", "value2", 1, true),
 						make_entry("2022-07-07T18:06:17.850Z", "value3", 200, true),
+						make_entry("2022-07-07T18:06:17.950Z", "value2", 10, false),
 					};
 
 				}
@@ -391,6 +401,7 @@ DOCTEST_TEST_CASE("getLog")
 						make_entry("2022-07-07T18:06:17.800Z", "value2", 1, true),
 						make_entry("2022-07-07T18:06:17.800Z", "value3", 3, true),
 						make_entry("2022-07-07T18:06:17.800Z", "value3", 200, false),
+						make_entry("2022-07-07T18:06:17.950", "value2", 10, false),
 					};
 				}
 			}
@@ -420,7 +431,7 @@ DOCTEST_TEST_CASE("getLog")
 			}
 		}
 
-		shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params));
+		shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromUtcString("2024-07-07T18:06:20.850")));
 		REQUIRE(entries.logHeader().withSnapShot() == expected_with_snapshot);
 		REQUIRE(as_vector(entries) == expected_entries);
 	}
@@ -556,7 +567,7 @@ DOCTEST_TEST_CASE("getLog")
 			}
 		}
 
-		auto log = shv::core::utils::ShvLogRpcValueReader(shv::core::utils::getLog(readers, get_log_params));
+		auto log = shv::core::utils::ShvLogRpcValueReader(shv::core::utils::getLog(readers, get_log_params, RpcValue::DateTime::fromUtcString("2024-07-07T18:06:20.850")));
 		REQUIRE(log.logHeader().sinceCRef() == expected_since);
 		REQUIRE(log.logHeader().untilCRef() == expected_until);
 	}
@@ -571,10 +582,10 @@ DOCTEST_TEST_CASE("getLog")
 			})
 		};
 		get_log_params.recordCountLimit = 10;
-		shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params));
+		shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromUtcString("2024-07-07T18:06:20.850")));
 		REQUIRE(entries.logHeader().dateTimeCRef().isValid());
 		REQUIRE(entries.logHeader().logParamsCRef().recordCountLimit == 10);
-		REQUIRE(entries.logHeader().recordCount() == 2);
+		REQUIRE(entries.logHeader().recordCount() == 3);
 	}
 
 	DOCTEST_SUBCASE("sinceLast")
@@ -609,7 +620,7 @@ DOCTEST_TEST_CASE("getLog")
 			expected_record_count = 1;
 		}
 
-		auto log = shv::core::utils::ShvLogRpcValueReader(shv::core::utils::getLog(readers, get_log_params));
+		auto log = shv::core::utils::ShvLogRpcValueReader(shv::core::utils::getLog(readers, get_log_params, RpcValue::DateTime::fromUtcString("2024-07-07T18:06:20.850")));
 		REQUIRE(log.logHeader().recordCount() == expected_record_count);
 		REQUIRE(log.logHeader().sinceCRef() == expected_since);
 		REQUIRE(log.logHeader().untilCRef() == expected_until);
