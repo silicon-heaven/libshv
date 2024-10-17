@@ -285,7 +285,7 @@ int ClientConnection::checkBrokerConnectedInterval() const
 
 bool ClientConnection::isBrokerConnected() const
 {
-	return m_socket->isOpen() && state() == State::BrokerConnected;
+	return m_socket && m_socket->isOpen() && state() == State::BrokerConnected;
 }
 
 static constexpr std::string_view::size_type MAX_LOG_LEN = 1024;
