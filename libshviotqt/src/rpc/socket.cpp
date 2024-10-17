@@ -170,12 +170,8 @@ Socket::Socket(QObject *parent)
 
 Socket::~Socket()
 {
-	if (m_frameReader) {
-		delete m_frameReader;
-	}
-	if (m_frameWriter) {
-		delete m_frameWriter;
-	}
+	delete m_frameReader;
+	delete m_frameWriter;
 }
 
 const char * Socket::schemeToString(Scheme schema)
