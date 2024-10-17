@@ -57,15 +57,11 @@ class SHVIOTQT_DECL_EXPORT SerialPortSocket : public Socket
 public:
 	SerialPortSocket(QSerialPort *port, QObject *parent = nullptr);
 
-	std::vector<chainpack::RpcFrame> takeFrames() override;
-	void writeFrameData(const std::string &frame_data) override;
-
 	void setReceiveTimeout(int millis);
 
 	void connectToHost(const QUrl &url) override;
 	void close() override;
 	void abort() override;
-	void resetCommunication() override;
 	QAbstractSocket::SocketState state() const override;
 	QString errorString() const override;
 	QHostAddress peerAddress() const override;
@@ -76,15 +72,13 @@ protected:
 private:
 	void setState(QAbstractSocket::SocketState state);
 	void onDataReadyRead();
-	void flushWriteBuffer();
+	void flushWriteBuffer() override;
 	void onParseDataException(const shv::chainpack::ParseException &e) override;
 	qint64 writeBytesEscaped(const char *data, qint64 max_size);
+	void clearWriteBuffer() override;
 private:
 	QSerialPort *m_port = nullptr;
 	QAbstractSocket::SocketState m_state = QAbstractSocket::UnconnectedState;
 	QTimer *m_readDataTimeout = nullptr;
-
-	SerialFrameReader m_frameReader;
-	SerialFrameWriter m_frameWriter;
 };
 }

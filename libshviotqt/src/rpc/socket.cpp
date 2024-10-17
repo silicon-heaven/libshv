@@ -40,6 +40,12 @@ void FrameWriter::flushToDevice(QIODevice *device)
 		}
 	}
 }
+
+void FrameWriter::clear()
+{
+	m_messageDataToWrite.clear();
+}
+
 #ifdef WITH_SHV_WEBSOCKETS
 void FrameWriter::flushToWebSocket(QWebSocket *socket)
 {
@@ -162,6 +168,16 @@ Socket::Socket(QObject *parent)
 
 }
 
+Socket::~Socket()
+{
+	if (m_frameReader) {
+		delete m_frameReader;
+	}
+	if (m_frameWriter) {
+		delete m_frameWriter;
+	}
+}
+
 const char * Socket::schemeToString(Scheme schema)
 {
 	switch (schema) {
@@ -188,9 +204,51 @@ Socket::Scheme Socket::schemeFromString(const std::string &schema)
 	return Scheme::Tcp;
 }
 
+void Socket::close()
+{
+	clearWriteBuffer();
+}
+
+void Socket::abort()
+{
+	clearWriteBuffer();
+}
+
+bool Socket::isOpen() const
+{
+	return state() == QAbstractSocket::ConnectedState;
+}
+
+void Socket::resetCommunication()
+{
+	Q_ASSERT(m_frameWriter);
+	if (isOpen()) {
+		m_frameWriter->resetCommunication();
+		flushWriteBuffer();
+	}
+}
+
+std::vector<chainpack::RpcFrame> Socket::takeFrames()
+{
+	Q_ASSERT(m_frameReader);
+	return m_frameReader->takeFrames();
+}
+
+void Socket::writeFrameData(const std::string &frame_data)
+{
+	Q_ASSERT(m_frameWriter);
+	m_frameWriter->addFrame(frame_data);
+	flushWriteBuffer();
+}
+
 void Socket::onParseDataException(const shv::chainpack::ParseException& ex)
 {
 	shvWarning() << "Frame ParseException" << ex.what();
+}
+
+void Socket::clearWriteBuffer()
+{
+	m_frameWriter->clear();
 }
 
 //======================================================
@@ -201,6 +259,8 @@ TcpSocket::TcpSocket(QTcpSocket *socket, QObject *parent)
 	, m_socket(socket)
 {
 	m_socket->setParent(this);
+	m_frameReader = new StreamFrameReader();
+	m_frameWriter = new StreamFrameWriter();
 
 	connect(m_socket, &QTcpSocket::connected, this, &Socket::connected);
 	connect(m_socket, &QTcpSocket::disconnected, this, &Socket::disconnected);
@@ -222,11 +282,13 @@ void TcpSocket::connectToHost(const QUrl &url)
 
 void TcpSocket::close()
 {
+	Super::close();
 	m_socket->close();
 }
 
 void TcpSocket::abort()
 {
+	Super::abort();
 	m_socket->abort();
 }
 
@@ -250,17 +312,6 @@ quint16 TcpSocket::peerPort() const
 	return m_socket->peerPort();
 }
 
-std::vector<chainpack::RpcFrame> TcpSocket::takeFrames()
-{
-	return m_frameReader.takeFrames();
-}
-
-void TcpSocket::writeFrameData(const std::string &frame_data)
-{
-	m_frameWriter.addFrame(frame_data);
-	flushWriteBuffer();
-}
-
 void TcpSocket::ignoreSslErrors()
 {
 }
@@ -269,18 +320,18 @@ void TcpSocket::onDataReadyRead()
 {
 	auto ba = m_socket->readAll();
 	std::string_view data(ba.constData(), ba.size());
-	for (auto rqid : m_frameReader.addData(data)) {
+	for (auto rqid : m_frameReader->addData(data)) {
 		emit responseMetaReceived(rqid);
 	}
 	emit dataChunkReceived();
-	if (!m_frameReader.isEmpty()) {
+	if (!m_frameReader->isEmpty()) {
 		emit readyRead();
 	}
 }
 
 void TcpSocket::flushWriteBuffer()
 {
-	m_frameWriter.flushToDevice(m_socket);
+	m_frameWriter->flushToDevice(m_socket);
 	m_socket->flush();
 }
 

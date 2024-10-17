@@ -11,6 +11,8 @@ WebSocket::WebSocket(QWebSocket *socket, QObject *parent)
 	, m_socket(socket)
 {
 	m_socket->setParent(this);
+	m_frameReader = new StreamFrameReader();
+	m_frameWriter = new StreamFrameWriter();
 
 	connect(m_socket, &QWebSocket::connected, this, &Socket::connected);
 	connect(m_socket, &QWebSocket::disconnected, this, &Socket::disconnected);
@@ -35,11 +37,13 @@ void WebSocket::connectToHost(const QUrl &url)
 
 void WebSocket::close()
 {
+	Super::close();
 	m_socket->close();
 }
 
 void WebSocket::abort()
 {
+	Super::abort();
 	m_socket->abort();
 }
 
@@ -63,17 +67,6 @@ quint16 WebSocket::peerPort() const
 	return m_socket->peerPort();
 }
 
-std::vector<chainpack::RpcFrame> WebSocket::takeFrames()
-{
-	return m_frameReader.takeFrames();
-}
-
-void WebSocket::writeFrameData(const std::string &frame_data)
-{
-	m_frameWriter.addFrame(frame_data);
-	flushWriteBuffer();
-}
-
 void WebSocket::ignoreSslErrors()
 {
 #ifndef QT_NO_SSL
@@ -83,7 +76,7 @@ void WebSocket::ignoreSslErrors()
 
 void WebSocket::flushWriteBuffer()
 {
-	m_frameWriter.flushToWebSocket(m_socket);
+	m_frameWriter->flushToWebSocket(m_socket);
 	m_socket->flush();
 }
 
@@ -91,11 +84,11 @@ void WebSocket::onTextMessageReceived(const QString &message)
 {
 	shvDebug() << "text message received:" << message;
 	auto ba = message.toUtf8();
-	for (auto rqid : m_frameReader.addData(std::string_view(ba.constData(), ba.size()))) {
+	for (auto rqid : m_frameReader->addData(std::string_view(ba.constData(), ba.size()))) {
 		emit responseMetaReceived(rqid);
 	}
 	emit dataChunkReceived();
-	if (!m_frameReader.isEmpty()) {
+	if (!m_frameReader->isEmpty()) {
 		emit readyRead();
 	}
 }
@@ -103,11 +96,11 @@ void WebSocket::onTextMessageReceived(const QString &message)
 void WebSocket::onBinaryMessageReceived(const QByteArray &message)
 {
 	shvDebug() << "binary message received:" << message;
-	for (auto rqid : m_frameReader.addData(std::string_view(message.constData(), message.size()))) {
+	for (auto rqid : m_frameReader->addData(std::string_view(message.constData(), message.size()))) {
 		emit responseMetaReceived(rqid);
 	}
 	emit dataChunkReceived();
-	if (!m_frameReader.isEmpty()) {
+	if (!m_frameReader->isEmpty()) {
 		emit readyRead();
 	}
 }

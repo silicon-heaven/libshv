@@ -98,17 +98,6 @@ LocalSocket::~LocalSocket()
 	delete m_frameWriter;
 }
 
-std::vector<chainpack::RpcFrame> LocalSocket::takeFrames()
-{
-	return m_frameReader->takeFrames();
-}
-
-void LocalSocket::writeFrameData(const std::string &frame_data)
-{
-	m_frameWriter->addFrame(frame_data);
-	flushWriteBuffer();
-}
-
 void LocalSocket::connectToHost(const QUrl &url)
 {
 	m_socket->connectToServer(url.path());
@@ -116,18 +105,14 @@ void LocalSocket::connectToHost(const QUrl &url)
 
 void LocalSocket::close()
 {
+	Super::close();
 	m_socket->close();
 }
 
 void LocalSocket::abort()
 {
+	Super::abort();
 	m_socket->abort();
-}
-
-void LocalSocket::resetCommunication()
-{
-	m_frameWriter->resetCommunication();
-	flushWriteBuffer();
 }
 
 QAbstractSocket::SocketState LocalSocket::state() const

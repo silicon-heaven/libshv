@@ -47,9 +47,6 @@ ClientConnection::ClientConnection(QObject *parent)
 	, m_loginType(IRpcConnection::LoginType::Sha1)
 {
 	connect(this, &SocketRpcConnection::socketConnectedChanged, this, &ClientConnection::onSocketConnectedChanged);
-
-	m_checkBrokerConnectedTimer = new QTimer(this);
-	connect(m_checkBrokerConnectedTimer, &QTimer::timeout, this, &ClientConnection::checkBrokerConnected);
 }
 
 ClientConnection::~ClientConnection()
@@ -158,18 +155,6 @@ void ClientConnection::abort()
 	closeOrAbort(true);
 }
 
-void ClientConnection::reopen()
-{
-	if(isAutoConnect()) {
-		closeSocket();
-		restartIfAutoConnect();
-	}
-	else {
-		close();
-		open();
-	}
-}
-
 void ClientConnection::setCliOptions(const ClientAppCliOptions *cli_opts)
 {
 	if(!cli_opts)
@@ -253,6 +238,8 @@ void ClientConnection::open()
 	checkBrokerConnected();
 	if(m_checkBrokerConnectedInterval > 0) {
 		shvInfo() << "Starting check-connected timer, interval:" << m_checkBrokerConnectedInterval/1000 << "sec.";
+		m_checkBrokerConnectedTimer = new QTimer(this);
+		connect(m_checkBrokerConnectedTimer, &QTimer::timeout, this, &ClientConnection::checkBrokerConnected);
 		m_checkBrokerConnectedTimer->start(m_checkBrokerConnectedInterval);
 	}
 	else {
@@ -264,7 +251,10 @@ void ClientConnection::closeOrAbort(bool is_abort)
 {
 	shvInfo() << "close connection, abort:" << is_abort;
 
-	m_checkBrokerConnectedTimer->stop();
+	if (m_checkBrokerConnectedTimer) {
+		m_checkBrokerConnectedTimer->deleteLater();
+		m_checkBrokerConnectedTimer = nullptr;
+	}
 
 	if(m_socket) {
 		if(is_abort) {
@@ -286,10 +276,6 @@ void ClientConnection::closeOrAbort(bool is_abort)
 void ClientConnection::setCheckBrokerConnectedInterval(int ms)
 {
 	m_checkBrokerConnectedInterval = ms;
-	if(ms == 0)
-		m_checkBrokerConnectedTimer->stop();
-	else
-		m_checkBrokerConnectedTimer->setInterval(ms);
 }
 
 int ClientConnection::checkBrokerConnectedInterval() const
@@ -299,7 +285,7 @@ int ClientConnection::checkBrokerConnectedInterval() const
 
 bool ClientConnection::isBrokerConnected() const
 {
-	return state() == State::BrokerConnected;
+	return m_socket->isOpen() && state() == State::BrokerConnected;
 }
 
 static constexpr std::string_view::size_type MAX_LOG_LEN = 1024;
@@ -541,12 +527,6 @@ bool ClientConnection::isShvPathMutedInLog(const std::string &shv_path, const st
 	return false;
 }
 
-void ClientConnection::onSocketError(QAbstractSocket::SocketError socket_error)
-{
-	Super::onSocketError(socket_error);
-	restartIfAutoConnect();
-}
-
 bool ClientConnection::isAutoConnect() const
 {
 	return m_checkBrokerConnectedInterval > 0;
@@ -555,7 +535,7 @@ bool ClientConnection::isAutoConnect() const
 void ClientConnection::restartIfAutoConnect()
 {
 	if(isAutoConnect()) {
-		setState(State::ConnectionError);
+		closeSocket();
 	}
 	else {
 		close();

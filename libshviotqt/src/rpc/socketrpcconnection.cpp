@@ -92,6 +92,11 @@ void SocketRpcConnection::onReadyRead()
 void SocketRpcConnection::onSocketError(QAbstractSocket::SocketError socket_error)
 {
 	shvWarning() << "Socket error:" << socket_error << m_socket->errorString();
+	if (socket()->isOpen()) {
+		// close socket to release file descriptor for reopen
+		// needed especially in case of serial port connection
+		closeSocket();
+	}
 	emit socketError(m_socket->errorString());
 }
 

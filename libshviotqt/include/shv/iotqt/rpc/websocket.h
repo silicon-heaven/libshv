@@ -14,9 +14,6 @@ class SHVIOTQT_DECL_EXPORT WebSocket : public Socket
 public:
 	WebSocket(QWebSocket *socket, QObject *parent = nullptr);
 
-	std::vector<chainpack::RpcFrame> takeFrames() override;
-	void writeFrameData(const std::string &frame_data) override;
-
 	void connectToHost(const QUrl &url) override;
 	void close() override;
 	void abort() override;
@@ -26,14 +23,11 @@ public:
 	quint16 peerPort() const override;
 	void ignoreSslErrors() override;
 private:
-	void flushWriteBuffer();
+	void flushWriteBuffer() override;
 	void onTextMessageReceived(const QString &message);
 	void onBinaryMessageReceived(const QByteArray &message);
 private:
 	QWebSocket *m_socket = nullptr;
-
-	StreamFrameReader m_frameReader;
-	StreamFrameWriter m_frameWriter;
 };
 
 } // namespace shv::iotqt::rpc

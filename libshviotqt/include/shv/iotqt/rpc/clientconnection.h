@@ -48,7 +48,6 @@ public:
 	virtual void open();
 	void close() override;
 	void abort() override;
-	void reopen();
 
 	void setCliOptions(const ClientAppCliOptions *cli_opts);
 
@@ -73,7 +72,6 @@ public:
 	void setRawRpcMessageLog(bool b);
 protected:
 	bool isShvPathMutedInLog(const std::string &shv_path, const std::string &method) const;
-	void onSocketError(QAbstractSocket::SocketError socket_error) override;
 public:
 	/// IRpcConnection interface implementation
 	void sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg) override;
@@ -112,7 +110,7 @@ private:
 	static void tst_connectionUrlFromString();
 private:
 	QUrl m_connectionUrl;
-	QTimer *m_checkBrokerConnectedTimer;
+	QTimer *m_checkBrokerConnectedTimer = nullptr;
 	int m_checkBrokerConnectedInterval = 0;
 	QTimer *m_heartBeatTimer = nullptr;
 	struct MutedPath {

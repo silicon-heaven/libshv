@@ -47,6 +47,7 @@ public:
 	virtual void addFrame(const std::string &frame_data) = 0;
 	virtual void resetCommunication() {}
 	void flushToDevice(QIODevice *device);
+	void clear();
 #ifdef WITH_SHV_WEBSOCKETS
 	void flushToWebSocket(QWebSocket *socket);
 #endif
@@ -81,15 +82,18 @@ public:
 	enum class Scheme { Tcp = 0, Ssl, WebSocket, WebSocketSecure, SerialPort, LocalSocket, LocalSocketSerial };
 public:
 	explicit Socket(QObject *parent = nullptr);
+	virtual ~Socket();
 
 	static const char* schemeToString(Scheme schema);
 	static Scheme schemeFromString(const std::string &schema);
 
 	virtual void connectToHost(const QUrl &host_url) = 0;
 
-	virtual void close() = 0;
-	virtual void abort() = 0;
-	virtual void resetCommunication() {}
+	virtual void close();
+	virtual void abort();
+	bool isOpen() const;
+
+	void resetCommunication();
 
 	virtual QAbstractSocket::SocketState state() const = 0;
 	virtual QString errorString() const = 0;
@@ -97,8 +101,8 @@ public:
 	virtual QHostAddress peerAddress() const = 0;
 	virtual quint16 peerPort() const = 0;
 
-	virtual std::vector<chainpack::RpcFrame> takeFrames() = 0;
-	virtual void writeFrameData(const std::string &frame_data) = 0;
+	std::vector<chainpack::RpcFrame> takeFrames();
+	void writeFrameData(const std::string &frame_data);
 
 	virtual void ignoreSslErrors() = 0;
 
@@ -113,6 +117,12 @@ public:
 	Q_SIGNAL void stateChanged(QAbstractSocket::SocketState state);
 	Q_SIGNAL void error(QAbstractSocket::SocketError socket_error);
 	Q_SIGNAL void sslErrors(const QList<QSslError> &errors);
+protected:
+	virtual void flushWriteBuffer() = 0;
+	virtual void clearWriteBuffer();
+protected:
+	FrameReader *m_frameReader = nullptr;
+	FrameWriter *m_frameWriter = nullptr;
 };
 
 class SHVIOTQT_DECL_EXPORT TcpSocket : public Socket
@@ -122,9 +132,6 @@ class SHVIOTQT_DECL_EXPORT TcpSocket : public Socket
 	using Super = Socket;
 public:
 	TcpSocket(QTcpSocket *socket, QObject *parent = nullptr);
-
-	std::vector<chainpack::RpcFrame> takeFrames() override;
-	void writeFrameData(const std::string &frame_data) override;
 
 	void connectToHost(const QUrl &url) override;
 	void close() override;
@@ -136,11 +143,9 @@ public:
 	void ignoreSslErrors() override;
 protected:
 	void onDataReadyRead();
-	void flushWriteBuffer();
+	void flushWriteBuffer() override;
 protected:
 	QTcpSocket *m_socket = nullptr;
-	StreamFrameReader m_frameReader;
-	StreamFrameWriter m_frameWriter;
 };
 
 #ifndef QT_NO_SSL

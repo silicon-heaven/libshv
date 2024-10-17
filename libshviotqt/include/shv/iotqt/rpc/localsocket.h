@@ -16,14 +16,9 @@ public:
 	LocalSocket(QLocalSocket *socket, Protocol protocol, QObject *parent = nullptr);
 	~LocalSocket() override;
 
-	std::vector<chainpack::RpcFrame> takeFrames() override;
-	void writeFrameData(const std::string &frame_data) override;
-
 	void connectToHost(const QUrl &url) override;
 	void close() override;
 	void abort() override;
-
-	void resetCommunication() override;
 
 	QAbstractSocket::SocketState state() const override;
 	QString errorString() const override;
@@ -32,11 +27,9 @@ public:
 	void ignoreSslErrors() override;
 protected:
 	void onDataReadyRead();
-	void flushWriteBuffer();
+	void flushWriteBuffer() override;
 protected:
 	QLocalSocket *m_socket = nullptr;
-	FrameReader *m_frameReader;
-	FrameWriter *m_frameWriter;
 };
 
 } // namespace shv::iotqt::rpc
