@@ -10,11 +10,11 @@ cmake --build .
 ```
 with CLI examples:
 ```
-cmake -DWITH_CLI_EXAMPLES ..
+cmake -DLIBSHV_WITH_CLI_EXAMPLES=ON ..
 ```
 with GUI samples:
 ```
-cmake -DWITH_GUI_EXAMPLES ..
+cmake -DLIBSHV_WITH_GUI_EXAMPLES=ON ..
 ```
 ## Samples
 ### Minimal SHV Broker
