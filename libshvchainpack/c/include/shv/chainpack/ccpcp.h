@@ -1,5 +1,7 @@
 #pragma once
 
+#include <shv/chainpack/compat.h>
+
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>

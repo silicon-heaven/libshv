@@ -2,6 +2,7 @@
 #include <shv/core/log.h>
 #include <shv/core/stringview.h>
 
+#include <shv/chainpack/compat.h>
 #include <shv/chainpack/utils.h>
 #include <cstring>
 #include <regex>
