@@ -77,7 +77,7 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   windows:
-    name: Qt 6.5.3 / Windows
+    name: Qt 6.7.2 / Windows
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
@@ -87,7 +87,7 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.5.3
+          qt_version: 6.7.2
           qt_arch: win64_mingw
           use_qt6: ON
           modules: qtserialport qtwebsockets
