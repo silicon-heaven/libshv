@@ -543,6 +543,35 @@ void unpack_blob(ccpcp_unpack_context* unpack_context)
 	unpack_context->item.type = CCPCP_ITEM_BLOB;
 }
 
+#ifdef __has_builtin
+#if __has_builtin(__builtin_mul_overflow)
+#define LIBSHV_HAVE_BUILTIN_MUL_OVERFLOW
+#endif
+#endif
+
+bool mul_overflow(int64_t a, int64_t b, int64_t* result)
+{
+#ifdef LIBSHV_HAVE_BUILTIN_MUL_OVERFLOW
+	return __builtin_mul_overflow(a, b, result);
+#else
+    if (a > 0 && b > 0 && a > INT64_MAX / b) {
+        return true;
+    }
+    if (a < 0 && b < 0 && a < INT64_MAX / b) {
+        return true;
+    }
+    if (a > 0 && b < 0 && b < INT64_MIN / a) {
+        return true;
+    }
+    if (a < 0 && b > 0 && a < INT64_MIN / b) {
+        return true;
+    }
+
+    *result = a * b;
+    return false;
+#endif
+}
+
 void cchainpack_unpack_next (ccpcp_unpack_context* unpack_context)
 {
 	if (unpack_context->err_no)
@@ -647,7 +676,7 @@ void cchainpack_unpack_next (ccpcp_unpack_context* unpack_context)
 				d >>= 7;
 			}
 			if (has_not_msec) {
-				if (__builtin_mul_overflow(d, 1000, &d)) {
+				if (mul_overflow(d, 1000, &d)) {
 					UNPACK_ERROR(CCPCP_RC_MALFORMED_INPUT, "DateTime msec value overflow.");
 				}
 			}
