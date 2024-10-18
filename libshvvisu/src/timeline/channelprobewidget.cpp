@@ -176,10 +176,15 @@ void ChannelProbeWidget::loadValues()
 		ui->twData->setItem(ix, DataTableColumn::ColProperty, item);
 		ui->twData->hideColumn(DataTableColumn::ColProperty);
 
-		item = new QTableWidgetItem(pv.toString());
+		QString s = pv.toString();
+		if (s.endsWith('\n')) {
+			s.chop(1);
+		}
+		item = new QTableWidgetItem(s);
 		item->setFlags(item->flags() & ~Qt::ItemIsEditable);
 		ui->twData->setItem(ix, DataTableColumn::ColValue, item);
 	}
+	ui->twData->verticalHeader()->resizeSections(QHeaderView::ResizeMode::ResizeToContents);
 }
 
 ChannelProbeWidget::FrameSection ChannelProbeWidget::getFrameSection()
