@@ -356,16 +356,17 @@ static void end_block(ccpcp_pack_context* pack_context, bool is_oneliner)
 	}
 }
 
+#define INT_STRING_LEN 32u
+
 void ccpon_pack_uint(ccpcp_pack_context* pack_context, uint64_t i)
 {
 	if (pack_context->err_no)
 		return;
 
 	// at least 21 characters for 64-bit types.
-	static const unsigned LEN = 32;
-	char str[LEN];
-	size_t n = uint_to_str(str, LEN, i);
-	if(n >= LEN) {
+	char str[INT_STRING_LEN];
+	size_t n = uint_to_str(str, INT_STRING_LEN, i);
+	if(n >= INT_STRING_LEN) {
 		pack_context->err_no = CCPCP_RC_LOGICAL_ERROR;
 		return;
 	}
@@ -380,23 +381,22 @@ void ccpon_pack_int(ccpcp_pack_context* pack_context, int64_t i)
 		return;
 
 	// at least 21 characters for 64-bit types.
-	static const unsigned LEN = 32;
-	char str[LEN];
-	size_t n = int_to_str(str, LEN, i);
-	if(n >= LEN) {
+	char str[INT_STRING_LEN];
+	size_t n = int_to_str(str, INT_STRING_LEN, i);
+	if(n >= INT_STRING_LEN) {
 		pack_context->err_no = CCPCP_RC_LOGICAL_ERROR;
 		return;
 	}
 	ccpcp_pack_copy_bytes(pack_context, str, n);
 }
 
+#define DECIMAL_STRING_LEN 64u
 
 void ccpon_pack_decimal(ccpcp_pack_context *pack_context, int64_t mantisa, int exponent)
 {
 	// at least 21 characters for 64-bit types.
-	static const size_t LEN = 64;
-	char buff[LEN];
-	size_t n = ccpcp_decimal_to_string(buff, LEN, mantisa, exponent);
+	char buff[DECIMAL_STRING_LEN];
+	size_t n = ccpcp_decimal_to_string(buff, DECIMAL_STRING_LEN, mantisa, exponent);
 	if(n == 0) {
 		pack_context->err_no = CCPCP_RC_LOGICAL_ERROR;
 		return;
@@ -405,16 +405,17 @@ void ccpon_pack_decimal(ccpcp_pack_context *pack_context, int64_t mantisa, int e
 	ccpcp_pack_copy_bytes(pack_context, buff, (size_t)n);
 }
 
+#define DOUBLE_STRING_LEN 32u
+
 void ccpon_pack_double(ccpcp_pack_context* pack_context, double d)
 {
 	if (pack_context->err_no)
 		return;
 
 	// at least 21 characters for 64-bit types.
-	static const unsigned LEN = 32;
-	char str[LEN];
-	size_t n = double_to_str(str, LEN, d);
-	if(n >= LEN) {
+	char str[DOUBLE_STRING_LEN];
+	size_t n = double_to_str(str, DOUBLE_STRING_LEN, d);
+	if(n >= DOUBLE_STRING_LEN) {
 		pack_context->err_no = CCPCP_RC_LOGICAL_ERROR;
 		return;
 	}
@@ -429,40 +430,41 @@ void ccpon_pack_date_time(ccpcp_pack_context *pack_context, int64_t epoch_msecs,
 	ccpcp_pack_copy_bytes(pack_context, "\"", 1);
 }
 
+#define DATETIME_STRING_LEN 32u
+
 void ccpon_pack_date_time_str(ccpcp_pack_context *pack_context, int64_t epoch_msecs, int min_from_utc, ccpon_msec_policy msec_policy, bool with_tz)
 {
 	struct tm tm;
 	ccpon_gmtime(epoch_msecs / 1000 + min_from_utc * 60, &tm);
-	static const unsigned LEN = 32;
-	char str[LEN];
-	size_t len = uint_to_str_lpad(str, LEN, (unsigned)tm.tm_year + 1900, 2, '0');
-	if(len < LEN)
+	char str[DATETIME_STRING_LEN];
+	size_t len = uint_to_str_lpad(str, DATETIME_STRING_LEN, (unsigned)tm.tm_year + 1900, 2, '0');
+	if(len < DATETIME_STRING_LEN)
 		str[len] = '-';
 	len++;
-	len += uint_to_str_lpad(str + len, (len < LEN)? LEN - len: 0, (unsigned)tm.tm_mon + 1, 2, '0');
-	if(len < LEN)
+	len += uint_to_str_lpad(str + len, (len < DATETIME_STRING_LEN)? DATETIME_STRING_LEN - len: 0, (unsigned)tm.tm_mon + 1, 2, '0');
+	if(len < DATETIME_STRING_LEN)
 		str[len] = '-';
 	len++;
-	len += uint_to_str_lpad(str + len, (len < LEN)? LEN - len: 0, (unsigned)tm.tm_mday, 2, '0');
-	if(len < LEN)
+	len += uint_to_str_lpad(str + len, (len < DATETIME_STRING_LEN)? DATETIME_STRING_LEN - len: 0, (unsigned)tm.tm_mday, 2, '0');
+	if(len < DATETIME_STRING_LEN)
 		str[len] = 'T';
 	len++;
-	len += uint_to_str_lpad(str + len, (len < LEN)? LEN - len: 0, (unsigned)tm.tm_hour, 2, '0');
-	if(len < LEN)
+	len += uint_to_str_lpad(str + len, (len < DATETIME_STRING_LEN)? DATETIME_STRING_LEN - len: 0, (unsigned)tm.tm_hour, 2, '0');
+	if(len < DATETIME_STRING_LEN)
 		str[len] = ':';
 	len++;
-	len += uint_to_str_lpad(str + len, (len < LEN)? LEN - len: 0, (unsigned)tm.tm_min, 2, '0');
-	if(len < LEN)
+	len += uint_to_str_lpad(str + len, (len < DATETIME_STRING_LEN)? DATETIME_STRING_LEN - len: 0, (unsigned)tm.tm_min, 2, '0');
+	if(len < DATETIME_STRING_LEN)
 		str[len] = ':';
 	len++;
-	len += uint_to_str_lpad(str + len, (len < LEN)? LEN - len: 0, (unsigned)tm.tm_sec, 2, '0');
-	if(len < LEN)
+	len += uint_to_str_lpad(str + len, (len < DATETIME_STRING_LEN)? DATETIME_STRING_LEN - len: 0, (unsigned)tm.tm_sec, 2, '0');
+	if(len < DATETIME_STRING_LEN)
 		ccpcp_pack_copy_bytes(pack_context, str, len);
 	int msec = (int)(epoch_msecs % 1000);
 	if((msec > 0 && msec_policy == CCPON_Auto) || msec_policy == CCPON_Always) {
 		ccpcp_pack_copy_bytes(pack_context, ".", 1);
-		len = uint_to_str_lpad(str, LEN, (unsigned)msec, 3, '0');
-		if(len < LEN)
+		len = uint_to_str_lpad(str, DATETIME_STRING_LEN, (unsigned)msec, 3, '0');
+		if(len < DATETIME_STRING_LEN)
 			ccpcp_pack_copy_bytes(pack_context, str, len);
 	}
 	if(with_tz) {
@@ -479,14 +481,14 @@ void ccpon_pack_date_time_str(ccpcp_pack_context *pack_context, int64_t epoch_ms
 			}
 			if(min_from_utc%60) {
 				len = 0;
-				len += uint_to_str_lpad(str + len, (len < LEN)? LEN - len: 0, (unsigned)min_from_utc/60, 2, '0');
-				len += uint_to_str_lpad(str + len, (len < LEN)? LEN - len: 0, (unsigned)min_from_utc%60, 2, '0');
+				len += uint_to_str_lpad(str + len, (len < DATETIME_STRING_LEN)? DATETIME_STRING_LEN - len: 0, (unsigned)min_from_utc/60, 2, '0');
+				len += uint_to_str_lpad(str + len, (len < DATETIME_STRING_LEN)? DATETIME_STRING_LEN - len: 0, (unsigned)min_from_utc%60, 2, '0');
 			}
 			else {
 				len = 0;
-				len += uint_to_str_lpad(str + len, (len < LEN)? LEN - len: 0, (unsigned)min_from_utc/60, 2, '0');
+				len += uint_to_str_lpad(str + len, (len < DATETIME_STRING_LEN)? DATETIME_STRING_LEN - len: 0, (unsigned)min_from_utc/60, 2, '0');
 			}
-			if(len < LEN)
+			if(len < DATETIME_STRING_LEN)
 				ccpcp_pack_copy_bytes(pack_context, str, len);
 		}
 	}
