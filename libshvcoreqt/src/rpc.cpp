@@ -161,8 +161,10 @@ QString qVariantToPrettyString(const QVariant &v, const QString &indent)
 } // namespace shv
 
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=109503
+#ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wattributes"
+#endif
 template<> QString shv::chainpack::RpcValue::to<QString>() const
 {
 	return QString::fromStdString(asString());
@@ -175,4 +177,6 @@ template<> QDateTime shv::chainpack::RpcValue::to<QDateTime>() const
 	}
 	return QDateTime::fromMSecsSinceEpoch(toDateTime().msecsSinceEpoch(), Qt::TimeSpec::UTC);
 }
+#ifdef __GNUC__
 #pragma GCC diagnostic pop
+#endif
