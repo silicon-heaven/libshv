@@ -6,7 +6,7 @@
 
 #include <doctest/doctest.h>
 
-#include <optional>
+#include <array>
 
 using namespace shv::chainpack;
 using std::string;
