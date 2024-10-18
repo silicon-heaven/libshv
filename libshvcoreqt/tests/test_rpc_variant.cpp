@@ -117,7 +117,7 @@ DOCTEST_TEST_CASE("shv2mqtt utils")
 
 		DOCTEST_SUBCASE("List")
 		{
-			v = RpcValue::List {
+			v = List {
 				100,
 				100U,
 				RpcValue::String("AHOJ"),

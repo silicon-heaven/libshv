@@ -57,6 +57,11 @@ struct SHVCOREQT_DECL_EXPORT ValueChange
 	ValueChange(TimeStamp value_x, double value_y);
 	ValueChange(TimeStamp value_x, CustomData *value_y);
 	ValueChange();
+
+	bool operator==(const ValueChange&) const
+	{
+		return false;
+	}
 };
 
 struct SHVCOREQT_DECL_EXPORT ValueXInterval

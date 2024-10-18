@@ -1,5 +1,6 @@
 #include <shv/chainpack/cchainpack.h>
 
+#include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 
@@ -131,7 +132,11 @@ static int bytes_needed(int bit_len)
 static void pack_uint_data_helper(ccpcp_pack_context* pack_context, uint64_t num, int bit_len)
 {
 	int byte_cnt = bytes_needed(bit_len);
-	uint8_t bytes[byte_cnt];
+	// 32 bytes should be enough for any number. Can't use a VLA for `bytes`, because MSVC doesn't support it.
+	if (byte_cnt > 32) {
+		abort();
+	}
+	uint8_t bytes[32];
 	int i;
 	for (i = byte_cnt-1; i >= 0; --i) {
 		uint8_t r = num & 255;
@@ -538,6 +543,35 @@ void unpack_blob(ccpcp_unpack_context* unpack_context)
 	unpack_context->item.type = CCPCP_ITEM_BLOB;
 }
 
+#ifdef __has_builtin
+#if __has_builtin(__builtin_mul_overflow)
+#define LIBSHV_HAVE_BUILTIN_MUL_OVERFLOW
+#endif
+#endif
+
+bool mul_overflow(int64_t a, int64_t b, int64_t* result)
+{
+#ifdef LIBSHV_HAVE_BUILTIN_MUL_OVERFLOW
+	return __builtin_mul_overflow(a, b, result);
+#else
+    if (a > 0 && b > 0 && a > INT64_MAX / b) {
+        return true;
+    }
+    if (a < 0 && b < 0 && a < INT64_MAX / b) {
+        return true;
+    }
+    if (a > 0 && b < 0 && b < INT64_MIN / a) {
+        return true;
+    }
+    if (a < 0 && b > 0 && a < INT64_MIN / b) {
+        return true;
+    }
+
+    *result = a * b;
+    return false;
+#endif
+}
+
 void cchainpack_unpack_next (ccpcp_unpack_context* unpack_context)
 {
 	if (unpack_context->err_no)
@@ -642,7 +676,7 @@ void cchainpack_unpack_next (ccpcp_unpack_context* unpack_context)
 				d >>= 7;
 			}
 			if (has_not_msec) {
-				if (__builtin_mul_overflow(d, 1000, &d)) {
+				if (mul_overflow(d, 1000, &d)) {
 					UNPACK_ERROR(CCPCP_RC_MALFORMED_INPUT, "DateTime msec value overflow.");
 				}
 			}

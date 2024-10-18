@@ -189,7 +189,7 @@ void ChainPackReader::read(RpcValue &val)
 
 void ChainPackReader::parseList(RpcValue &val)
 {
-	RpcValue::List lst;
+	List lst;
 	while (true) {
 		RpcValue v;
 		read(v);

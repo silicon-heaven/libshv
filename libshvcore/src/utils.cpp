@@ -2,12 +2,11 @@
 #include <shv/core/log.h>
 #include <shv/core/stringview.h>
 
+#include <shv/chainpack/compat.h>
 #include <shv/chainpack/utils.h>
 #include <cstring>
 #include <regex>
 #include <sstream>
-
-#include <unistd.h>
 
 using namespace std;
 using namespace shv::chainpack;
@@ -230,51 +229,5 @@ std::string Utils::simplifyPath(const std::string &p)
 		ret.push_back(s);
 	}
 	return ret.join('/');
-}
-
-std::vector<char> Utils::readAllFd(int fd)
-{
-	/// will not work with blockong read !!!
-	/// one possible solution for the blocking sockets, pipes, FIFOs, and tty's is
-	/// ioctl(fd, FIONREAD, &n);
-	static constexpr ssize_t CHUNK_SIZE = 1024;
-	std::vector<char> ret;
-	while(true) {
-		size_t prev_size = ret.size();
-		ret.resize(prev_size + CHUNK_SIZE);
-		ssize_t n = ::read(fd, ret.data() + prev_size, CHUNK_SIZE);
-		if(n < 0) {
-			if(errno == EAGAIN) {
-				if(prev_size && (prev_size % CHUNK_SIZE)) {
-					shvError() << "no data available, returning so far read bytes:" << prev_size << "number of chunks:" << (prev_size/CHUNK_SIZE);
-				}
-				else {
-					/// can happen if previous read returned exactly CHUNK_SIZE
-				}
-				ret.resize(prev_size);
-				return ret;
-			}
-
-			shvError() << "error read fd:" << fd << std::strerror(errno);
-			return std::vector<char>();
-		}
-		if(n < CHUNK_SIZE) {
-			ret.resize(prev_size + static_cast<size_t>(n));
-			break;
-		}
-#ifdef USE_IOCTL_FIONREAD
-		else if(n == CHUNK_SIZE) {
-			if(S_ISFIFO(mode) || S_ISSOCK(mode)) {
-				if(::ioctl(fd, FIONREAD, &n) < 0) {
-					shvError() << "error ioctl(FIONREAD) fd:" << fd << ::strerror(errno);
-					return ret;
-				}
-				if(n == 0)
-					return ret;
-			}
-		}
-#endif
-	}
-	return ret;
 }
 }

@@ -4,6 +4,8 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 
+#include <array>
+
 using namespace shv::core::utils;
 using namespace shv::core;
 using namespace std;

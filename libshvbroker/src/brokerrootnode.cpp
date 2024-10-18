@@ -15,12 +15,12 @@ chainpack::RpcValue BrokerRootNode::callMethodRq(const chainpack::RpcRequest &rq
 	chainpack::RpcValue res = Super::callMethodRq(rq);
 	shvDebug() << "result:" << res.toCpon();
 	if (rq.metaData().hasKey(rpc::MasterBrokerConnection::ADD_LOCAL_TO_LS_RESULT_META_KEY)) {
-		chainpack::RpcValue::List res_list = res.asList();
+		chainpack::List res_list = res.asList();
 		if (res_list.size() && !res_list[0].isList()) {
 			res_list.push_back(rpc::MasterBrokerConnection::LOCAL_NODE);
 		}
 		else {
-			res_list.push_back(chainpack::RpcValue::List{ rpc::MasterBrokerConnection::LOCAL_NODE, true });
+			res_list.push_back(chainpack::List{ rpc::MasterBrokerConnection::LOCAL_NODE, true });
 		}
 		res = res_list;
 	}

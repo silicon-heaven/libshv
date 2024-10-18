@@ -76,8 +76,8 @@ jobs:
       - name: Build and test
         uses: ./.github/actions/build-and-test
 
-  windows:
-    name: Qt 6.5.3 / Windows
+  windows-mingw:
+    name: Qt 6.5.3 / Windows MinGW
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
@@ -89,6 +89,30 @@ jobs:
         with:
           qt_version: 6.5.3
           qt_arch: win64_mingw
+          use_qt6: ON
+          modules: qtserialport qtwebsockets
+          # Need to get all binaries in the same directory, otherwise the tests can't find the dlls.
+          additional_cmake_args: |
+            -DLIBSHV_WITH_LDAP=OFF \
+            -DCMAKE_RUNTIME_OUTPUT_DIRECTORY='${{github.workspace}}/build/bin' \
+            -DCMAKE_LIBRARY_OUTPUT_DIRECTORY='${{github.workspace}}/build/bin'
+
+      - name: Build and test
+        uses: ./.github/actions/build-and-test
+
+  windows-msvc:
+    name: Qt 6.5.3 / Windows MSVC
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup CMake
+        uses: ./.github/actions/cmake
+        with:
+          qt_version: 6.5.3
+          qt_arch: win64_msvc2019_64
           use_qt6: ON
           modules: qtserialport qtwebsockets
           # Need to get all binaries in the same directory, otherwise the tests can't find the dlls.

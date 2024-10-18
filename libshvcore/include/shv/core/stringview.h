@@ -1,6 +1,7 @@
 #pragma once
 
 #include "shvcoreglobal.h"
+#include <shv/chainpack/compat.h>
 
 #include <string>
 #include <vector>

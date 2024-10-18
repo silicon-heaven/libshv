@@ -3,6 +3,7 @@
 #include <shv/chainpack/ccpon.h>
 #include <shv/chainpack/cchainpack.h>
 #include <shv/chainpack/ccpcp_convert.h>
+#include <shv/chainpack/compat.h>
 
 #include <time.h>
 #include <stdio.h>
@@ -28,9 +29,10 @@ static void binary_dump(const char *buff, ssize_t len)
 	}
 }
 
+#define BUFFLEN 1024ul
+
 int test_pack_double(double d, const char *res)
 {
-	static const unsigned long BUFFLEN = 1024;
 	char buff[BUFFLEN];
 	ccpcp_pack_context ctx;
 	ccpcp_pack_context_init(&ctx, buff, BUFFLEN, NULL);
@@ -45,7 +47,6 @@ int test_pack_double(double d, const char *res)
 
 int test_pack_int(long i, const char *res)
 {
-	static const unsigned long BUFFLEN = 1024;
 	char buff[BUFFLEN];
 	ccpcp_pack_context ctx;
 	ccpcp_pack_context_init(&ctx, buff, BUFFLEN, NULL);
@@ -60,7 +61,6 @@ int test_pack_int(long i, const char *res)
 
 int test_pack_uint(unsigned long i, const char *res)
 {
-	static const unsigned long BUFFLEN = 1024;
 	char buff[BUFFLEN];
 	ccpcp_pack_context ctx;
 	ccpcp_pack_context_init(&ctx, buff, BUFFLEN, NULL);
@@ -75,7 +75,6 @@ int test_pack_uint(unsigned long i, const char *res)
 
 void test_pack_decimal(int mantisa, int exponent, const char *res)
 {
-	static const unsigned long BUFFLEN = 1024;
 	char buff[BUFFLEN];
 	ccpcp_pack_context ctx;
 	ccpcp_pack_context_init(&ctx, buff, BUFFLEN, NULL);
@@ -90,9 +89,10 @@ void test_pack_decimal(int mantisa, int exponent, const char *res)
 	}
 }
 
+#define STATE_CNT 100
+
 int test_unpack_number(const char *str, int expected_type, double expected_val)
 {
-	static const size_t STATE_CNT = 100;
 	ccpcp_container_state states[STATE_CNT];
 	ccpcp_container_stack stack;
 	ccpcp_container_stack_init(&stack, states, STATE_CNT, NULL);
@@ -225,7 +225,6 @@ static void test_cpon_helper(const char *cpon, const char *ref_cpon, bool compar
 	if(o_verbose)
 		printf("---------------- test cpon ---------------------\n");
 
-	static const size_t STATE_CNT = 100;
 	ccpcp_container_state states[STATE_CNT];
 	ccpcp_container_stack stack;
 
@@ -344,7 +343,6 @@ static void test_dry_run_cpon(const char *cpon)
 
 	size_t dry_run_size;
 	{
-		static const size_t STATE_CNT = 100;
 		ccpcp_container_state states[STATE_CNT];
 		ccpcp_container_stack stack;
 		ccpcp_container_stack_init(&stack, states, STATE_CNT, NULL);
@@ -360,7 +358,6 @@ static void test_dry_run_cpon(const char *cpon)
 	}
 	size_t packed_size;
 	{
-		static const size_t STATE_CNT = 100;
 		ccpcp_container_state states[STATE_CNT];
 		ccpcp_container_stack stack;
 		ccpcp_container_stack_init(&stack, states, STATE_CNT, NULL);

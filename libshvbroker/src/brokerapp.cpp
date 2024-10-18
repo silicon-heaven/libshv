@@ -204,7 +204,7 @@ public:
 				auto *nd = qobject_cast<ClientShvNode*>(nd1);
 				if(nd == nullptr)
 					SHV_EXCEPTION("Wrong node type on path: " + path + ", looking for ClientShvNode, found: " + nd1->metaObject()->className());
-				cp::RpcValue::List lst;
+				cp::List lst;
 				for(rpc::ClientConnectionOnBroker *conn : nd->connections())
 					lst.push_back(conn->connectionId());
 				return cp::RpcValue{lst};
@@ -253,7 +253,7 @@ std::optional<AzureConfig> BrokerApp::azureConfig()
 }
 
 namespace {
-auto transform_cli_group_mapping(const chainpack::RpcValue::List& cli_group_mapping)
+auto transform_cli_group_mapping(const chainpack::List& cli_group_mapping)
 {
 	std::vector<GroupMapping> group_mapping;
 	std::transform(cli_group_mapping.begin(),
@@ -262,7 +262,11 @@ auto transform_cli_group_mapping(const chainpack::RpcValue::List& cli_group_mapp
 				   [] (const auto& mapping) {
 					   auto mapping_list = mapping.asList();
 					   if (mapping_list.size() != 2) {
+#ifdef _MSC_VER
+						   SHV_EXCEPTION(__FUNCSIG__ + std::string{": group mapping isn't a pair."});
+#else
 						   SHV_EXCEPTION(__PRETTY_FUNCTION__ + std::string{": group mapping isn't a pair."});
+#endif
 					   }
 					   return GroupMapping {
 						   .nativeGroup = mapping.asList().at(0).asString(),
