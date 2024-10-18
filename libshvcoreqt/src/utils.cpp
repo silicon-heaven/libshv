@@ -176,7 +176,11 @@ QJsonValue utils::rpcValueToJson(const shv::chainpack::RpcValue& v)
 		return object;
 	}
 	}
+#ifdef _MSC_VER
+	__assume(false);
+#else
 	__builtin_unreachable();
+#endif
 }
 
 QByteArray utils::jsonValueToByteArray(const QJsonValue& json)
@@ -197,7 +201,12 @@ QByteArray utils::jsonValueToByteArray(const QJsonValue& json)
 	case QJsonValue::Undefined:
 		return QByteArray("undefined");
 	}
+#
+#ifdef _MSC_VER
+	__assume(false);
+#else
 	__builtin_unreachable();
+#endif
 }
 
 [[noreturn]] void utils::qcoro_unhandled_exception(std::exception& ex)
