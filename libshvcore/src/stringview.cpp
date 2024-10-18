@@ -1,4 +1,5 @@
 #include <shv/core/stringview.h>
+#include <shv/chainpack/compat.h>
 
 namespace shv::core {
 

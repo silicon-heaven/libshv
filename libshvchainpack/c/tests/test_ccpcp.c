@@ -3,6 +3,7 @@
 #include <shv/chainpack/ccpon.h>
 #include <shv/chainpack/cchainpack.h>
 #include <shv/chainpack/ccpcp_convert.h>
+#include <shv/chainpack/compat.h>
 
 #include <time.h>
 #include <stdio.h>
