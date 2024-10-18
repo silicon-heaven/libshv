@@ -83,10 +83,17 @@ runs:
         echo CMAKE_BIN="${Qt6_DIR}/bin/qt-cmake" >> "$GITHUB_ENV"
       shell: bash
 
+    - name: Add Werror
+      if: inputs.qt_arch != 'win64_msvc2019_64'
+      run: |
+        echo CFLAGS="-Werror ${CFLAGS}" >> "$GITHUB_ENV"
+        echo CXXFLAGS="-Werror ${CXXFLAGS}" >> "$GITHUB_ENV"
+      shell: bash
+
     - name: Configure CMake
       run: |
-        CFLAGS="-Werror ${CFLAGS}" \
-        CXXFLAGS="-Werror ${CXXFLAGS}" \
+        CFLAGS="${CFLAGS}" \
+        CXXFLAGS="${CXXFLAGS}" \
         "${CMAKE_BIN:-cmake}" \
         -S '${{github.workspace}}' \
         -B '${{github.workspace}}/build' \
