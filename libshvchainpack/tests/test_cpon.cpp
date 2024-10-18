@@ -343,7 +343,7 @@ DOCTEST_TEST_CASE("Cpon")
 				const RpcValue obj = RpcValue::Map({
 													   { "k1", "v1" },
 													   { "k2", 42.0 },
-													   { "k3", RpcValue::List({ "a", 123.0, true, false, nullptr }) },
+													   { "k3", RpcList({ "a", 123.0, true, false, nullptr }) },
 												   });
 
 				nDebug() << "obj: " << obj.toCpon();
@@ -357,7 +357,7 @@ DOCTEST_TEST_CASE("Cpon")
 				RpcValue my_json = RpcValue::Map {
 					{ "key1", "value1" },
 					{ "key2", false },
-					{ "key3", RpcValue::List { 1, 2, 3 } },
+					{ "key3", RpcList { 1, 2, 3 } },
 				};
 				std::string json_obj_str = my_json.toCpon();
 				nDebug() << "json_obj_str: " << json_obj_str.c_str();
@@ -369,7 +369,7 @@ DOCTEST_TEST_CASE("Cpon")
 					int x;
 					int y;
 					Point (int xx, int yy) : x(xx), y(yy) {}
-					RpcValue toRpcValue() const { return RpcValue::List { x, y }; }
+					RpcValue toRpcValue() const { return RpcList { x, y }; }
 				};
 
 				{

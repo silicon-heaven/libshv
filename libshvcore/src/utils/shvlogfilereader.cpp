@@ -65,7 +65,7 @@ bool ShvLogFileReader::next()
 
 		cp::RpcValue val;
 		m_reader->read(val);
-		const chainpack::RpcValue::List &row = val.asList();
+		const chainpack::RpcList &row = val.asList();
 		std::string err;
 		m_currentEntry = ShvJournalEntry::fromRpcValueList(row, unmap_path, &err);
 		if(!err.empty()) {

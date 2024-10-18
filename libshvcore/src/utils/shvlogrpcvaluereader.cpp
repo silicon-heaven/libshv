@@ -32,12 +32,12 @@ bool ShvLogRpcValueReader::next()
 	};
 	while(true) {
 		m_currentEntry = {};
-		const chainpack::RpcValue::List &list = m_log.asList();
+		const chainpack::RpcList &list = m_log.asList();
 		if(m_currentIndex >= list.size())
 			return false;
 
 		const cp::RpcValue &val = list[m_currentIndex++];
-		const chainpack::RpcValue::List &row = val.asList();
+		const chainpack::RpcList &row = val.asList();
 		std::string err;
 		m_currentEntry = ShvJournalEntry::fromRpcValueList(row, unmap_path, &err);
 		if(!err.empty()) {

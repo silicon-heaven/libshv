@@ -111,7 +111,7 @@ chainpack::RpcValue qVariantToRpcValue(const QVariant &v, bool *ok)
 	}
 	case QMetaType::QStringList:
 	case QMetaType::QVariantList: {
-		chainpack::RpcValue::List lst;
+		chainpack::RpcList lst;
 		for(const QVariant &qv : v.toList()) {
 			lst.push_back(qVariantToRpcValue(qv));
 		}
@@ -147,7 +147,7 @@ QStringList rpcValueToStringList(const shv::chainpack::RpcValue &rpcval)
 
 shv::chainpack::RpcValue stringListToRpcValue(const QStringList &sl)
 {
-	shv::chainpack::RpcValue::List ret;
+	shv::chainpack::RpcList ret;
 	for(const QString &s : sl)
 		ret.push_back(s.toStdString());
 	return shv::chainpack::RpcValue(ret);

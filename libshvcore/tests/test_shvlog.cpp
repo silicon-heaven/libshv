@@ -86,7 +86,7 @@ const ShvTypeInfo typeInfo = ShvTypeInfo::fromVersion2(
 				ShvTypeDescr::Type::BitField,
 				{
 					{"Active", "Bool", 0},
-					{"LastDir", "UInt", RpcValue::List{1,2}, {{"description", "N,L,R,S"}}},
+					{"LastDir", "UInt", RpcList{1,2}, {{"description", "N,L,R,S"}}},
 					{"CommError", "Bool", 3},
 				},
 			}
@@ -421,7 +421,7 @@ DOCTEST_TEST_CASE("ShvLog")
 						e.value = RpcValue::Decimal(rv.toInt(), -2);
 					}
 					else if(e.path == "vetra/vehicleDetected") {
-						e.value = RpcValue::List{rv, i %2? "R": "L"};
+						e.value = RpcList{rv, i %2? "R": "L"};
 					}
 					else {
 						e.value = rv;

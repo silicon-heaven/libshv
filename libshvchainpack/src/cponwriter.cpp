@@ -50,7 +50,7 @@ CponWriterOptions& CponWriterOptions::setJsonFormat(bool b)
 }
 
 namespace {
-bool is_oneline_list(const RpcValue::List &lst)
+bool is_oneline_list(const RpcList &lst)
 {
 	if(lst.size() > 10)
 		return false;
@@ -435,7 +435,7 @@ CponWriter &CponWriter::write_p(const RpcValue::IMap &values, const RpcValue::Me
 	return *this;
 }
 
-CponWriter &CponWriter::write_p(const RpcValue::List &values)
+CponWriter &CponWriter::write_p(const RpcList &values)
 {
 	writeContainerBegin(RpcValue::Type::List, is_oneline_list(values));
 	for (const auto& value : values) {

@@ -112,7 +112,7 @@ int IRpcConnection::callMethodSubscribeGlob(std::string glob)
 		return callShvMethod(rq_id
 							 , Rpc::DIR_BROKER_CURRENTCLIENT
 							 , Rpc::METH_SUBSCRIBE
-							 , RpcValue::List{ glob, nullptr }
+							 , RpcList{ glob, nullptr }
 							 );
 	}
 	nError() << "Glob subscribe is supported on SHV3 devices only.";
@@ -134,7 +134,7 @@ int IRpcConnection::callMethodSubscribe(int rq_id, const std::string &shv_path, 
 		return callShvMethod(rq_id
 							 , Rpc::DIR_BROKER_CURRENTCLIENT
 							 , Rpc::METH_SUBSCRIBE
-							 , RpcValue::List{ ri, nullptr }
+							 , RpcList{ ri, nullptr }
 							 );
 	}
 	return callShvMethod(rq_id

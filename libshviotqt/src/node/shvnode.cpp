@@ -184,11 +184,11 @@ void ShvNode::handleRpcFrame(RpcFrame &&frame)
 		ShvNode *root = rootNode();
 		if(root) {
 			if (ls_hook && resp.isSuccess()) {
-				chainpack::RpcValue::List res_list = resp.result().asList();
+				chainpack::RpcList res_list = resp.result().asList();
 				if (!res_list.empty() && !res_list[0].isList())
 					res_list.insert(res_list.begin(), LOCAL_NODE_HACK);
 				else
-					res_list.insert(res_list.begin(), chainpack::RpcValue::List{ LOCAL_NODE_HACK, true });
+					res_list.insert(res_list.begin(), chainpack::RpcList{ LOCAL_NODE_HACK, true });
 				resp.setResult(res_list);
 				shvDebug() << resp.toCpon();
 			}
@@ -396,7 +396,7 @@ chainpack::RpcValue ShvNode::dir(const StringViewList &shv_path, const chainpack
 	auto method_name = methods_params.asString();
 	size_t cnt = methodCount(shv_path);
 	if(method_name.empty()) {
-		RpcValue::List ret;
+		RpcList ret;
 		for (size_t ix = 0; ix < cnt; ++ix) {
 			const chainpack::MetaMethod *mm = metaMethod(shv_path, ix);
 			ret.push_back(mm->toRpcValue());
@@ -416,7 +416,7 @@ chainpack::RpcValue ShvNode::ls(const StringViewList &shv_path, const chainpack:
 {
 	const std::string &child_name = methods_params.asString();
 	if(child_name.empty()) {
-		RpcValue::List ret;
+		RpcList ret;
 		for(const std::string &ch_name : childNames(shv_path)) {
 			ret.push_back(ch_name);
 		}

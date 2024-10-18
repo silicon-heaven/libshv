@@ -42,7 +42,7 @@ shv::chainpack::RpcValue LogModel::log() const
 
 int LogModel::rowCount(const QModelIndex &) const
 {
-	const shv::chainpack::RpcValue::List &lst = m_log.asList();
+	const shv::chainpack::RpcList &lst = m_log.asList();
 	return static_cast<int>(lst.size());
 }
 
@@ -74,7 +74,7 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
 {
 	if(index.isValid() && index.row() < rowCount()) {
 		if(role == Qt::DisplayRole) {
-			const shv::chainpack::RpcValue::List &lst = m_log.asList();
+			const shv::chainpack::RpcList &lst = m_log.asList();
 			shv::chainpack::RpcValue row = lst.value(static_cast<unsigned>(index.row()));
 			shv::chainpack::RpcValue val = row.asList().value(static_cast<unsigned>(index.column()));
 			if(index.column() == ColDateTime) {

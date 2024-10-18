@@ -41,8 +41,8 @@ public:
 	CLIOPTION_GETTER_SETTER2(std::string, "ldap.password", l, setL, dapPassword)
 	CLIOPTION_GETTER_SETTER2(std::string, "ldap.hostname", l, setL, dapHostname)
 	CLIOPTION_GETTER_SETTER2(std::string, "ldap.searchBaseDN", l, setL, dapSearchBaseDN)
-	CLIOPTION_GETTER_SETTER2(chainpack::RpcValue::List, "ldap.searchAttrs", l, setL, dapSearchAttrs)
-	CLIOPTION_GETTER_SETTER2(chainpack::RpcValue::List, "ldap.groupMapping", l, setL, dapGroupMapping)
-	CLIOPTION_GETTER_SETTER2(chainpack::RpcValue::List, "azure.groupMapping", a, setA, zureGroupMapping)
+	CLIOPTION_GETTER_SETTER2(chainpack::RpcList, "ldap.searchAttrs", l, setL, dapSearchAttrs)
+	CLIOPTION_GETTER_SETTER2(chainpack::RpcList, "ldap.groupMapping", l, setL, dapGroupMapping)
+	CLIOPTION_GETTER_SETTER2(chainpack::RpcList, "azure.groupMapping", a, setA, zureGroupMapping)
 };
 }

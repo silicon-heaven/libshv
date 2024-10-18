@@ -158,7 +158,7 @@ RpcValue CponReader::readFile(const std::string &file_name, std::string *error)
 
 void CponReader::parseList(RpcValue &val)
 {
-	RpcValue::List lst;
+	RpcList lst;
 	while (true) {
 		RpcValue v;
 		read(v);

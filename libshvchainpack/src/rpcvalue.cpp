@@ -31,7 +31,7 @@ namespace shv::chainpack {
 #ifdef DEBUG_RPCVAL
 inline NecroLog &operator<<(NecroLog log, const shv::chainpack::RpcValue::Decimal &d) { return log.operator <<(d.toDouble()); }
 inline NecroLog &operator<<(NecroLog log, const shv::chainpack::RpcValue::DateTime &d) { return log.operator <<(d.toIsoString()); }
-inline NecroLog &operator<<(NecroLog log, const shv::chainpack::RpcValue::List &d) { return log.operator <<("some_list:" + std::to_string(d.size())); }
+inline NecroLog &operator<<(NecroLog log, const shv::chainpack::List &d) { return log.operator <<("some_list:" + std::to_string(d.size())); }
 inline NecroLog &operator<<(NecroLog log, const shv::chainpack::RpcValue::Map &d) { return log.operator <<("some_map:" + std::to_string(d.size())); }
 inline NecroLog &operator<<(NecroLog log, const shv::chainpack::RpcValue::IMap &d) { return log.operator <<("some_imap:" + std::to_string(d.size())); }
 inline NecroLog &operator<<(NecroLog log, std::nullptr_t) { return log.operator <<("NULL"); }
@@ -60,7 +60,7 @@ auto convert_to_int(const double d)
 namespace {
 const CowPtr<RpcValue::String>& static_empty_string() { static const CowPtr<RpcValue::String> s{std::make_shared<RpcValue::String>()}; return s; }
 const CowPtr<RpcValue::Blob>& static_empty_blob() { static const CowPtr<RpcValue::Blob> s{std::make_shared<RpcValue::Blob>()}; return s; }
-const CowPtr<RpcValue::List>& static_empty_list() { static const CowPtr<RpcValue::List> s{std::make_shared<RpcValue::List>()}; return s; }
+const CowPtr<RpcList>& static_empty_list() { static const CowPtr<RpcList> s{std::make_shared<RpcList>()}; return s; }
 const CowPtr<RpcValue::Map>& static_empty_map() { static const CowPtr<RpcValue::Map> s{std::make_shared<RpcValue::Map>()}; return s; }
 const CowPtr<RpcValue::IMap>& static_empty_imap() { static const CowPtr<RpcValue::IMap> s{std::make_shared<RpcValue::IMap>()}; return s; }
 }
@@ -83,7 +83,7 @@ RpcValue RpcValue::fromType(RpcValue::Type t) noexcept
 	case Type::String: return RpcValue{String()};
 	case Type::Blob: return RpcValue{Blob()};
 	case Type::DateTime: return RpcValue{DateTime()};
-	case Type::List: return RpcValue{List()};
+	case Type::List: return RpcValue{RpcList()};
 	case Type::Map: return RpcValue{Map()};
 	case Type::IMap: return RpcValue{IMap()};
 	case Type::Decimal: return RpcValue{Decimal()};
@@ -113,8 +113,8 @@ RpcValue::RpcValue(const std::string &value) : m_value(std::make_shared<std::str
 RpcValue::RpcValue(std::string &&value) : m_value(std::make_shared<std::string>(std::move(value))) {}
 RpcValue::RpcValue(const char * value) : m_value(std::make_shared<std::string>(value)) {}
 
-RpcValue::RpcValue(const RpcValue::List &values) : m_value(CowPtr{std::make_shared<RpcValue::List>(values)}) {}
-RpcValue::RpcValue(RpcValue::List &&values) : m_value(CowPtr{std::make_shared<RpcValue::List>(std::move(values))}) {}
+RpcValue::RpcValue(const RpcList &values) : m_value(CowPtr{std::make_shared<RpcList>(values)}) {}
+RpcValue::RpcValue(RpcList &&values) : m_value(CowPtr{std::make_shared<RpcList>(std::move(values))}) {}
 
 RpcValue::RpcValue(const RpcValue::Map &values) : m_value(CowPtr{std::make_shared<RpcValue::Map>(values)}) {}
 RpcValue::RpcValue(RpcValue::Map &&values) : m_value(CowPtr{std::make_shared<RpcValue::Map>(std::move(values))}) {}
@@ -325,7 +325,7 @@ double RpcValue::toDouble() const
 				   std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
-				   std::is_same<TypeX, CowPtr<RpcValue::List>>()) {
+				   std::is_same<TypeX, CowPtr<RpcList>>()) {
 			return double{0};
 		} else {
 			static_assert(not_implemented_for_type<TypeX>, "toDouble not implemented for this type");
@@ -369,7 +369,7 @@ ResultType impl_to_int(const RpcValue::VariantType& value)
 				   std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
-				   std::is_same<TypeX, CowPtr<RpcValue::List>>()) {
+				   std::is_same<TypeX, CowPtr<RpcList>>()) {
 			return ResultType{0};
 		} else {
 			static_assert(not_implemented_for_type<TypeX>, "impl_to_int not implemented for this type");
@@ -426,7 +426,7 @@ bool RpcValue::toBool() const
 							 std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
 							 std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
 							 std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
-							 std::is_same<TypeX, CowPtr<RpcValue::List>>() ||
+							 std::is_same<TypeX, CowPtr<RpcList>>() ||
 							 std::is_same<TypeX, CowPtr<RpcValue::String>>()) {
 			return false;
 		} else {
@@ -455,7 +455,7 @@ RpcValue::String RpcValue::toString() const
 				   std::is_same<TypeX, RpcValue::Decimal>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
-				   std::is_same<TypeX, CowPtr<RpcValue::List>>()) {
+				   std::is_same<TypeX, CowPtr<RpcList>>()) {
 			return std::string();
 		} else {
 			static_assert(not_implemented_for_type<TypeX>, "toString not implemented for this type");
@@ -473,9 +473,9 @@ const RpcValue::Blob& RpcValue::asBlob() const
 	return *try_convert_or_default<CowPtr<RpcValue::Blob>>(m_value, static_empty_blob());
 }
 
-const RpcValue::List& RpcValue::asList() const
+const RpcList& RpcValue::asList() const
 {
-	return *try_convert_or_default<CowPtr<RpcValue::List>>(m_value, static_empty_list());
+	return *try_convert_or_default<CowPtr<RpcList>>(m_value, static_empty_list());
 }
 
 const RpcValue::Map& RpcValue::asMap() const
@@ -514,7 +514,7 @@ size_t RpcValue::count() const
 {
 	return std::visit([] (const auto& x) {
 		using TypeX = std::remove_cvref_t<decltype(x)>;
-		if constexpr (std::is_same<TypeX, CowPtr<List>>() ||
+		if constexpr (std::is_same<TypeX, CowPtr<RpcList>>() ||
 					  std::is_same<TypeX, CowPtr<IMap>>() ||
 					  std::is_same<TypeX, CowPtr<Map>>()) {
 			return x->size();
@@ -536,7 +536,7 @@ RpcValue RpcValue::at(RpcValue::Int ix, const RpcValue& default_value) const
 {
 	return std::visit([ix, &default_value] (const auto& x) mutable {
 		using TypeX = std::remove_cvref_t<decltype(x)>;
-		if constexpr (std::is_same<TypeX, CowPtr<List>>()) {
+		if constexpr (std::is_same<TypeX, CowPtr<RpcList>>()) {
 			if (ix < 0) {
 				ix = static_cast<RpcValue::Int>(x->size()) + ix;
 			}
@@ -577,7 +577,7 @@ RpcValue RpcValue::at(const std::string& key, const RpcValue& default_value) con
 				   std::is_same<TypeX, CowPtr<String>>() ||
 				   std::is_same<TypeX, CowPtr<Blob>>() ||
 				   std::is_same<TypeX, CowPtr<IMap>>() ||
-				   std::is_same<TypeX, CowPtr<List>>() ||
+				   std::is_same<TypeX, CowPtr<RpcList>>() ||
 				   std::is_same<TypeX, RpcValue::DateTime>() ||
 				   std::is_same<TypeX, RpcValue::Decimal>()) {
 			return default_value;
@@ -606,7 +606,7 @@ bool impl_has(const RpcValue::VariantType& value, const KeyType& key)
 				   std::is_arithmetic<TypeX>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::String>>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
-				   std::is_same<TypeX, CowPtr<RpcValue::List>>() ||
+				   std::is_same<TypeX, CowPtr<RpcList>>() ||
 				   std::is_same<TypeX, RpcValue::DateTime>() ||
 				   std::is_same<TypeX, RpcValue::Decimal>()) {
 			return false;
@@ -651,7 +651,7 @@ std::string RpcValue::toStdString() const
 		} else if constexpr (std::is_same<TypeX, RpcValue::Invalid>() ||
 							 std::is_same<TypeX, CowPtr<Map>>() ||
 							 std::is_same<TypeX, CowPtr<IMap>>() ||
-							 std::is_same<TypeX, CowPtr<List>>()) {
+							 std::is_same<TypeX, CowPtr<RpcList>>()) {
 			return std::string();
 		} else {
 			static_assert(not_implemented_for_type<TypeX>, "toStdString not implemented for this type");
@@ -677,7 +677,7 @@ void impl_set(RpcValue::VariantType& map, const KeyType& key, const RpcValue& va
 				   std::is_arithmetic<TypeX>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
-				   std::is_same<TypeX, CowPtr<RpcValue::List>>() ||
+				   std::is_same<TypeX, CowPtr<RpcList>>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::String>>() ||
 				   std::is_same<TypeX, RpcValue::DateTime>() ||
@@ -704,7 +704,7 @@ void RpcValue::append(const RpcValue &val)
 {
 	std::visit([&val] (auto& x) {
 		using TypeX = std::remove_cvref_t<decltype(x)>;
-		if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, CowPtr<RpcValue::List>>()) {
+		if constexpr (std::is_same<std::remove_cvref_t<decltype(x)>, CowPtr<RpcList>>()) {
 			x->emplace_back(val);
 		} else if constexpr (std::is_same<TypeX, RpcValue::Invalid>() ||
 				   std::is_same<TypeX, RpcValue::Null>() ||
@@ -1479,14 +1479,14 @@ RpcValue::Blob RpcValue::stringToBlob(const RpcValue::String &s)
 	return Blob(s.begin(), s.end());
 }
 
-RpcValue RpcValue::List::value(size_t ix) const
+RpcValue RpcList::value(size_t ix) const
 {
 	if(ix >= size())
 		return RpcValue();
 	return operator [](ix);
 }
 
-const RpcValue& RpcValue::List::valref(size_t ix) const
+const RpcValue& RpcList::valref(size_t ix) const
 {
 	if(ix >= size()) {
 		static RpcValue s;
@@ -1495,9 +1495,9 @@ const RpcValue& RpcValue::List::valref(size_t ix) const
 	return operator [](ix);
 }
 
-RpcValue::List RpcValue::List::fromStringList(const std::vector<std::string> &sl)
+RpcList RpcList::fromStringList(const std::vector<std::string> &sl)
 {
-	List ret;
+	RpcList ret;
 	for(const std::string &s : sl)
 		ret.push_back(s);
 	return ret;
@@ -1618,11 +1618,11 @@ bool RpcValueGenList::empty() const
 	return size() == 0;
 }
 
-RpcValue::List RpcValueGenList::toList() const
+RpcList RpcValueGenList::toList() const
 {
 	if(m_val.isList())
 		return m_val.asList();
-	return m_val.isValid()? RpcValue::List{m_val}: RpcValue::List{};
+	return m_val.isValid()? RpcList{m_val}: RpcList{};
 }
 }
 

@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 		}
 		case Type::ShvLog: {
 			ShvJournalFileReader rd(*pin);
-			RpcValue::List records;
+			RpcList records;
 			while(rd.next()) {
 				auto e = rd.entry();
 				records.push_back(e.toRpcValueList());

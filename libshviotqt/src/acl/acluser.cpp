@@ -15,7 +15,7 @@ shv::chainpack::RpcValue AclUser::toRpcValue() const
 {
 	return shv::chainpack::RpcValue::Map {
 		{"password", password.toRpcValue()},
-		{"roles", shv::chainpack::RpcValue::List::fromStringList(roles)},
+		{"roles", shv::chainpack::RpcList::fromStringList(roles)},
 	};
 }
 

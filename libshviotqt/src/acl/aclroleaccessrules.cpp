@@ -84,7 +84,7 @@ bool AclAccessRule::isPathMethodMatch(std::string_view shv_path, const string &m
 //================================================================
 shv::chainpack::RpcValue AclRoleAccessRules::toRpcValue() const
 {
-	shv::chainpack::RpcValue::List ret;
+	shv::chainpack::RpcList ret;
 	for(const auto &kv : *this) {
 		ret.push_back(kv.toRpcValue());
 	}

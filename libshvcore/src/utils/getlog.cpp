@@ -40,7 +40,7 @@ enum class Status {
 	RecordCountLimitHit
 };
 
-void append_log_entry(RpcValue::List& log, const ShvJournalEntry &e, GetLogContext& ctx)
+void append_log_entry(shv::chainpack::RpcList& log, const ShvJournalEntry &e, GetLogContext& ctx)
 {
 	logDGetLog() << "\t append_log_entry:" << e.toRpcValueMap().toCpon();
 	std::function<shv::chainpack::RpcValue(const std::string&)> map_path;
@@ -54,7 +54,7 @@ void append_log_entry(RpcValue::List& log, const ShvJournalEntry &e, GetLogConte
 
 auto snapshot_to_entries(const ShvSnapshot& snapshot, const bool since_last, const int64_t params_since_msec, GetLogContext& ctx)
 {
-	RpcValue::List res;
+	shv::chainpack::RpcList res;
 	logMGetLog() << "\t writing snapshot, record count:" << snapshot.keyvals.size();
 	if (!snapshot.keyvals.empty()) {
 		auto since_res = params_since_msec;
@@ -137,7 +137,7 @@ template <LogReader Type>
 	}
 
 	ShvSnapshot snapshot;
-	RpcValue::List result_log;
+	shv::chainpack::RpcList result_log;
 	PatternMatcher pattern_matcher(ctx.params);
 
 	ShvLogHeader log_header;
@@ -206,14 +206,14 @@ exit_nested_loop:
 		}
 
 		if (last_entry && ctx.params.isSinceLast()) {
-			RpcValue::List res;
+			shv::chainpack::RpcList res;
 			append_log_entry(res, *last_entry, ctx);
 			return res;
 		}
-		return RpcValue::List{};
+		return shv::chainpack::RpcList{};
 	}();
 
-	RpcValue::List result_entries = snapshot_entries;
+	shv::chainpack::RpcList result_entries = snapshot_entries;
 	std::copy(result_log.begin(), result_log.end(), std::back_inserter(result_entries));
 
 	if (ctx.params.withPathsDict) {

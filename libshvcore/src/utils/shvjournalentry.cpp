@@ -70,7 +70,7 @@ chainpack::RpcValue ShvJournalEntry::toRpcValueMap() const
 chainpack::RpcValue ShvJournalEntry::toRpcValueList(std::function< chainpack::RpcValue (const std::string &)> map_path) const
 {
 	using namespace shv::chainpack;
-	RpcValue::List rec;
+	RpcList rec;
 	rec.push_back(RpcValue::DateTime::fromMSecsSinceEpoch(epochMsec));
 	if(map_path)
 		rec.push_back(map_path(path));
@@ -122,7 +122,7 @@ ShvJournalEntry ShvJournalEntry::fromRpcValueMap(const chainpack::RpcValue::Map 
 	return ret;
 }
 
-ShvJournalEntry ShvJournalEntry::fromRpcValueList(const chainpack::RpcValue::List &row, std::function<std::string (const chainpack::RpcValue &)> unmap_path, std::string *err)
+ShvJournalEntry ShvJournalEntry::fromRpcValueList(const chainpack::RpcList &row, std::function<std::string (const chainpack::RpcValue &)> unmap_path, std::string *err)
 {
 	using Column = ShvLogHeader::Column;
 	chainpack::RpcValue dt = row.value(Column::Timestamp);

@@ -96,7 +96,7 @@ DataChange DataChange::fromRpcValue(const RpcValue &val)
 	if(isDataChange(val)) {
 		DataChange ret;
 		if(val.isList()) {
-			const RpcValue::List &lst = val.asList();
+			const RpcList &lst = val.asList();
 			if(lst.size() == 1) {
 				RpcValue wrapped_val = lst.value(0);
 				if(!wrapped_val.metaData().isEmpty() && !val.metaValue(MetaType::Tag::SpecialListValue).isValid()) {
@@ -126,7 +126,7 @@ RpcValue DataChange::toRpcValue() const
 	if(m_value.isValid()) {
 		if(m_value.metaData().isEmpty()) {
 			ret = m_value;
-			const RpcValue::List &lst = m_value.asList();
+			const RpcList &lst = m_value.asList();
 			if(lst.size() == 1 && !lst[0].metaData().isEmpty()) {
 				// [<meta>value] will be packed as <dc-meta>[<meta>value]
 				// what will be unpacked to DataChange as <meta>value
@@ -136,7 +136,7 @@ RpcValue DataChange::toRpcValue() const
 			}
 		}
 		else {
-			ret = RpcValue::List{m_value};
+			ret = RpcList{m_value};
 		}
 	}
 	else {
