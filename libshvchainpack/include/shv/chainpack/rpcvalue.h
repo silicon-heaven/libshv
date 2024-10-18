@@ -75,9 +75,12 @@ public:
 	}
 };
 
+class List;
+
 class SHVCHAINPACK_DECL_EXPORT RpcValue
 {
 public:
+
 	enum class Type {
 		Invalid,
 		Null,
@@ -194,15 +197,6 @@ public:
 	static String blobToString(const Blob &s, bool *check_utf8 = nullptr);
 	static Blob stringToBlob(const String &s);
 
-	class SHVCHAINPACK_DECL_EXPORT List : public std::vector<RpcValue>
-	{
-		using Super = std::vector<RpcValue>;
-		using Super::Super; // expose base class constructors
-	public:
-		RpcValue value(size_t ix) const;
-		const RpcValue& valref(size_t ix) const;
-		static List fromStringList(const std::vector<std::string> &sl);
-	};
 	class SHVCHAINPACK_DECL_EXPORT Map : public std::map<String, RpcValue>
 	{
 		using Super = std::map<String, RpcValue>;
@@ -390,7 +384,7 @@ public:
 			return toDateTime();
 		else if constexpr (std::is_same<T, Decimal>())
 			return toDecimal();
-		else if constexpr (std::is_same<T, RpcValue::List>())
+		else if constexpr (std::is_same<T, List>())
 			return asList();
 		else
 			static_assert(not_implemented_for_type<T>, "RpcValue::to<T> is not implemented for this type (maybe you're missing an include?)");
@@ -410,7 +404,7 @@ public:
 			return isDateTime();
 		else if constexpr (std::is_same<T, Decimal>())
 			return isDecimal();
-		else if constexpr (std::is_same<T, RpcValue::List>())
+		else if constexpr (std::is_same<T, List>())
 			return isList();
 		else
 			static_assert(not_implemented_for_type<T>, "RpcValue::is<T> is not implemented for this type");
@@ -454,10 +448,20 @@ public:
 		bool operator==(const Null&) const = default;
 	};
 
-	using VariantType = std::variant<RpcValue::Invalid, RpcValue::Null, uint64_t, int64_t, RpcValue::Double, RpcValue::Bool, CowPtr<RpcValue::Blob>, CowPtr<RpcValue::String>, RpcValue::DateTime, CowPtr<RpcValue::List>, CowPtr<RpcValue::Map>, CowPtr<RpcValue::IMap>, RpcValue::Decimal>;
+	using VariantType = std::variant<RpcValue::Invalid, RpcValue::Null, uint64_t, int64_t, RpcValue::Double, RpcValue::Bool, CowPtr<RpcValue::Blob>, CowPtr<RpcValue::String>, RpcValue::DateTime, CowPtr<List>, CowPtr<RpcValue::Map>, CowPtr<RpcValue::IMap>, RpcValue::Decimal>;
 private:
 	CowPtr<MetaData> m_meta = nullptr;
 	VariantType m_value;
+};
+
+class SHVCHAINPACK_DECL_EXPORT List : public std::vector<RpcValue>
+{
+	using Super = std::vector<RpcValue>;
+	using Super::Super; // expose base class constructors
+public:
+	RpcValue value(size_t ix) const;
+	const RpcValue& valref(size_t ix) const;
+	static List fromStringList(const std::vector<std::string> &sl);
 };
 
 namespace string_literals {
@@ -483,7 +487,7 @@ public:
 	RpcValue value(size_t ix) const;
 	size_t size() const;
 	bool empty() const;
-	RpcValue::List toList() const;
+	List toList() const;
 private:
 	RpcValue m_val;
 };
