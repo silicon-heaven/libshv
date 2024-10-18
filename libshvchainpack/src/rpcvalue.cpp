@@ -1030,18 +1030,26 @@ RpcValue::DateTime RpcValue::DateTime::fromMSecsSinceEpoch(int64_t msecs, int ut
 
 void RpcValue::DateTime::setMsecsSinceEpoch(int64_t msecs)
 {
+#ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
+#endif
 	m_dtm.msec = msecs;
+#ifdef __GNUC__
 #pragma GCC diagnostic pop
+#endif
 }
 
 void RpcValue::DateTime::setUtcOffsetMin(int utc_offset_min)
 {
+#ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
+#endif
 	m_dtm.tz = (utc_offset_min / 15) & 0x7F;
+#ifdef __GNUC__
 #pragma GCC diagnostic pop
+#endif
 }
 
 std::string RpcValue::DateTime::toLocalString() const

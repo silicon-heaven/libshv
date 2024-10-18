@@ -143,11 +143,15 @@ public:
 		static DateTime fromUtcString(const std::string &utc_date_time_str, size_t *plen = nullptr);
 		static DateTime fromMSecsSinceEpoch(int64_t msecs, int utc_offset_min = 0);
 
+#ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
+#endif
 		void setMsecsSinceEpoch(int64_t msecs);
 		void setUtcOffsetMin(int utc_offset_min);
+#ifdef __GNUC__
 #pragma GCC diagnostic pop
+#endif
 
 		std::string toLocalString() const;
 		std::string toIsoString() const;
