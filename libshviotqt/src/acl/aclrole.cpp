@@ -15,7 +15,7 @@ shv::chainpack::RpcValue AclRole::toRpcValue() const
 {
 	shv::chainpack::RpcValue::Map m;
 	if(!roles.empty())
-		m["roles"] = shv::chainpack::RpcValue::List::fromStringList(roles);
+		m["roles"] = shv::chainpack::RpcList::fromStringList(roles);
 	if(profile.isMap())
 		m["profile"] = profile;
 	return m;

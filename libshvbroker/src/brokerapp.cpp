@@ -204,7 +204,7 @@ public:
 				auto *nd = qobject_cast<ClientShvNode*>(nd1);
 				if(nd == nullptr)
 					SHV_EXCEPTION("Wrong node type on path: " + path + ", looking for ClientShvNode, found: " + nd1->metaObject()->className());
-				cp::RpcValue::List lst;
+				cp::RpcList lst;
 				for(rpc::ClientConnectionOnBroker *conn : nd->connections())
 					lst.push_back(conn->connectionId());
 				return cp::RpcValue{lst};
@@ -253,7 +253,7 @@ std::optional<AzureConfig> BrokerApp::azureConfig()
 }
 
 namespace {
-auto transform_cli_group_mapping(const chainpack::RpcValue::List& cli_group_mapping)
+auto transform_cli_group_mapping(const chainpack::RpcList& cli_group_mapping)
 {
 	std::vector<GroupMapping> group_mapping;
 	std::transform(cli_group_mapping.begin(),

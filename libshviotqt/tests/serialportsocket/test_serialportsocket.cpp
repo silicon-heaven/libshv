@@ -53,12 +53,12 @@ DOCTEST_TEST_CASE("Send")
 	rq.setRequestId(1);
 	rq.setShvPath("foo/bar");
 	rq.setMethod("baz");
-	RpcValue::List params = {
+	RpcList params = {
 		"hello",
 		"\xaa",
 		"\xa2\xa3\xa4\xa5\xaa",
 		"aa\xaa""aa",
-		RpcValue::List{0xa2, 0xa3, 0xa4, 0xa5, 0xaa, "\xa2\xa3\xa4\xa5\xaa"},
+		RpcList{0xa2, 0xa3, 0xa4, 0xa5, 0xaa, "\xa2\xa3\xa4\xa5\xaa"},
 	};
 	for(const auto &p : params) {
 		rq.setParams(p);

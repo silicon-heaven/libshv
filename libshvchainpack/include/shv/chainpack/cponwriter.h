@@ -66,7 +66,7 @@ private:
 	CponWriter& write_p(RpcValue::DateTime value);
 	CponWriter& write_p(const std::string &value);
 	CponWriter& write_p(const RpcValue::Blob &value);
-	CponWriter& write_p(const RpcValue::List &values);
+	CponWriter& write_p(const RpcList &values);
 	CponWriter& write_p(const RpcValue::Map &values);
 	CponWriter& write_p(const RpcValue::IMap &values, const RpcValue::MetaData *meta_data = nullptr);
 private:

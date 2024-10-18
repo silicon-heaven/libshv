@@ -217,7 +217,7 @@ chainpack::RpcValue LocalFSNode::ndWrite(const QString &path, const chainpack::R
 		SHV_EXCEPTION("Cannot open file " + f.fileName().toStdString() + " for writing.");
 	}
 	if (methods_params.isList()){
-		chainpack::RpcValue::List params = methods_params.asList();
+		chainpack::RpcList params = methods_params.asList();
 
 		if (params.size() != 2){
 			SHV_EXCEPTION("Cannot write to file " + f.fileName().toStdString() + ". Invalid parameters count.");
@@ -261,7 +261,7 @@ chainpack::RpcValue LocalFSNode::ndMkfile(const QString &path, const chainpack::
 		error = "Cannot open file " + file_path.toStdString() + " for writing.";
 	}
 	else if (methods_params.isList()){
-		const chainpack::RpcValue::List &param_lst = methods_params.asList();
+		const chainpack::RpcList &param_lst = methods_params.asList();
 
 		if (param_lst.size() != 2) {
 			throw shv::core::Exception(R"(Invalid params, ["name", "content"] expected.)");
@@ -334,14 +334,14 @@ RpcValue LocalFSNode::ndLsDir(const QString &path, const chainpack::RpcValue &me
 		QDir d2(fi_path.absoluteFilePath());
 		if(!d2.exists())
 			SHV_EXCEPTION("Path " + d2.absolutePath().toStdString() + " do not exists.");
-		RpcValue::List lst;
+		RpcList lst;
 		QDir::Filters filters = QDir::NoDotAndDotDot;
 		if(with_dirs)
 			filters |= QDir::Dirs;
 		if(with_files)
 			filters |= QDir::Files;
 		for(const QFileInfo &fi : d2.entryInfoList(filters, QDir::Name | QDir::IgnoreCase | QDir::DirsFirst)) {
-			RpcValue::List lst2;
+			RpcList lst2;
 			lst2.push_back(fi.fileName().toStdString());
 			lst2.push_back(fi.isDir()? "d": "f");
 			if(with_size) {
@@ -358,7 +358,7 @@ RpcValue LocalFSNode::ndLsDir(const QString &path, const chainpack::RpcValue &me
 		return lst;
 	}
 
-	return RpcValue::List{};
+	return RpcList{};
 }
 
 } // namespace shv

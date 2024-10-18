@@ -39,7 +39,7 @@ private:
 	ChainPackWriter& write_p(RpcValue::DateTime value);
 	ChainPackWriter& write_p(const std::string &value);
 	ChainPackWriter& write_p(const RpcValue::Blob &value);
-	ChainPackWriter& write_p(const RpcValue::List &values);
+	ChainPackWriter& write_p(const RpcList &values);
 	ChainPackWriter& write_p(const RpcValue::Map &values);
 	ChainPackWriter& write_p(const RpcValue::IMap &values);
 };

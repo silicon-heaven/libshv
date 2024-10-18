@@ -44,7 +44,7 @@ DOCTEST_TEST_CASE("RpcMessage")
 				.setParams({{
 								{"a", 45},
 								{"b", "bar"},
-								{"c", RpcValue::List{1,2,3}},
+								{"c", RpcList{1,2,3}},
 							}});
 		rq.setMetaValue(RpcMessage::MetaType::Tag::ShvPath, "aus/mel/pres/A");
 		std::stringstream out;
@@ -97,7 +97,7 @@ DOCTEST_TEST_CASE("RpcMessage")
 				.setParams({{
 							   {"a", 45},
 							   {"b", "bar"},
-							   {"c", RpcValue::List{1,2,3}},
+							   {"c", RpcList{1,2,3}},
 						   }});
 		nDebug() << rq.toCpon();
 		REQUIRE(rq.isSignal());

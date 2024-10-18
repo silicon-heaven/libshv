@@ -324,7 +324,7 @@ std::vector<ShvFieldDescr> ShvTypeDescr::fields() const
 
 ShvTypeDescr &ShvTypeDescr::setFields(const std::vector<ShvFieldDescr> &fields)
 {
-	RpcValue::List cp_fields;
+	RpcList cp_fields;
 	for (const ShvFieldDescr &field : fields) {
 		cp_fields.push_back(field.toRpcValue());
 	}
@@ -502,7 +502,7 @@ ShvTypeDescr ShvTypeDescr::fromRpcValue(const RpcValue &v)
 	{
 		RpcValue::Map map = v.asMap();
 		RpcValue src_fields = map.take("fields");
-		RpcValue::List fields;
+		RpcList fields;
 		for(const auto &rv : src_fields.asList()) {
 			RpcValue::Map field = rv.asMap();
 			mergeTags(field);
@@ -573,7 +573,7 @@ ShvMethodDescr ShvPropertyDescr::method(const std::string &name) const
 
 ShvPropertyDescr &ShvPropertyDescr::addMethod(const ShvMethodDescr &method_descr)
 {
-	RpcValue::List new_methods = dataValue(KEY_METHODS).asList();
+	RpcList new_methods = dataValue(KEY_METHODS).asList();
 	new_methods.push_back(method_descr.toRpcValue());
 	setDataValue(KEY_METHODS, new_methods);
 	return *this;
@@ -594,7 +594,7 @@ ShvPropertyDescr &ShvPropertyDescr::setMethod(const ShvMethodDescr &method_descr
 	if(!method_found) {
 		method_list.push_back(method_descr);
 	}
-	RpcValue::List new_methods;
+	RpcList new_methods;
 	for(const auto &mm : method_list) {
 		new_methods.push_back(mm.toRpcValue());
 	}
@@ -605,7 +605,7 @@ ShvPropertyDescr &ShvPropertyDescr::setMethod(const ShvMethodDescr &method_descr
 RpcValue ShvPropertyDescr::toRpcValue() const
 {
 	auto rv = Super::toRpcValue();
-	RpcValue::List mml;
+	RpcList mml;
 	for (const auto &m : methods()) {
 		mml.push_back(m.toMap());
 	}
@@ -706,7 +706,7 @@ RpcValue ShvDeviceDescription::toRpcValue() const
 		ret[KEY_RESTRICTION_OF_DEVICE] = restrictionOfDevice;
 	if(siteSpecificLocalization)
 		ret[KEY_SITE_SPECIFIC_LOCALIZATION] = siteSpecificLocalization;
-	RpcValue::List props;
+	RpcList props;
 	for(const auto &pd : properties) {
 		props.push_back(pd.toRpcValue());
 	}
@@ -1290,7 +1290,7 @@ void ShvTypeInfo::fromNodesTree_helper(const RpcValue::Map &node_types,
 	ShvDeviceDescription new_device_description;
 	ShvDeviceDescription *current_device_description = device_description? device_description: &new_device_description;
 	RpcValue::Map property_descr_map;
-	RpcValue::List property_methods;
+	RpcList property_methods;
 	bool new_device_type_entered = device_description == nullptr;
 	static const string CREATE_FROM_TYPE_NAME = "createFromTypeName";
 	static const string SYSTEM_PATH = "systemPath";

@@ -73,7 +73,7 @@ shv::chainpack::RpcValue CurrentClientShvNode::callMethodRq(const shv::chainpack
 				const string user_name = cli->userName();
 				auto user_def = shv::broker::BrokerApp::instance()->aclManager()->user(user_name);
 				auto roles = app->aclManager()->userFlattenRoles(user_name, user_def.roles);
-				cp::RpcValue::List ret;
+				cp::RpcList ret;
 				std::copy(roles.begin(), roles.end(), std::back_inserter(ret));
 #if WITH_SHV_LDAP
 				auto ldap_roles = app->aclManager()->ldapUserFlattenRoles(user_name, user_def.roles);
@@ -140,7 +140,7 @@ shv::chainpack::RpcValue CurrentClientShvNode::callMethodRq(const shv::chainpack
 			if (!rq.params().isList()) {
 				throw_wrong_format();
 			}
-			const shv::chainpack::RpcValue::List &param_lst = params.asList();
+			const shv::chainpack::RpcList &param_lst = params.asList();
 			if (!param_lst[0].isString() || !param_lst[1].isString()) {
 				throw_wrong_format();
 			}

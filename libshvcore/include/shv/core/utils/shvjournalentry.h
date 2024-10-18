@@ -71,7 +71,7 @@ public:
 	shv::chainpack::RpcValue toRpcValue() const;
 	static ShvJournalEntry fromRpcValue(const shv::chainpack::RpcValue &rv);
 	static ShvJournalEntry fromRpcValueMap(const shv::chainpack::RpcValue::Map &m);
-	static ShvJournalEntry fromRpcValueList(const shv::chainpack::RpcValue::List &row, std::function< std::string (const chainpack::RpcValue &)> unmap_path = nullptr, std::string *err = nullptr);
+	static ShvJournalEntry fromRpcValueList(const shv::chainpack::RpcList &row, std::function< std::string (const chainpack::RpcValue &)> unmap_path = nullptr, std::string *err = nullptr);
 
 	shv::chainpack::DataChange toDataChange() const;
 };

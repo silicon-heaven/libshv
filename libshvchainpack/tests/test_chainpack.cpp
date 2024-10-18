@@ -322,7 +322,7 @@ DOCTEST_TEST_CASE("ChainPack")
 			}
 		}
 		{
-			RpcValue cp1{RpcValue::List{1,2,3}};
+			RpcValue cp1{RpcList{1,2,3}};
 			std::stringstream out;
 			{ ChainPackWriter wr(out);  wr.write(cp1); }
 			ChainPackReader rd(out); RpcValue cp2 = rd.read();
@@ -344,7 +344,7 @@ DOCTEST_TEST_CASE("ChainPack")
 			}
 			ChainPackReader rd(out); RpcValue cp2 = rd.read();
 			nDebug() << cp2.toCpon() << " dump: " << binary_dump(out.str()).c_str();
-			const RpcValue::List list = cp2.asList();
+			const RpcList list = cp2.asList();
 			REQUIRE(list.size() == N);
 			for (size_t i = 0; i < list.size(); ++i) {
 				std::string s("foo-bar");
@@ -356,7 +356,7 @@ DOCTEST_TEST_CASE("ChainPack")
 	{
 		{
 			RpcValue cp1{{
-					{"foo", RpcValue::List{11,12,13}},
+					{"foo", RpcList{11,12,13}},
 					{"bar", 2},
 					{"baz", 3},
 						 }};
@@ -369,7 +369,7 @@ DOCTEST_TEST_CASE("ChainPack")
 		}
 		{
 			RpcValue::Map m{
-					{"foo", RpcValue::List{11,12,13}},
+					{"foo", RpcList{11,12,13}},
 					{"bar", 2},
 					{"baz", 3},
 						 };
@@ -416,7 +416,7 @@ DOCTEST_TEST_CASE("ChainPack")
 		}
 		{
 			RpcValue cp1{{
-					{127, RpcValue::List{11,12,13}},
+					{127, RpcList{11,12,13}},
 					{128, 2},
 					{129, 3},
 						 }};
@@ -446,11 +446,11 @@ DOCTEST_TEST_CASE("ChainPack")
 		}
 		{
 			nDebug() << "------------- Meta2";
-			RpcValue cp1{RpcValue::List{"META2", 17, 18, 19}};
+			RpcValue cp1{RpcList{"META2", 17, 18, 19}};
 			cp1.setMetaValue(meta::Tag::MetaTypeNameSpaceId, 12);
 			cp1.setMetaValue(meta::Tag::MetaTypeId, 2);
 			cp1.setMetaValue(meta::Tag::USER, "foo");
-			cp1.setMetaValue(meta::Tag::USER+1, RpcValue::List{1,2,3});
+			cp1.setMetaValue(meta::Tag::USER+1, RpcList{1,2,3});
 			cp1.setMetaValue("bar", 3);
 			std::stringstream out;
 			{ ChainPackWriter wr(out);  wr.write(cp1); }
