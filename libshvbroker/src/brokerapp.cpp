@@ -262,7 +262,11 @@ auto transform_cli_group_mapping(const chainpack::RpcValue::List& cli_group_mapp
 				   [] (const auto& mapping) {
 					   auto mapping_list = mapping.asList();
 					   if (mapping_list.size() != 2) {
+#ifdef _MSC_VER
+						   SHV_EXCEPTION(__FUNCSIG__ + std::string{": group mapping isn't a pair."});
+#else
 						   SHV_EXCEPTION(__PRETTY_FUNCTION__ + std::string{": group mapping isn't a pair."});
+#endif
 					   }
 					   return GroupMapping {
 						   .nativeGroup = mapping.asList().at(0).asString(),
