@@ -8,8 +8,6 @@
 #include <regex>
 #include <sstream>
 
-#include <unistd.h>
-
 using namespace std;
 using namespace shv::chainpack;
 
