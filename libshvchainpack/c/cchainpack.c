@@ -1,5 +1,6 @@
 #include <shv/chainpack/cchainpack.h>
 
+#include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 
@@ -131,7 +132,11 @@ static int bytes_needed(int bit_len)
 static void pack_uint_data_helper(ccpcp_pack_context* pack_context, uint64_t num, int bit_len)
 {
 	int byte_cnt = bytes_needed(bit_len);
-	uint8_t bytes[byte_cnt];
+	// 32 bytes should be enough for any number. Can't use a VLA for `bytes`, because MSVC doesn't support it.
+	if (byte_cnt > 32) {
+		abort();
+	}
+	uint8_t bytes[32];
 	int i;
 	for (i = byte_cnt-1; i >= 0; --i) {
 		uint8_t r = num & 255;
