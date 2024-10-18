@@ -95,8 +95,6 @@ public:
 
 	static std::string simplifyPath(const std::string &p);
 
-	static std::vector<char> readAllFd(int fd);
-
 	template<typename T>
 	static T getIntLE(const char *buff, unsigned len)
 	{
