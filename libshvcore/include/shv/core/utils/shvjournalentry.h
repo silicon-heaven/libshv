@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../shvcoreglobal.h"
+#include <shv/core/shvcoreglobal.h>
 
-#include "shvtypeinfo.h"
+#include <shv/core/utils/shvtypeinfo.h>
 
 #include <shv/chainpack/datachange.h>
 #include <shv/chainpack/rpc.h>

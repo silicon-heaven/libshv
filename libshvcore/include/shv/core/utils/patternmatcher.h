@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../shvcoreglobal.h"
+#include <shv/core/shvcoreglobal.h>
 
-#include "shvgetlogparams.h"
-#include "shvjournalentry.h"
+#include <shv/core/utils/shvgetlogparams.h>
+#include <shv/core/utils/shvjournalentry.h>
 
 #include <regex>
 

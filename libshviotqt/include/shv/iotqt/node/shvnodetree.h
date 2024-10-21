@@ -1,6 +1,6 @@
 #pragma once
 
-#include "shvnode.h"
+#include <shv/iotqt/node/shvnode.h>
 
 #include <QObject>
 

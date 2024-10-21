@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../shvcoreglobal.h"
+#include <shv/core/shvcoreglobal.h>
 
-#include "abstractshvjournal.h"
-#include "patternmatcher.h"
-#include "shvgetlogparams.h"
+#include <shv/core/utils/abstractshvjournal.h>
+#include <shv/core/utils/patternmatcher.h>
+#include <shv/core/utils/shvgetlogparams.h>
 
 namespace shv::core::utils {
 

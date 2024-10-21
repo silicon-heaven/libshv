@@ -1,6 +1,6 @@
 #pragma once
 
-#include "shvbrokerglobal.h"
+#include <shv/broker/shvbrokerglobal.h>
 
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/core/utils/clioptions.h>

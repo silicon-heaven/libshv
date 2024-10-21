@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../shviotqtglobal.h"
-#include "socketrpcconnection.h"
+#include <shv/iotqt/shviotqtglobal.h>
+#include <shv/iotqt/rpc/socketrpcconnection.h>
 
 #include <shv/chainpack/irpcconnection.h>
 #include <shv/chainpack/rpcmessage.h>

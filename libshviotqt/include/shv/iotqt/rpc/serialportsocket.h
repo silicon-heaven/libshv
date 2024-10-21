@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../shviotqtglobal.h"
-#include "socket.h"
+#include <shv/iotqt/shviotqtglobal.h>
+#include <shv/iotqt/rpc/socket.h>
 
 #include <shv/chainpack/crc32.h>
 #include <shv/coreqt/log.h>

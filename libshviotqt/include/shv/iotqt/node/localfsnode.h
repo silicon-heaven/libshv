@@ -1,6 +1,6 @@
 #pragma once
 
-#include "filenode.h"
+#include <shv/iotqt/node/filenode.h>
 
 #include <QDir>
 #include <QMap>

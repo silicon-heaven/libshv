@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../shviotqtglobal.h"
+#include <shv/iotqt/shviotqtglobal.h>
 
 #include <string>
 

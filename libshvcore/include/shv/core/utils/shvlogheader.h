@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../shvcoreglobal.h"
+#include <shv/core/shvcoreglobal.h>
 
-#include "shvtypeinfo.h"
-#include "shvgetlogparams.h"
-#include "../utils.h"
+#include <shv/core/utils/shvtypeinfo.h>
+#include <shv/core/utils/shvgetlogparams.h>
+#include <shv/core/utils.h>
 
 #include <shv/chainpack/rpcvalue.h>
 

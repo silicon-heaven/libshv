@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../shvcoreglobal.h"
+#include <shv/core/shvcoreglobal.h>
 
 #include <string>
 #include <map>

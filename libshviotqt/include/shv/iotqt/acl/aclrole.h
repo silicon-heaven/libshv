@@ -2,7 +2,7 @@
 
 #include <shv/iotqt/shviotqtglobal.h>
 
-#include "shv/chainpack/rpcvalue.h"
+#include <shv/chainpack/rpcvalue.h>
 
 #include <string>
 #include <vector>

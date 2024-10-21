@@ -1,6 +1,6 @@
 #pragma once
 
-#include "socket.h"
+#include <shv/iotqt/rpc/socket.h>
 
 class QWebSocket;
 

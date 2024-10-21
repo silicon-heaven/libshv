@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types.h"
+#include <shv/visu/svgscene/types.h>
 
 #include <QPen>
 #include <QMap>

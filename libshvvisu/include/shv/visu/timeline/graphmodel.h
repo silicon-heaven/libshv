@@ -1,7 +1,7 @@
 #pragma once
 
-#include "sample.h"
-#include "../shvvisuglobal.h"
+#include <shv/visu/timeline/sample.h>
+#include <shv/visu/shvvisuglobal.h>
 
 #include <QObject>
 #include <QVariant>

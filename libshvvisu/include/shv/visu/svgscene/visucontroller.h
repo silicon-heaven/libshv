@@ -1,7 +1,7 @@
 #pragma once
 
-#include "saxhandler.h"
-#include "types.h"
+#include <shv/visu/svgscene/saxhandler.h>
+#include <shv/visu/svgscene/types.h>
 
 #include <shv/core/utils.h>
 

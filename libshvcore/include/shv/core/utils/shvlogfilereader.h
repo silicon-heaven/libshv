@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../shvcoreglobal.h"
+#include <shv/core/shvcoreglobal.h>
 
-#include "shvlogheader.h"
-#include "shvjournalentry.h"
+#include <shv/core/utils/shvlogheader.h>
+#include <shv/core/utils/shvjournalentry.h>
 
 #include <shv/chainpack/chainpackreader.h>
 
