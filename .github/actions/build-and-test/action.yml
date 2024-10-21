@@ -16,5 +16,6 @@ runs:
       run: |
         # https://github.com/DiligentGraphics/github-action/commit/d2f7990b16def1efa337e5cc2fc8fa22b6fae55d
         PATH="/c/mingw64/bin:$PATH"
-        ctest --output-on-failure -j"$(nproc)"
+        # --build-config is only needed for MSVC, but it doesn't bother Linux builds.
+        ctest --output-on-failure --parallel "$(nproc)" --build-config Debug
       shell: bash
