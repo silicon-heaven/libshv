@@ -129,11 +129,6 @@ private:
 	ValueType m_xType;
 	ValueType m_yType;
 };
-
-class SHVCOREQT_DECL_EXPORT SerieDataList : public QVector<SerieData>
-{
-};
-
 } // namespace shv::coreqt::data
 
 
