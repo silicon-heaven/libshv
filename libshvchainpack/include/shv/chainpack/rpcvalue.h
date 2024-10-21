@@ -138,6 +138,33 @@ private:
 	MsTz m_dtm = {0, 0};
 };
 
+class SHVCHAINPACK_DECL_EXPORT RpcDecimal
+{
+	static constexpr int Base = 10;
+	struct Num {
+		int64_t mantisa = 0;
+		int exponent = 0;
+
+		Num();
+		Num(int64_t m, int e);
+		bool operator==(const Num&) const = default;
+	};
+	Num m_num;
+public:
+	RpcDecimal();
+	RpcDecimal(int64_t mantisa, int exponent);
+	RpcDecimal(int dec_places);
+
+	int64_t mantisa() const;
+	int exponent() const;
+
+	static RpcDecimal fromDouble(double d, int round_to_dec_places);
+	void setDouble(double d);
+	double toDouble() const;
+	std::string toString() const;
+	bool operator==(const RpcDecimal&) const = default;
+};
+
 class SHVCHAINPACK_DECL_EXPORT RpcValue
 {
 public:
@@ -167,32 +194,7 @@ public:
 	using Bool = bool;
 	using List = RpcList;
 	using DateTime = RpcDateTime;
-	class SHVCHAINPACK_DECL_EXPORT Decimal
-	{
-		static constexpr int Base = 10;
-		struct Num {
-			int64_t mantisa = 0;
-			int exponent = 0;
-
-			Num();
-			Num(int64_t m, int e);
-			bool operator==(const Num&) const = default;
-		};
-		Num m_num;
-	public:
-		Decimal();
-		Decimal(int64_t mantisa, int exponent);
-		Decimal(int dec_places);
-
-		int64_t mantisa() const;
-		int exponent() const;
-
-		static Decimal fromDouble(double d, int round_to_dec_places);
-		void setDouble(double d);
-		double toDouble() const;
-		std::string toString() const;
-		bool operator==(const Decimal&) const = default;
-	};
+	using Decimal = RpcDecimal;
 
 	using String = std::string;
 	using Blob = std::vector<uint8_t>;
@@ -286,7 +288,7 @@ public:
 	RpcValue(unsigned long value);      // UInt
 	RpcValue(unsigned long long value); // UInt
 	RpcValue(double value);             // Double
-	RpcValue(const Decimal& value);     // Decimal
+	RpcValue(const RpcDecimal& value);     // Decimal
 	RpcValue(const RpcDateTime &value);
 
 	RpcValue(const uint8_t *value, size_t size);
@@ -353,7 +355,7 @@ public:
 	bool isValueNotAvailable() const;
 
 	double toDouble() const;
-	Decimal toDecimal() const;
+	RpcDecimal toDecimal() const;
 	Int toInt() const;
 	UInt toUInt() const;
 	int64_t toInt64() const;
@@ -385,7 +387,7 @@ public:
 			return asString();
 		else if constexpr (std::is_same<T, RpcDateTime>())
 			return toDateTime();
-		else if constexpr (std::is_same<T, Decimal>())
+		else if constexpr (std::is_same<T, RpcDecimal>())
 			return toDecimal();
 		else if constexpr (std::is_same<T, RpcList>())
 			return asList();
@@ -405,7 +407,7 @@ public:
 			return isString();
 		else if constexpr (std::is_same<T, RpcDateTime>())
 			return isDateTime();
-		else if constexpr (std::is_same<T, Decimal>())
+		else if constexpr (std::is_same<T, RpcDecimal>())
 			return isDecimal();
 		else if constexpr (std::is_same<T, RpcList>())
 			return isList();
