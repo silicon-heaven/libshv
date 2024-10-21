@@ -165,6 +165,10 @@ public:
 	bool operator==(const RpcDecimal&) const = default;
 };
 
+class RpcMap;
+class RpcIMap;
+class RpcMetaData;
+
 class SHVCHAINPACK_DECL_EXPORT RpcValue
 {
 public:
@@ -202,73 +206,9 @@ public:
 	static String blobToString(const Blob &s, bool *check_utf8 = nullptr);
 	static Blob stringToBlob(const String &s);
 
-	class SHVCHAINPACK_DECL_EXPORT Map : public std::map<String, RpcValue>
-	{
-		using Super = std::map<String, RpcValue>;
-		using Super::Super; // expose base class constructors
-	public:
-		RpcValue take(const String &key, const RpcValue &default_val = RpcValue());
-		RpcValue value(const String &key, const RpcValue &default_val = RpcValue()) const;
-		const RpcValue& valref(const String &key) const;
-		void setValue(const String &key, const RpcValue &val);
-		bool hasKey(const String &key) const;
-		std::vector<String> keys() const;
-	};
-	class SHVCHAINPACK_DECL_EXPORT IMap : public std::map<Int, RpcValue>
-	{
-		using Super = std::map<Int, RpcValue>;
-		using Super::Super; // expose base class constructors
-	public:
-		RpcValue value(Int key, const RpcValue &default_val = RpcValue()) const;
-		const RpcValue& valref(Int key) const;
-		void setValue(Int key, const RpcValue &val);
-		bool hasKey(Int key) const;
-		std::vector<Int> keys() const;
-	};
-
-	class SHVCHAINPACK_DECL_EXPORT MetaData
-	{
-	public:
-		MetaData();
-		MetaData(const MetaData &o);
-		MetaData(MetaData &&o) noexcept;
-		MetaData(RpcValue::IMap &&imap);
-		MetaData(RpcValue::Map &&smap);
-		MetaData(RpcValue::IMap &&imap, RpcValue::Map &&smap);
-		~MetaData() = default;
-
-		MetaData& operator=(const MetaData &o);
-		MetaData& operator =(MetaData &&o) noexcept;
-
-		int metaTypeId() const;
-		void setMetaTypeId(RpcValue::Int id);
-		int metaTypeNameSpaceId() const;
-		void setMetaTypeNameSpaceId(RpcValue::Int id);
-		std::vector<RpcValue::Int> iKeys() const;
-		std::vector<RpcValue::String> sKeys() const;
-		bool hasKey(RpcValue::Int key) const;
-		bool hasKey(const RpcValue::String &key) const;
-		RpcValue value(RpcValue::Int key, const RpcValue &def_val = RpcValue()) const;
-		RpcValue value(const RpcValue::String &key, const RpcValue &def_val = RpcValue()) const;
-		const RpcValue& valref(RpcValue::Int key) const;
-		const RpcValue& valref(const String &key) const;
-		void setValue(RpcValue::Int key, const RpcValue &val);
-		void setValue(const RpcValue::String &key, const RpcValue &val);
-		size_t size() const;
-		bool isEmpty() const;
-		bool operator==(const MetaData &o) const;
-		const RpcValue::IMap& iValues() const;
-		const RpcValue::Map& sValues() const;
-		std::string toPrettyString() const;
-		std::string toString(const std::string &indent = std::string()) const;
-
-		//MetaData* clone() const;
-	private:
-		void swap(MetaData &o) noexcept;
-	private:
-		RpcValue::IMap m_imap;
-		RpcValue::Map m_smap;
-	};
+	using Map = RpcMap;
+	using IMap = RpcIMap;
+	using MetaData = RpcMetaData;
 
 	// Constructors for the various types of JSON value.
 	RpcValue() noexcept;                // Invalid
@@ -467,6 +407,75 @@ public:
 	RpcValue value(size_t ix) const;
 	const RpcValue& valref(size_t ix) const;
 	static RpcList fromStringList(const std::vector<std::string> &sl);
+};
+
+class SHVCHAINPACK_DECL_EXPORT RpcMap : public std::map<RpcValue::String, RpcValue>
+{
+	using Super = std::map<std::string, RpcValue>;
+	using Super::Super; // expose base class constructors
+public:
+	RpcValue take(const RpcValue::String &key, const RpcValue &default_val = RpcValue());
+	RpcValue value(const RpcValue::String &key, const RpcValue &default_val = RpcValue()) const;
+	const RpcValue& valref(const RpcValue::String &key) const;
+	void setValue(const RpcValue::String &key, const RpcValue &val);
+	bool hasKey(const RpcValue::String &key) const;
+	std::vector<RpcValue::String> keys() const;
+};
+
+class SHVCHAINPACK_DECL_EXPORT RpcIMap : public std::map<RpcValue::Int, RpcValue>
+{
+	using Super = std::map<RpcValue::Int, RpcValue>;
+	using Super::Super; // expose base class constructors
+public:
+	RpcValue value(RpcValue::Int key, const RpcValue &default_val = RpcValue()) const;
+	const RpcValue& valref(RpcValue::Int key) const;
+	void setValue(RpcValue::Int key, const RpcValue &val);
+	bool hasKey(RpcValue::Int key) const;
+	std::vector<RpcValue::Int> keys() const;
+};
+
+class SHVCHAINPACK_DECL_EXPORT RpcMetaData
+{
+public:
+	RpcMetaData();
+	RpcMetaData(const RpcMetaData &o);
+	RpcMetaData(RpcMetaData &&o) noexcept;
+	RpcMetaData(RpcValue::IMap &&imap);
+	RpcMetaData(RpcValue::Map &&smap);
+	RpcMetaData(RpcValue::IMap &&imap, RpcValue::Map &&smap);
+	~RpcMetaData() = default;
+
+	RpcMetaData& operator=(const RpcMetaData &o);
+	RpcMetaData& operator =(RpcMetaData &&o) noexcept;
+
+	int metaTypeId() const;
+	void setMetaTypeId(RpcValue::Int id);
+	int metaTypeNameSpaceId() const;
+	void setMetaTypeNameSpaceId(RpcValue::Int id);
+	std::vector<RpcValue::Int> iKeys() const;
+	std::vector<RpcValue::String> sKeys() const;
+	bool hasKey(RpcValue::Int key) const;
+	bool hasKey(const RpcValue::String &key) const;
+	RpcValue value(RpcValue::Int key, const RpcValue &def_val = RpcValue()) const;
+	RpcValue value(const RpcValue::String &key, const RpcValue &def_val = RpcValue()) const;
+	const RpcValue& valref(RpcValue::Int key) const;
+	const RpcValue& valref(const RpcValue::String &key) const;
+	void setValue(RpcValue::Int key, const RpcValue &val);
+	void setValue(const RpcValue::String &key, const RpcValue &val);
+	size_t size() const;
+	bool isEmpty() const;
+	bool operator==(const RpcMetaData &o) const;
+	const RpcValue::IMap& iValues() const;
+	const RpcValue::Map& sValues() const;
+	std::string toPrettyString() const;
+	std::string toString(const std::string &indent = std::string()) const;
+
+	//MetaData* clone() const;
+private:
+	void swap(RpcMetaData &o) noexcept;
+private:
+	RpcValue::IMap m_imap;
+	RpcValue::Map m_smap;
 };
 
 namespace string_literals {

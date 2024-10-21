@@ -32,8 +32,8 @@ namespace shv::chainpack {
 inline NecroLog &operator<<(NecroLog log, const shv::chainpack::RpcDecimal &d) { return log.operator <<(d.toDouble()); }
 inline NecroLog &operator<<(NecroLog log, const shv::chainpack::RpcValue::DateTime &d) { return log.operator <<(d.toIsoString()); }
 inline NecroLog &operator<<(NecroLog log, const shv::chainpack::List &d) { return log.operator <<("some_list:" + std::to_string(d.size())); }
-inline NecroLog &operator<<(NecroLog log, const shv::chainpack::RpcValue::Map &d) { return log.operator <<("some_map:" + std::to_string(d.size())); }
-inline NecroLog &operator<<(NecroLog log, const shv::chainpack::RpcValue::IMap &d) { return log.operator <<("some_imap:" + std::to_string(d.size())); }
+inline NecroLog &operator<<(NecroLog log, const shv::chainpack::RpcMap &d) { return log.operator <<("some_map:" + std::to_string(d.size())); }
+inline NecroLog &operator<<(NecroLog log, const shv::chainpack::RpcIMap &d) { return log.operator <<("some_imap:" + std::to_string(d.size())); }
 inline NecroLog &operator<<(NecroLog log, std::nullptr_t) { return log.operator <<("NULL"); }
 
 static int value_data_cnt = 0;
@@ -61,8 +61,8 @@ namespace {
 const CowPtr<RpcValue::String>& static_empty_string() { static const CowPtr<RpcValue::String> s{std::make_shared<RpcValue::String>()}; return s; }
 const CowPtr<RpcValue::Blob>& static_empty_blob() { static const CowPtr<RpcValue::Blob> s{std::make_shared<RpcValue::Blob>()}; return s; }
 const CowPtr<RpcList>& static_empty_list() { static const CowPtr<RpcList> s{std::make_shared<RpcList>()}; return s; }
-const CowPtr<RpcValue::Map>& static_empty_map() { static const CowPtr<RpcValue::Map> s{std::make_shared<RpcValue::Map>()}; return s; }
-const CowPtr<RpcValue::IMap>& static_empty_imap() { static const CowPtr<RpcValue::IMap> s{std::make_shared<RpcValue::IMap>()}; return s; }
+const CowPtr<RpcMap>& static_empty_map() { static const CowPtr<RpcMap> s{std::make_shared<RpcMap>()}; return s; }
+const CowPtr<RpcIMap>& static_empty_imap() { static const CowPtr<RpcIMap> s{std::make_shared<RpcIMap>()}; return s; }
 }
 
 /* * * * * * * * * * * * * * * * * * * *
@@ -116,11 +116,11 @@ RpcValue::RpcValue(const char * value) : m_value(std::make_shared<std::string>(v
 RpcValue::RpcValue(const RpcList &values) : m_value(CowPtr{std::make_shared<RpcList>(values)}) {}
 RpcValue::RpcValue(RpcList &&values) : m_value(CowPtr{std::make_shared<RpcList>(std::move(values))}) {}
 
-RpcValue::RpcValue(const RpcValue::Map &values) : m_value(CowPtr{std::make_shared<RpcValue::Map>(values)}) {}
-RpcValue::RpcValue(RpcValue::Map &&values) : m_value(CowPtr{std::make_shared<RpcValue::Map>(std::move(values))}) {}
+RpcValue::RpcValue(const RpcMap &values) : m_value(CowPtr{std::make_shared<RpcMap>(values)}) {}
+RpcValue::RpcValue(RpcMap &&values) : m_value(CowPtr{std::make_shared<RpcMap>(std::move(values))}) {}
 
-RpcValue::RpcValue(const RpcValue::IMap &values) : m_value(CowPtr{std::make_shared<RpcValue::IMap>(values)}) {}
-RpcValue::RpcValue(RpcValue::IMap &&values) : m_value(CowPtr{std::make_shared<RpcValue::IMap>(std::move(values))}) {}
+RpcValue::RpcValue(const RpcIMap &values) : m_value(CowPtr{std::make_shared<RpcIMap>(values)}) {}
+RpcValue::RpcValue(RpcIMap &&values) : m_value(CowPtr{std::make_shared<RpcIMap>(std::move(values))}) {}
 
 #ifdef RPCVALUE_COPY_AND_SWAP
 void RpcValue::swap(RpcValue& other) noexcept
@@ -137,7 +137,7 @@ RpcValue::Type RpcValue::type() const
 {
 	return static_cast<Type>(m_value.index());
 }
-const RpcValue::MetaData &RpcValue::metaData() const
+const RpcMetaData &RpcValue::metaData() const
 {
 	static MetaData md;
 	if (m_meta) {
@@ -160,7 +160,7 @@ RpcValue RpcValue::metaValue(const RpcValue::String &key, const RpcValue &defaul
 	return ret;
 }
 
-void RpcValue::setMetaData(RpcValue::MetaData &&meta_data)
+void RpcValue::setMetaData(RpcMetaData &&meta_data)
 {
 	if (type() == Type::Invalid)
 		SHVCHP_EXCEPTION("Cannot set valid meta data to invalid ChainPack value!");
@@ -323,8 +323,8 @@ double RpcValue::toDouble() const
 				   std::is_same<TypeX, RpcValue::Bool>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::String>>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
-				   std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
-				   std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
+				   std::is_same<TypeX, CowPtr<RpcMap>>() ||
+				   std::is_same<TypeX, CowPtr<RpcIMap>>() ||
 				   std::is_same<TypeX, CowPtr<RpcList>>()) {
 			return double{0};
 		} else {
@@ -367,8 +367,8 @@ ResultType impl_to_int(const RpcValue::VariantType& value)
 				   std::is_same<TypeX, RpcValue::Null>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::String>>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
-				   std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
-				   std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
+				   std::is_same<TypeX, CowPtr<RpcMap>>() ||
+				   std::is_same<TypeX, CowPtr<RpcIMap>>() ||
 				   std::is_same<TypeX, CowPtr<RpcList>>()) {
 			return ResultType{0};
 		} else {
@@ -424,8 +424,8 @@ bool RpcValue::toBool() const
 		} else if constexpr (std::is_same<TypeX, RpcValue::Invalid>() ||
 							 std::is_same<TypeX, RpcValue::Null>() ||
 							 std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
-							 std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
-							 std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
+							 std::is_same<TypeX, CowPtr<RpcMap>>() ||
+							 std::is_same<TypeX, CowPtr<RpcIMap>>() ||
 							 std::is_same<TypeX, CowPtr<RpcList>>() ||
 							 std::is_same<TypeX, CowPtr<RpcValue::String>>()) {
 			return false;
@@ -453,8 +453,8 @@ RpcValue::String RpcValue::toString() const
 				   std::is_arithmetic<TypeX>() ||
 				   std::is_same<TypeX, RpcValue::DateTime>() ||
 				   std::is_same<TypeX, RpcDecimal>() ||
-				   std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
-				   std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
+				   std::is_same<TypeX, CowPtr<RpcMap>>() ||
+				   std::is_same<TypeX, CowPtr<RpcIMap>>() ||
 				   std::is_same<TypeX, CowPtr<RpcList>>()) {
 			return std::string();
 		} else {
@@ -478,14 +478,14 @@ const RpcList& RpcValue::asList() const
 	return *try_convert_or_default<CowPtr<RpcList>>(m_value, static_empty_list());
 }
 
-const RpcValue::Map& RpcValue::asMap() const
+const RpcMap& RpcValue::asMap() const
 {
-	return *try_convert_or_default<CowPtr<RpcValue::Map>>(m_value, static_empty_map());
+	return *try_convert_or_default<CowPtr<RpcMap>>(m_value, static_empty_map());
 }
 
-const RpcValue::IMap& RpcValue::asIMap() const
+const RpcIMap& RpcValue::asIMap() const
 {
-	return *try_convert_or_default<CowPtr<RpcValue::IMap>>(m_value, static_empty_imap());
+	return *try_convert_or_default<CowPtr<RpcIMap>>(m_value, static_empty_imap());
 }
 
 std::pair<const uint8_t *, size_t> RpcValue::asBytes() const
@@ -593,8 +593,8 @@ bool impl_has(const RpcValue::VariantType& value, const KeyType& key)
 {
 	return std::visit([key] (const auto& x) mutable {
 		using TypeX = std::remove_cvref_t<decltype(x)>;
-		if constexpr (std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
-					  std::is_same<TypeX, CowPtr<RpcValue::IMap>>()) {
+		if constexpr (std::is_same<TypeX, CowPtr<RpcMap>>() ||
+					  std::is_same<TypeX, CowPtr<RpcIMap>>()) {
 			if constexpr (std::is_same<TypeX, MapType>()) {
 				auto iter = x->find(key);
 				return iter != x->end();
@@ -665,8 +665,8 @@ void impl_set(RpcValue::VariantType& map, const KeyType& key, const RpcValue& va
 {
 	return std::visit([&key, &value] (auto& x) {
 		using TypeX = std::remove_cvref_t<decltype(x)>;
-		if constexpr ((std::is_same<TypeX, CowPtr<RpcValue::Map>>() && std::is_same<std::remove_cvref_t<KeyType>, std::string>()) ||
-					  (std::is_same<TypeX, CowPtr<RpcValue::IMap>>() && std::is_same<std::remove_cvref_t<KeyType>, RpcValue::Int>())) {
+		if constexpr ((std::is_same<TypeX, CowPtr<RpcMap>>() && std::is_same<std::remove_cvref_t<KeyType>, std::string>()) ||
+					  (std::is_same<TypeX, CowPtr<RpcIMap>>() && std::is_same<std::remove_cvref_t<KeyType>, RpcValue::Int>())) {
 			if (value.isValid()) {
 				x->insert_or_assign(key, value);
 			} else {
@@ -676,9 +676,9 @@ void impl_set(RpcValue::VariantType& map, const KeyType& key, const RpcValue& va
 				   std::is_same<TypeX, RpcValue::Null>() ||
 				   std::is_arithmetic<TypeX>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
-				   std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
+				   std::is_same<TypeX, CowPtr<RpcIMap>>() ||
 				   std::is_same<TypeX, CowPtr<RpcList>>() ||
-				   std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
+				   std::is_same<TypeX, CowPtr<RpcMap>>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::String>>() ||
 				   std::is_same<TypeX, RpcValue::DateTime>() ||
 				   std::is_same<TypeX, RpcDecimal>()) {
@@ -709,8 +709,8 @@ void RpcValue::append(const RpcValue &val)
 		} else if constexpr (std::is_same<TypeX, RpcValue::Invalid>() ||
 				   std::is_same<TypeX, RpcValue::Null>() ||
 				   std::is_arithmetic<TypeX>() ||
-				   std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
-				   std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
+				   std::is_same<TypeX, CowPtr<RpcIMap>>() ||
+				   std::is_same<TypeX, CowPtr<RpcMap>>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::String>>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
 				   std::is_same<TypeX, RpcValue::DateTime>() ||
@@ -722,7 +722,7 @@ void RpcValue::append(const RpcValue &val)
 	}, m_value);
 }
 
-RpcValue::MetaData RpcValue::takeMeta()
+RpcMetaData RpcValue::takeMeta()
 {
 	return *std::exchange(m_meta, nullptr);
 }
@@ -1167,15 +1167,15 @@ bool RpcDateTime::operator<=(const RpcDateTime &o) const
 static int cnt = 0;
 #endif
 #ifdef DEBUG_RPCVAL
-RpcValue::MetaData::MetaData()
+RpcMetaData::MetaData()
 {
 	logDebugRpcVal() << ++cnt << "+++MM default" << this;
 }
 #else
-RpcValue::MetaData::MetaData() = default;
+RpcMetaData::RpcMetaData() = default;
 #endif
 
-RpcValue::MetaData::MetaData(const RpcValue::MetaData &o)
+RpcMetaData::RpcMetaData(const RpcMetaData &o)
 {
 #ifdef DEBUG_RPCVAL
 	logDebugRpcVal() << ++cnt << "+++MM copy" << this << "<------" << &o;
@@ -1184,8 +1184,8 @@ RpcValue::MetaData::MetaData(const RpcValue::MetaData &o)
 	m_smap = o.m_smap;
 }
 
-RpcValue::MetaData::MetaData(RpcValue::MetaData &&o) noexcept
-	: MetaData()
+RpcMetaData::RpcMetaData(RpcMetaData &&o) noexcept
+	: RpcMetaData()
 {
 #ifdef DEBUG_RPCVAL
 	logDebugRpcVal() << ++cnt << "+++MM move" << this << "<------" << &o;
@@ -1193,7 +1193,7 @@ RpcValue::MetaData::MetaData(RpcValue::MetaData &&o) noexcept
 	swap(o);
 }
 
-RpcValue::MetaData::MetaData(RpcValue::IMap &&imap)
+RpcMetaData::RpcMetaData(RpcIMap &&imap)
 {
 #ifdef DEBUG_RPCVAL
 	logDebugRpcVal() << ++cnt << "+++MM move imap" << this;
@@ -1201,7 +1201,7 @@ RpcValue::MetaData::MetaData(RpcValue::IMap &&imap)
 	m_imap = std::move(imap);
 }
 
-RpcValue::MetaData::MetaData(RpcValue::Map &&smap)
+RpcMetaData::RpcMetaData(RpcMap &&smap)
 {
 #ifdef DEBUG_RPCVAL
 	logDebugRpcVal() << ++cnt << "+++MM move smap" << this;
@@ -1209,7 +1209,7 @@ RpcValue::MetaData::MetaData(RpcValue::Map &&smap)
 	m_smap = std::move(smap);
 }
 
-RpcValue::MetaData::MetaData(RpcValue::IMap &&imap, RpcValue::Map &&smap)
+RpcMetaData::RpcMetaData(RpcIMap &&imap, RpcMap &&smap)
 {
 #ifdef DEBUG_RPCVAL
 	logDebugRpcVal() << ++cnt << "+++MM move imap smap" << this;
@@ -1218,7 +1218,7 @@ RpcValue::MetaData::MetaData(RpcValue::IMap &&imap, RpcValue::Map &&smap)
 	m_smap = std::move(smap);
 }
 
-RpcValue::MetaData &RpcValue::MetaData::operator=(RpcValue::MetaData &&o) noexcept
+RpcMetaData &RpcMetaData::operator=(RpcMetaData &&o) noexcept
 {
 #ifdef DEBUG_RPCVAL
 	logDebugRpcVal() << "===MM op= move ref" << this;
@@ -1227,7 +1227,7 @@ RpcValue::MetaData &RpcValue::MetaData::operator=(RpcValue::MetaData &&o) noexce
 	return *this;
 }
 
-RpcValue::MetaData &RpcValue::MetaData::operator=(const RpcValue::MetaData &o)
+RpcMetaData &RpcMetaData::operator=(const RpcMetaData &o)
 {
 #ifdef DEBUG_RPCVAL
 	logDebugRpcVal() << "===MM op= const ref" << this;
@@ -1240,28 +1240,28 @@ RpcValue::MetaData &RpcValue::MetaData::operator=(const RpcValue::MetaData &o)
 	return *this;
 }
 
-int RpcValue::MetaData::metaTypeId() const
+int RpcMetaData::metaTypeId() const
 {
 	return value(meta::Tag::MetaTypeId).toInt();
 }
 
-void RpcValue::MetaData::setMetaTypeId(RpcValue::Int id)
+void RpcMetaData::setMetaTypeId(RpcValue::Int id)
 {
 	setValue(meta::Tag::MetaTypeId, id);
 }
 
-int RpcValue::MetaData::metaTypeNameSpaceId() const
+int RpcMetaData::metaTypeNameSpaceId() const
 {
 	return value(meta::Tag::MetaTypeNameSpaceId).toInt();
 }
 
-void RpcValue::MetaData::setMetaTypeNameSpaceId(RpcValue::Int id)
+void RpcMetaData::setMetaTypeNameSpaceId(RpcValue::Int id)
 {
 	setValue(meta::Tag::MetaTypeNameSpaceId, id);
 }
 
 
-std::vector<RpcValue::Int> RpcValue::MetaData::iKeys() const
+std::vector<RpcValue::Int> RpcMetaData::iKeys() const
 {
 	std::vector<RpcValue::Int> ret;
 	for(const auto &it : iValues())
@@ -1269,7 +1269,7 @@ std::vector<RpcValue::Int> RpcValue::MetaData::iKeys() const
 	return ret;
 }
 
-std::vector<RpcValue::String> RpcValue::MetaData::sKeys() const
+std::vector<RpcValue::String> RpcMetaData::sKeys() const
 {
 	std::vector<RpcValue::String> ret;
 	for(const auto &it : sValues())
@@ -1277,41 +1277,41 @@ std::vector<RpcValue::String> RpcValue::MetaData::sKeys() const
 	return ret;
 }
 
-bool RpcValue::MetaData::hasKey(RpcValue::Int key) const
+bool RpcMetaData::hasKey(RpcValue::Int key) const
 {
-	const IMap &m = iValues();
+	const RpcIMap &m = iValues();
 	auto it = m.find(key);
 	return (it != m.end());
 }
 
-bool RpcValue::MetaData::hasKey(const RpcValue::String &key) const
+bool RpcMetaData::hasKey(const RpcValue::String &key) const
 {
-	const Map &m = sValues();
+	const RpcMap &m = sValues();
 	auto it = m.find(key);
 	return (it != m.end());
 }
 
-RpcValue RpcValue::MetaData::value(RpcValue::Int key, const RpcValue &def_val) const
+RpcValue RpcMetaData::value(RpcValue::Int key, const RpcValue &def_val) const
 {
-	const IMap &m = iValues();
+	const RpcIMap &m = iValues();
 	auto it = m.find(key);
 	if(it != m.end())
 		return it->second;
 	return def_val;
 }
 
-RpcValue RpcValue::MetaData::value(const String &key, const RpcValue &def_val) const
+RpcValue RpcMetaData::value(const RpcValue::String &key, const RpcValue &def_val) const
 {
-	const Map &m = sValues();
+	const RpcMap &m = sValues();
 	auto it = m.find(key);
 	if(it != m.end())
 		return it->second;
 	return def_val;
 }
 
-const RpcValue &RpcValue::MetaData::valref(Int key) const
+const RpcValue &RpcMetaData::valref(RpcValue::Int key) const
 {
-	const IMap &m = iValues();
+	const RpcIMap &m = iValues();
 	auto it = m.find(key);
 	if(it != m.end())
 		return it->second;
@@ -1319,9 +1319,9 @@ const RpcValue &RpcValue::MetaData::valref(Int key) const
 	return def_val;
 }
 
-const RpcValue &RpcValue::MetaData::valref(const String &key) const
+const RpcValue &RpcMetaData::valref(const RpcValue::String &key) const
 {
-	const Map &m = sValues();
+	const RpcMap &m = sValues();
 	auto it = m.find(key);
 	if(it != m.end())
 		return it->second;
@@ -1329,7 +1329,7 @@ const RpcValue &RpcValue::MetaData::valref(const String &key) const
 	return def_val;
 }
 
-void RpcValue::MetaData::setValue(RpcValue::Int key, const RpcValue &val)
+void RpcMetaData::setValue(RpcValue::Int key, const RpcValue &val)
 {
 	if(val.isValid()) {
 		m_imap[key] = val;
@@ -1339,7 +1339,7 @@ void RpcValue::MetaData::setValue(RpcValue::Int key, const RpcValue &val)
 	}
 }
 
-void RpcValue::MetaData::setValue(const RpcValue::String &key, const RpcValue &val)
+void RpcMetaData::setValue(const RpcValue::String &key, const RpcValue &val)
 {
 	if(val.isValid()) {
 		m_smap[key] = val;
@@ -1349,32 +1349,32 @@ void RpcValue::MetaData::setValue(const RpcValue::String &key, const RpcValue &v
 	}
 }
 
-size_t RpcValue::MetaData::size() const
+size_t RpcMetaData::size() const
 {
 	return m_imap.size() + m_smap.size();
 }
 
-bool RpcValue::MetaData::isEmpty() const
+bool RpcMetaData::isEmpty() const
 {
 	return size() == 0;
 }
 
-bool RpcValue::MetaData::operator==(const RpcValue::MetaData &o) const
+bool RpcMetaData::operator==(const RpcMetaData &o) const
 {
 	return iValues() == o.iValues() && sValues() == o.sValues();
 }
 
-const RpcValue::IMap &RpcValue::MetaData::iValues() const
+const RpcIMap &RpcMetaData::iValues() const
 {
 	return m_imap;
 }
 
-const RpcValue::Map &RpcValue::MetaData::sValues() const
+const RpcMap &RpcMetaData::sValues() const
 {
 	return m_smap;
 }
 
-std::string RpcValue::MetaData::toPrettyString() const
+std::string RpcMetaData::toPrettyString() const
 {
 	std::ostringstream out;
 	{
@@ -1386,7 +1386,7 @@ std::string RpcValue::MetaData::toPrettyString() const
 	return out.str();
 }
 
-std::string RpcValue::MetaData::toString(const std::string &indent) const
+std::string RpcMetaData::toString(const std::string &indent) const
 {
 	std::ostringstream out;
 	{
@@ -1399,13 +1399,13 @@ std::string RpcValue::MetaData::toString(const std::string &indent) const
 	return out.str();
 }
 
-//RpcValue::MetaData *RpcValue::MetaData::clone() const
+//RpcMetaData *RpcMetaData::clone() const
 //{
 //	auto *md = new MetaData(*this);
 //	return md;
 //}
 
-void RpcValue::MetaData::swap(RpcValue::MetaData &o) noexcept
+void RpcMetaData::swap(RpcMetaData &o) noexcept
 {
 	std::swap(m_imap, o.m_imap);
 	std::swap(m_smap, o.m_smap);
@@ -1503,7 +1503,7 @@ RpcList RpcList::fromStringList(const std::vector<std::string> &sl)
 	return ret;
 }
 
-RpcValue RpcValue::Map::take(const String &key, const RpcValue &default_val)
+RpcValue RpcMap::take(const RpcValue::String &key, const RpcValue &default_val)
 {
 	auto it = find(key);
 	if(it == end())
@@ -1513,7 +1513,7 @@ RpcValue RpcValue::Map::take(const String &key, const RpcValue &default_val)
 	return ret;
 }
 
-RpcValue RpcValue::Map::value(const String &key, const RpcValue &default_val) const
+RpcValue RpcMap::value(const RpcValue::String &key, const RpcValue &default_val) const
 {
 	auto it = find(key);
 	if(it == end())
@@ -1521,7 +1521,7 @@ RpcValue RpcValue::Map::value(const String &key, const RpcValue &default_val) co
 	return it->second;
 }
 
-const RpcValue& RpcValue::Map::valref(const String &key) const
+const RpcValue& RpcMap::valref(const RpcValue::String &key) const
 {
 	auto it = find(key);
 	if(it == end()) {
@@ -1531,7 +1531,7 @@ const RpcValue& RpcValue::Map::valref(const String &key) const
 	return it->second;
 }
 
-void RpcValue::Map::setValue(const String &key, const RpcValue &val)
+void RpcMap::setValue(const RpcValue::String &key, const RpcValue &val)
 {
 	if(val.isValid())
 		(*this)[key] = val;
@@ -1539,21 +1539,21 @@ void RpcValue::Map::setValue(const String &key, const RpcValue &val)
 		this->erase(key);
 }
 
-bool RpcValue::Map::hasKey(const String &key) const
+bool RpcMap::hasKey(const RpcValue::String &key) const
 {
 	auto it = find(key);
 	return !(it == end());
 }
 
-std::vector<RpcValue::String> RpcValue::Map::keys() const
+std::vector<RpcValue::String> RpcMap::keys() const
 {
-	std::vector<String> ret;
+	std::vector<RpcValue::String> ret;
 	for(const auto &kv : *this)
 		ret.push_back(kv.first);
 	return ret;
 }
 
-RpcValue RpcValue::IMap::value(Int key, const RpcValue &default_val) const
+RpcValue RpcIMap::value(RpcValue::Int key, const RpcValue &default_val) const
 {
 	auto it = find(key);
 	if(it == end())
@@ -1561,7 +1561,7 @@ RpcValue RpcValue::IMap::value(Int key, const RpcValue &default_val) const
 	return it->second;
 }
 
-const RpcValue& RpcValue::IMap::valref(Int key) const
+const RpcValue& RpcIMap::valref(RpcValue::Int key) const
 {
 	auto it = find(key);
 	if(it == end()) {
@@ -1571,7 +1571,7 @@ const RpcValue& RpcValue::IMap::valref(Int key) const
 	return it->second;
 }
 
-void RpcValue::IMap::setValue(Int key, const RpcValue &val)
+void RpcIMap::setValue(RpcValue::Int key, const RpcValue &val)
 {
 	if(val.isValid())
 		(*this)[key] = val;
@@ -1579,15 +1579,15 @@ void RpcValue::IMap::setValue(Int key, const RpcValue &val)
 		this->erase(key);
 }
 
-bool RpcValue::IMap::hasKey(Int key) const
+bool RpcIMap::hasKey(RpcValue::Int key) const
 {
 	auto it = find(key);
 	return !(it == end());
 }
 
-std::vector<RpcValue::Int> RpcValue::IMap::keys() const
+std::vector<RpcValue::Int> RpcIMap::keys() const
 {
-	std::vector<Int> ret;
+	std::vector<RpcValue::Int> ret;
 	for(const auto &kv : *this)
 		ret.push_back(kv.first);
 	return ret;
