@@ -114,7 +114,7 @@ std::string MasterBrokerConnection::masterExportedToLocalPath(const std::string 
 	static const std::string DIR_BROKER = cp::Rpc::DIR_BROKER;
 	if(shv::core::utils::ShvPath::startsWithPath(master_path, DIR_BROKER))
 		return master_path;
-	return shv::core::utils::ShvPath(m_exportedShvPath).appendPath(master_path);
+	return shv::core::utils::ShvPath(m_exportedShvPath).appendPath(master_path).asString();
 }
 
 std::string MasterBrokerConnection::localPathToMasterExported(const std::string &local_path) const

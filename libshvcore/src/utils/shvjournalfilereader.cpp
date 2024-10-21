@@ -119,13 +119,13 @@ bool ShvJournalFileReader::next()
 				}
 				else {
 					bool ok;
-					int short_time = shv::core::String::toInt(std::string{fld}, &ok);
+					int short_time = shv::core::string::toInt(std::string{fld}, &ok);
 					m_currentEntry.shortTime = ok && short_time >= 0? short_time: ShvJournalEntry::NO_SHORT_TIME;
 				}
 				break;
 			}
 			case Column::ValueFlags: {
-				auto value_flags = fld.empty()? 0: shv::core::String::toInt(std::string{fld});
+				auto value_flags = fld.empty()? 0: shv::core::string::toInt(std::string{fld});
 				m_currentEntry.valueFlags = static_cast<unsigned int>(value_flags);
 				break;
 			}

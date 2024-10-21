@@ -11,10 +11,9 @@
 
 using namespace shv::core::utils;
 using namespace shv::core;
-using namespace std;
 
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
-vector<string> cmdline;
+std::vector<std::string> cmdline;
 
 int main(int argc, char** argv)
 {
@@ -25,12 +24,13 @@ int main(int argc, char** argv)
 
 DOCTEST_TEST_CASE("CliOptions")
 {
+	using namespace std::string_literals;
 	DOCTEST_SUBCASE("Make config dir and config file absolute")
 	{
-		string req_abs_config_dir;
-		string req_abs_config_file;
-		string config_dir;
-		string config_file;
+		std::string req_abs_config_dir;
+		std::string req_abs_config_file;
+		std::string config_dir;
+		std::string config_file;
 		const auto cwd = std::filesystem::current_path().string();
 		const auto default_config_file_name = "test_core_clioptions.conf"s;
 		ConfigCLIOptions cliopts;

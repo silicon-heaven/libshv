@@ -8,15 +8,15 @@
 
 using namespace shv::core::utils;
 using namespace shv::core;
-using namespace std;
 
 DOCTEST_TEST_CASE("ShvPath")
 {
+	using namespace std::string_literals;
 	DOCTEST_SUBCASE("ShvPath::startsWithPath()")
 	{
 		{
-			string path = "status/errorCommunication";
-			array paths = {
+			std::string path = "status/errorCommunication";
+			std::array paths = {
 				"status/errorCommunication"s,
 				"status/errorCommunication/"s,
 				"status/errorCommunication/foo"s,
@@ -27,8 +27,8 @@ DOCTEST_TEST_CASE("ShvPath")
 			}
 		}
 		{
-			string path = "foo/bar";
-			array paths = {
+			std::string path = "foo/bar";
+			std::array paths = {
 				"bar/baz"s,
 				"foo/barbaz"s,
 			};
@@ -39,29 +39,29 @@ DOCTEST_TEST_CASE("ShvPath")
 	}
 	DOCTEST_SUBCASE("ShvPath::firstDir()")
 	{
-		string dir = "'a/b/c'/d";
-		string dir1 = "a/b/c";
+		std::string dir = "'a/b/c'/d";
+		std::string dir1 = "a/b/c";
 		REQUIRE(ShvPath::firstDir(dir) == StringView(dir1));
 	}
 	DOCTEST_SUBCASE("ShvPath::takeFirsDir()")
 	{
-		string dir = "'a/b/c'/d";
+		std::string dir = "'a/b/c'/d";
 		StringView dir_view(dir);
-		string dir1 = "a/b/c";
-		string dir2 = "d";
+		std::string dir1 = "a/b/c";
+		std::string dir2 = "d";
 		auto dir_view1 = ShvPath::takeFirsDir(dir_view);
 		REQUIRE(dir_view1 == StringView(dir1));
 		REQUIRE(dir_view == StringView(dir2));
 	}
 	DOCTEST_SUBCASE("ShvPath join & split")
 	{
-		string dir1 = "foo";
-		string dir2 = "bar/baz";
-		string joined = "foo/'bar/baz'";
+		std::string dir1 = "foo";
+		std::string dir2 = "bar/baz";
+		std::string joined = "foo/'bar/baz'";
 
 		DOCTEST_SUBCASE("ShvPath::joinDirs()")
 		{
-			REQUIRE(ShvPath::joinDirs(dir1, dir2) == joined);
+			REQUIRE(ShvPath::joinDirs(dir1, dir2).asString() == joined);
 		}
 		DOCTEST_SUBCASE("ShvPath::splitPath()")
 		{
@@ -82,7 +82,7 @@ DOCTEST_TEST_CASE("ShvPath")
 			{"a/c/d", "a"},
 		};
 		ShvPath::forEachDirAndSubdirs(m, "a/b", [](Map::const_iterator it) {
-			REQUIRE(ShvPath::startsWithPath(it->first, string("a/b")));
+			REQUIRE(ShvPath::startsWithPath(it->first, std::string("a/b")));
 		});
 	}
 	DOCTEST_SUBCASE("pattern match")
