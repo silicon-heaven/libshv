@@ -44,6 +44,13 @@ DlgLogInspector::DlgLogInspector(const QString &shv_path, QWidget *parent) :
 	ui(new Ui::DlgLogInspector)
 {
 	ui->setupUi(this);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+	ui->edSince->setTimeZone(QTimeZone::UTC);
+	ui->edUntil->setTimeZone(QTimeZone::UTC);
+#else
+	ui->edSince->setTimeSpec(Qt::UTC);
+	ui->edUntil->setTimeSpec(Qt::UTC);
+#endif
 	setShvPath(shv_path);
 	{
 		auto *m = new QMenu(this);

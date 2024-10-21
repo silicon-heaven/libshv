@@ -3,6 +3,7 @@
 #include <shv/coreqt/log.h>
 
 #include <QVariant>
+#include <QTimeZone>
 
 namespace shv::coreqt::rpc {
 
@@ -33,7 +34,11 @@ QVariant rpcValueToQVariant(const chainpack::RpcValue &v, bool *ok)
 	}
 	case chainpack::RpcValue::Type::DateTime: {
 		chainpack::RpcValue::DateTime cdt = v.toDateTime();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+		QDateTime dt = QDateTime::fromMSecsSinceEpoch(cdt.msecsSinceEpoch(), QTimeZone::fromSecondsAheadOfUtc(cdt.utcOffsetMin() * 60));
+#else
 		QDateTime dt = QDateTime::fromMSecsSinceEpoch(cdt.msecsSinceEpoch(), Qt::OffsetFromUTC, cdt.utcOffsetMin() * 60);
+#endif
 		return dt;
 	}
 	case chainpack::RpcValue::Type::List: {
@@ -175,7 +180,12 @@ template<> QDateTime shv::chainpack::RpcValue::to<QDateTime>() const
 	if (!isValid() || !isDateTime()) {
 		return QDateTime();
 	}
-	return QDateTime::fromMSecsSinceEpoch(toDateTime().msecsSinceEpoch(), Qt::TimeSpec::UTC);
+	auto dt = toDateTime();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+	return QDateTime::fromMSecsSinceEpoch(dt.msecsSinceEpoch(), QTimeZone::fromSecondsAheadOfUtc(dt.utcOffsetMin() * 60));
+#else
+	return QDateTime::fromMSecsSinceEpoch(dt.msecsSinceEpoch(), Qt::OffsetFromUTC, dt.utcOffsetMin() * 60);
+#endif
 }
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
