@@ -12,6 +12,8 @@
 #define logSerialPortSocketM() nCMessage("SerialPortSocket")
 #define logSerialPortSocketW() nCWarning("SerialPortSocket")
 
+#define logRpcData() nCMessage("RpcData")
+
 using namespace std;
 
 namespace shv::iotqt::rpc {
@@ -38,7 +40,7 @@ SerialFrameReader::SerialFrameReader(CrcCheck crc)
 
 QList<int> SerialFrameReader::addData(std::string_view data)
 {
-	shvDebug() << "===> received:" << data.size() << "bytes:" << chainpack::utils::hexArray(data.data(), data.size());
+	logRpcData().nospace() << "FRAME DATA READ " << data.size() << " bytes of data read:\n" << shv::chainpack::utils::hexDump(data);
 	QList<int> response_request_ids;
 	auto check_response_id = [this, &response_request_ids]() {
 		std::istringstream in(m_readBuffer);

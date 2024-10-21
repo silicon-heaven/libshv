@@ -16,6 +16,8 @@
 #include <QWebSocket>
 #endif
 
+#define logRpcData() nCMessage("RpcData")
+
 namespace shv::iotqt::rpc {
 
 //======================================================
@@ -102,10 +104,10 @@ int FrameReader::tryToReadMeta(std::istringstream &in)
 //======================================================
 QList<int> StreamFrameReader::addData(std::string_view data)
 {
+	logRpcData().nospace() << "FRAME DATA READ " << data.size() << " bytes of data read:\n" << shv::chainpack::utils::hexDump(data);
 	using namespace chainpack;
 	QList<int> response_request_ids;
 	m_readBuffer += data;
-	shvDebug() << "received:\n" << utils::hexDump(data);
 	while (true) {
 		std::istringstream in(m_readBuffer);
 		int err_code;

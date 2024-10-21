@@ -52,13 +52,24 @@ void RpcMessage::MetaType::registerMetaType()
 //==================================================================
 RpcMessage RpcFrame::toRpcMessage(std::string *errmsg) const
 {
+	auto make_rpcmsg = [](const RpcValue &val, std::string *err_msg) {
+		try {
+			return RpcMessage(val);
+		}
+		catch (const std::exception &e) {
+			if (err_msg) {
+				*err_msg = e.what();
+			}
+		}
+		return RpcMessage();
+	};
 	switch (protocol) {
 	case Rpc::ProtocolType::ChainPack: {
 		auto val = RpcValue::fromChainPack(data, errmsg);
 		if (!errmsg || (errmsg && errmsg->empty())) {
 			auto m = meta;
 			val.setMetaData(std::move(m));
-			return RpcMessage(val);
+			return make_rpcmsg(val, errmsg);
 		}
 		break;
 	}
@@ -67,17 +78,21 @@ RpcMessage RpcFrame::toRpcMessage(std::string *errmsg) const
 		if (!errmsg || (errmsg && errmsg->empty())) {
 			auto m = meta;
 			val.setMetaData(std::move(m));
-			return RpcMessage(val);
+			return make_rpcmsg(val, errmsg);
 		}
 		break;
 	}
 	default: {
+		constexpr auto msg = "Invalid protocol type";
 		if (errmsg) {
-			*errmsg = "Invalid protocol type";
+			*errmsg = msg;
 		}
-		return {};
+		else {
+			throw std::runtime_error(msg);
+		}
 	}
 	}
+
 	return {};
 }
 
