@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../shvvisuglobal.h"
+#include <shv/visu/shvvisuglobal.h>
 
 #include <QGraphicsView>
 

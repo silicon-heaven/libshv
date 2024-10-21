@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../shviotqtglobal.h"
+#include <shv/iotqt/shviotqtglobal.h>
 
 #include <shv/chainpack/accessgrant.h>
 #include <shv/core/utils/shvpath.h>

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../shvcoreglobal.h"
+#include <shv/core/shvcoreglobal.h>
 
-#include "../string.h"
+#include <shv/core/string.h>
 
 #include <functional>
 #include <map>

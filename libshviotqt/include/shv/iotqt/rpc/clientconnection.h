@@ -1,6 +1,6 @@
 #pragma once
 
-#include "socketrpcconnection.h"
+#include <shv/iotqt/rpc/socketrpcconnection.h>
 
 #include <shv/chainpack/rpcmessage.h>
 #include <shv/chainpack/rpcdriver.h>

@@ -1,9 +1,8 @@
 #pragma once
 
-#include "../shvcoreglobal.h"
-#include "shvjournalentry.h"
-#include "shvtypeinfo.h"
-#include "../exception.h"
+#include <shv/core/shvcoreglobal.h>
+#include <shv/core/utils/shvjournalentry.h>
+#include <shv/core/exception.h>
 
 #include <string>
 #include <fstream>

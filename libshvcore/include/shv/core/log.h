@@ -12,7 +12,7 @@
 #define NECROLOG_NO_DEBUG_LOG
 #endif
 
-#include "shvcoreglobal.h"
+#include <shv/core/shvcoreglobal.h>
 #include <necrolog.h>
 
 #define shvCDebug(category) nCDebug(category)

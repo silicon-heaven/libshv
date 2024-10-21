@@ -1,7 +1,7 @@
 #pragma once
 
-#include "shvcoreglobal.h"
-#include "stringview.h"
+#include <shv/core/shvcoreglobal.h>
+#include <shv/core/stringview.h>
 
 #include <sstream>
 #include <string>

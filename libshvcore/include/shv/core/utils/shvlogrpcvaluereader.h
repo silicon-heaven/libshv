@@ -1,7 +1,7 @@
 #pragma once
 
-#include "shvlogheader.h"
-#include "shvjournalentry.h"
+#include <shv/core/utils/shvlogheader.h>
+#include <shv/core/utils/shvjournalentry.h>
 
 namespace shv::core::utils {
 

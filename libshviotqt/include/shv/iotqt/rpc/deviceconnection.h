@@ -1,6 +1,6 @@
 #pragma once
 
-#include "clientconnection.h"
+#include <shv/iotqt/rpc/clientconnection.h>
 
 namespace shv::iotqt::rpc {
 

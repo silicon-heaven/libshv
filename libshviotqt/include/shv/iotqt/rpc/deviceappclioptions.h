@@ -1,6 +1,6 @@
 #pragma once
 
-#include "clientappclioptions.h"
+#include <shv/iotqt/rpc/clientappclioptions.h>
 
 namespace shv::iotqt::rpc {
 

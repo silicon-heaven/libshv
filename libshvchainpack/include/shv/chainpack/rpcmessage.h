@@ -1,6 +1,6 @@
 #pragma once
 
-#include "shv/chainpack/accesslevel.h"
+#include <shv/chainpack/accesslevel.h>
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/chainpack/rpc.h>
 

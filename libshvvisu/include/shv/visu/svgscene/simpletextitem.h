@@ -1,6 +1,6 @@
 #pragma once
 
-#include "saxhandler.h"
+#include <shv/visu/svgscene/saxhandler.h>
 
 #include <QGraphicsItem>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "shv/chainpack/rpcdriver.h"
+#include <shv/chainpack/rpcdriver.h>
 #ifdef USE_SHV_PATHS_GRANTS_CACHE
 #include <string>
 

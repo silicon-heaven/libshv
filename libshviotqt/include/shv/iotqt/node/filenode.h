@@ -1,6 +1,6 @@
 #pragma once
 
-#include "shvnode.h"
+#include <shv/iotqt/node/shvnode.h>
 #if QT_VERSION_MAJOR >= 6
 #include <shv/coreqt/rpc.h>
 #endif

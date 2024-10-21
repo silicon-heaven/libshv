@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../shvcoreglobal.h"
-#include "abstractshvjournal.h"
-#include "shvjournalentry.h"
-#include "shvgetlogparams.h"
+#include <shv/core/shvcoreglobal.h>
+#include <shv/core/utils/abstractshvjournal.h>
+#include <shv/core/utils/shvjournalentry.h>
+#include <shv/core/utils/shvgetlogparams.h>
 
 #include <fstream>
 #include <functional>

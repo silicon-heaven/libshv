@@ -1,11 +1,11 @@
 #pragma once
 
-#include "channelfilter.h"
-#include "channelprobe.h"
-#include "graphchannel.h"
-#include "graphmodel.h"
-#include "sample.h"
-#include "../shvvisuglobal.h"
+#include <shv/visu/timeline/channelfilter.h>
+#include <shv/visu/timeline/channelprobe.h>
+#include <shv/visu/timeline/graphchannel.h>
+#include <shv/visu/timeline/graphmodel.h>
+#include <shv/visu/timeline/sample.h>
+#include <shv/visu/shvvisuglobal.h>
 
 #include <shv/coreqt/utils.h>
 #include <shv/core/exception.h>

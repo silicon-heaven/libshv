@@ -2,7 +2,7 @@
 
 #include <shv/core/utils/clioptions.h>
 
-#include "../shviotqtglobal.h"
+#include <shv/iotqt/shviotqtglobal.h>
 
 namespace shv::iotqt::rpc {
 

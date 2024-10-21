@@ -1,7 +1,7 @@
 #pragma once
 
-#include "log.h"
-#include "exception.h"
+#include <shv/core/exception.h>
+#include <shv/core/log.h>
 
 #define SHV_EXCEPTION_STRING(cond, message) shvError() << "EXCEPTION:" << "\"" cond"\" -" << message << Q_FUNC_INFO
 #define SHV_ASSERT_STRING(cond, message) shvError() << "\"" cond"\" -" << message << Q_FUNC_INFO

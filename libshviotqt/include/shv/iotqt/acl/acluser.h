@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../shviotqtglobal.h"
-#include "aclpassword.h"
+#include <shv/iotqt/shviotqtglobal.h>
+#include <shv/iotqt/acl/aclpassword.h>
 
 #include <vector>
 

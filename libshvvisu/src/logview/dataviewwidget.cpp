@@ -4,7 +4,7 @@
 #include <shv/visu/timeline/graph.h>
 #include <shv/visu/timeline/channelfilterdialog.h>
 
-#include "shv/core/log.h"
+#include <shv/core/log.h>
 
 namespace tl = shv::visu::timeline;
 

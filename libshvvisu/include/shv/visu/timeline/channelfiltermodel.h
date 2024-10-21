@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../shvvisuglobal.h"
-#include "graph.h"
+#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/timeline/graph.h>
 
 #include <QStandardItemModel>
 #include <shv/core/stringview.h>

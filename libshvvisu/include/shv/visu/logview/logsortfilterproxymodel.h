@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../shvvisuglobal.h"
-#include "../timeline/channelfilter.h"
-#include "../timeline/fulltextfilter.h"
+#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/timeline/channelfilter.h>
+#include <shv/visu/timeline/fulltextfilter.h>
 
 #include <QSortFilterProxyModel>
 #include <optional>
