@@ -49,7 +49,7 @@ void RpcDriver::sendRpcFrame(RpcFrame &&frame)
 			frame = msg.toToRpcFrame(m_clientProtocolType);
 		}
 		auto frame_data = frame.toFrameData();
-		logRpcData().nospace() << "FRAME DATA WRITE " << frame_data.size() << " bytes of data:\n" << shv::chainpack::utils::hexDump(frame_data);
+		//logRpcData().nospace() << "FRAME DATA WRITE " << frame_data.size() << " bytes of data:\n" << shv::chainpack::utils::hexDump(frame_data);
 		writeFrameData(frame_data);
 	}
 	catch (const std::exception &e) {
@@ -59,11 +59,6 @@ void RpcDriver::sendRpcFrame(RpcFrame &&frame)
 
 void RpcDriver::onFrameDataRead(const std::string &frame_data)
 {
-#ifdef _MSC_VER
-	logRpcData() << __FUNCSIG__ << "+++++++++++++++++++++++++++++++++";
-#else
-	logRpcData() << __PRETTY_FUNCTION__ << "+++++++++++++++++++++++++++++++++";
-#endif
 	logRpcData().nospace() << "FRAME DATA READ " << frame_data.size() << " bytes of data read:\n" << shv::chainpack::utils::hexDump(frame_data);
 	try {
 		auto frame = RpcFrame::fromFrameData(frame_data);
