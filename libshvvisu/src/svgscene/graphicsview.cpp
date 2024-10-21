@@ -2,21 +2,27 @@
 
 #include <shv/visu/svgscene/graphicsview.h>
 
+#if QT_VERSION_MAJOR >= 6
+#include <QInputDevice>
+#endif
 #include <QMouseEvent>
 
-#ifdef ANDROID
 #include <QGestureEvent>
 #include <QScroller>
-#endif
 
 namespace shv::visu::svgscene {
 
 GraphicsView::GraphicsView(QWidget *parent)
 	: Super(parent)
 {
-#ifdef ANDROID
-	QScroller::grabGesture(viewport(), QScroller::LeftMouseButtonGesture);
-	grabGesture(Qt::PinchGesture);
+#if QT_VERSION_MAJOR >= 6
+	for (const auto &id : QInputDevice::devices()) {
+		if (id->type() == QInputDevice::DeviceType::TouchScreen) {
+			QScroller::grabGesture(viewport(), QScroller::LeftMouseButtonGesture);
+			grabGesture(Qt::PinchGesture);
+			break;
+		}
+	}
 #endif
 }
 
@@ -105,7 +111,6 @@ void GraphicsView::mouseMoveEvent(QMouseEvent* ev)
 	Super::mouseMoveEvent(ev);
 }
 
-#ifdef ANDROID
 bool GraphicsView::event(QEvent *event)
 {
 	if (event->type() == QEvent::Gesture) {
@@ -124,6 +129,5 @@ bool GraphicsView::event(QEvent *event)
 	}
 	return Super::event(event);
 }
-#endif
 
 }
