@@ -77,10 +77,70 @@ public:
 
 class RpcList;
 
+class SHVCHAINPACK_DECL_EXPORT RpcDateTime
+{
+public:
+	enum class MsecPolicy {Auto = 0, Always, Never};
+	static constexpr bool IncludeTimeZone = true;
+public:
+	RpcDateTime();
+	int64_t msecsSinceEpoch() const;
+	int utcOffsetMin() const;
+	bool isZero() const;
+
+	static RpcDateTime now();
+	static RpcDateTime fromLocalString(const std::string &local_date_time_str);
+	static RpcDateTime fromUtcString(const std::string &utc_date_time_str, size_t *plen = nullptr);
+	static RpcDateTime fromMSecsSinceEpoch(int64_t msecs, int utc_offset_min = 0);
+
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#endif
+	void setMsecsSinceEpoch(int64_t msecs);
+	void setUtcOffsetMin(int utc_offset_min);
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+
+	std::string toLocalString() const;
+	std::string toIsoString() const;
+	std::string toIsoString(MsecPolicy msec_policy, bool include_tz) const;
+
+	struct SHVCHAINPACK_DECL_EXPORT Parts
+	{
+		int year = 0;
+		int month = 0; // 1-12
+		int day = 0; // 1-31
+		int hour = 0; // 0-23
+		int min = 0; // 0-59
+		int sec = 0; // 0-59
+		int msec = 0; // 0-999
+
+		Parts();
+		Parts(int y, int m, int d, int h = 0, int mn = 0, int s = 0, int ms = 0);
+
+		bool isValid() const;
+		bool operator==(const Parts &o) const;
+	};
+	Parts toParts() const;
+	static RpcDateTime fromParts(const Parts &parts);
+
+	bool operator ==(const RpcDateTime &o) const;
+	bool operator <(const RpcDateTime &o) const;
+	bool operator >=(const RpcDateTime &o) const;
+	bool operator >(const RpcDateTime &o) const;
+	bool operator <=(const RpcDateTime &o) const;
+private:
+	struct MsTz {
+		int64_t tz: 7, msec: 57;
+	};
+	MsTz m_dtm = {0, 0};
+};
+
 class SHVCHAINPACK_DECL_EXPORT RpcValue
 {
 public:
-	using List = RpcList;
 
 	enum class Type {
 		Invalid,
@@ -105,6 +165,8 @@ public:
 	using UInt = unsigned; //uint64_t;
 	using Double = double;
 	using Bool = bool;
+	using List = RpcList;
+	using DateTime = RpcDateTime;
 	class SHVCHAINPACK_DECL_EXPORT Decimal
 	{
 		static constexpr int Base = 10;
@@ -130,66 +192,6 @@ public:
 		double toDouble() const;
 		std::string toString() const;
 		bool operator==(const Decimal&) const = default;
-	};
-	class SHVCHAINPACK_DECL_EXPORT DateTime
-	{
-	public:
-		enum class MsecPolicy {Auto = 0, Always, Never};
-		static constexpr bool IncludeTimeZone = true;
-	public:
-		DateTime();
-		int64_t msecsSinceEpoch() const;
-		int utcOffsetMin() const;
-		bool isZero() const;
-
-		static DateTime now();
-		static DateTime fromLocalString(const std::string &local_date_time_str);
-		static DateTime fromUtcString(const std::string &utc_date_time_str, size_t *plen = nullptr);
-		static DateTime fromMSecsSinceEpoch(int64_t msecs, int utc_offset_min = 0);
-
-#ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-#endif
-		void setMsecsSinceEpoch(int64_t msecs);
-		void setUtcOffsetMin(int utc_offset_min);
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
-
-		std::string toLocalString() const;
-		std::string toIsoString() const;
-		std::string toIsoString(MsecPolicy msec_policy, bool include_tz) const;
-
-		struct SHVCHAINPACK_DECL_EXPORT Parts
-		{
-			int year = 0;
-			int month = 0; // 1-12
-			int day = 0; // 1-31
-			int hour = 0; // 0-23
-			int min = 0; // 0-59
-			int sec = 0; // 0-59
-			int msec = 0; // 0-999
-
-			Parts();
-			Parts(int y, int m, int d, int h = 0, int mn = 0, int s = 0, int ms = 0);
-
-			bool isValid() const;
-			bool operator==(const Parts &o) const;
-		};
-		Parts toParts() const;
-		static DateTime fromParts(const Parts &parts);
-
-		bool operator ==(const DateTime &o) const;
-		bool operator <(const DateTime &o) const;
-		bool operator >=(const DateTime &o) const;
-		bool operator >(const DateTime &o) const;
-		bool operator <=(const DateTime &o) const;
-	private:
-		struct MsTz {
-			int64_t tz: 7, msec: 57;
-		};
-		MsTz m_dtm = {0, 0};
 	};
 
 	using String = std::string;
@@ -285,7 +287,7 @@ public:
 	RpcValue(unsigned long long value); // UInt
 	RpcValue(double value);             // Double
 	RpcValue(const Decimal& value);     // Decimal
-	RpcValue(const DateTime &value);
+	RpcValue(const RpcDateTime &value);
 
 	RpcValue(const uint8_t *value, size_t size);
 	RpcValue(const RpcValue::Blob &value); // String
@@ -357,7 +359,7 @@ public:
 	int64_t toInt64() const;
 	uint64_t toUInt64() const;
 	bool toBool() const;
-	DateTime toDateTime() const;
+	RpcDateTime toDateTime() const;
 	RpcValue::String toString() const;
 
 	const RpcValue::String &asString() const;
@@ -381,7 +383,7 @@ public:
 			return toUInt();
 		else if constexpr (std::is_same<T, String>())
 			return asString();
-		else if constexpr (std::is_same<T, DateTime>())
+		else if constexpr (std::is_same<T, RpcDateTime>())
 			return toDateTime();
 		else if constexpr (std::is_same<T, Decimal>())
 			return toDecimal();
@@ -401,7 +403,7 @@ public:
 			return isUInt();
 		else if constexpr (std::is_same<T, String>())
 			return isString();
-		else if constexpr (std::is_same<T, DateTime>())
+		else if constexpr (std::is_same<T, RpcDateTime>())
 			return isDateTime();
 		else if constexpr (std::is_same<T, Decimal>())
 			return isDecimal();
