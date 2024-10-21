@@ -3,21 +3,9 @@
 
 #include <algorithm>
 
-namespace shv::core {
+namespace shv::core::string {
 
-String::String() = default;
-
-String::String(const std::string &o)
-	: Super(o)
-{
-}
-
-String::String(std::string &&o)
-	: Super(o)
-{
-}
-
-std::string::size_type String::indexOf(const std::string & str_haystack, const std::string &str_needle, String::CaseSensitivity case_sensitivity)
+std::string::size_type indexOf(const std::string & str_haystack, const std::string &str_needle, CaseSensitivity case_sensitivity)
 {
 	auto it = std::search(
 				  str_haystack.begin(), str_haystack.end(),
@@ -29,7 +17,7 @@ std::string::size_type String::indexOf(const std::string & str_haystack, const s
 	return (it == str_haystack.end())? std::string::npos: static_cast<std::string::size_type>(it - str_haystack.begin());
 }
 
-std::string::size_type String::indexOf(const std::string &haystack, char needle)
+std::string::size_type indexOf(const std::string &haystack, char needle)
 {
 	for (std::string::size_type i = 0; i < haystack.length(); i++)
 		if(haystack[i] == needle)
@@ -37,54 +25,31 @@ std::string::size_type String::indexOf(const std::string &haystack, char needle)
 	return std::string::npos;
 }
 
-std::string::size_type String::indexOf(const std::string &needle, String::CaseSensitivity case_sensitivity) const
+std::string mid(const std::string& str, size_t pos, size_t cnt)
 {
-	return indexOf(*this, needle, case_sensitivity);
-}
-
-std::string::size_type String::indexOf(char needle) const
-{
-	return indexOf(*this, needle);
-}
-
-size_t String::lastIndexOf(char c) const
-{
-	if(empty())
-		return std::string::npos;
-	for (size_t i = size() - 1; ; i--) {
-		if(at(i) == c)
-			return i;
-		if(i == 0)
-			break;
-	}
-	return std::string::npos;
-}
-
-std::string String::mid(size_t pos, size_t cnt) const
-{
-	if(pos < size())
-		return substr(pos, cnt);
+	if(pos < str.size())
+		return str.substr(pos, cnt);
 	return {};
 }
 
-std::string& String::rtrim(std::string& s, const char* t)
+std::string& rtrim(std::string& s, const char* t)
 {
 	s.erase(s.find_last_not_of(t) + 1);
 	return s;
 }
 
-std::string& String::ltrim(std::string& s, const char* t)
+std::string& ltrim(std::string& s, const char* t)
 {
 	s.erase(0, s.find_first_not_of(t));
 	return s;
 }
 
-std::string& String::trim(std::string& s, const char* t)
+std::string& trim(std::string& s, const char* t)
 {
 	return ltrim(rtrim(s, t), t);
 }
 
-bool String::equal(std::string const& a, std::string const& b, String::CaseSensitivity case_sensitivity)
+bool equal(std::string const& a, std::string const& b, CaseSensitivity case_sensitivity)
 {
 	if (a.length() == b.length()) {
 		return std::equal(
@@ -99,24 +64,24 @@ bool String::equal(std::string const& a, std::string const& b, String::CaseSensi
 	return false;
 }
 
-std::vector<std::string> String::split(const std::string &str, char delim, SplitBehavior split_behavior)
+std::vector<std::string> split(const std::string &str, char delim, SplitBehavior split_behavior)
 {
 	using namespace std;
-	vector<string> ret;
+	vector<std::string> ret;
 	size_t pos = 0;
 	while(true) {
 		size_t pos2 = str.find_first_of(delim, pos);
-		string s = (pos2 == string::npos)? str.substr(pos): str.substr(pos, pos2 - pos);
+		std::string s = (pos2 == std::string::npos)? str.substr(pos): str.substr(pos, pos2 - pos);
 		if(split_behavior == KeepEmptyParts || !s.empty())
 			ret.push_back(s);
-		if(pos2 == string::npos)
+		if(pos2 == std::string::npos)
 			break;
 		pos = pos2 + 1;
 	}
 	return ret;
 }
 
-std::string String::join(const std::vector<std::string> &lst, const std::string &delim)
+std::string join(const std::vector<std::string> &lst, const std::string &delim)
 {
 	std::string ret;
 	for(const auto &s : lst) {
@@ -127,7 +92,7 @@ std::string String::join(const std::vector<std::string> &lst, const std::string 
 	return ret;
 }
 
-std::string String::join(const std::vector<std::string> &lst, char delim)
+std::string join(const std::vector<std::string> &lst, char delim)
 {
 	std::string ret;
 	for(const auto &s : lst) {
@@ -138,7 +103,7 @@ std::string String::join(const std::vector<std::string> &lst, char delim)
 	return ret;
 }
 
-std::string String::join(const std::vector<StringView> &lst, char delim)
+std::string join(const std::vector<StringView> &lst, char delim)
 {
 	std::string ret;
 	for(const auto &s : lst) {
@@ -149,7 +114,7 @@ std::string String::join(const std::vector<StringView> &lst, char delim)
 	return ret;
 }
 
-int String::replace(std::string &str, const std::string &from, const std::string &to)
+int replace(std::string &str, const std::string &from, const std::string &to)
 {
 	int i = 0;
 	size_t pos = 0;
@@ -163,7 +128,7 @@ int String::replace(std::string &str, const std::string &from, const std::string
 	return i;
 }
 
-int String::replace(std::string& str, const char from, const char to)
+int replace(std::string& str, const char from, const char to)
 {
 	int n = 0;
 	for (char& i : str) {
@@ -175,33 +140,33 @@ int String::replace(std::string& str, const char from, const char to)
 	return n;
 }
 
-std::string &String::upper(std::string &s)
+std::string &upper(std::string &s)
 {
 	for (char& i : s)
 		i = static_cast<char>(std::toupper(i));
 	return s;
 }
 
-std::string String::toUpper(const std::string& s)
+std::string toUpper(const std::string& s)
 {
 	std::string ret(s);
 	return upper(ret);
 }
 
-std::string &String::lower(std::string &s)
+std::string &lower(std::string &s)
 {
 	for (char& i : s)
 		i = static_cast<char>(std::tolower(i));
 	return s;
 }
 
-std::string String::toLower(const std::string& s)
+std::string toLower(const std::string& s)
 {
 	std::string ret(s);
 	return lower(ret);
 }
 
-int String::toInt(const std::string &str, bool *ok)
+int toInt(const std::string &str, bool *ok)
 {
 	int ret = 0;
 	bool is_ok = false;
@@ -221,7 +186,7 @@ int String::toInt(const std::string &str, bool *ok)
 	return ret;
 }
 
-double String::toDouble(const std::string &str, bool *ok)
+double toDouble(const std::string &str, bool *ok)
 {
 	double ret = 0;
 	bool is_ok = false;
@@ -246,15 +211,15 @@ size_t find_str(const std::string &haystack, size_t begin_pos, size_t end_pos, c
 {
 	using namespace std;
 	if(needle.empty())
-		return string::npos;
+		return std::string::npos;
 	if(begin_pos > haystack.size())
-		return string::npos;
+		return std::string::npos;
 	if(end_pos > haystack.size())
-		return string::npos;
+		return std::string::npos;
 	if(end_pos < begin_pos)
-		return string::npos;
+		return std::string::npos;
 	if(needle.size() > (end_pos - begin_pos))
-		return string::npos;
+		return std::string::npos;
 	auto pos1 = begin_pos;
 	auto pos2 = end_pos - needle.size() + 1;
 	while(pos1 < pos2) {
@@ -267,11 +232,11 @@ size_t find_str(const std::string &haystack, size_t begin_pos, size_t end_pos, c
 			return pos1;
 		++pos1;
 	}
-	return string::npos;
+	return std::string::npos;
 }
 }
 
-std::pair<size_t, size_t> String::indexOfBrackets(const std::string &haystack, size_t begin_pos, size_t end_pos, const std::string &open_bracket, const std::string &close_bracket)
+std::pair<size_t, size_t> indexOfBrackets(const std::string &haystack, size_t begin_pos, size_t end_pos, const std::string &open_bracket, const std::string &close_bracket)
 {
 	if(begin_pos + open_bracket.size() > haystack.size())
 		return std::pair<size_t, size_t>(std::string::npos, std::string::npos);

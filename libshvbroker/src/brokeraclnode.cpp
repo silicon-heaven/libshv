@@ -588,7 +588,7 @@ unsigned AccessAclNode::keyToRuleIndex(const std::string &key)
 	if(std::regex_search(key, color_match, color_regex)) {
 		if (color_match.size() > 1) {
 			bool ok;
-			unsigned ix = static_cast<unsigned>(shv::core::String::toInt(color_match[1], &ok));
+			unsigned ix = static_cast<unsigned>(shv::core::string::toInt(color_match[1], &ok));
 			if(ok)
 				return ix;
 		}

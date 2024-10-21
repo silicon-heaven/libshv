@@ -27,24 +27,24 @@ bool shvpath::startsWithPath(const std::string_view &str, const std::string_view
 
 ShvPath::ShvPath() = default;
 
-ShvPath::ShvPath(shv::core::String &&o)
-	: Super(std::move(o))
+ShvPath::ShvPath(std::string &&o)
+	: m_str(std::move(o))
 {
 }
 
-ShvPath::ShvPath(const shv::core::String &o)
-	: Super(o)
+ShvPath::ShvPath(const std::string &o)
+	: m_str(o)
 {
 }
 
 const std::string &ShvPath::asString() const
 {
-	return *this;
+	return m_str;
 }
 
 bool ShvPath::startsWithPath(const StringView &path, size_t *pos) const
 {
-	return startsWithPath(*this, path, pos);
+	return startsWithPath(m_str, path, pos);
 }
 
 bool ShvPath::startsWithPath(const StringView &str, const StringView &path, size_t *pos)
@@ -54,7 +54,7 @@ bool ShvPath::startsWithPath(const StringView &str, const StringView &path, size
 
 ShvPath ShvPath::appendPath(const StringView &path) const
 {
-	return shv::core::utils::joinPath(*this, path);
+	return shv::core::utils::joinPath(m_str, path);
 }
 
 core::StringViewList ShvPath::splitPath(const shv::core::StringView &shv_path)
@@ -86,7 +86,7 @@ StringView ShvPath::takeFirsDir(StringView &shv_path)
 
 ShvPath ShvPath::joinDirs(const std::vector<std::string> &dirs)
 {
-	ShvPath ret;
+	std::string ret;
 	for(const std::string &s : dirs) {
 		if(s.empty())
 			continue;
@@ -123,7 +123,7 @@ bool need_quotes(const StringView &dir)
 
 ShvPath ShvPath::joinDirs(std::vector<StringView>::const_iterator first, std::vector<StringView>::const_iterator last)
 {
-	ShvPath ret;
+	std::string ret;
 	for(auto it = first; it != last; ++it) {
 		if(it->empty())
 			continue;
@@ -162,7 +162,7 @@ ShvPath ShvPath::appendDir(StringView path1, StringView dir)
 
 ShvPath ShvPath::appendDir(StringView dir) const
 {
-	return appendDir(*this, dir);
+	return appendDir(m_str, dir);
 }
 
 StringViewList ShvPath::split(const StringView &shv_path)
@@ -178,7 +178,7 @@ bool ShvPath::matchWild(const std::string &pattern) const
 
 bool ShvPath::matchWild(const shv::core::StringViewList &pattern_lst) const
 {
-	const shv::core::StringViewList path_lst = shv::core::utils::split(*this, SHV_PATH_DELIM);
+	const shv::core::StringViewList path_lst = shv::core::utils::split(m_str, SHV_PATH_DELIM);
 	return matchWild(path_lst, pattern_lst);
 }
 

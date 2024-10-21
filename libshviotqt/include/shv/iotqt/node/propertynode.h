@@ -83,7 +83,7 @@ public:
 		m_value = val;
 		shv::chainpack::RpcSignal sig;
 		sig.setMethod(shv::chainpack::Rpc::SIG_VAL_CHANGED);
-		sig.setShvPath(shvPath());
+		sig.setShvPath(shvPath().asString());
 		sig.setParams(m_toRpcValue(m_value));
 		emitSendRpcMessage(sig);
 	}

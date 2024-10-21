@@ -119,14 +119,14 @@ CLIOptions::Option& CLIOptions::Option::setValueString(const std::string &val_st
 		}
 		else {
 			bool ok;
-			int n = String::toInt(val_str, &ok);
+			int n = string::toInt(val_str, &ok);
 			if(ok) {
 				setValue(n != 0);
 			}
 			else {
 				bool is_true = true;
 				for(const char * const s : {"n", "no", "false"}) {
-					if(String::equal(val_str, s, String::CaseInsensitive)) {
+					if(string::equal(val_str, s, string::CaseInsensitive)) {
 						is_true = false;
 						break;
 					}
@@ -140,7 +140,7 @@ CLIOptions::Option& CLIOptions::Option::setValueString(const std::string &val_st
 	case RpcValue::Type::UInt:
 	{
 		bool ok;
-		setValue(String::toInt(val_str, &ok));
+		setValue(string::toInt(val_str, &ok));
 		if(!ok)
 			shvWarning() << "Value:" << val_str << "cannot be converted to Int.";
 		break;
@@ -148,7 +148,7 @@ CLIOptions::Option& CLIOptions::Option::setValueString(const std::string &val_st
 	case(RpcValue::Type::Double):
 	{
 		bool ok;
-		setValue(String::toDouble(val_str, &ok));
+		setValue(string::toDouble(val_str, &ok));
 		if(!ok)
 			shvWarning() << "Value:" << val_str << "cannot be converted to Double.";
 		break;
@@ -399,7 +399,7 @@ std::tuple<std::string, std::string> CLIOptions::applicationDirAndName() const
 	#endif
 			if(app_name.size() > ext.size()) {
 				std::string app_ext = app_name.substr(app_name.size() - ext.size());
-				if(String::equal(ext, app_ext, String::CaseInsensitive))
+				if(string::equal(ext, app_ext, string::CaseInsensitive))
 					app_name = app_name.substr(0, app_name.size() - ext.size());
 			}
 		}
@@ -425,7 +425,7 @@ void CLIOptions::printHelp(std::ostream &os) const
 	os << "OPTIONS:" << endl << endl;
 	for(const auto &kv : m_options) {
 		const Option &opt = kv.second;
-		os << String::join(opt.names(), ", ");
+		os << string::join(opt.names(), ", ");
 		if(opt.type() != RpcValue::Type::Bool) {
 			if(opt.type() == RpcValue::Type::Int
 					|| opt.type() == RpcValue::Type::UInt
@@ -457,7 +457,7 @@ void CLIOptions::dump(std::ostream &os) const
 {
 	for(const auto &kv : m_options) {
 		const Option &opt = kv.second;
-		os << kv.first << '(' << String::join(opt.names(), ", ") << ')' << ": " << opt.value().asString() << std::endl;
+		os << kv.first << '(' << string::join(opt.names(), ", ") << ')' << ": " << opt.value().asString() << std::endl;
 	}
 }
 

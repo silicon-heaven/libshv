@@ -15,18 +15,16 @@ SHVCORE_DECL_EXPORT bool startsWithPath(const std::string_view &str, const std::
 
 }
 
-class SHVCORE_DECL_EXPORT ShvPath : public shv::core::String
+class SHVCORE_DECL_EXPORT ShvPath
 {
-	using Super = shv::core::String;
 public:
 	static constexpr auto SHV_PATH_QUOTE = '\'';
 	static constexpr auto SHV_PATH_DELIM = '/';
 	static constexpr auto SHV_PATH_METHOD_DELIM = ':';
 public:
 	ShvPath();
-	ShvPath(shv::core::String &&o);
-	ShvPath(const shv::core::String &o);
-	using Super::Super;
+	ShvPath(std::string &&o);
+	ShvPath(const std::string &o);
 
 	const std::string &asString() const;
 
@@ -92,5 +90,8 @@ public:
 			}
 		}
 	}
+
+private:
+	std::string m_str;
 };
 }

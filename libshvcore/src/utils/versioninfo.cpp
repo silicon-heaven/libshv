@@ -16,7 +16,7 @@ VersionInfo::VersionInfo(int major, int minor, int patch, const std::string &bra
 VersionInfo::VersionInfo(const std::string &version, const std::string &branch)
 	: m_branch(branch)
 {
-	std::vector<std::string> parts = String::split(version, '.');
+	std::vector<std::string> parts = shv::core::string::split(version, '.');
 	while (parts.size() < 3) {
 		parts.emplace_back("0");
 	}

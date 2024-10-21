@@ -984,7 +984,7 @@ void BrokerApp::onClientLogin(int connection_id)
 
 		conn->setParent(client_app_node);
 		{
-			std::string mount_point = client_id_node->shvPath() + "/subscriptions";
+			std::string mount_point = client_id_node->shvPath().asString() + "/subscriptions";
 			auto *nd = new SubscriptionsNode(conn);
 			if(!m_nodesTree->mount(mount_point, nd))
 				SHV_EXCEPTION("Cannot mount connection subscription list to device tree, connection id: " + std::to_string(connection_id)
@@ -1010,7 +1010,7 @@ void BrokerApp::onClientLogin(int connection_id)
 					SHV_EXCEPTION("Cannot mount connection to device tree, connection id: " + std::to_string(connection_id));
 				connect(cli_nd, &ClientShvNode::destroyed, cli_nd->parentNode(), &shv::iotqt::node::ShvNode::deleteIfEmptyWithParents, Qt::QueuedConnection);
 			}
-			mount_point = cli_nd->shvPath();
+			mount_point = cli_nd->shvPath().asString();
 			QTimer::singleShot(0, this, [this, mount_point]() {
 				sendNotifyToSubscribers(mount_point, cp::Rpc::SIG_MOUNTED_CHANGED, "", true);
 			});

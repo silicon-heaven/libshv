@@ -124,9 +124,9 @@ const std::string &ShvFileJournal::journalDir()
 		}
 		else {
 			std::string id = m_journalContext.deviceId;
-			String::replace(id, '/', '-');
-			String::replace(id, ':', '-');
-			String::replace(id, '.', '-');
+			string::replace(id, '/', '-');
+			string::replace(id, ':', '-');
+			string::replace(id, '.', '-');
 			d += id;
 		}
 		m_journalContext.journalDir = d;
