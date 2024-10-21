@@ -191,7 +191,7 @@ StringViewList utils::split(StringView strv, char delim, char quote, SplitBehavi
 				ret.push_back(token);
 			}
 		}
-		if(token.end() >= strv.end())
+		if(token.data() + token.size() >= strv.data() + strv.size())
 			break;
 		strv = strv.substr(token.length() + 1);
 	}
