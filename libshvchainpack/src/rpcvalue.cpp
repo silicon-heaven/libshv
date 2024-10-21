@@ -939,27 +939,27 @@ long long parse_ISO_DateTime(const std::string &s, std::tm &tm, int &msec, int64
 }
 }
 
-RpcValue::DateTime::DateTime()
+RpcDateTime::RpcDateTime()
 	: m_dtm{0, 0}
 {
 }
 
-int64_t RpcValue::DateTime::msecsSinceEpoch() const
+int64_t RpcDateTime::msecsSinceEpoch() const
 {
 	return m_dtm.msec;
 }
 
-int RpcValue::DateTime::utcOffsetMin() const
+int RpcDateTime::utcOffsetMin() const
 {
 	return m_dtm.tz * 15;
 }
 
-bool RpcValue::DateTime::isZero() const
+bool RpcDateTime::isZero() const
 {
 	return msecsSinceEpoch() == 0;
 }
 
-RpcValue::DateTime RpcValue::DateTime::now()
+RpcDateTime RpcDateTime::now()
 {
 	std::chrono::time_point<std::chrono::system_clock> p1 = std::chrono::system_clock::now();
 	int64_t msecs = std::chrono::duration_cast<std::chrono:: milliseconds>(p1.time_since_epoch()).count();
@@ -972,7 +972,7 @@ RpcValue::DateTime RpcValue::DateTime::fromLocalString(const std::string &local_
 	int msec;
 	int64_t epoch_msec;
 	int utc_offset;
-	DateTime ret;
+	RpcDateTime ret;
 	if(!parse_ISO_DateTime(local_date_time_str, tm, msec, epoch_msec, utc_offset)) {
 		nError() << "Invalid date time string:" << local_date_time_str;
 		return ret;
@@ -992,18 +992,18 @@ RpcValue::DateTime RpcValue::DateTime::fromLocalString(const std::string &local_
 	return ret;
 }
 
-RpcValue::DateTime RpcValue::DateTime::fromUtcString(const std::string &utc_date_time_str, size_t *plen)
+RpcDateTime RpcDateTime::fromUtcString(const std::string &utc_date_time_str, size_t *plen)
 {
 	if(utc_date_time_str.empty()) {
 		if(plen)
 			*plen = 0;
-		return DateTime();
+		return RpcDateTime();
 	}
 	std::tm tm;
 	int msec;
 	int64_t epoch_msec;
 	int utc_offset;
-	DateTime ret;
+	RpcDateTime ret;
 	auto len = parse_ISO_DateTime(utc_date_time_str, tm, msec, epoch_msec, utc_offset);
 	if(len == 0) {
 		nInfo() << "Invalid date time string:" << utc_date_time_str;
@@ -1020,15 +1020,15 @@ RpcValue::DateTime RpcValue::DateTime::fromUtcString(const std::string &utc_date
 	return ret;
 }
 
-RpcValue::DateTime RpcValue::DateTime::fromMSecsSinceEpoch(int64_t msecs, int utc_offset_min)
+RpcDateTime RpcDateTime::fromMSecsSinceEpoch(int64_t msecs, int utc_offset_min)
 {
-	DateTime ret;
+	RpcDateTime ret;
 	ret.setMsecsSinceEpoch(msecs);
 	ret.setUtcOffsetMin(utc_offset_min);
 	return ret;
 }
 
-void RpcValue::DateTime::setMsecsSinceEpoch(int64_t msecs)
+void RpcDateTime::setMsecsSinceEpoch(int64_t msecs)
 {
 #ifdef __GNUC__
 #pragma GCC diagnostic push
@@ -1040,7 +1040,7 @@ void RpcValue::DateTime::setMsecsSinceEpoch(int64_t msecs)
 #endif
 }
 
-void RpcValue::DateTime::setUtcOffsetMin(int utc_offset_min)
+void RpcDateTime::setUtcOffsetMin(int utc_offset_min)
 {
 #ifdef __GNUC__
 #pragma GCC diagnostic push
@@ -1052,7 +1052,7 @@ void RpcValue::DateTime::setUtcOffsetMin(int utc_offset_min)
 #endif
 }
 
-std::string RpcValue::DateTime::toLocalString() const
+std::string RpcDateTime::toLocalString() const
 {
 	std::time_t tim = m_dtm.msec / 1000 + m_dtm.tz * 15 * 60;
 	std::tm *tm = std::localtime(&tim);
@@ -1069,12 +1069,12 @@ std::string RpcValue::DateTime::toLocalString() const
 	return ret;
 }
 
-std::string RpcValue::DateTime::toIsoString() const
+std::string RpcDateTime::toIsoString() const
 {
 	return toIsoString(MsecPolicy::Auto, IncludeTimeZone);
 }
 
-std::string RpcValue::DateTime::toIsoString(RpcValue::DateTime::MsecPolicy msec_policy, bool include_tz) const
+std::string RpcDateTime::toIsoString(RpcDateTime::MsecPolicy msec_policy, bool include_tz) const
 {
 	ccpcp_pack_context ctx;
 	std::array<char, 32> buff;
@@ -1083,14 +1083,14 @@ std::string RpcValue::DateTime::toIsoString(RpcValue::DateTime::MsecPolicy msec_
 	return std::string(buff.data(), ctx.current);
 }
 
-RpcValue::DateTime::Parts::Parts() = default;
+RpcDateTime::Parts::Parts() = default;
 
-RpcValue::DateTime::Parts::Parts(int y, int m, int d, int h, int mn, int s, int ms)
+RpcDateTime::Parts::Parts(int y, int m, int d, int h, int mn, int s, int ms)
 	: year(y), month(m), day(d), hour(h), min(mn), sec(s), msec(ms)
 {
 }
 
-bool RpcValue::DateTime::Parts::isValid() const
+bool RpcDateTime::Parts::isValid() const
 {
 	return
 	year >= 1970
@@ -1102,7 +1102,7 @@ bool RpcValue::DateTime::Parts::isValid() const
 	&& msec >= 0 && msec <= 999;
 }
 
-bool RpcValue::DateTime::Parts::operator==(const Parts &o) const
+bool RpcDateTime::Parts::operator==(const Parts &o) const
 {
 	return
 	year == o.year
@@ -1114,14 +1114,14 @@ bool RpcValue::DateTime::Parts::operator==(const Parts &o) const
 	&& msec == o.msec;
 }
 
-RpcValue::DateTime::Parts RpcValue::DateTime::toParts() const
+RpcDateTime::Parts RpcDateTime::toParts() const
 {
 	struct tm tm;
 	ccpon_gmtime(msecsSinceEpoch() / 1000 + utcOffsetMin() * 60, &tm);
 	return Parts {tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, static_cast<int>(msecsSinceEpoch() % 1000)};
 }
 
-RpcValue::DateTime RpcValue::DateTime::fromParts(const Parts &parts)
+RpcDateTime RpcDateTime::fromParts(const Parts &parts)
 {
 	if (parts.isValid()) {
 		struct tm tm;
@@ -1132,32 +1132,32 @@ RpcValue::DateTime RpcValue::DateTime::fromParts(const Parts &parts)
 		tm.tm_min = parts.min;
 		tm.tm_sec = parts.sec;
 		auto msec = ccpon_timegm(&tm) * 1000 + parts.msec;
-		return DateTime::fromMSecsSinceEpoch(msec);
+		return RpcDateTime::fromMSecsSinceEpoch(msec);
 	}
 	return {};
 }
 
-bool RpcValue::DateTime::operator==(const DateTime &o) const
+bool RpcDateTime::operator==(const RpcDateTime &o) const
 {
 	return (m_dtm.msec == o.m_dtm.msec);
 }
 
-bool RpcValue::DateTime::operator<(const DateTime &o) const
+bool RpcDateTime::operator<(const RpcDateTime &o) const
 {
 	return m_dtm.msec < o.m_dtm.msec;
 }
 
-bool RpcValue::DateTime::operator>=(const DateTime &o) const
+bool RpcDateTime::operator>=(const RpcDateTime &o) const
 {
 	return !(*this < o);
 }
 
-bool RpcValue::DateTime::operator>(const DateTime &o) const
+bool RpcDateTime::operator>(const RpcDateTime &o) const
 {
 	return m_dtm.msec > o.m_dtm.msec;
 }
 
-bool RpcValue::DateTime::operator<=(const DateTime &o) const
+bool RpcDateTime::operator<=(const RpcDateTime &o) const
 {
 	return !(*this > o);
 }
