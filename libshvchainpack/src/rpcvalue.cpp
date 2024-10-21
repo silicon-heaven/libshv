@@ -29,7 +29,7 @@ namespace shv::chainpack {
 // value wrappers
 //==============================================
 #ifdef DEBUG_RPCVAL
-inline NecroLog &operator<<(NecroLog log, const shv::chainpack::RpcValue::Decimal &d) { return log.operator <<(d.toDouble()); }
+inline NecroLog &operator<<(NecroLog log, const shv::chainpack::RpcDecimal &d) { return log.operator <<(d.toDouble()); }
 inline NecroLog &operator<<(NecroLog log, const shv::chainpack::RpcValue::DateTime &d) { return log.operator <<(d.toIsoString()); }
 inline NecroLog &operator<<(NecroLog log, const shv::chainpack::List &d) { return log.operator <<("some_list:" + std::to_string(d.size())); }
 inline NecroLog &operator<<(NecroLog log, const shv::chainpack::RpcValue::Map &d) { return log.operator <<("some_map:" + std::to_string(d.size())); }
@@ -92,7 +92,7 @@ RpcValue RpcValue::fromType(RpcValue::Type t) noexcept
 }
 RpcValue::RpcValue(std::nullptr_t) noexcept : m_value(Null{}) {}
 RpcValue::RpcValue(double value) : m_value(value) {}
-RpcValue::RpcValue(const RpcValue::Decimal& value) : m_value(value) {}
+RpcValue::RpcValue(const RpcDecimal& value) : m_value(value) {}
 RpcValue::RpcValue(short value) : m_value(int64_t{value}) {}
 RpcValue::RpcValue(int value) : m_value(int64_t{value}) {}
 RpcValue::RpcValue(long value) : m_value(int64_t{value}) {}
@@ -359,7 +359,7 @@ ResultType impl_to_int(const RpcValue::VariantType& value)
 			return static_cast<ResultType>(x);
 		} else if constexpr (std::is_same<TypeX, double>()) {
 			return static_cast<ResultType>(convert_to_int(x));
-		} else if constexpr (std::is_same<TypeX, RpcValue::Decimal>()) {
+		} else if constexpr (std::is_same<TypeX, RpcDecimal>()) {
 			return static_cast<ResultType>(convert_to_int(x.toDouble()));
 		} else if constexpr (std::is_same<TypeX, RpcValue::DateTime>()) {
 			return static_cast<ResultType>(x.msecsSinceEpoch());
@@ -378,9 +378,9 @@ ResultType impl_to_int(const RpcValue::VariantType& value)
 }
 }
 
-RpcValue::Decimal RpcValue::toDecimal() const
+RpcDecimal RpcValue::toDecimal() const
 {
-	return try_convert_or_default<RpcValue::Decimal>(m_value, Decimal{});
+	return try_convert_or_default<RpcDecimal>(m_value, Decimal{});
 }
 
 RpcValue::Int RpcValue::toInt() const
@@ -452,7 +452,7 @@ RpcValue::String RpcValue::toString() const
 				   std::is_same<TypeX, RpcValue::Null>() ||
 				   std::is_arithmetic<TypeX>() ||
 				   std::is_same<TypeX, RpcValue::DateTime>() ||
-				   std::is_same<TypeX, RpcValue::Decimal>() ||
+				   std::is_same<TypeX, RpcDecimal>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::IMap>>() ||
 				   std::is_same<TypeX, CowPtr<RpcList>>()) {
@@ -524,7 +524,7 @@ size_t RpcValue::count() const
 				   std::is_same<TypeX, CowPtr<String>>() ||
 				   std::is_same<TypeX, CowPtr<Blob>>() ||
 				   std::is_same<TypeX, RpcValue::DateTime>() ||
-				   std::is_same<TypeX, RpcValue::Decimal>()) {
+				   std::is_same<TypeX, RpcDecimal>()) {
 			return size_t{0};
 		} else {
 			static_assert(not_implemented_for_type<TypeX>, "count() not implemented for this type");
@@ -556,7 +556,7 @@ RpcValue RpcValue::at(RpcValue::Int ix, const RpcValue& default_value) const
 				   std::is_same<TypeX, CowPtr<Blob>>() ||
 				   std::is_same<TypeX, CowPtr<Map>>() ||
 				   std::is_same<TypeX, RpcValue::DateTime>() ||
-				   std::is_same<TypeX, RpcValue::Decimal>()) {
+				   std::is_same<TypeX, RpcDecimal>()) {
 			return default_value;
 		} else {
 			static_assert(not_implemented_for_type<TypeX>, "at(int) not implemented for this type");
@@ -579,7 +579,7 @@ RpcValue RpcValue::at(const std::string& key, const RpcValue& default_value) con
 				   std::is_same<TypeX, CowPtr<IMap>>() ||
 				   std::is_same<TypeX, CowPtr<RpcList>>() ||
 				   std::is_same<TypeX, RpcValue::DateTime>() ||
-				   std::is_same<TypeX, RpcValue::Decimal>()) {
+				   std::is_same<TypeX, RpcDecimal>()) {
 			return default_value;
 		} else {
 			static_assert(not_implemented_for_type<TypeX>, "at(const string&) not implemented for this type");
@@ -608,7 +608,7 @@ bool impl_has(const RpcValue::VariantType& value, const KeyType& key)
 				   std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
 				   std::is_same<TypeX, CowPtr<RpcList>>() ||
 				   std::is_same<TypeX, RpcValue::DateTime>() ||
-				   std::is_same<TypeX, RpcValue::Decimal>()) {
+				   std::is_same<TypeX, RpcDecimal>()) {
 			return false;
 		} else {
 			static_assert(not_implemented_for_type<TypeX>, "impl_has not implemented for this type");
@@ -681,7 +681,7 @@ void impl_set(RpcValue::VariantType& map, const KeyType& key, const RpcValue& va
 				   std::is_same<TypeX, CowPtr<RpcValue::Map>>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::String>>() ||
 				   std::is_same<TypeX, RpcValue::DateTime>() ||
-				   std::is_same<TypeX, RpcValue::Decimal>()) {
+				   std::is_same<TypeX, RpcDecimal>()) {
 			nError() << " Cannot set value to a non-map RpcValue! Key: " << key;
 		} else {
 			static_assert(not_implemented_for_type<TypeX>, "impl_set() not implemented for this type");
@@ -714,7 +714,7 @@ void RpcValue::append(const RpcValue &val)
 				   std::is_same<TypeX, CowPtr<RpcValue::String>>() ||
 				   std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
 				   std::is_same<TypeX, RpcValue::DateTime>() ||
-				   std::is_same<TypeX, RpcValue::Decimal>()) {
+				   std::is_same<TypeX, RpcDecimal>()) {
 			nError() << " Cannot set value to a non-list RpcValue!";
 		} else {
 			static_assert(not_implemented_for_type<TypeX>, "append() not implemented for this type");
@@ -830,12 +830,12 @@ RpcValue string_literals::operator""_cpon(const char* data, size_t size)
 	return RpcValue::fromCpon(std::string{data, size});
 }
 
-RpcValue::Decimal::Num::Num()
+RpcDecimal::Num::Num()
 	: exponent(-1)
 {
 }
 
-RpcValue::Decimal::Num::Num(int64_t m, int e)
+RpcDecimal::Num::Num(int64_t m, int e)
 	: mantisa(m)
 	, exponent(e)
 {
@@ -1411,29 +1411,29 @@ void RpcValue::MetaData::swap(RpcValue::MetaData &o) noexcept
 	std::swap(m_smap, o.m_smap);
 }
 
-RpcValue::Decimal::Decimal() = default;
+RpcDecimal::RpcDecimal() = default;
 
-RpcValue::Decimal::Decimal(int64_t mantisa, int exponent)
+RpcDecimal::RpcDecimal(int64_t mantisa, int exponent)
 	: m_num{mantisa, exponent}
 {
 }
 
-RpcValue::Decimal::Decimal(int dec_places)
-	: Decimal(0, -dec_places)
+RpcDecimal::RpcDecimal(int dec_places)
+	: RpcDecimal(0, -dec_places)
 {
 }
 
-int64_t RpcValue::Decimal::mantisa() const
+int64_t RpcDecimal::mantisa() const
 {
 	return m_num.mantisa;
 }
 
-int RpcValue::Decimal::exponent() const
+int RpcDecimal::exponent() const
 {
 	return m_num.exponent;
 }
 
-RpcValue::Decimal RpcValue::Decimal::fromDouble(double d, int round_to_dec_places)
+RpcDecimal RpcDecimal::fromDouble(double d, int round_to_dec_places)
 {
 	int exponent = -round_to_dec_places;
 	if(round_to_dec_places > 0) {
@@ -1442,16 +1442,16 @@ RpcValue::Decimal RpcValue::Decimal::fromDouble(double d, int round_to_dec_place
 	else if(round_to_dec_places < 0) {
 		for(; round_to_dec_places < 0; round_to_dec_places++) d /= Base;
 	}
-	return Decimal(std::lround(d), exponent);
+	return RpcDecimal(std::lround(d), exponent);
 }
 
-void RpcValue::Decimal::setDouble(double d)
+void RpcDecimal::setDouble(double d)
 {
-	Decimal dc = fromDouble(d, -m_num.exponent);
+	RpcDecimal dc = fromDouble(d, -m_num.exponent);
 	m_num.mantisa = dc.mantisa();
 }
 
-double RpcValue::Decimal::toDouble() const
+double RpcDecimal::toDouble() const
 {
 	auto ret = static_cast<double>(mantisa());
 	int exp = exponent();
@@ -1462,7 +1462,7 @@ double RpcValue::Decimal::toDouble() const
 	return ret;
 }
 
-std::string RpcValue::Decimal::toString() const
+std::string RpcDecimal::toString() const
 {
 	std::string ret = RpcValue(*this).toCpon();
 	return ret;
