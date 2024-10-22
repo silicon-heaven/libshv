@@ -13,3 +13,8 @@ NecroLog operator<<(NecroLog log, const shv::chainpack::RpcValue &v)
 	return log.operator <<(v.isValid()? v.toCpon(): "Invalid");
 }
 
+
+NecroLog operator<<(NecroLog log, const shv::core::utils::ShvPath &v)
+{
+	return log.operator<<(v.asString());
+}
