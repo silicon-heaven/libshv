@@ -196,8 +196,8 @@ auto findLongestPrefix(const QMap<QString, Value>& map, QString value) -> typena
 
 	return map.end();
 }
-}
 
+}
 } // namespace coreqt
 } // namespace shv
 
