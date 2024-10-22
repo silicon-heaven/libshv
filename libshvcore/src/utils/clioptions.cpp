@@ -1,7 +1,7 @@
 #include <shv/core/utils/clioptions.h>
 
 #include <shv/core/log.h>
-#include <shv/core/string.h>
+#include <shv/core/utils.h>
 #include <shv/core/exception.h>
 
 #include <shv/chainpack/cponreader.h>
@@ -119,14 +119,14 @@ CLIOptions::Option& CLIOptions::Option::setValueString(const std::string &val_st
 		}
 		else {
 			bool ok;
-			int n = string::toInt(val_str, &ok);
+			int n = utils::toInt(val_str, &ok);
 			if(ok) {
 				setValue(n != 0);
 			}
 			else {
 				bool is_true = true;
 				for(const char * const s : {"n", "no", "false"}) {
-					if(string::equal(val_str, s, string::CaseInsensitive)) {
+					if(utils::equal(val_str, s, utils::CaseSensitivity::CaseInsensitive)) {
 						is_true = false;
 						break;
 					}
@@ -140,7 +140,7 @@ CLIOptions::Option& CLIOptions::Option::setValueString(const std::string &val_st
 	case RpcValue::Type::UInt:
 	{
 		bool ok;
-		setValue(string::toInt(val_str, &ok));
+		setValue(utils::toInt(val_str, &ok));
 		if(!ok)
 			shvWarning() << "Value:" << val_str << "cannot be converted to Int.";
 		break;
@@ -148,7 +148,7 @@ CLIOptions::Option& CLIOptions::Option::setValueString(const std::string &val_st
 	case(RpcValue::Type::Double):
 	{
 		bool ok;
-		setValue(string::toDouble(val_str, &ok));
+		setValue(utils::toDouble(val_str, &ok));
 		if(!ok)
 			shvWarning() << "Value:" << val_str << "cannot be converted to Double.";
 		break;
@@ -399,7 +399,7 @@ std::tuple<std::string, std::string> CLIOptions::applicationDirAndName() const
 	#endif
 			if(app_name.size() > ext.size()) {
 				std::string app_ext = app_name.substr(app_name.size() - ext.size());
-				if(string::equal(ext, app_ext, string::CaseInsensitive))
+				if(utils::equal(ext, app_ext, utils::CaseSensitivity::CaseInsensitive))
 					app_name = app_name.substr(0, app_name.size() - ext.size());
 			}
 		}
@@ -425,7 +425,7 @@ void CLIOptions::printHelp(std::ostream &os) const
 	os << "OPTIONS:" << endl << endl;
 	for(const auto &kv : m_options) {
 		const Option &opt = kv.second;
-		os << string::join(opt.names(), ", ");
+		os << utils::join(opt.names(), ", ");
 		if(opt.type() != RpcValue::Type::Bool) {
 			if(opt.type() == RpcValue::Type::Int
 					|| opt.type() == RpcValue::Type::UInt
@@ -457,7 +457,7 @@ void CLIOptions::dump(std::ostream &os) const
 {
 	for(const auto &kv : m_options) {
 		const Option &opt = kv.second;
-		os << kv.first << '(' << string::join(opt.names(), ", ") << ')' << ": " << opt.value().asString() << std::endl;
+		os << kv.first << '(' << utils::join(opt.names(), ", ") << ')' << ": " << opt.value().asString() << std::endl;
 	}
 }
 

@@ -71,7 +71,7 @@ bool PatternMatcher::match(const std::string &path, const std::string &domain) c
 	}
 	else if(!m_pathPatternWildCard.empty()) {
 		const shv::core::StringViewList path_lst = shv::core::utils::ShvPath::split(path);
-		const shv::core::StringViewList pattern_lst = shv::core::utils::split(m_pathPatternWildCard, '/');
+		const shv::core::StringViewList pattern_lst = shv::core::utils::split(std::string_view{m_pathPatternWildCard}, '/');
 		if(!ShvPath::matchWild(path_lst, pattern_lst))
 			return false;
 	}

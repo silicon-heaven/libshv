@@ -9,7 +9,7 @@
 
 #include <shv/core/log.h>
 #include <shv/core/exception.h>
-#include <shv/core/string.h>
+#include <shv/core/utils.h>
 
 #include <shv/chainpack/rpc.h>
 
@@ -124,9 +124,9 @@ const std::string &ShvFileJournal::journalDir()
 		}
 		else {
 			std::string id = m_journalContext.deviceId;
-			string::replace(id, '/', '-');
-			string::replace(id, ':', '-');
-			string::replace(id, '.', '-');
+			utils::replace(id, '/', '-');
+			utils::replace(id, ':', '-');
+			utils::replace(id, '.', '-');
 			d += id;
 		}
 		m_journalContext.journalDir = d;

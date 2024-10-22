@@ -3,7 +3,7 @@
 
 #include <shv/core/exception.h>
 #include <shv/core/log.h>
-#include <shv/core/string.h>
+#include <shv/core/utils.h>
 
 #define logWShvJournal() shvCWarning("ShvJournal")
 #define logIShvJournal() shvCInfo("ShvJournal")
@@ -119,13 +119,13 @@ bool ShvJournalFileReader::next()
 				}
 				else {
 					bool ok;
-					int short_time = shv::core::string::toInt(std::string{fld}, &ok);
+					int short_time = shv::core::utils::toInt(std::string{fld}, &ok);
 					m_currentEntry.shortTime = ok && short_time >= 0? short_time: ShvJournalEntry::NO_SHORT_TIME;
 				}
 				break;
 			}
 			case Column::ValueFlags: {
-				auto value_flags = fld.empty()? 0: shv::core::string::toInt(std::string{fld});
+				auto value_flags = fld.empty()? 0: shv::core::utils::toInt(std::string{fld});
 				m_currentEntry.valueFlags = static_cast<unsigned int>(value_flags);
 				break;
 			}

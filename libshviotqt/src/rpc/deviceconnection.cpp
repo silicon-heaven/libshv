@@ -2,7 +2,7 @@
 #include <shv/iotqt/rpc/deviceappclioptions.h>
 
 #include <shv/core/log.h>
-#include <shv/core/string.h>
+#include <shv/core/utils.h>
 
 #include <QCoreApplication>
 
@@ -49,8 +49,8 @@ void DeviceConnection::setCliOptions(const DeviceAppCliOptions *cli_opts)
 			device_id = device_id_from_file;
 		}
 		else {
-			shv::core::string::replace(device_id, "{{deviceIdFile}}", device_id_from_file);
-			shv::core::string::replace(device_id, "{{appName}}", QCoreApplication::applicationName().toStdString());
+			shv::core::utils::replace(device_id, "{{deviceIdFile}}", device_id_from_file);
+			shv::core::utils::replace(device_id, "{{appName}}", QCoreApplication::applicationName().toStdString());
 		}
 		if(!device_id.empty())
 			dev[cp::Rpc::KEY_DEVICE_ID] = device_id;

@@ -1,6 +1,5 @@
 #include <shv/core/utils/versioninfo.h>
 
-#include <shv/core/string.h>
 #include <shv/core/utils.h>
 
 namespace shv::core::utils {
@@ -16,7 +15,7 @@ VersionInfo::VersionInfo(int major, int minor, int patch, const std::string &bra
 VersionInfo::VersionInfo(const std::string &version, const std::string &branch)
 	: m_branch(branch)
 {
-	std::vector<std::string> parts = shv::core::string::split(version, '.');
+	std::vector<std::string> parts = shv::core::utils::split(version, '.');
 	while (parts.size() < 3) {
 		parts.emplace_back("0");
 	}

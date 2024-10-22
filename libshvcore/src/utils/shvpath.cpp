@@ -172,13 +172,13 @@ StringViewList ShvPath::split(const StringView &shv_path)
 
 bool ShvPath::matchWild(const std::string &pattern) const
 {
-	const shv::core::StringViewList ptlst = shv::core::utils::split(pattern, SHV_PATH_DELIM);
+	const shv::core::StringViewList ptlst = shv::core::utils::split(std::string_view{pattern}, SHV_PATH_DELIM);
 	return matchWild(ptlst);
 }
 
 bool ShvPath::matchWild(const shv::core::StringViewList &pattern_lst) const
 {
-	const shv::core::StringViewList path_lst = shv::core::utils::split(m_str, SHV_PATH_DELIM);
+	const shv::core::StringViewList path_lst = shv::core::utils::split(std::string_view{m_str}, SHV_PATH_DELIM);
 	return matchWild(path_lst, pattern_lst);
 }
 

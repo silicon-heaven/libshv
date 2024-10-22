@@ -11,7 +11,7 @@
 
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/core/exception.h>
-#include <shv/core/string.h>
+#include <shv/core/utils.h>
 #include <shv/coreqt/log.h>
 #include <shv/core/utils/shvgetlogparams.h>
 #include <shv/core/utils/shvjournalentry.h>

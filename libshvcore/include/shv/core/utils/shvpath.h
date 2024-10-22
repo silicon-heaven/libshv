@@ -2,7 +2,7 @@
 
 #include <shv/core/shvcoreglobal.h>
 
-#include <shv/core/string.h>
+#include <shv/core/utils.h>
 
 #include <functional>
 #include <map>
