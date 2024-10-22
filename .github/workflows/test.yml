@@ -144,6 +144,39 @@ jobs:
       - name: Build and test
         uses: ./.github/actions/build-and-test
 
+  wasm:
+    name: WebAssembly / Qt 6.6.3
+    runs-on: ubuntu-22.04
+    env:
+      emsdk_cache_dir: "emsdk-cache"
+    steps:
+      - name: Clone the repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup emsdk cache
+        uses: actions/cache@v4
+        with:
+          key: emsdk-cache
+          path: ${{ env.emsdk_cache_dir }}
+
+      - uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 3.1.37
+          actions-cache-folder: ${{ env.emsdk_cache_dir }}
+
+      - name: Setup CMake
+        uses: ./.github/actions/cmake
+        with:
+          qt_version: 6.6.3
+          qt_arch: wasm_singlethread
+          use_qt6: ON
+          modules: qtwebsockets
+
+      - name: Build and test
+        uses: ./.github/actions/build-and-test
+
   nix:
     name: Qt 6.6.2 / NixOS
     runs-on: ubuntu-22.04
