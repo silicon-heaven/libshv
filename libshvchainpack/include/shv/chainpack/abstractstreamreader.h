@@ -7,19 +7,16 @@
 
 namespace shv::chainpack {
 
-class SHVCHAINPACK_DECL_EXPORT ParseException : public std::exception
+class SHVCHAINPACK_DECL_EXPORT ParseException : public std::runtime_error
 {
-	using Super = std::exception;
+	using Super = std::runtime_error;
 public:
 	ParseException(int err_code, const std::string &msg, long long pos, const std::string &dump);
 
-	const char *what() const noexcept override;
 	int errCode() const;
 	long long pos() const;
-	const std::string& msg() const;
 private:
 	int m_errCode;
-	std::string m_msg;
 	long long m_pos = -1;
 };
 

@@ -18,14 +18,18 @@ size_t unpack_underflow_handler(ccpcp_unpack_context *ctx)
 }
 
 ParseException::ParseException(int err_code, const std::string &msg, long long pos, const std::string &dump)
-	: m_errCode(err_code), m_msg(msg), m_pos(pos)
+	: Super([&msg, &dump, err_code, pos](){
+		auto res = std::string("Parse error: ")  + std::to_string(err_code) + " " + ccpcp_error_string(err_code)
+				+ " at pos: " + std::to_string(pos)
+				+ " - " + msg;
+		if (!dump.empty()) {
+			res += " near to:\n" + dump;
+		}
+		return res;
+	}())
+	, m_errCode(err_code)
+	, m_pos(pos)
 {
-	m_msg = std::string("Parse error: ")  + std::to_string(m_errCode) + " " + ccpcp_error_string(m_errCode)
-			+ " at pos: " + std::to_string(m_pos)
-			+ " - " + m_msg;
-	if (!dump.empty()) {
-		m_msg += " near to:\n" + dump;
-	}
 }
 
 int ParseException::errCode() const
@@ -36,16 +40,6 @@ int ParseException::errCode() const
 long long ParseException::pos() const
 {
 	return m_pos;
-}
-
-const std::string& ParseException::msg() const
-{
-	return m_msg;
-}
-
-const char *ParseException::what() const noexcept
-{
-	 return m_msg.data();
 }
 
 AbstractStreamReader::AbstractStreamReader(std::istream &in)

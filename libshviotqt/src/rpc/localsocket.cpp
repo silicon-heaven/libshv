@@ -1,5 +1,6 @@
 #include <shv/iotqt/rpc/localsocket.h>
 
+#include <shv/chainpack/utils.h>
 #include <shv/iotqt/rpc/serialportsocket.h>
 
 #include <QLocalSocket>
@@ -142,13 +143,19 @@ void LocalSocket::ignoreSslErrors()
 void LocalSocket::onDataReadyRead()
 {
 	auto ba = m_socket->readAll();
-	std::string_view escaped_data(ba.constData(), ba.size());
-	for (auto rqid : m_frameReader->addData(escaped_data)) {
-		emit responseMetaReceived(rqid);
+	try {
+		std::string_view escaped_data(ba.constData(), ba.size());
+		for (auto rqid : m_frameReader->addData(escaped_data)) {
+			emit responseMetaReceived(rqid);
+		}
+		emit dataChunkReceived();
+		if (!m_frameReader->isEmpty()) {
+			emit readyRead();
+		}
 	}
-	emit dataChunkReceived();
-	if (!m_frameReader->isEmpty()) {
-		emit readyRead();
+	catch (const std::runtime_error &e) {
+		shvWarning() << "Corrupted meta data received:\n" << shv::chainpack::utils::hexDump(std::string_view(ba.constData(), std::min(ba.size(), static_cast<decltype(ba.size())>(64))));
+		emit error(QAbstractSocket::SocketError::UnknownSocketError);
 	}
 }
 

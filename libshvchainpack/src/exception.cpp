@@ -19,17 +19,22 @@ Exception::Exception(const std::string& _msg, const std::string& _where, const c
 {
 }
 
-Exception::Exception(const std::string &_msg, const RpcValue &_data, const std::string &_where, const char *_log_topic)
-	: m_msg(_msg)
-	, m_data(_data)
-	, m_where(_where)
+Exception::Exception(const std::string &msg, const RpcValue &data, const std::string &where, const char *log_topic)
+	: Super([&msg, &data](){
+		if(data.isValid()) {
+			return msg + " data: " + data.toCpon();
+		}
+		return msg;
+	}())
+	, m_msg(msg)
+	, m_data(data)
+	, m_where(where)
 {
-	makeWhat();
-	if(isAbortOnException() || !_where.empty() || (_log_topic && *_log_topic)) {
-		if(_log_topic && *_log_topic)
-			nCError(_log_topic) << "SHV_EXCEPTION:" << _where << m_what;
+	if(isAbortOnException() || !where.empty() || (log_topic && *log_topic)) {
+		if(log_topic && *log_topic)
+			nCError(log_topic) << "SHV_EXCEPTION:" << where << what();
 		else
-			nError() << "SHV_EXCEPTION:" << _where << m_what;
+			nError() << "SHV_EXCEPTION:" << where << what();
 	}
 	if(isAbortOnException())
 		std::abort();
@@ -50,12 +55,6 @@ shv::chainpack::RpcValue Exception::data() const
 	return m_data;
 }
 
-
-const char *Exception::what() const noexcept
-{
-	return m_what.c_str();
-}
-
 void Exception::Exception::setAbortOnException(bool on)
 {
 	s_abortOnException = on;
@@ -64,14 +63,6 @@ void Exception::Exception::setAbortOnException(bool on)
 bool Exception::Exception::isAbortOnException()
 {
 	return s_abortOnException;
-}
-
-void Exception::makeWhat()
-{
-	m_what = m_msg;
-	if(m_data.isValid()) {
-		m_what += " data: " + m_data.toCpon();
-	}
 }
 
 } // namespace shv

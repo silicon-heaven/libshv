@@ -1,5 +1,6 @@
 #include <shv/iotqt/rpc/websocket.h>
 
+#include <shv/chainpack/utils.h>
 #include <shv/coreqt/log.h>
 
 #include <QWebSocket>
@@ -83,25 +84,35 @@ void WebSocket::flushWriteBuffer()
 void WebSocket::onTextMessageReceived(const QString &message)
 {
 	shvDebug() << "text message received:" << message;
-	auto ba = message.toUtf8();
-	for (auto rqid : m_frameReader->addData(std::string_view(ba.constData(), ba.size()))) {
-		emit responseMetaReceived(rqid);
+	auto data = message.toUtf8();
+	try {
+		for (auto rqid : m_frameReader->addData(std::string_view(data.constData(), data.size()))) {
+			emit responseMetaReceived(rqid);
+		}
+		emit dataChunkReceived();
+		if (!m_frameReader->isEmpty()) {
+			emit readyRead();
+		}
 	}
-	emit dataChunkReceived();
-	if (!m_frameReader->isEmpty()) {
-		emit readyRead();
+	catch (const std::runtime_error &e) {
+		shvWarning() << "Corrupted meta data received:\n" << shv::chainpack::utils::hexDump(std::string_view(data.constData(), std::min(data.size(), static_cast<decltype(data.size())>(64))));
 	}
 }
 
 void WebSocket::onBinaryMessageReceived(const QByteArray &message)
 {
-	shvDebug() << "binary message received:" << message;
-	for (auto rqid : m_frameReader->addData(std::string_view(message.constData(), message.size()))) {
-		emit responseMetaReceived(rqid);
+	try {
+		shvDebug() << "binary message received:" << message;
+		for (auto rqid : m_frameReader->addData(std::string_view(message.constData(), message.size()))) {
+			emit responseMetaReceived(rqid);
+		}
+		emit dataChunkReceived();
+		if (!m_frameReader->isEmpty()) {
+			emit readyRead();
+		}
 	}
-	emit dataChunkReceived();
-	if (!m_frameReader->isEmpty()) {
-		emit readyRead();
+	catch (const std::runtime_error &e) {
+		shvWarning() << "Corrupted meta data received:\n" << shv::chainpack::utils::hexDump(std::string_view(message.constData(), std::min(message.size(), static_cast<decltype(message.size())>(64))));
 	}
 }
 

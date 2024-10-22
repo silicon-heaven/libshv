@@ -70,7 +70,7 @@ void RpcDriver::onFrameDataRead(const std::string &frame_data)
 		onRpcFrameReceived(std::move(frame));
 	}
 	catch (const ParseException &e) {
-		logRpcDataW() << "ERROR - Rpc frame data corrupted:" << e.msg();
+		logRpcDataW() << "ERROR - Rpc frame data corrupted:" << e.what();
 		//logRpcDataW() << "The error occured in data:\n" << shv::chainpack::utils::hexDump(m_readData.data(), 1024);
 		onParseDataException(e);
 		return;

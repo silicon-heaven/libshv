@@ -9,8 +9,9 @@
 
 namespace shv::chainpack {
 
-class SHVCHAINPACK_DECL_EXPORT Exception : public std::exception
+class SHVCHAINPACK_DECL_EXPORT Exception : public std::runtime_error
 {
+	using Super = std::runtime_error;
 public:
 	static constexpr bool Throw = true;
 public:
@@ -22,17 +23,13 @@ public:
 	std::string message() const;
 	std::string where() const;
 	shv::chainpack::RpcValue data() const;
-	const char* what() const noexcept override;
 	static void setAbortOnException(bool on);
 	static bool isAbortOnException();
-protected:
-	void makeWhat();
 protected:
 	// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 	static bool s_abortOnException;
 	std::string m_msg;
 	shv::chainpack::RpcValue m_data;
-	std::string m_what;
 	std::string m_where;
 };
 

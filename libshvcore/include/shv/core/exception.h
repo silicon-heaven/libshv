@@ -3,9 +3,6 @@
 #include <shv/core/shvcoreglobal.h>
 #include <shv/core/utils.h>
 
-#include <stdexcept>
-#include <string>
-
 #include <shv/chainpack/exception.h>
 
 namespace shv::core {
