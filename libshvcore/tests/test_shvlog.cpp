@@ -20,14 +20,29 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 #include <doctest/doctest.h>
 
-using namespace shv::core::utils;
 using namespace shv::core;
 using namespace shv::chainpack;
+using shv::core::utils::ShvTypeInfo;
+using shv::core::utils::ShvTypeDescr;
+using shv::core::utils::ShvPropertyDescr;
+using shv::core::utils::ShvJournalEntry;
+using shv::core::utils::ShvFileJournal;
+using shv::core::utils::ShvGetLogParams;
+using shv::core::utils::ShvLogRpcValueReader;
+using shv::core::utils::ShvLogFileReader;
+using shv::core::utils::ShvJournalFileWriter;
+using shv::core::utils::ShvMemoryJournal;
+using shv::core::utils::ShvJournalFileReader;
+using shv::core::utils::ShvLogFilter;
 
 namespace shv::chainpack {
 
 doctest::String toString(const RpcValue& value) {
 	return value.toCpon().c_str();
+}
+
+doctest::String toString(const ShvJournalEntry& value) {
+	return value.toRpcValue().toCpon().c_str();
 }
 
 }

@@ -11,7 +11,7 @@
 #include <shv/coreqt/log.h>
 
 #include <shv/core/exception.h>
-#include <shv/core/string.h>
+#include <shv/core/utils.h>
 
 #include <shv/chainpack/cponreader.h>
 #include <shv/chainpack/rpcmessage.h>

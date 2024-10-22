@@ -2,7 +2,7 @@
 #include <shv/broker/brokerapp.h>
 
 #include <shv/chainpack/rpcmessage.h>
-#include <shv/core/string.h>
+#include <shv/core/utils.h>
 #include <shv/coreqt/log.h>
 #include <shv/core/utils/shvpath.h>
 #include <shv/iotqt/rpc/deviceappclioptions.h>

@@ -1,6 +1,5 @@
 #include <shv/core/utils/shvtypeinfo.h>
 #include <shv/core/utils/shvpath.h>
-#include <shv/core/string.h>
 #include <shv/core/utils.h>
 #include <shv/core/log.h>
 
@@ -751,7 +750,7 @@ typename std::map<std::string, T>::const_iterator find_longest_prefix(const std:
 				prefix = "";
 			}
 			else {
-				prefix = shv::core::string::mid(prefix, 0, ix);
+				prefix = shv::core::utils::mid(prefix, 0, ix);
 			}
 		}
 		else {
@@ -965,7 +964,7 @@ std::tuple<std::string, std::string, std::string> ShvTypeInfo::findDeviceType(co
 
 	const std::string prefix = it->first;
 	const std::string device_type = it->second;
-	const std::string property_path = prefix.empty()? shv_path: shv::core::string::mid(shv_path, prefix.size() + 1);
+	const std::string property_path = prefix.empty()? shv_path: shv::core::utils::mid(shv_path, prefix.size() + 1);
 	return make_tuple(prefix, device_type, property_path);
 }
 

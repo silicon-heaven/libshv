@@ -1,7 +1,6 @@
 add_library(libshvcore
 	src/exception.cpp
 	src/log.cpp
-	src/string.cpp
 	src/stringview.cpp
 	src/utils.cpp
 	src/utils/abstractshvjournal.cpp

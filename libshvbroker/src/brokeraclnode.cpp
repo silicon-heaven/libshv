@@ -9,7 +9,7 @@
 #include <shv/chainpack/cponwriter.h>
 #include <shv/chainpack/metamethod.h>
 #include <shv/chainpack/rpc.h>
-#include <shv/core/string.h>
+#include <shv/core/utils.h>
 #include <shv/core/log.h>
 #include <shv/core/exception.h>
 #include <shv/iotqt/acl/aclroleaccessrules.h>
@@ -588,7 +588,7 @@ unsigned AccessAclNode::keyToRuleIndex(const std::string &key)
 	if(std::regex_search(key, color_match, color_regex)) {
 		if (color_match.size() > 1) {
 			bool ok;
-			unsigned ix = static_cast<unsigned>(shv::core::string::toInt(color_match[1], &ok));
+			unsigned ix = static_cast<unsigned>(shv::core::utils::toInt(color_match[1], &ok));
 			if(ok)
 				return ix;
 		}

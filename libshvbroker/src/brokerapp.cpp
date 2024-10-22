@@ -28,7 +28,6 @@
 
 #include <shv/coreqt/log.h>
 
-#include <shv/core/string.h>
 #include <shv/core/utils.h>
 #include <shv/core/assert.h>
 #include <shv/core/stringview.h>

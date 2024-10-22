@@ -12,7 +12,7 @@
 #include <shv/chainpack/accessgrant.h>
 #include <shv/core/exception.h>
 #include <shv/core/stringview.h>
-#include <shv/core/string.h>
+#include <shv/core/utils.h>
 #include <shv/core/utils/shvpath.h>
 
 #include <QTimer>
@@ -322,7 +322,7 @@ ShvNode::StringList ShvNode::childNames(const StringViewList &shv_path)
 		if(nd)
 			ret = nd->childNames(StringViewList());
 	}
-	shvDebug() << "\tret:" << shv::core::string::join(ret, '+');
+	shvDebug() << "\tret:" << shv::core::utils::join(ret, '+');
 	return ret;
 }
 
