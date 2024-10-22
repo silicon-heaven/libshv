@@ -171,7 +171,7 @@ template <LogReader Type>
 				continue;
 			}
 
-			if (ctx.params.isSinceLast() || entry.epochMsec < params_since_msec) {
+			if (ctx.params.isSinceLast() || entry.epochMsec <= params_since_msec) {
 				logDGetLog() << "\t saving SNAPSHOT entry:" << entry.toRpcValueMap().toCpon();
 				AbstractShvJournal::addToSnapshot(snapshot, entry);
 			}
@@ -181,7 +181,7 @@ template <LogReader Type>
 				goto exit_nested_loop;
 			}
 
-			if (entry.epochMsec >= params_since_msec && !ctx.params.isSinceLast()) {
+			if (entry.epochMsec > params_since_msec && !ctx.params.isSinceLast()) {
 				if ((static_cast<int>(snapshot.keyvals.size()) + record_count + 1) > ctx.params.recordCountLimit) {
 					log_header.setRecordCountLimitHit(true);
 					if (last_entry.has_value() && entry.dateTime() != last_entry->dateTime()) {
