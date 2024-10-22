@@ -23,7 +23,6 @@
 using namespace shv::core::utils;
 using namespace shv::core;
 using namespace shv::chainpack;
-using namespace std;
 
 namespace shv::chainpack {
 
@@ -35,9 +34,9 @@ doctest::String toString(const RpcValue& value) {
 
 namespace {
 
-void write_cpon_file(const string &fn, const RpcValue &log)
+void write_cpon_file(const std::string &fn, const RpcValue &log)
 {
-	ofstream out(fn, std::ios::binary | std::ios::out);
+	std::ofstream out(fn, std::ios::binary | std::ios::out);
 	CponWriterOptions opts;
 	opts.setIndent("\t");
 	CponWriter wr(out, opts);
@@ -47,7 +46,7 @@ void write_cpon_file(const string &fn, const RpcValue &log)
 struct Channel
 {
 	ShvTypeInfo typeInfo;
-	string domain;
+	std::string domain;
 	DataChange::ValueFlags valueFlags = 0;
 	int minVal = 0;
 	int maxVal = 0;
@@ -57,7 +56,7 @@ struct Channel
 };
 
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
-std::map<string, Channel> channels;
+std::map<std::string, Channel> channels;
 
 const ShvTypeInfo typeInfo = ShvTypeInfo::fromVersion2(
 	// types
@@ -167,14 +166,14 @@ void init_channels()
 	}
 }
 
-const string TEST_DIR = filesystem::temp_directory_path().string() + "/test_ShvLog";
-const string JOURNAL_DIR = TEST_DIR + "/journal";
+const std::string TEST_DIR = std::filesystem::temp_directory_path().string() + "/test_ShvLog";
+const std::string JOURNAL_DIR = TEST_DIR + "/journal";
 const int64_t JOURNAL_FILES_CNT = 10;
 
 void init_journal_dir()
 {
-	filesystem::remove_all(TEST_DIR);
-	filesystem::create_directories(JOURNAL_DIR);
+	std::filesystem::remove_all(TEST_DIR);
+	std::filesystem::create_directories(JOURNAL_DIR);
 }
 
 void init_file_journal(ShvFileJournal &file_journal)
@@ -195,7 +194,7 @@ int64_t device_stop2_msec = 0;
 class TimeScope
 {
 public:
-	TimeScope(const string &msg)
+	TimeScope(const std::string &msg)
 		: m_start(std::chrono::steady_clock::now())
 		, m_message(msg) {  }
 	~TimeScope()
@@ -204,7 +203,7 @@ public:
 	}
 private:
 	std::chrono::time_point<std::chrono::steady_clock> m_start;
-	string m_message;
+	std::string m_message;
 };
 
 }
@@ -300,14 +299,14 @@ DOCTEST_TEST_CASE("ShvLog")
 			params.recordCountLimit = 10000;
 			nDebug() << "\t params:" << params.toRpcValue().toCpon();
 			RpcValue log1 = file_journal.getLog(params);
-			string fn = TEST_DIR + "/log1.chpk";
+			std::string fn = TEST_DIR + "/log1.chpk";
 			{
-				ofstream out(fn, std::ios::binary | std::ios::out);
+				std::ofstream out(fn, std::ios::binary | std::ios::out);
 				ChainPackWriter wr(out);
 				wr << log1;
 			}
 			{
-				string fn2 = TEST_DIR + "/log1.cpon";
+				std::string fn2 = TEST_DIR + "/log1.cpon";
 				nDebug() << "\t file:" << fn2;
 				write_cpon_file(fn2, log1);
 			}
@@ -339,7 +338,7 @@ DOCTEST_TEST_CASE("ShvLog")
 			params.since = RpcValue::DateTime::fromMSecsSinceEpoch(device_start1_msec + (device_stop2_msec - device_start2_msec) / 4);
 			nDebug() << "\t params:" << params.toRpcValue().toCpon();
 			RpcValue log1 = file_journal.getLog(params);
-			string fn = TEST_DIR + "/log1-filtered.cpon";
+			std::string fn = TEST_DIR + "/log1-filtered.cpon";
 			nDebug() << "\t file:" << fn;
 			write_cpon_file(fn, log1);
 			ShvLogRpcValueReader rd(log1);
@@ -403,7 +402,7 @@ DOCTEST_TEST_CASE("ShvLog")
 		std::uniform_int_distribution<int> rndval(0, 1000);
 
 		unsigned dirty_cnt = 0;
-		string dirty_fn = TEST_DIR + "/dirty.log2";
+		std::string dirty_fn = TEST_DIR + "/dirty.log2";
 		ShvJournalFileWriter dirty_log(dirty_fn);
 		ShvMemoryJournal memory_jurnal;
 		memory_jurnal.setTypeInfo(typeInfo);
@@ -457,12 +456,12 @@ DOCTEST_TEST_CASE("ShvLog")
 	DOCTEST_SUBCASE("Read chainpack to memory log")
 	{
 		nDebug() << "------------- Read chainpack to memory log";
-		string fn1 = TEST_DIR + "/log1.chpk";
-		string fn2 = TEST_DIR + "/log2.chpk";
+		std::string fn1 = TEST_DIR + "/log1.chpk";
+		std::string fn2 = TEST_DIR + "/log2.chpk";
 		ShvMemoryJournal memory_jurnal;
 		memory_jurnal.loadLog(fn1);
 		{
-			ofstream out(fn2, std::ios::binary | std::ios::out);
+			std::ofstream out(fn2, std::ios::binary | std::ios::out);
 			ChainPackWriter wr(out);
 			wr << memory_jurnal.getLog(ShvGetLogParams());
 		}
@@ -482,7 +481,7 @@ DOCTEST_TEST_CASE("ShvLog")
 		params.pathPattern = "**/vetra/**";
 		ShvLogFilter filter(params);
 		ShvMemoryJournal mmj;
-		string fn1 = TEST_DIR + "/log1.chpk";
+		std::string fn1 = TEST_DIR + "/log1.chpk";
 		ShvLogFileReader rd1(fn1);
 		while (rd1.next()) {
 			const ShvJournalEntry &e1 = rd1.entry();
@@ -491,12 +490,12 @@ DOCTEST_TEST_CASE("ShvLog")
 			}
 		}
 		for(const auto &e : mmj.entries()) {
-			REQUIRE(e.path.find("vetra") != string::npos);
+			REQUIRE(e.path.find("vetra") != std::string::npos);
 		}
 	}
 	DOCTEST_SUBCASE("Filtering chainpack appends to memory log 2")
 	{
-		string fn1 = TEST_DIR + "/log1.chpk";
+		std::string fn1 = TEST_DIR + "/log1.chpk";
 		ShvLogFileReader rd1(fn1);
 		ShvGetLogParams params;
 		params.pathPattern = "((temp.*)|(volt.+))";

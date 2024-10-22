@@ -12,7 +12,6 @@
 #include <unistd.h>
 #endif
 
-using namespace std;
 using namespace shv::chainpack;
 
 namespace shv::core {
@@ -124,7 +123,7 @@ void create_key_val(RpcValue &map, const StringViewList &path, const RpcValue &v
 		map.set(std::string{path[static_cast<size_t>(path.length() - 1)]}, val);
 	}
 	else {
-		string key = std::string{path[0]};
+		auto key = std::string{path[0]};
 		RpcValue mval = map.at(key);
 		if(!mval.isMap())
 			mval = RpcValue::Map();
@@ -138,7 +137,7 @@ RpcValue Utils::foldMap(const chainpack::RpcValue::Map &plain_map, char key_deli
 {
 	RpcValue ret = RpcValue::Map();
 	for(const auto &kv : plain_map) {
-		string key = kv.first;
+		auto key = kv.first;
 		StringViewList lst = utils::split(key, key_delimiter, '\0');
 		create_key_val(ret, lst, kv.second);
 	}
