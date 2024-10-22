@@ -95,6 +95,10 @@ public:
 
 	static std::string simplifyPath(const std::string &p);
 
+#ifndef _MSC_VER
+	static std::vector<char> readAllFd(int fd);
+#endif
+
 	template<typename T>
 	static T getIntLE(const char *buff, unsigned len)
 	{
