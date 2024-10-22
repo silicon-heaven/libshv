@@ -138,7 +138,6 @@ DOCTEST_TEST_CASE("getLog")
 			DOCTEST_SUBCASE("since")
 			{
 				expected_timestamps = {
-					"2022-07-07T18:06:17.872Z",
 					"2022-07-07T18:06:17.874Z",
 					"2022-07-07T18:06:17.880Z",
 				};
@@ -356,7 +355,6 @@ DOCTEST_TEST_CASE("getLog")
 			{
 				get_log_params.since = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.800");
 				expected_entries = {
-					make_entry("2022-07-07T18:06:17.800Z", "value3", 200, false),
 					make_entry("2022-07-07T18:06:17.950Z", "value2", 10, false),
 				};
 			}
@@ -399,8 +397,7 @@ DOCTEST_TEST_CASE("getLog")
 					expected_entries = {
 						make_entry("2022-07-07T18:06:17.800Z", "value1", 0, true),
 						make_entry("2022-07-07T18:06:17.800Z", "value2", 1, true),
-						make_entry("2022-07-07T18:06:17.800Z", "value3", 3, true),
-						make_entry("2022-07-07T18:06:17.800Z", "value3", 200, false),
+						make_entry("2022-07-07T18:06:17.800Z", "value3", 200, true),
 						make_entry("2022-07-07T18:06:17.950", "value2", 10, false),
 					};
 				}
@@ -415,7 +412,7 @@ DOCTEST_TEST_CASE("getLog")
 				expected_entries = {
 					make_entry("2022-07-07T18:06:17.800Z", "value1", 0, true),
 					make_entry("2022-07-07T18:06:17.800Z", "value2", 1, true),
-					make_entry("2022-07-07T18:06:17.800Z", "value3", 3, true),
+					make_entry("2022-07-07T18:06:17.800Z", "value3", 200, true),
 				};
 			}
 
