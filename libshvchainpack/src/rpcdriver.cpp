@@ -92,8 +92,14 @@ void RpcDriver::setDefaultRpcTimeoutMsec(int msec)
 
 void RpcDriver::onRpcFrameReceived(RpcFrame &&frame)
 {
-	auto msg = frame.toRpcMessage();
-	onRpcMessageReceived(msg);
+	std::string errmsg;
+	auto msg = frame.toRpcMessage(&errmsg);
+	if (errmsg.empty()) {
+		onRpcMessageReceived(msg);
+	}
+	else {
+		logRpcDataW() << "ERROR - Rpc frame data corrupted:" << errmsg;
+	}
 }
 
 std::string RpcDriver::frameToPrettyCpon(const RpcFrame &frame)
