@@ -14,7 +14,7 @@ inputs:
     description: "Specify which modules should be installed"
     required: true
   ccache:
-    description: "Specify which modules should be installed"
+    description: "Specify ccache cache should be saved"
     default: "true"
   additional_cmake_args:
     description: "Additional args to pass to CMake"
