@@ -23,8 +23,6 @@
 #include <QTimeZone>
 #endif
 
-class QSvgGenerator;
-
 namespace shv::visu::timeline {
 
 class SHVVISU_DECL_EXPORT Graph : public QObject
@@ -237,8 +235,6 @@ public:
 	QStringList savedVisualSettingsNames(const QString &settings_id) const;
 	void loadVisualSettings(const QString &settings_id, const QString &name);
 	QString loadedVisualSettingsId();
-
-	void draw(QSvgGenerator *svg_generator, const QRect &rect);
 
 protected:
 	void sanityXRangeZoom();
