@@ -5,6 +5,7 @@
 #include <shv/core/exception.h>
 #include <shv/coreqt/log.h>
 #include <shv/chainpack/rpcvalue.h>
+#include <QtSvg/QSvgGenerator>
 
 #include <QPainter>
 #include <QFontMetrics>
@@ -1294,6 +1295,15 @@ int Graph::maximizedChannelIndex() const
 	}
 
 	return -1;
+}
+
+void Graph::draw(QSvgGenerator *svg_generator, const QRect &rect)
+{
+	auto orig_layout = m_layout.rect;
+	makeLayout(rect);
+	QPainter painter(svg_generator);
+	draw(&painter, rect, rect);
+	makeLayout(orig_layout);
 }
 
 void Graph::draw(QPainter *painter, const QRect &dirty_rect, const QRect &view_rect)
