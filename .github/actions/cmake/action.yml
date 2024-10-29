@@ -90,6 +90,18 @@ runs:
         echo CXXFLAGS="-Werror ${CXXFLAGS}" >> "$GITHUB_ENV"
       shell: bash
 
+    - name: Setup MSVC toolchain
+      if: inputs.qt_arch == 'win64_msvc2019_64'
+      uses: ilammy/msvc-dev-cmd@v1.13.0
+
+    - name: Use Ninja with MSVC
+      if: inputs.qt_arch == 'win64_msvc2019_64'
+      run: |
+        # Need to use Ninja with MSVC, otherwise ccache doesn't work. And I don't want to use MSBuild anyway. Hopefully
+        # that won't be an issue.
+        echo cmake_extra_args="'-G Ninja'" >> "$GITHUB_ENV"
+      shell: bash
+
     - name: Configure CMake
       run: |
         CFLAGS="${CFLAGS}" \
