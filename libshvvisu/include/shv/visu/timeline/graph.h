@@ -23,7 +23,9 @@
 #include <QTimeZone>
 #endif
 
+#ifdef WITH_SHV_SVG
 class QSvgGenerator;
+#endif
 
 namespace shv::visu::timeline {
 
@@ -201,8 +203,11 @@ public:
 	GraphChannel::Style defaultChannelStyle() const;
 
 	void makeLayout(const QRect &pref_rect);
-	void draw(QPainter *painter, const QRect &dirty_rect, const QRect &view_rect);
 
+	void draw(QPainter *painter, const QRect &dirty_rect, const QRect &view_rect);
+#ifdef WITH_SHV_SVG
+	void draw(QSvgGenerator *svg_generator, const QRect &rect);
+#endif
 	int u2px(double u) const;
 	double u2pxf(double u) const;
 	double px2u(int px) const;
@@ -237,9 +242,6 @@ public:
 	QStringList savedVisualSettingsNames(const QString &settings_id) const;
 	void loadVisualSettings(const QString &settings_id, const QString &name);
 	QString loadedVisualSettingsId();
-
-	void draw(QSvgGenerator *svg_generator, const QRect &rect);
-
 protected:
 	void sanityXRangeZoom();
 
