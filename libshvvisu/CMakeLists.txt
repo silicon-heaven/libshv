@@ -76,6 +76,11 @@ target_include_directories(libshvvisu PUBLIC
 	)
 target_compile_definitions(libshvvisu PRIVATE SHVVISU_BUILD_DLL)
 
+if(LIBSHV_WITH_SVG)
+	target_compile_definitions(libshvvisu PUBLIC WITH_SHV_SVG)
+	target_link_libraries(libshvvisu PUBLIC Qt::Svg)
+endif()
+
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/shv" TYPE INCLUDE)
 
 install(TARGETS libshvvisu EXPORT libshvConfig)
