@@ -73,7 +73,7 @@ runs:
       uses: hendrikmuhs/ccache-action@v1.2.12
       with:
         key: ${{ github.workflow }}-${{ github.job }}
-        max-size: 150M
+        max-size: 50M
         
     - name: Android-specific stuff
       if: inputs.qt_arch == 'android_arm64_v8a'
