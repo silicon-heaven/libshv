@@ -142,7 +142,7 @@ class SHVCHAINPACK_DECL_EXPORT RpcDecimal
 {
 	static constexpr int Base = 10;
 	struct Num {
-		int64_t mantisa = 0;
+		int64_t mantissa = 0;
 		int exponent = 0;
 
 		Num();
@@ -152,10 +152,11 @@ class SHVCHAINPACK_DECL_EXPORT RpcDecimal
 	Num m_num;
 public:
 	RpcDecimal();
-	RpcDecimal(int64_t mantisa, int exponent);
+	RpcDecimal(int64_t mantissa, int exponent);
 	RpcDecimal(int dec_places);
 
-	int64_t mantisa() const;
+	[[deprecated]] int64_t mantisa() const { return mantissa(); }
+	int64_t mantissa() const;
 	int exponent() const;
 
 	static RpcDecimal fromDouble(double d, int round_to_dec_places);

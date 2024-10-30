@@ -220,7 +220,7 @@ bool RpcValue::isDefaultValue() const
 	case RpcValue::Type::Int: return (toInt() == 0);
 	case RpcValue::Type::UInt: return (toUInt() == 0);
 	case RpcValue::Type::DateTime: return (toDateTime().msecsSinceEpoch() == 0);
-	case RpcValue::Type::Decimal: return (toDecimal().mantisa() == 0);
+	case RpcValue::Type::Decimal: return (toDecimal().mantissa() == 0);
 	case RpcValue::Type::Double: return (toDouble() == 0);
 	case RpcValue::Type::String: return (asString().empty());
 	case RpcValue::Type::Blob: return (asBlob().empty());
@@ -416,7 +416,7 @@ bool RpcValue::toBool() const
 		if constexpr (std::is_same_v<TypeX, DateTime>) {
 			return x.msecsSinceEpoch() != 0;
 		} else if constexpr (std::is_same_v<TypeX, Decimal>) {
-			return x.mantisa() != 0;
+			return x.mantissa() != 0;
 		} else if constexpr (std::is_arithmetic_v<TypeX>) {
 			return x != 0;
 		} else if constexpr (std::is_same_v<TypeX, bool>) {
@@ -836,7 +836,7 @@ RpcDecimal::Num::Num()
 }
 
 RpcDecimal::Num::Num(int64_t m, int e)
-	: mantisa(m)
+	: mantissa(m)
 	, exponent(e)
 {
 }
@@ -1413,8 +1413,8 @@ void RpcMetaData::swap(RpcMetaData &o) noexcept
 
 RpcDecimal::RpcDecimal() = default;
 
-RpcDecimal::RpcDecimal(int64_t mantisa, int exponent)
-	: m_num{mantisa, exponent}
+RpcDecimal::RpcDecimal(int64_t mantissa, int exponent)
+	: m_num{mantissa, exponent}
 {
 }
 
@@ -1423,9 +1423,9 @@ RpcDecimal::RpcDecimal(int dec_places)
 {
 }
 
-int64_t RpcDecimal::mantisa() const
+int64_t RpcDecimal::mantissa() const
 {
-	return m_num.mantisa;
+	return m_num.mantissa;
 }
 
 int RpcDecimal::exponent() const
@@ -1448,12 +1448,12 @@ RpcDecimal RpcDecimal::fromDouble(double d, int round_to_dec_places)
 void RpcDecimal::setDouble(double d)
 {
 	RpcDecimal dc = fromDouble(d, -m_num.exponent);
-	m_num.mantisa = dc.mantisa();
+	m_num.mantissa = dc.mantissa();
 }
 
 double RpcDecimal::toDouble() const
 {
-	auto ret = static_cast<double>(mantisa());
+	auto ret = static_cast<double>(mantissa());
 	int exp = exponent();
 	if(exp > 0)
 		for(; exp > 0; exp--) ret *= Base;

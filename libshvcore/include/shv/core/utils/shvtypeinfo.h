@@ -5,7 +5,6 @@
 #include <shv/chainpack/rpcvalue.h>
 
 #include <string>
-#include <variant>
 #include <functional>
 
 namespace shv::chainpack { class MetaMethod; }

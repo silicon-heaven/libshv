@@ -375,7 +375,7 @@ CponWriter &CponWriter::write_p(double value)
 
 CponWriter &CponWriter::write_p(RpcValue::Decimal value)
 {
-	ccpon_pack_decimal(&m_outCtx, value.mantisa(), value.exponent());
+	ccpon_pack_decimal(&m_outCtx, value.mantissa(), value.exponent());
 	return *this;
 }
 

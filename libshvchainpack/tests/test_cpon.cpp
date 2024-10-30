@@ -7,6 +7,7 @@
 #include <doctest/doctest.h>
 
 #include <array>
+#include <sstream>
 
 using namespace shv::chainpack;
 using std::string;
@@ -39,6 +40,12 @@ namespace shv::chainpack {
 doctest::String toString(const RpcValue& value) {
 	return value.toCpon().c_str();
 }
+doctest::String toString(const RpcDecimal& value) {
+	std::ostringstream sb;
+	sb << "RpcDecimal(" << value.mantissa() << ',' << value.exponent() << ')';
+	return sb.str().c_str();
+}
+
 }
 
 DOCTEST_TEST_CASE("Cpon")
@@ -390,5 +397,27 @@ DOCTEST_TEST_CASE("Cpon")
 	{
 		const string input = "invalid input";
 		REQUIRE_THROWS_AS(shv::chainpack::RpcValue::fromCpon(input), shv::chainpack::ParseException);
+	}
+
+	DOCTEST_SUBCASE("Very long decimals")
+	{
+		// read very long decimal without overflow error, value is capped
+		REQUIRE(RpcValue::fromCpon("123456789012345678901234567890123456789012345678901234567890").toInt64() == std::numeric_limits<int64_t>::max());
+		REQUIRE(RpcValue::fromCpon("9223372036854775806").toInt64() == 9223372036854775806LL);
+		REQUIRE(RpcValue::fromCpon("9223372036854775807").toInt64() == std::numeric_limits<int64_t>::max());
+		REQUIRE(RpcValue::fromCpon("9223372036854775808").toInt64() == std::numeric_limits<int64_t>::max());
+		REQUIRE(RpcValue::fromCpon("0x7FFFFFFFFFFFFFFE").toInt64() == 0x7FFFFFFFFFFFFFFELL);
+		REQUIRE(RpcValue::fromCpon("0x7FFFFFFFFFFFFFFF").toInt64() == std::numeric_limits<int64_t>::max());
+		REQUIRE(RpcValue::fromCpon("0x8000000000000000").toInt64() == std::numeric_limits<int64_t>::max());
+		REQUIRE(RpcValue::fromCpon("-123456789012345678901234567890123456789012345678901234567890").toInt64() == std::numeric_limits<int64_t>::min());
+		REQUIRE(RpcValue::fromCpon("-9223372036854775807").toInt64() == -9223372036854775807LL);
+		REQUIRE(RpcValue::fromCpon("-9223372036854775808").toInt64() == std::numeric_limits<int64_t>::min());
+		REQUIRE(RpcValue::fromCpon("-9223372036854775809").toInt64() == std::numeric_limits<int64_t>::min());
+		REQUIRE(RpcValue::fromCpon("-0x7FFFFFFFFFFFFFFF").toInt64() == -0x7FFFFFFFFFFFFFFFLL);
+		REQUIRE(RpcValue::fromCpon("-0x8000000000000000").toInt64() == std::numeric_limits<int64_t>::min());
+		REQUIRE(RpcValue::fromCpon("-0x8000000000000001").toInt64() == std::numeric_limits<int64_t>::min());
+		REQUIRE(RpcValue::fromCpon("1.23456789012345678901234567890123456789012345678901234567890").toDecimal() == RpcDecimal(1234567890123456789LL, -18));
+		REQUIRE(RpcValue::fromCpon("12345678901234567890123456789012345678901234567890123456.7890").toDecimal() == RpcDecimal(std::numeric_limits<int64_t>::max(), 0));
+		REQUIRE(RpcValue::fromCpon("123456789012345678901234567890123456789012345678901234567890.").toDecimal() == RpcDecimal(std::numeric_limits<int64_t>::max(), 0));
 	}
 }
