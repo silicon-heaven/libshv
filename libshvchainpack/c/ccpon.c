@@ -803,11 +803,11 @@ const char* ccpon_unpack_skip_insignificant(ccpcp_unpack_context* unpack_context
 
 static bool add_with_overflow_check_subopt(int64_t a, int b, int64_t *result)
 {
-	int64_t res = a + b;
-	if (res < 0) {
-		return true;
+	// Check for overflow
+	if (a > INT64_MAX - b) {
+		return true; // Overflow occurred
 	}
-	*result = res;
+	*result = a + b;
 	return false;
 }
 
