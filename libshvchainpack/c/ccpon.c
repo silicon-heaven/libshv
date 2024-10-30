@@ -801,7 +801,8 @@ const char* ccpon_unpack_skip_insignificant(ccpcp_unpack_context* unpack_context
 	}
 }
 
-static bool add_with_overflow_check_subopt(int64_t a, int b, int64_t *result)
+#ifdef _MSC_VER
+static bool add_with_overflow_check(int64_t a, int b, int64_t *result)
 {
 	// Check for overflow
 	if (a > INT64_MAX - b) {
@@ -811,7 +812,7 @@ static bool add_with_overflow_check_subopt(int64_t a, int b, int64_t *result)
 	return false;
 }
 
-static bool multiply_with_overflow_check_subopt(int64_t a, int b, int64_t* result)
+static bool multiply_with_overflow_check(int64_t a, int b, int64_t* result)
 {
 	// Check for zero multiplication
 	if (a == 0 || b == 0) {
@@ -829,45 +830,17 @@ static bool multiply_with_overflow_check_subopt(int64_t a, int b, int64_t* resul
 	*result = a * b;
 	return false; // No overflow
 }
-
-#if defined(__has_builtin)
-#  if __has_builtin(__builtin_add_overflow)
-#    define HAS_BUILTIN_ADD_OVERFLOW
-#  endif
-#  if __has_builtin(__builtin_mul_overflow)
-#    define HAS_BUILTIN_MUL_OVERFLOW
-#  endif
-#endif
-
-static bool add_with_overflow_check(int64_t a, int b, int64_t* result) {
-#ifdef HAS_BUILTIN_ADD_OVERFLOW
-	if (sizeof(long long int) == sizeof(int64_t)) {
-		long long res;
-		if (__builtin_saddll_overflow(a, b, &res)) {
-			return true;
-		}
-		*result = (int64_t)res;
-		return false;
-	}
-#endif
-	return add_with_overflow_check_subopt(a, b, result);
+#else
+static bool add_with_overflow_check(int64_t a, int b, int64_t* result)
+{
+	return __builtin_add_overflow(a, b, result);
 }
 
-static bool multiply_with_overflow_check(int64_t a, int b, int64_t* result) {
-#ifdef HAS_BUILTIN_MUL_OVERFLOW
-	if (sizeof(long long int) == sizeof(int64_t)) {
-		long long res;
-		if (__builtin_smulll_overflow(a, b, &res)) {
-			return true;
-		}
-		*result = res;
-		return false;
-	}
-#endif
-	return multiply_with_overflow_check_subopt(a, b, result);
+static bool multiply_with_overflow_check(int64_t a, int b, int64_t* result)
+{
+	return __builtin_mul_overflow(a, b, result);
 }
-#undef HAS_BUILTIN_ADD_OVERFLOW
-#undef HAS_BUILTIN_MUL_OVERFLOW
+#endif
 
 typedef struct {
 	int64_t value;
@@ -955,13 +928,15 @@ static int unpack_int_to_result(ccpcp_unpack_context* unpack_context, int64_t in
 			goto eonumb;
 		}
 		if (digit >= 0) {
-			if (multiply_with_overflow_check(result->value, base, &result->value)) {
+			int64_t value;
+			if (multiply_with_overflow_check(result->value, base, &value)) {
 				result->is_overflow = true;
 			}
-			else if (add_with_overflow_check(result->value, digit, &result->value)) {
+			else if (add_with_overflow_check(value, digit, &value)) {
 				result->is_overflow = true;
 			}
 			else {
+				result->value = value;
 				result->digit_cnt++;
 			}
 		}
