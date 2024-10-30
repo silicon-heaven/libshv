@@ -2,6 +2,7 @@ qt_add_library(libshvbroker
 	src/aclmanager.cpp
 	src/aclmanagersqlite.cpp
 	src/appclioptions.cpp
+	src/appnode.cpp
 	src/brokeraclnode.cpp
 	src/brokerapp.cpp
 	src/brokerappnode.cpp

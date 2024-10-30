@@ -1,4 +1,5 @@
 #include "aclmanagersqlite.h"
+#include "appnode.h"
 #include "brokeraclnode.h"
 #include "brokerappnode.h"
 #include "brokerrootnode.h"
@@ -295,6 +296,7 @@ BrokerApp::BrokerApp(int &argc, char **argv, AppCliOptions *cli_opts)
 	connect(m_nodesTree->root(), &shv::iotqt::node::ShvRootNode::sendRpcMessage, this, &BrokerApp::onRootNodeSendRpcMesage);
 	auto *bn = new BrokerAppNode();
 	m_nodesTree->mount(cp::Rpc::DIR_BROKER_APP, bn);
+	m_nodesTree->mount(cp::Rpc::DIR_APP, new AppNode());
 	m_nodesTree->mount(BROKER_CURRENT_CLIENT_SHV_PATH, new CurrentClientShvNode());
 	m_nodesTree->mount(std::string(cp::Rpc::DIR_BROKER) + "/clients", new ClientsNode());
 	m_nodesTree->mount(std::string(cp::Rpc::DIR_BROKER) + "/masters", new MasterBrokersNode());
