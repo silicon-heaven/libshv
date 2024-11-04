@@ -53,6 +53,9 @@ public:
 
 	void setTunnelOptions(const shv::chainpack::RpcValue &opts);
 
+	// for CPON clients
+	void setProtocolType(shv::chainpack::Rpc::ProtocolType protocol_type);
+
 	void setCheckBrokerConnectedInterval(int ms);
 	int checkBrokerConnectedInterval() const;
 
