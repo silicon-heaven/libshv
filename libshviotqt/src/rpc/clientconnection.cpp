@@ -47,6 +47,7 @@ ClientConnection::ClientConnection(QObject *parent)
 	, m_loginType(IRpcConnection::LoginType::Sha1)
 {
 	connect(this, &SocketRpcConnection::socketConnectedChanged, this, &ClientConnection::onSocketConnectedChanged);
+	setProtocolType(cp::Rpc::ProtocolType::ChainPack);
 }
 
 ClientConnection::~ClientConnection()
@@ -199,6 +200,11 @@ void ClientConnection::setTunnelOptions(const chainpack::RpcValue &opts)
 	shv::chainpack::RpcValue::Map conn_opts = connectionOptions().asMap();
 	conn_opts[cp::Rpc::KEY_TUNNEL] = opts;
 	setConnectionOptions(conn_opts);
+}
+
+void ClientConnection::setProtocolType(chainpack::Rpc::ProtocolType protocol_type)
+{
+	setClientProtocolType(protocol_type);
 }
 
 void ClientConnection::open()
