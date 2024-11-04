@@ -77,9 +77,11 @@ int FrameReader::tryToReadMeta(std::istringstream &in)
 		auto protocol = in.get();
 		AbstractStreamReader *rd = nullptr;
 		if (protocol == protocol_cpon) {
+			m_protocol = shv::chainpack::Rpc::ProtocolType::Cpon;
 			rd = new chainpack::CponReader(in);
 		}
 		else if (protocol == protocol_chainpack) {
+			m_protocol = shv::chainpack::Rpc::ProtocolType::ChainPack;
 			rd = new chainpack::ChainPackReader(in);
 		}
 		if (rd) {
@@ -142,7 +144,7 @@ QList<int> StreamFrameReader::addData(std::string_view data)
 			}
 			auto frame_data = std::string(m_readBuffer, m_dataStart.value(), frame_size);
 			m_readBuffer = std::string(m_readBuffer, consumed_len + frame_size);
-			m_frames.emplace_back(std::move(m_meta), std::move(frame_data));
+			m_frames.emplace_back(m_protocol, std::move(m_meta), std::move(frame_data));
 			m_meta = {};
 			m_dataStart = {};
 		}

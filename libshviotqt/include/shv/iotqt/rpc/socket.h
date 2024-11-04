@@ -35,6 +35,7 @@ protected:
 	int tryToReadMeta(std::istringstream &in);
 protected:
 	std::vector<chainpack::RpcFrame> m_frames;
+	chainpack::Rpc::ProtocolType m_protocol;
 	chainpack::RpcValue::MetaData m_meta;
 	std::optional<size_t> m_dataStart;
 
