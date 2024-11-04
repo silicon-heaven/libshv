@@ -3,6 +3,7 @@
 #include <shv/coreqt/log.h>
 #include <shv/chainpack/utils.h>
 #include <shv/chainpack/chainpackreader.h>
+#include <shv/chainpack/cponreader.h>
 #include <shv/chainpack/chainpackwriter.h>
 #include <shv/chainpack/irpcconnection.h>
 
@@ -72,11 +73,19 @@ int FrameReader::tryToReadMeta(std::istringstream &in)
 	if (!m_dataStart.has_value()) {
 		using namespace chainpack;
 		static constexpr auto protocol_chainpack = static_cast<int>(shv::chainpack::Rpc::ProtocolType::ChainPack);
-		if (auto b = in.get(); b == protocol_chainpack) {
-			chainpack::ChainPackReader rd(in);
+		static constexpr auto protocol_cpon = static_cast<int>(shv::chainpack::Rpc::ProtocolType::Cpon);
+		auto protocol = in.get();
+		AbstractStreamReader *rd = nullptr;
+		if (protocol == protocol_cpon) {
+			rd = new chainpack::CponReader(in);
+		}
+		else if (protocol == protocol_chainpack) {
+			rd = new chainpack::ChainPackReader(in);
+		}
+		if (rd) {
 			try {
 				m_meta = {};
-				rd.read(m_meta);
+				rd->read(m_meta);
 				auto data_start = in.tellg();
 				if (data_start == -1) {
 					// meta was read without error, but without closing brackets
@@ -328,7 +337,7 @@ void TcpSocket::onDataReadyRead()
 		}
 	}
 	catch (const std::runtime_error &e) {
-		shvWarning() << "Corrupted meta data received:\n" << shv::chainpack::utils::hexDump(std::string_view(ba.constData(), std::min(ba.size(), static_cast<decltype(ba.size())>(64))));
+		shvWarning() << "Corrupted meta data received:" << e.what() << "\n" << shv::chainpack::utils::hexDump(std::string_view(ba.constData(), std::min(ba.size(), static_cast<decltype(ba.size())>(64))));
 		emit error(QAbstractSocket::SocketError::UnknownSocketError);
 	}
 }

@@ -154,7 +154,7 @@ void LocalSocket::onDataReadyRead()
 		}
 	}
 	catch (const std::runtime_error &e) {
-		shvWarning() << "Corrupted meta data received:\n" << shv::chainpack::utils::hexDump(std::string_view(ba.constData(), std::min(ba.size(), static_cast<decltype(ba.size())>(64))));
+		shvWarning() << "Corrupted meta data received:" << e.what() << "\n" << shv::chainpack::utils::hexDump(std::string_view(ba.constData(), std::min(ba.size(), static_cast<decltype(ba.size())>(64))));
 		emit error(QAbstractSocket::SocketError::UnknownSocketError);
 	}
 }

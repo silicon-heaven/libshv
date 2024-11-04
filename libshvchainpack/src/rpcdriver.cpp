@@ -65,7 +65,9 @@ void RpcDriver::onFrameDataRead(const std::string &frame_data)
 
 		// set client protocol type according to protocol type received from it
 		// default protocol type is chainpack, this is needed just for legacy devices support
-		m_clientProtocolType = frame.protocol;
+		if (m_clientProtocolType == Rpc::ProtocolType::Invalid) {
+			m_clientProtocolType = frame.protocol;
+		}
 
 		onRpcFrameReceived(std::move(frame));
 	}
