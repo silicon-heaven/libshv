@@ -165,7 +165,7 @@ void SerialFrameReader::finishFrame()
 	}
 	shvDebug() << "ADD FRAME:" << chainpack::utils::hexArray(m_readBuffer.data(), m_readBuffer.size());
 	auto frame_data = std::string(m_readBuffer, m_dataStart.value());
-	m_frames.emplace_back(std::move(m_meta), std::move(frame_data));
+	m_frames.emplace_back(m_protocol, std::move(m_meta), std::move(frame_data));
 	setState(ReadState::WaitingForStx);
 }
 

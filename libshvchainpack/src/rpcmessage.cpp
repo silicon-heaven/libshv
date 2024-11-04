@@ -142,8 +142,7 @@ RpcFrame RpcFrame::fromFrameData(const std::string &frame_data)
 		if(pos < 0)
 			throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
 		auto data = std::string(frame_data, static_cast<size_t>(pos));
-		RpcFrame frame(std::move(meta), std::move(data));
-		frame.protocol = protocol;
+		RpcFrame frame(protocol, std::move(meta), std::move(data));
 		return frame;
 	}
 	case Rpc::ProtocolType::Cpon: {
@@ -156,8 +155,7 @@ RpcFrame RpcFrame::fromFrameData(const std::string &frame_data)
 		if(pos < 0)
 			throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
 		auto data = std::string(frame_data, static_cast<size_t>(pos));
-		RpcFrame frame(std::move(meta), std::move(data));
-		frame.protocol = protocol;
+		RpcFrame frame(protocol, std::move(meta), std::move(data));
 		return frame;
 	}
 	default:
@@ -654,8 +652,7 @@ RpcFrame RpcMessage::toToRpcFrame(Rpc::ProtocolType protocol) const
 	default:
 		throw std::runtime_error("Invalid protocol type");
 	}
-	RpcFrame frame{std::move(meta), std::move(data)};
-	frame.protocol = protocol;
+	RpcFrame frame{protocol, std::move(meta), std::move(data)};
 	return frame;
 }
 
