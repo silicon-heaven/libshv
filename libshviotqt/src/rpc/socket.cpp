@@ -75,14 +75,14 @@ int FrameReader::tryToReadMeta(std::istringstream &in)
 		static constexpr auto protocol_chainpack = static_cast<int>(shv::chainpack::Rpc::ProtocolType::ChainPack);
 		static constexpr auto protocol_cpon = static_cast<int>(shv::chainpack::Rpc::ProtocolType::Cpon);
 		auto protocol = in.get();
-		AbstractStreamReader *rd = nullptr;
+		std::unique_ptr<AbstractStreamReader> rd;
 		if (protocol == protocol_cpon) {
 			m_protocol = shv::chainpack::Rpc::ProtocolType::Cpon;
-			rd = new chainpack::CponReader(in);
+			rd = std::make_unique<chainpack::CponReader>(in);
 		}
 		else if (protocol == protocol_chainpack) {
 			m_protocol = shv::chainpack::Rpc::ProtocolType::ChainPack;
-			rd = new chainpack::ChainPackReader(in);
+			rd = std::make_unique<chainpack::ChainPackReader>(in);
 		}
 		if (rd) {
 			try {
