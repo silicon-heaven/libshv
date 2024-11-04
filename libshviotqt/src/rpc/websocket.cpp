@@ -95,7 +95,7 @@ void WebSocket::onTextMessageReceived(const QString &message)
 		}
 	}
 	catch (const std::runtime_error &e) {
-		shvWarning() << "Corrupted meta data received:\n" << shv::chainpack::utils::hexDump(std::string_view(data.constData(), std::min(data.size(), static_cast<decltype(data.size())>(64))));
+		shvWarning() << "Corrupted meta data received:" << e.what() << "\n" << shv::chainpack::utils::hexDump(std::string_view(data.constData(), std::min(data.size(), static_cast<decltype(data.size())>(64))));
 	}
 }
 
@@ -112,7 +112,7 @@ void WebSocket::onBinaryMessageReceived(const QByteArray &message)
 		}
 	}
 	catch (const std::runtime_error &e) {
-		shvWarning() << "Corrupted meta data received:\n" << shv::chainpack::utils::hexDump(std::string_view(message.constData(), std::min(message.size(), static_cast<decltype(message.size())>(64))));
+		shvWarning() << "Corrupted meta data received:" << e.what() << "\n" << shv::chainpack::utils::hexDump(std::string_view(message.constData(), std::min(message.size(), static_cast<decltype(message.size())>(64))));
 	}
 }
 

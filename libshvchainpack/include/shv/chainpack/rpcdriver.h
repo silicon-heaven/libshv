@@ -32,10 +32,13 @@ protected:
 	virtual void onRpcFrameReceived(RpcFrame &&frame);
 	virtual void onParseDataException(const shv::chainpack::ParseException &e) = 0;
 	virtual void onRpcMessageReceived(const shv::chainpack::RpcMessage &msg) = 0;
+
+	void setClientProtocolType(Rpc::ProtocolType pt) { m_clientProtocolType = pt; }
 private:
 	// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 	static int s_defaultRpcTimeoutMsec;
-	Rpc::ProtocolType m_clientProtocolType = Rpc::ProtocolType::ChainPack;
+	/// We must remember recent message protocol type to support legacy CPON clients
+	Rpc::ProtocolType m_clientProtocolType = Rpc::ProtocolType::Invalid;
 };
 
 }
