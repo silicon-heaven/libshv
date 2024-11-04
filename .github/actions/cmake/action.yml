@@ -79,7 +79,7 @@ runs:
       if: inputs.qt_arch == 'android_arm64_v8a'
       run: |
         chmod +x "${Qt6_DIR}/bin/qt-cmake"
-        echo cmake_extra_args="'-DQT_HOST_PATH=$(realpath "${Qt6_DIR}/../gcc_64")'" >> "$GITHUB_ENV"
+        echo cmake_extra_args="${cmake_extra_args} '-DQT_HOST_PATH=$(realpath "${Qt6_DIR}/../gcc_64")'" >> "$GITHUB_ENV"
         echo CMAKE_BIN="${Qt6_DIR}/bin/qt-cmake" >> "$GITHUB_ENV"
       shell: bash
 
@@ -99,7 +99,7 @@ runs:
       run: |
         # Need to use Ninja with MSVC, otherwise ccache doesn't work. And I don't want to use MSBuild anyway. Hopefully
         # that won't be an issue.
-        echo cmake_extra_args="'-G Ninja'" >> "$GITHUB_ENV"
+        echo cmake_extra_args="${cmake_extra_args} '-G Ninja'" >> "$GITHUB_ENV"
       shell: bash
 
     - name: Configure CMake
