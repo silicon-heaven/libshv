@@ -94,6 +94,9 @@ void RpcDriver::setDefaultRpcTimeoutMsec(int msec)
 
 void RpcDriver::onRpcFrameReceived(RpcFrame &&frame)
 {
+	if (m_clientProtocolType == Rpc::ProtocolType::Invalid) {
+		m_clientProtocolType = frame.protocol;
+	}
 	std::string errmsg;
 	auto msg = frame.toRpcMessage(&errmsg);
 	if (errmsg.empty()) {
