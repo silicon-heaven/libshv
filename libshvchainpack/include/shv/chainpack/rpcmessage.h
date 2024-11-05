@@ -147,7 +147,7 @@ public:
 	std::string toCpon() const;
 	std::string toChainPack() const;
 
-	RpcFrame toToRpcFrame(Rpc::ProtocolType protocol = Rpc::ProtocolType::ChainPack) const;
+	RpcFrame toRpcFrame(Rpc::ProtocolType protocol = Rpc::ProtocolType::ChainPack) const;
 
 	const RpcValue::MetaData& metaData() const;
 	RpcValue metaValue(RpcValue::Int key) const;

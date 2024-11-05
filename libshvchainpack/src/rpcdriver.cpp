@@ -27,7 +27,7 @@ RpcDriver::~RpcDriver() = default;
 
 void RpcDriver::sendRpcMessage(const RpcMessage &msg)
 {
-	RpcDriver::sendRpcFrame(msg.toToRpcFrame(m_clientProtocolType));
+	RpcDriver::sendRpcFrame(msg.toRpcFrame(m_clientProtocolType));
 }
 
 void RpcDriver::sendRpcFrame(RpcFrame &&frame)
@@ -46,7 +46,7 @@ void RpcDriver::sendRpcFrame(RpcFrame &&frame)
 			if (!errmsg.empty()) {
 				throw std::runtime_error("Cannot convert RPC frame to message: " + errmsg);
 			}
-			frame = msg.toToRpcFrame(m_clientProtocolType);
+			frame = msg.toRpcFrame(m_clientProtocolType);
 		}
 		auto frame_data = frame.toFrameData();
 		//logRpcData().nospace() << "FRAME DATA WRITE " << frame_data.size() << " bytes of data:\n" << shv::chainpack::utils::hexDump(frame_data);

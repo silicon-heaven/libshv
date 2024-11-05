@@ -36,7 +36,7 @@ vector<string> msg_to_raw_data(const vector<string> &cpons)
 		auto rv = RpcValue::fromCpon(cpon);
 		auto msg = RpcMessage(rv);
 		StreamFrameWriter wr;
-		wr.addFrame(msg.toToRpcFrame().toFrameData());
+		wr.addFrame(msg.toRpcFrame().toFrameData());
 		QByteArray ba;
 		{
 			QBuffer buffer(&ba);
@@ -54,7 +54,7 @@ vector<string> msg_to_raw_data_serial(const vector<string> &cpons, SerialFrameWr
 		auto rv = RpcValue::fromCpon(cpon);
 		auto msg = RpcMessage(rv);
 		SerialFrameWriter wr(crc_check);
-		wr.addFrame(msg.toToRpcFrame().toFrameData());
+		wr.addFrame(msg.toRpcFrame().toFrameData());
 		QByteArray ba;
 		{
 			QBuffer buffer(&ba);

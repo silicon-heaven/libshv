@@ -637,7 +637,7 @@ std::string RpcMessage::toChainPack() const
 	return m_value.toChainPack();
 }
 
-RpcFrame RpcMessage::toToRpcFrame(Rpc::ProtocolType protocol) const
+RpcFrame RpcMessage::toRpcFrame(Rpc::ProtocolType protocol) const
 {
 	auto val = m_value;
 	auto meta = val.takeMeta();
