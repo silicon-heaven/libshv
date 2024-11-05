@@ -21,6 +21,9 @@
 #include <netdb.h>
 #endif
 
+#define logRpcData() nCMessage("RpcData")
+#define logRpcDataW() nCWarning("RpcData")
+
 namespace cp = shv::chainpack;
 
 namespace shv::chainpack {
@@ -62,6 +65,24 @@ void SocketRpcDriver::writeFrameData(const std::string &frame_data)
 	if (m_writeBuffer.size() + frame_data.size() < m_maxWriteBufferLength) {
 		m_writeBuffer += frame_data;
 		flush();
+	}
+}
+
+void SocketRpcDriver::onFrameDataRead(const std::string &frame_data)
+{
+	logRpcData().nospace() << "FRAME DATA READ " << frame_data.size() << " bytes of data read:\n" << shv::chainpack::utils::hexDump(frame_data);
+	try {
+		auto frame = RpcFrame::fromFrameData(frame_data);
+		processRpcFrame(std::move(frame));
+	}
+	catch (const ParseException &e) {
+		logRpcDataW() << "ERROR - Rpc frame data corrupted:" << e.what();
+		//logRpcDataW() << "The error occured in data:\n" << shv::chainpack::utils::hexDump(m_readData.data(), 1024);
+		onParseDataException(e);
+		return;
+	}
+	catch (const std::exception &e) {
+		nError() << "ERROR - Rpc frame process error:" << e.what();
 	}
 }
 

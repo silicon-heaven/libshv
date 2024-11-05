@@ -85,7 +85,7 @@ void SocketRpcConnection::onReadyRead()
 {
 	auto frames = socket()->takeFrames();
 	for (auto begin = std::make_move_iterator(frames.begin()), end = std::make_move_iterator(frames.end()); begin != end; ++begin) {
-		onRpcFrameReceived(*begin);
+		processRpcFrame(*begin);
 	}
 }
 

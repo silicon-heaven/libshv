@@ -57,31 +57,6 @@ void RpcDriver::sendRpcFrame(RpcFrame &&frame)
 	}
 }
 
-void RpcDriver::onFrameDataRead(const std::string &frame_data)
-{
-	logRpcData().nospace() << "FRAME DATA READ " << frame_data.size() << " bytes of data read:\n" << shv::chainpack::utils::hexDump(frame_data);
-	try {
-		auto frame = RpcFrame::fromFrameData(frame_data);
-
-		// set client protocol type according to protocol type received from it
-		// default protocol type is chainpack, this is needed just for legacy devices support
-		if (m_clientProtocolType == Rpc::ProtocolType::Invalid) {
-			m_clientProtocolType = frame.protocol;
-		}
-
-		onRpcFrameReceived(std::move(frame));
-	}
-	catch (const ParseException &e) {
-		logRpcDataW() << "ERROR - Rpc frame data corrupted:" << e.what();
-		//logRpcDataW() << "The error occured in data:\n" << shv::chainpack::utils::hexDump(m_readData.data(), 1024);
-		onParseDataException(e);
-		return;
-	}
-	catch (const std::exception &e) {
-		nError() << "ERROR - Rpc frame process error:" << e.what();
-	}
-}
-
 int RpcDriver::defaultRpcTimeoutMsec()
 {
 	return s_defaultRpcTimeoutMsec;
@@ -92,11 +67,19 @@ void RpcDriver::setDefaultRpcTimeoutMsec(int msec)
 	s_defaultRpcTimeoutMsec = msec;
 }
 
-void RpcDriver::onRpcFrameReceived(RpcFrame &&frame)
+void RpcDriver::processRpcFrame(RpcFrame &&frame)
 {
+	// set client protocol type according to protocol type received from it
+	// default protocol type is chainpack, this is needed just for legacy devices support
 	if (m_clientProtocolType == Rpc::ProtocolType::Invalid) {
 		m_clientProtocolType = frame.protocol;
 	}
+
+	onRpcFrameReceived(std::move(frame));
+}
+
+void RpcDriver::onRpcFrameReceived(RpcFrame &&frame)
+{
 	std::string errmsg;
 	auto msg = frame.toRpcMessage(&errmsg);
 	if (errmsg.empty()) {
