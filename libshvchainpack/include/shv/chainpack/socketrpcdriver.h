@@ -22,6 +22,7 @@ protected:
 	bool isOpen() override;
 	void writeFrameData(const std::string &frame_data) override;
 
+	virtual void onFrameDataRead(const std::string &frame_data);
 	virtual void idleTaskOnSelectTimeout();
 private:
 	bool isOpenImpl() const;
