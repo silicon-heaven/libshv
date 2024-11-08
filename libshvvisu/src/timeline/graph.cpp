@@ -1496,7 +1496,7 @@ void Graph::drawGrid(QPainter *painter, int channel)
 	const GraphChannel *ch = channelAt(channel);
 	const XAxis &x_axis = m_state.xAxis;
 	if(!x_axis.isValid()) {
-		drawRectText(painter, ch->m_layout.graphAreaRect, "grid", m_style.font(), ch->m_effectiveStyle.colorGrid());
+		// drawRectText(painter, ch->m_layout.graphAreaRect, "grid", m_style.font(), ch->m_effectiveStyle.colorGrid());
 		return;
 	}
 	QColor gc = ch->m_effectiveStyle.colorGrid();
