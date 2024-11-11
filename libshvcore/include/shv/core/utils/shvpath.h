@@ -5,7 +5,6 @@
 #include <shv/core/utils.h>
 
 #include <functional>
-#include <map>
 
 namespace shv::core::utils {
 
