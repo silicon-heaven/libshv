@@ -20,7 +20,7 @@ public:
 	void sendNotify(std::string &&method, const RpcValue &result);
 protected:
 	bool isOpen() override;
-	void writeFrameData(const std::string &frame_data) override;
+	void writeFrame(RpcFrame &&frame) override;
 
 	virtual void onFrameDataRead(const std::string &frame_data);
 	virtual void idleTaskOnSelectTimeout();

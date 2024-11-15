@@ -111,9 +111,9 @@ bool SocketRpcConnection::isOpen()
 	return isSocketConnected();
 }
 
-void SocketRpcConnection::writeFrameData(const std::string &frame_data)
+void SocketRpcConnection::writeFrame(chainpack::RpcFrame &&frame)
 {
-	socket()->writeFrameData(frame_data);
+	socket()->writeFrame(std::move(frame));
 }
 
 void SocketRpcConnection::sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg)

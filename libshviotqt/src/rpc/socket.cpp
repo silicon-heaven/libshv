@@ -24,6 +24,17 @@ namespace shv::iotqt::rpc {
 //======================================================
 // FrameWriter
 //======================================================
+void FrameWriter::addFrame(chainpack::RpcFrame &&frame)
+{
+	try {
+		auto frame_data = frame.toFrameHead();
+		frame_data += frame.data;
+		addFrameData(std::move(frame_data));
+	} catch (const std::runtime_error &e) {
+		shvWarning() << "Error converting frame to data:" << e.what();
+	}
+}
+
 void FrameWriter::flushToDevice(QIODevice *device)
 {
 	while (!m_messageDataToWrite.isEmpty()) {
@@ -160,7 +171,7 @@ QList<int> StreamFrameReader::addData(std::string_view data)
 //======================================================
 // StreamFrameWriter
 //======================================================
-void StreamFrameWriter::addFrame(const std::string &frame_data)
+void StreamFrameWriter::addFrameData(std::string &&frame_data)
 {
 	using namespace shv::chainpack;
 	std::ostringstream out;
@@ -245,10 +256,10 @@ std::vector<chainpack::RpcFrame> Socket::takeFrames()
 	return m_frameReader->takeFrames();
 }
 
-void Socket::writeFrameData(const std::string &frame_data)
+void Socket::writeFrame(shv::chainpack::RpcFrame &&frame)
 {
 	Q_ASSERT(m_frameWriter);
-	m_frameWriter->addFrame(frame_data);
+	m_frameWriter->addFrame(std::move(frame));
 	flushWriteBuffer();
 }
 

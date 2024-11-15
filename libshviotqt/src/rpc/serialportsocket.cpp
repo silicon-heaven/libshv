@@ -177,7 +177,7 @@ SerialFrameWriter::SerialFrameWriter(CrcCheck crc)
 {
 }
 
-void SerialFrameWriter::addFrame(const std::string &frame_data)
+void SerialFrameWriter::addFrameData(string &&frame_data)
 {
 	QByteArray data_to_write;
 	auto write_escaped = [&data_to_write](uint8_t b) {
@@ -213,7 +213,7 @@ void SerialFrameWriter::resetCommunication()
 
 	QByteArray data_to_write;
 	data_to_write.append(static_cast<char>(00));
-	addFrame(data_to_write.toStdString());
+	addFrameData(data_to_write.toStdString());
 }
 
 //======================================================
