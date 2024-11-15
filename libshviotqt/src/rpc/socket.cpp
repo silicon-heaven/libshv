@@ -134,16 +134,18 @@ QList<int> StreamFrameReader::addData(std::string_view data)
 		if (len <= 0) {
 			throw std::runtime_error("Read RPC message length data error.");
 		}
-		auto consumed_len = static_cast<size_t>(len);
+		auto frame_len_size = static_cast<size_t>(len);
 		if (auto rqid = tryToReadMeta(in); rqid > 0) {
 			response_request_ids << rqid;
 		}
-		if (consumed_len + frame_size <= m_readBuffer.size()) {
+		if (frame_len_size + frame_size <= m_readBuffer.size()) {
 			if (!m_dataStart.has_value()) {
 				throw std::runtime_error("Read RPC message meta data error.");
 			}
-			auto frame_data = std::string(m_readBuffer, m_dataStart.value(), frame_size);
-			m_readBuffer = std::string(m_readBuffer, consumed_len + frame_size);
+			auto data_start = m_dataStart.value();
+			auto data_len = frame_len_size + frame_size - m_dataStart.value();
+			auto frame_data = std::string(m_readBuffer, data_start, data_len);
+			m_readBuffer = std::string(m_readBuffer, frame_len_size + frame_size);
 			m_frames.emplace_back(m_protocol, std::move(m_meta), std::move(frame_data));
 			m_meta = {};
 			m_dataStart = {};
