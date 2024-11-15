@@ -26,6 +26,7 @@ struct SHVCHAINPACK_DECL_EXPORT RpcFrame
 	RpcFrame(Rpc::ProtocolType protocol, RpcValue::MetaData &&meta, std::string &&data) : protocol(protocol), meta(std::move(meta)), data(std::move(data)) {}
 	bool isValid() const { return !meta.isEmpty() && !data.empty(); }
 	RpcMessage toRpcMessage(std::string *errmsg = nullptr) const;
+	std::string toFrameHead() const;
 	std::string toFrameData() const;
 	static RpcFrame fromFrameData(const std::string &frame_data);
 };

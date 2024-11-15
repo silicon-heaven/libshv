@@ -96,7 +96,7 @@ RpcMessage RpcFrame::toRpcMessage(std::string *errmsg) const
 	return {};
 }
 
-std::string RpcFrame::toFrameData() const
+std::string RpcFrame::toFrameHead() const
 {
 	switch (protocol) {
 	case Rpc::ProtocolType::ChainPack: {
@@ -118,13 +118,19 @@ std::string RpcFrame::toFrameData() const
 		}
 		auto ret = out.str();
 		ret = static_cast<char>(protocol) + ret;
-		ret += data;
 		return ret;
 	}
 	default: {
 		throw std::runtime_error("Invalid protocol type");
 	}
 	}
+}
+
+std::string RpcFrame::toFrameData() const
+{
+	auto ret = toFrameHead();
+	ret += data;
+	return ret;
 }
 
 RpcFrame RpcFrame::fromFrameData(const std::string &frame_data)

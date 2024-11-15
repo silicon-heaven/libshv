@@ -43,8 +43,9 @@ public:
 	SerialFrameWriter(CrcCheck crc);
 	~SerialFrameWriter() override = default;
 
-	void addFrame(const std::string &frame_data) override;
 	void resetCommunication() override;
+protected:
+	void addFrameData(std::string &&frame_data) override;
 private:
 	bool m_withCrcCheck = true;
 };
