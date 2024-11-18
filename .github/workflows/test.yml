@@ -199,4 +199,4 @@ jobs:
       - name: Flake check
         run: nix --experimental-features 'nix-command flakes' flake check .
       - name: Format
-        run: nix --experimental-features 'nix-command flakes' fmt && git diff --exit-code
+        run: nix --experimental-features 'nix-command flakes' fmt . && git diff --exit-code
