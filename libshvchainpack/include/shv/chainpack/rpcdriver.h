@@ -26,7 +26,7 @@ public:
 protected:
 	virtual bool isOpen() = 0;
 
-	virtual void writeFrame(RpcFrame &&frame) = 0;
+	virtual void writeFrame(const RpcFrame &frame) = 0;
 
 	void processRpcFrame(RpcFrame &&frame);
 	virtual void onRpcFrameReceived(RpcFrame &&frame);

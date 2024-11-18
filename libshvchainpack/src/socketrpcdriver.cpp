@@ -57,7 +57,7 @@ void SocketRpcDriver::idleTaskOnSelectTimeout()
 {
 }
 
-void SocketRpcDriver::writeFrame(RpcFrame &&frame)
+void SocketRpcDriver::writeFrame(const RpcFrame &frame)
 {
 	if(!isOpen()) {
 		nInfo() << "Write to closed socket";

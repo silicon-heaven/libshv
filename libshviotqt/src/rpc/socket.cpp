@@ -176,7 +176,7 @@ void StreamFrameWriter::addFrameData(const std::string &frame_head, const std::s
 	std::ostringstream out;
 	{
 		ChainPackWriter wr(out);
-		wr.writeUIntData(frame_data.size());
+		wr.writeUIntData(frame_head.size() + frame_data.size());
 	}
 	auto len_data = out.str();
 	QByteArray data(len_data.data(), len_data.size());
