@@ -1,6 +1,7 @@
 #include <shv/chainpack/socketrpcdriver.h>
 
 #include <shv/chainpack/chainpackreader.h>
+#include <shv/chainpack/chainpackwriter.h>
 #include <shv/chainpack/utils.h>
 
 #include <necrolog.h>
@@ -62,8 +63,16 @@ void SocketRpcDriver::writeFrame(RpcFrame &&frame)
 		nInfo() << "Write to closed socket";
 		return;
 	}
+	using namespace shv::chainpack;
 	auto frame_head = frame.toFrameHead();
-	if (m_writeBuffer.size() + frame_head.size() + frame.data.size() < m_maxWriteBufferLength) {
+	std::ostringstream out;
+	{
+		ChainPackWriter wr(out);
+		wr.writeUIntData(frame_head.size() + frame.data.size());
+	}
+	auto len_data = out.str();
+	if (m_writeBuffer.size() + len_data.size() + frame_head.size() + frame.data.size() < m_maxWriteBufferLength) {
+		m_writeBuffer += len_data;
 		m_writeBuffer += frame_head;
 		m_writeBuffer += frame.data;
 		flush();

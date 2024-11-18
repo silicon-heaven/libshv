@@ -45,7 +45,7 @@ class SHVIOTQT_DECL_EXPORT FrameWriter
 {
 public:
 	virtual ~FrameWriter() = default;
-	void addFrame(shv::chainpack::RpcFrame &&frame);
+	void addFrame(const shv::chainpack::RpcFrame &frame);
 	virtual void resetCommunication() {}
 	void flushToDevice(QIODevice *device);
 	void clear();
@@ -53,7 +53,7 @@ public:
 	void flushToWebSocket(QWebSocket *socket);
 #endif
 protected:
-	virtual void addFrameData(std::string &&frame_data) = 0;
+	virtual void addFrameData(const std::string &frame_head, const std::string &frame_data) = 0;
 protected:
 	QList<QByteArray> m_messageDataToWrite;
 };
@@ -72,8 +72,9 @@ class SHVIOTQT_DECL_EXPORT StreamFrameWriter : public FrameWriter
 {
 public:
 	~StreamFrameWriter() override = default;
+
 protected:
-	void addFrameData(std::string &&frame_data) override;
+	void addFrameData(const std::string &frame_head, const std::string &frame_data) override;
 };
 
 /// wrapper class for QTcpSocket and QWebSocket
@@ -105,7 +106,7 @@ public:
 	virtual quint16 peerPort() const = 0;
 
 	std::vector<chainpack::RpcFrame> takeFrames();
-	void writeFrame(chainpack::RpcFrame &&frame);
+	void writeFrame(const chainpack::RpcFrame &frame);
 
 	virtual void ignoreSslErrors() = 0;
 

@@ -45,7 +45,7 @@ public:
 
 	void resetCommunication() override;
 protected:
-	void addFrameData(std::string &&frame_data) override;
+	void addFrameData(const std::string &frame_head, const std::string &frame_data) override;
 private:
 	bool m_withCrcCheck = true;
 };

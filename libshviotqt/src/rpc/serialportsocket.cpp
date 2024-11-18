@@ -177,7 +177,7 @@ SerialFrameWriter::SerialFrameWriter(CrcCheck crc)
 {
 }
 
-void SerialFrameWriter::addFrameData(string &&frame_data)
+void SerialFrameWriter::addFrameData(const std::string &frame_head, const std::string &frame_data)
 {
 	QByteArray data_to_write;
 	auto write_escaped = [&data_to_write](uint8_t b) {
@@ -190,6 +190,9 @@ void SerialFrameWriter::addFrameData(string &&frame_data)
 		}
 	};
 	data_to_write += static_cast<char>(STX);
+	for(uint8_t b : frame_head) {
+		write_escaped(b);
+	}
 	for(uint8_t b : frame_data) {
 		write_escaped(b);
 	}
@@ -213,7 +216,7 @@ void SerialFrameWriter::resetCommunication()
 
 	QByteArray data_to_write;
 	data_to_write.append(static_cast<char>(00));
-	addFrameData(data_to_write.toStdString());
+	addFrameData(data_to_write.toStdString(), {});
 }
 
 //======================================================
