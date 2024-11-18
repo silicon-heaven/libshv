@@ -50,7 +50,7 @@ public:
 protected:
 	// RpcDriver interface
 	bool isOpen() Q_DECL_OVERRIDE;
-	void writeFrame(shv::chainpack::RpcFrame &&frame) override;
+	void writeFrame(const shv::chainpack::RpcFrame &frame) override;
 
 	Socket* socket();
 	void onReadyRead();

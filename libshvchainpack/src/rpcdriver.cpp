@@ -47,11 +47,11 @@ void RpcDriver::sendRpcFrame(RpcFrame &&frame)
 				throw std::runtime_error("Cannot convert RPC frame to message: " + errmsg);
 			}
 			auto frame2 = msg.toRpcFrame(m_clientProtocolType);
-			writeFrame(std::move(frame2));
+			writeFrame(frame2);
 		}
 		else {
 			//logRpcData().nospace() << "FRAME DATA WRITE " << frame_data.size() << " bytes of data:\n" << shv::chainpack::utils::hexDump(frame_data);
-			writeFrame(std::move(frame));
+			writeFrame(frame);
 		}
 	}
 	catch (const std::exception &e) {

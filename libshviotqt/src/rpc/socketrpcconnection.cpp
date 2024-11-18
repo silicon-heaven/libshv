@@ -111,7 +111,7 @@ bool SocketRpcConnection::isOpen()
 	return isSocketConnected();
 }
 
-void SocketRpcConnection::writeFrame(chainpack::RpcFrame &&frame)
+void SocketRpcConnection::writeFrame(const chainpack::RpcFrame &frame)
 {
 	socket()->writeFrame(frame);
 }
