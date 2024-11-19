@@ -4,6 +4,7 @@
 
 #include <regex>
 #include <sstream>
+#include <cstring>
 
 #include <unistd.h>
 
