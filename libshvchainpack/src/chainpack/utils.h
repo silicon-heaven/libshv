@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <cstdint>
 
 #if defined LIBC_NEWLIB || defined ANDROID_BUILD
 #include <sstream>
