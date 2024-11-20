@@ -334,14 +334,21 @@ double RpcValue::toDouble() const
 }
 
 namespace {
-template <typename DesiredType>
-const DesiredType& try_convert_or_default(const RpcValue::VariantType& value, const DesiredType& default_value)
+template <typename VariantType, typename DefaultCallable>
+decltype(auto) try_convert_or_default(VariantType&& variant, DefaultCallable&& default_callable)
 {
-	if (std::holds_alternative<DesiredType>(value)) {
-		return std::get<DesiredType>(value);
-	}
+    using DesiredType = std::decay_t<decltype(default_callable())>; // Deduce the type from the callable's return type
 
-	return default_value;
+    using ReturnType = std::conditional_t<
+        std::is_lvalue_reference_v<VariantType>,
+        const DesiredType&, // For lvalue references
+        DesiredType         // For rvalue references
+    >;
+
+    if (std::holds_alternative<DesiredType>(variant)) {
+        return static_cast<ReturnType>(std::get<DesiredType>(std::forward<VariantType>(variant)));
+    }
+    return static_cast<ReturnType>(std::forward<DefaultCallable>(default_callable)());
 }
 
 #ifdef __ANDROID__
@@ -378,9 +385,16 @@ ResultType impl_to_int(const RpcValue::VariantType& value)
 }
 }
 
-RpcDecimal RpcValue::toDecimal() const
+const RpcDecimal& static_default_decimal() { static const RpcDecimal s; return s; }
+
+RpcDecimal RpcValue::toDecimal() const&
 {
-	return try_convert_or_default<RpcDecimal>(m_value, Decimal{});
+	return try_convert_or_default(m_value, static_default_decimal);
+}
+
+RpcDecimal RpcValue::toDecimal() &&
+{
+	return try_convert_or_default(std::move(m_value), static_default_decimal);
 }
 
 RpcValue::Int RpcValue::toInt() const
@@ -435,12 +449,19 @@ bool RpcValue::toBool() const
 	}, m_value);
 }
 
-RpcValue::DateTime RpcValue::toDateTime() const
+const RpcDateTime& static_default_datetime() { static const RpcDateTime s; return s; }
+
+RpcValue::DateTime RpcValue::toDateTime() const&
 {
-	return try_convert_or_default<RpcValue::DateTime>(m_value, {});
+	return try_convert_or_default(m_value, static_default_datetime);
 }
 
-RpcValue::String RpcValue::toString() const
+RpcValue::DateTime RpcValue::toDateTime() &&
+{
+	return try_convert_or_default(std::move(m_value), static_default_datetime);
+}
+
+RpcValue::String RpcValue::toString() const&
 {
 	return std::visit([this] (const auto& x) {
 		using TypeX = std::remove_cvref_t<decltype(x)>;
@@ -463,29 +484,59 @@ RpcValue::String RpcValue::toString() const
 	}, m_value);
 }
 
-const RpcValue::String& RpcValue::asString() const
+RpcValue::String RpcValue::toString() &&
 {
-	return *try_convert_or_default<CowPtr<RpcValue::String>>(m_value, static_empty_string());
+	return *try_convert_or_default(std::move(m_value), [this] { return CowPtr(std::make_shared<RpcValue::String>(toString())); } );
 }
 
-const RpcValue::Blob& RpcValue::asBlob() const
+const RpcValue::String& RpcValue::asString() const&
 {
-	return *try_convert_or_default<CowPtr<RpcValue::Blob>>(m_value, static_empty_blob());
+	return *try_convert_or_default(m_value, static_empty_string);
 }
 
-const RpcList& RpcValue::asList() const
+RpcValue::String RpcValue::asString() &&
 {
-	return *try_convert_or_default<CowPtr<RpcList>>(m_value, static_empty_list());
+	return *try_convert_or_default(std::move(m_value), static_empty_string);
 }
 
-const RpcMap& RpcValue::asMap() const
+const RpcValue::Blob& RpcValue::asBlob() const&
 {
-	return *try_convert_or_default<CowPtr<RpcMap>>(m_value, static_empty_map());
+	return *try_convert_or_default(m_value, static_empty_blob);
 }
 
-const RpcIMap& RpcValue::asIMap() const
+RpcValue::Blob RpcValue::asBlob() &&
 {
-	return *try_convert_or_default<CowPtr<RpcIMap>>(m_value, static_empty_imap());
+	return *try_convert_or_default(std::move(m_value), static_empty_blob);
+}
+
+const RpcList& RpcValue::asList() const&
+{
+	return *try_convert_or_default(m_value, static_empty_list);
+}
+
+const RpcMap& RpcValue::asMap() const&
+{
+	return *try_convert_or_default(m_value, static_empty_map);
+}
+
+const RpcIMap& RpcValue::asIMap() const&
+{
+	return *try_convert_or_default(m_value, static_empty_imap);
+}
+
+RpcList RpcValue::asList() &&
+{
+	return *try_convert_or_default(std::move(m_value), static_empty_list);
+}
+
+RpcMap RpcValue::asMap() &&
+{
+	return *try_convert_or_default(std::move(m_value), static_empty_map);
+}
+
+RpcIMap RpcValue::asIMap() &&
+{
+	return *try_convert_or_default(std::move(m_value), static_empty_imap);
 }
 
 std::pair<const uint8_t *, size_t> RpcValue::asBytes() const&
@@ -497,17 +548,6 @@ std::pair<const uint8_t *, size_t> RpcValue::asBytes() const&
 	}
 	const String &s = asString();
 	return Ret(reinterpret_cast<const uint8_t*>(s.data()), s.size());
-}
-
-std::pair<const char *, size_t> RpcValue::asData() const
-{
-	using Ret = std::pair<const char *, size_t>;
-	if(type() == Type::Blob) {
-		const Blob &blob = asBlob();
-		return Ret(reinterpret_cast<const char*>(blob.data()), blob.size());
-	}
-	const String &s = asString();
-	return Ret(s.data(), s.size());
 }
 
 size_t RpcValue::count() const

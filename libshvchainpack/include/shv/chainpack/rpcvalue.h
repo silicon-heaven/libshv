@@ -296,23 +296,32 @@ public:
 	bool isValueNotAvailable() const;
 
 	double toDouble() const;
-	RpcDecimal toDecimal() const;
+	RpcDecimal toDecimal() const&;
+	RpcDecimal toDecimal() &&;
 	Int toInt() const;
 	UInt toUInt() const;
 	int64_t toInt64() const;
 	uint64_t toUInt64() const;
 	bool toBool() const;
-	RpcDateTime toDateTime() const;
-	RpcValue::String toString() const;
+	RpcDateTime toDateTime() const&;
+	RpcDateTime toDateTime() &&;
+	RpcValue::String toString() const&;
+	RpcValue::String toString() &&;
 
-	const RpcValue::String &asString() const;
-	const RpcValue::Blob &asBlob() const;
+	const RpcValue::String &asString() const&;
+	const RpcValue::Blob &asBlob() const&;
+	RpcValue::String asString() &&;
+	RpcValue::Blob asBlob() &&;
 
-	std::pair<const uint8_t*, size_t> asBytes() const&;
+	std::pair<const uint8_t*, size_t> asBytes() const;
 
-	const RpcList &asList() const;
-	const Map &asMap() const;
-	const IMap &asIMap() const;
+	const RpcList &asList() const&;
+	const Map &asMap() const&;
+	const IMap &asIMap() const&;
+	RpcList asList() &&;
+	Map asMap() &&;
+	IMap asIMap() &&;
+
 
 	template<typename T> T to() const
 	{
