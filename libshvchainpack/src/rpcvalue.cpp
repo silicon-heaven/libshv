@@ -499,17 +499,6 @@ std::pair<const uint8_t *, size_t> RpcValue::asBytes() const
 	return Ret(reinterpret_cast<const uint8_t*>(s.data()), s.size());
 }
 
-std::pair<const char *, size_t> RpcValue::asData() const
-{
-	using Ret = std::pair<const char *, size_t>;
-	if(type() == Type::Blob) {
-		const Blob &blob = asBlob();
-		return Ret(reinterpret_cast<const char*>(blob.data()), blob.size());
-	}
-	const String &s = asString();
-	return Ret(s.data(), s.size());
-}
-
 size_t RpcValue::count() const
 {
 	return std::visit([] (const auto& x) {
