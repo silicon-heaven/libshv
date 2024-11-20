@@ -488,7 +488,7 @@ const RpcIMap& RpcValue::asIMap() const
 	return *try_convert_or_default<CowPtr<RpcIMap>>(m_value, static_empty_imap());
 }
 
-std::pair<const uint8_t *, size_t> RpcValue::asBytes() const
+std::pair<const uint8_t *, size_t> RpcValue::asBytes() const&
 {
 	using Ret = std::pair<const uint8_t *, size_t>;
 	if(type() == Type::Blob) {
