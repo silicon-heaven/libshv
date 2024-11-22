@@ -21,6 +21,9 @@ public:
 	~DataViewWidget() override;
 
 	void init(const QString &site_path, timeline::Graph *graph);
+	void setPredefinedViews(const QVector<timeline::Graph::VisualSettings> &views);
+	const QVector<timeline::Graph::VisualSettings> &predefinedViews();
+	void applyPredefinedView(const QString &name);
 
 private:
 	void onShowChannelFilterClicked();
@@ -28,6 +31,7 @@ private:
 
 	timeline::Graph *m_graph = nullptr;
 	QString m_sitePath;
+	QVector<timeline::Graph::VisualSettings> m_predefinedViews;
 
 	Ui::DataViewWidget *ui;
 };
