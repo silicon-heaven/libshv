@@ -20,7 +20,7 @@ class SHVVISU_DECL_EXPORT ChannelFilterDialog : public QDialog
 	Q_OBJECT
 
 public:
-	explicit ChannelFilterDialog(QWidget *parent, const QString &site_path, Graph *graph);
+	explicit ChannelFilterDialog(QWidget *parent, const QString &site_path, Graph *graph, const QVector<Graph::VisualSettings> &views = {});
 	~ChannelFilterDialog() override;
 
 	std::optional<ChannelFilter> channelFilter();
@@ -58,6 +58,7 @@ private:
 	ChannelFilterSortFilterProxyModel *m_channelsFilterProxyModel = nullptr;
 	QString m_sitePath;
 	QString m_recentSettingsDir;
+	QVector<timeline::Graph::VisualSettings> m_predefinedDataViews;
 
 	QAction *m_saveViewAction = nullptr;
 	QAction *m_saveViewAsAction = nullptr;

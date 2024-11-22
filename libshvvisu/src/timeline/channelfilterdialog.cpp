@@ -17,7 +17,7 @@ namespace shv::visu::timeline {
 
 static const QString FLATLINE_VIEW_SETTINGS_FILE_EXTENSION = QStringLiteral(".fvs");
 
-ChannelFilterDialog::ChannelFilterDialog(QWidget *parent, const QString &site_path, Graph *graph) :
+ChannelFilterDialog::ChannelFilterDialog(QWidget *parent, const QString &site_path, Graph *graph, const QVector<Graph::VisualSettings> &predefined_data_views) :
 	QDialog(parent),
 	ui(new Ui::ChannelFilterDialog)
 {
@@ -48,16 +48,19 @@ ChannelFilterDialog::ChannelFilterDialog(QWidget *parent, const QString &site_pa
 	ui->gbFilterSettings->setChecked(true);
 
 	m_channelsFilterModel->createNodes();
+	m_predefinedDataViews = predefined_data_views;
 
 	loadChannelFilterFomGraph();
 	reloadDataViewsCombobox();
 
 	std::optional<ChannelFilter> chf = m_graph->channelFilter();
 
-	if (chf && !chf.value().name().isEmpty())
+	if (chf && !chf.value().name().isEmpty()) {
 		ui->cbDataView->setCurrentText(chf.value().name());
-	else
+	}
+	else {
 		ui->cbDataView->setCurrentIndex(-1);
+	}
 
 	refreshActions();
 
@@ -97,6 +100,15 @@ void ChannelFilterDialog::applyTextFilter()
 void ChannelFilterDialog::reloadDataViewsCombobox()
 {
 	ui->cbDataView->clear();
+
+	for (const auto &v: m_predefinedDataViews) {
+		ui->cbDataView->addItem(v.name);
+	}
+
+	if (ui->cbDataView->count() > 0) {
+		ui->cbDataView->insertSeparator(ui->cbDataView->count());
+	}
+
 	ui->cbDataView->addItems(m_graph->savedVisualSettingsNames(m_sitePath));
 }
 
@@ -150,9 +162,11 @@ void ChannelFilterDialog::importDataView()
 
 void ChannelFilterDialog::refreshActions()
 {
-	m_saveViewAction->setEnabled(!ui->cbDataView->currentText().isEmpty());
-	m_deleteViewAction->setEnabled(!ui->cbDataView->currentText().isEmpty());
-	m_resetViewAction->setEnabled(!ui->cbDataView->currentText().isEmpty());
+	bool is_action_enabled = (!ui->cbDataView->currentText().isEmpty() && ui->cbDataView->currentIndex() >= m_predefinedDataViews.count());
+
+	m_saveViewAction->setEnabled(is_action_enabled);
+	m_deleteViewAction->setEnabled(is_action_enabled);
+	m_resetViewAction->setEnabled(is_action_enabled);
 }
 
 void ChannelFilterDialog::saveDataView()
@@ -274,7 +288,13 @@ void ChannelFilterDialog::setVisibleItemsCheckState_helper(const QModelIndex &mi
 void ChannelFilterDialog::onDataViewComboboxChanged(int index)
 {
 	if (index >= 0) { //ignore event with index = -1, which is emmited from clear() method
-		m_graph->loadVisualSettings(m_sitePath, ui->cbDataView->currentText());
+		if (index < m_predefinedDataViews.count()) {
+			m_graph->setVisualSettingsAndChannelFilter(m_predefinedDataViews[index]);
+		}
+		else {
+			m_graph->loadVisualSettings(m_sitePath, ui->cbDataView->currentText());
+		}
+
 		loadChannelFilterFomGraph();
 	}
 	refreshActions();

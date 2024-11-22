@@ -1239,7 +1239,11 @@ void Graph::setVisualSettingsAndChannelFilter(const VisualSettings &settings)
 			GraphChannel *channel = m_channels[j];
 			if (channel->shvPath() == channel_settings.shvPath) {
 				permitted_paths.insert(channel_settings.shvPath);
-				channel->setStyle(channel_settings.style);
+
+				if (!channel_settings.style.isEmpty()) {
+					channel->setStyle(channel_settings.style);;
+				}
+
 				m_channels.insert(i, m_channels.takeAt(j));
 				break;
 			}

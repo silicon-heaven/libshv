@@ -42,9 +42,29 @@ void DataViewWidget::init(const QString &site_path, timeline::Graph *graph)
 	ui->pbShowRawData->setIcon(m_graph->style().isRawDataVisible()? QIcon(QStringLiteral(":/shv/visu/images/raw.svg")): QIcon(QStringLiteral(":/shv/visu/images/raw-off.svg")));
 }
 
+void DataViewWidget::setPredefinedViews(const QVector<timeline::Graph::VisualSettings> &views)
+{
+	m_predefinedViews = views;
+}
+
+const QVector<timeline::Graph::VisualSettings> &DataViewWidget::predefinedViews()
+{
+	return m_predefinedViews;
+}
+
+void DataViewWidget::applyPredefinedView(const QString &name)
+{
+	for (const auto &v: m_predefinedViews) {
+		if (v.name == name) {
+			m_graph->setVisualSettingsAndChannelFilter(v);
+			return;
+		}
+	}
+}
+
 void DataViewWidget::onShowChannelFilterClicked()
 {
-	auto *channel_filter_dialog = new tl::ChannelFilterDialog(this, m_sitePath, m_graph);
+	auto *channel_filter_dialog = new tl::ChannelFilterDialog(this, m_sitePath, m_graph, m_predefinedViews);
 
 	if (channel_filter_dialog->exec() == QDialog::Accepted) {
 		m_graph->setChannelFilter(channel_filter_dialog->channelFilter());
