@@ -334,9 +334,10 @@ double RpcValue::toDouble() const
 }
 
 namespace {
-template <typename DesiredType>
-const DesiredType& try_convert_or_default(const RpcValue::VariantType& value, const DesiredType& default_value)
+template <typename DefaultType>
+decltype(auto) try_convert_or_default(const RpcValue::VariantType& value, const DefaultType& default_value)
 {
+	using DesiredType = std::decay_t<decltype(default_value)>;
 	if (std::holds_alternative<DesiredType>(value)) {
 		return std::get<DesiredType>(value);
 	}
@@ -380,7 +381,7 @@ ResultType impl_to_int(const RpcValue::VariantType& value)
 
 RpcDecimal RpcValue::toDecimal() const
 {
-	return try_convert_or_default<RpcDecimal>(m_value, Decimal{});
+	return try_convert_or_default(m_value, Decimal{});
 }
 
 RpcValue::Int RpcValue::toInt() const
@@ -437,7 +438,7 @@ bool RpcValue::toBool() const
 
 RpcValue::DateTime RpcValue::toDateTime() const
 {
-	return try_convert_or_default<RpcValue::DateTime>(m_value, {});
+	return try_convert_or_default(m_value, RpcValue::DateTime{});
 }
 
 RpcValue::String RpcValue::toString() const
@@ -465,27 +466,27 @@ RpcValue::String RpcValue::toString() const
 
 const RpcValue::String& RpcValue::asString() const
 {
-	return *try_convert_or_default<CowPtr<RpcValue::String>>(m_value, static_empty_string());
+	return *try_convert_or_default(m_value, static_empty_string());
 }
 
 const RpcValue::Blob& RpcValue::asBlob() const
 {
-	return *try_convert_or_default<CowPtr<RpcValue::Blob>>(m_value, static_empty_blob());
+	return *try_convert_or_default(m_value, static_empty_blob());
 }
 
 const RpcList& RpcValue::asList() const
 {
-	return *try_convert_or_default<CowPtr<RpcList>>(m_value, static_empty_list());
+	return *try_convert_or_default(m_value, static_empty_list());
 }
 
 const RpcMap& RpcValue::asMap() const
 {
-	return *try_convert_or_default<CowPtr<RpcMap>>(m_value, static_empty_map());
+	return *try_convert_or_default(m_value, static_empty_map());
 }
 
 const RpcIMap& RpcValue::asIMap() const
 {
-	return *try_convert_or_default<CowPtr<RpcIMap>>(m_value, static_empty_imap());
+	return *try_convert_or_default(m_value, static_empty_imap());
 }
 
 std::pair<const uint8_t *, size_t> RpcValue::asBytes() const&
