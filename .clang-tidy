@@ -7,6 +7,7 @@ Checks:
     hicpp-*,
     clang-analyzer-*,
     misc-*,
+    performance-*,
     readability-*,
     -bugprone-easily-swappable-parameters,
     -bugprone-implicit-widening-of-multiplication-result,
