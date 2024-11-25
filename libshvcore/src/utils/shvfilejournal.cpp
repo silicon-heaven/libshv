@@ -440,7 +440,7 @@ void ShvFileJournal::updateJournalStatus()
 		if(!fn.ends_with(ext))
 			continue;
 		try {
-			int64_t msec = m_journalContext.fileNameToFileMsec(fn);
+			int64_t msec = ShvFileJournal::JournalContext::fileNameToFileMsec(fn);
 			m_journalContext.files.push_back(msec);
 			fn = m_journalContext.journalDir + '/' + fn;
 			int64_t sz = file_size(fn);
