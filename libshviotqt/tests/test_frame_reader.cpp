@@ -96,10 +96,7 @@ void test_valid_data(FrameReader *rd, const vector<string> &data)
 
 void test_incomplete_data(FrameReader *rd, const vector<string> &data)
 {
-	auto rq1 = data[0];
 	auto rs1 = data[1];
-	auto rs2 = data[2];
-	auto sig1 = data[3];
 	vector<string> chunks;
 	vector<size_t> ixs = {0, 4, rs1.size() - 2, rs1.size()};
 	for (size_t i = 1; i < ixs.size(); i++) {
