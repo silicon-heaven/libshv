@@ -13,11 +13,11 @@ on:
 
 jobs:
   clang-tidy:
-    name: clang-tidy / Ubuntu 22.04
-    runs-on: ubuntu-22.04
+    name: clang-tidy / Ubuntu 24.04
+    runs-on: ubuntu-24.04
     env:
-      CC: clang-15
-      CXX: clang++-15
+      CC: clang-18
+      CXX: clang++-18
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,14 +26,14 @@ jobs:
       - name: Run clang-tidy
         uses: ./.github/actions/run-linter
         with:
-          lint_program_with_args: clang-tidy-cache clang-tidy-15 -p build --header-filter=.* --quiet --warnings-as-errors=*
+          lint_program_with_args: clang-tidy-cache clang-tidy-18 -p build --header-filter=.* --quiet --warnings-as-errors=*
 
   clazy:
-    name: clazy / Ubuntu 22.04
-    runs-on: ubuntu-22.04
+    name: clazy / Ubuntu 24.04
+    runs-on: ubuntu-24.04
     env:
-      CC: clang-15
-      CXX: clang++-15
+      CC: clang-18
+      CXX: clang++-18
     steps:
       - uses: actions/checkout@v4
         with:
