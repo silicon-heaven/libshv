@@ -18,7 +18,7 @@ const auto cpmerge_help =
 int main(int argc, char *argv[])
 {
 	if (argc < 2) {
-		std::cerr << "No argument. Use config.file as first argument." << std::endl;
+		std::cerr << "No argument. Use config.file as first argument.\n";
 		std::cout << cpmerge_help;
 		return 1;
 	}
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 	std::ifstream fis;
 	fis.open(argv[1]);
 	if (!fis.good()) {
-		std::cerr << "Cannot open config file for reading." << std::endl;
+		std::cerr << "Cannot open config file for reading.\n";
 		return 1;
 	}
 	std::string err;
@@ -42,14 +42,14 @@ int main(int argc, char *argv[])
 	fis.close();
 
 	if (!err.empty()){
-		std::cerr << err << std::endl;
+		std::cerr << err << '\n';
 		return 2;
 	}
 
 	shv::chainpack::RpcValue overlay_config = shv::chainpack::CponReader(std::cin).read(&err);
 
 	if (!err.empty()){
-		std::cerr << err << std::endl;
+		std::cerr << err << '\n';
 		return 3;
 	}
 
