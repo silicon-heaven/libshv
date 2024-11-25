@@ -72,6 +72,7 @@ Checks:
   - -modernize-use-trailing-return-type
   - -modernize-use-using
   - -performance-enum-size
+  - -performance-inefficient-string-concatenation
   - -readability-avoid-const-params-in-decls
   - -readability-avoid-nested-conditional-operator
   - -readability-braces-around-statements
