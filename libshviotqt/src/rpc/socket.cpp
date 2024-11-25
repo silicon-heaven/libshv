@@ -111,7 +111,7 @@ int FrameReader::tryToReadMeta(std::istringstream &in)
 				}
 				return 0;
 			}
-			catch (ParseException &e) {
+			catch (ParseException &e) { // NOLINT(bugprone-empty-catch)
 				// ignore read errro, meta not availble or corrupted
 				// frame parser will catch it later on
 			}
