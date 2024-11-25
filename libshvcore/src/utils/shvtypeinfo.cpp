@@ -579,11 +579,10 @@ ShvPropertyDescr &ShvPropertyDescr::addMethod(const ShvMethodDescr &method_descr
 
 ShvPropertyDescr &ShvPropertyDescr::setMethod(const ShvMethodDescr &method_descr)
 {
-	auto name = method_descr.name();
 	auto method_list = methods();
 	bool method_found = false;
 	for(auto &mm : method_list) {
-		if(mm.name() == name) {
+		if(mm.name() == method_descr.name()) {
 			mm = method_descr;
 			method_found = true;
 			break;

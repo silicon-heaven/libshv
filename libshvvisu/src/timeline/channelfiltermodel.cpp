@@ -183,7 +183,7 @@ void ChannelFilterModel::createNodesForPath(const QString &path, const QMap<QStr
 		QStandardItem *it = shvPathToItem(sub_path, invisibleRootItem());
 
 		if (!it) {
-			QString dir_name = path_list.at(i);
+			const auto& dir_name = path_list.at(i);
 			auto *item = new QStandardItem(dir_name);
 			item->setData(dir_name, UserData::DirName);
 
