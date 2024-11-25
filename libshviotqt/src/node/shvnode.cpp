@@ -393,7 +393,7 @@ void ShvNode::treeWalk_helper(std::function<void (ShvNode *, const ShvNode::Stri
 
 chainpack::RpcValue ShvNode::dir(const StringViewList &shv_path, const chainpack::RpcValue &methods_params)
 {
-	auto method_name = methods_params.asString();
+	const auto& method_name = methods_params.asString();
 	size_t cnt = methodCount(shv_path);
 	if(method_name.empty()) {
 		RpcList ret;

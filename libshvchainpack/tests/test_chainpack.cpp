@@ -344,7 +344,7 @@ DOCTEST_TEST_CASE("ChainPack")
 			}
 			ChainPackReader rd(out); RpcValue cp2 = rd.read();
 			nDebug() << cp2.toCpon() << " dump: " << binary_dump(out.str()).c_str();
-			const RpcList list = cp2.asList();
+			const RpcList& list = cp2.asList();
 			REQUIRE(list.size() == N);
 			for (size_t i = 0; i < list.size(); ++i) {
 				std::string s("foo-bar");

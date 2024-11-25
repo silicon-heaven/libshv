@@ -260,7 +260,7 @@ auto transform_cli_group_mapping(const chainpack::RpcList& cli_group_mapping)
 				   cli_group_mapping.end(),
 				   std::back_inserter(group_mapping),
 				   [] (const auto& mapping) {
-					   auto mapping_list = mapping.asList();
+					   const auto& mapping_list = mapping.asList();
 					   if (mapping_list.size() != 2) {
 #ifdef _MSC_VER
 						   SHV_EXCEPTION(__FUNCSIG__ + std::string{": group mapping isn't a pair."});
