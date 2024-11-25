@@ -98,7 +98,7 @@ public:
 	void reloadConfigRemountDevices();
 	bool checkTunnelSecret(const std::string &s);
 
-	void checkLogin(const chainpack::UserLoginContext &ctx, const QObject* connection_ctx, const std::function<void(chainpack::UserLoginResult)> cb);
+	void checkLogin(const chainpack::UserLoginContext &ctx, const QObject* connection_ctx, const std::function<void(chainpack::UserLoginResult)>& cb);
 
 	void sendNewLogEntryNotify(const std::string &msg);
 

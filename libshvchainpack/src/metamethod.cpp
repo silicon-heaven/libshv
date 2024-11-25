@@ -9,7 +9,7 @@ constexpr auto KEY_ACCESSGRANT = "accessGrant";
 constexpr auto VOID_TYPE_NAME = "Null";
 }
 
-MetaMethod::Signal::Signal(std::string _name, std::optional<std::string> _param_type)
+MetaMethod::Signal::Signal(const std::string& _name, const std::optional<std::string>& _param_type)
 	: name(_name)
 	, param_type(_param_type)
 {
@@ -17,10 +17,10 @@ MetaMethod::Signal::Signal(std::string _name, std::optional<std::string> _param_
 
 MetaMethod::MetaMethod() = default;
 
-MetaMethod::MetaMethod(std::string name,
+MetaMethod::MetaMethod(const std::string& name,
 	unsigned flags,
-	std::optional<std::string> param,
-	std::optional<std::string> result,
+	const std::optional<std::string>& param,
+	const std::optional<std::string>& result,
 	AccessLevel access_level,
 	const std::vector<Signal>& signal_definitions,
 	const std::string& description,
@@ -41,7 +41,7 @@ MetaMethod::MetaMethod(std::string name,
 	}
 }
 
-MetaMethod::MetaMethod(std::string name,
+MetaMethod::MetaMethod(const std::string& name,
 	Signature signature,
 	unsigned int flags,
 	const std::string &access_grant,

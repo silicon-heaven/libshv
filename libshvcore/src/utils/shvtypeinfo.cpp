@@ -1237,7 +1237,7 @@ RpcValue ShvTypeInfo::applyTypeDescription(const chainpack::RpcValue &val, const
 	return val;
 }
 
-void ShvTypeInfo::forEachDeviceProperty(const std::string &device_type, std::function<void (const ShvPropertyDescr &)> fn) const
+void ShvTypeInfo::forEachDeviceProperty(const std::string &device_type, const std::function<void (const ShvPropertyDescr &)>& fn) const
 {
 	auto it = m_deviceDescriptions.find(device_type);
 	if( it == m_deviceDescriptions.end()) {
@@ -1250,7 +1250,7 @@ void ShvTypeInfo::forEachDeviceProperty(const std::string &device_type, std::fun
 	};
 }
 
-void ShvTypeInfo::forEachProperty(std::function<void (const std::string &shv_path, const ShvPropertyDescr &)> fn) const
+void ShvTypeInfo::forEachProperty(const std::function<void (const std::string &shv_path, const ShvPropertyDescr &)>& fn) const
 {
 	for(const auto& [device_path, device_type] : m_devicePaths) {
 		if(auto it = m_deviceDescriptions.find(device_type); it != m_deviceDescriptions.end()) {

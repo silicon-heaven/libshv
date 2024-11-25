@@ -31,7 +31,7 @@ protected:
 	size_t methodCount(const StringViewList &shv_path) override;
 	const shv::chainpack::MetaMethod* metaMethod(const StringViewList &shv_path, size_t ix) override;
 
-	std::string saveConfigFile(const std::string &file_name, const shv::chainpack::RpcValue val);
+	std::string saveConfigFile(const std::string &file_name, const shv::chainpack::RpcValue& val);
 };
 
 class MountsAclNode : public BrokerAclNode

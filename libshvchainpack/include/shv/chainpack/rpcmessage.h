@@ -197,7 +197,7 @@ public:
 public:
 	RpcRequest& setRequestId(const RpcValue::Int requestId) = delete;
 
-	static void write(AbstractStreamWriter &wr, const std::string &method, std::function<void (AbstractStreamWriter &)> write_params_callback);
+	static void write(AbstractStreamWriter &wr, const std::string &method, const std::function<void (AbstractStreamWriter &)>& write_params_callback);
 };
 
 class SHVCHAINPACK_DECL_EXPORT RpcException : public Exception

@@ -51,10 +51,10 @@ public:
 	std::string userId;
 
 	ShvJournalEntry();
-	ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_, std::string domain_, int short_time, ValueFlags flags, int64_t epoch_msec = 0);
-	ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_);
-	ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_, int short_time);
-	ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_, std::string domain_);
+	ShvJournalEntry(const std::string& path_, const shv::chainpack::RpcValue& value_, const std::string& domain_, int short_time, ValueFlags flags, int64_t epoch_msec = 0);
+	ShvJournalEntry(const std::string& path_, const shv::chainpack::RpcValue& value_);
+	ShvJournalEntry(const std::string& path_, const shv::chainpack::RpcValue& value_, int short_time);
+	ShvJournalEntry(const std::string& path_, const shv::chainpack::RpcValue& value_, const std::string& domain_);
 
 	bool isValid() const;
 	bool isSpontaneous() const;
@@ -65,13 +65,13 @@ public:
 	void setShortTime(int short_time);
 	shv::chainpack::RpcValue::DateTime dateTime() const;
 	shv::chainpack::RpcValue toRpcValueMap() const;
-	shv::chainpack::RpcValue toRpcValueList(std::function< chainpack::RpcValue (const std::string &)> map_path = nullptr) const;
+	shv::chainpack::RpcValue toRpcValueList(const std::function< chainpack::RpcValue (const std::string &)>& map_path = nullptr) const;
 
 	static bool isShvJournalEntry(const shv::chainpack::RpcValue &rv);
 	shv::chainpack::RpcValue toRpcValue() const;
 	static ShvJournalEntry fromRpcValue(const shv::chainpack::RpcValue &rv);
 	static ShvJournalEntry fromRpcValueMap(const shv::chainpack::RpcValue::Map &m);
-	static ShvJournalEntry fromRpcValueList(const shv::chainpack::RpcList &row, std::function< std::string (const chainpack::RpcValue &)> unmap_path = nullptr, std::string *err = nullptr);
+	static ShvJournalEntry fromRpcValueList(const shv::chainpack::RpcList &row, const std::function< std::string (const chainpack::RpcValue &)>& unmap_path = nullptr, std::string *err = nullptr);
 
 	shv::chainpack::DataChange toDataChange() const;
 };

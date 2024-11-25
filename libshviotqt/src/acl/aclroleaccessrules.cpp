@@ -44,7 +44,7 @@ AclAccessRule AclAccessRule::fromRpcValue(const RpcValue &rpcval)
 }
 
 namespace {
-bool is_wild_card_pattern(const string path)
+bool is_wild_card_pattern(const string& path)
 {
 	static const string ASTERISKS = "**";
 	static const string SLASH_ASTERISKS = "/**";

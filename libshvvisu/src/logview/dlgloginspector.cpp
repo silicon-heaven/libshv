@@ -354,7 +354,7 @@ void DlgLogInspector::downloadLog()
 	conn->callShvMethod(rq_id, shv_path, cp::Rpc::METH_GET_LOG, params);
 }
 
-void DlgLogInspector::parseLog(shv::chainpack::RpcValue log)
+void DlgLogInspector::parseLog(const shv::chainpack::RpcValue& log)
 {
 	{
 		std::string str = log.metaData().toString("\t");
@@ -462,7 +462,7 @@ std::string DlgLogInspector::loadData(const QString &ext)
 	return "";
 }
 
-void DlgLogInspector::saveData(const std::string &data_to_be_saved, QString ext)
+void DlgLogInspector::saveData(const std::string &data_to_be_saved, const QString& ext)
 {
 	QString fn = QFileDialog::getSaveFileName(this, tr("Savefile"), QString(), "*" + ext);
 	if(fn.isEmpty())

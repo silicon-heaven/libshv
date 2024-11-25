@@ -106,7 +106,7 @@ shv::core::utils::ShvTypeDescr::Type qt_to_shv_type(int meta_type_id)
 }
 }
 
-double GraphModel::valueToDouble(const QVariant v, shv::core::utils::ShvTypeDescr::Type type_id, bool *ok)
+double GraphModel::valueToDouble(const QVariant& v, shv::core::utils::ShvTypeDescr::Type type_id, bool *ok)
 {
 	using Type = shv::core::utils::ShvTypeDescr::Type;
 	if(ok)

@@ -49,24 +49,24 @@ void RpcResponseCallBack::start(int time_out)
 	start();
 }
 
-void RpcResponseCallBack::start(RpcResponseCallBack::CallBackFunction cb)
+void RpcResponseCallBack::start(const RpcResponseCallBack::CallBackFunction& cb)
 {
 	m_callBackFunction = cb;
 	start();
 }
 
-void RpcResponseCallBack::start(int time_out, RpcResponseCallBack::CallBackFunction cb)
+void RpcResponseCallBack::start(int time_out, const RpcResponseCallBack::CallBackFunction& cb)
 {
 	setTimeout(time_out);
 	start(cb);
 }
 
-void RpcResponseCallBack::start(QObject *context, RpcResponseCallBack::CallBackFunction cb)
+void RpcResponseCallBack::start(QObject *context, const RpcResponseCallBack::CallBackFunction& cb)
 {
 	start(timeout(), context, cb);
 }
 
-void RpcResponseCallBack::start(int time_out_msec, QObject *context, RpcResponseCallBack::CallBackFunction cb)
+void RpcResponseCallBack::start(int time_out_msec, QObject *context, const RpcResponseCallBack::CallBackFunction& cb)
 {
 	if(context) {
 		connect(context, &QObject::destroyed, this, [this]() {

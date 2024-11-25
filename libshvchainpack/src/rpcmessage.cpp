@@ -718,7 +718,7 @@ RpcSignal::RpcSignal(const RpcMessage &msg)
 
 RpcSignal::~RpcSignal() = default;
 
-void RpcSignal::write(AbstractStreamWriter &wr, const std::string &method, std::function<void (AbstractStreamWriter &)> write_params_callback)
+void RpcSignal::write(AbstractStreamWriter &wr, const std::string &method, const std::function<void (AbstractStreamWriter &)>& write_params_callback)
 {
 	RpcValue::MetaData md;
 	md.setMetaTypeId(RpcMessage::MetaType::ID);

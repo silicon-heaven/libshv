@@ -95,11 +95,11 @@ public:
 	bool optionExists(const std::string &name) const;
 	chainpack::RpcValue::Map values() const;
 	chainpack::RpcValue value(const std::string &name) const;
-	chainpack::RpcValue value(const std::string &name, const chainpack::RpcValue default_value) const;
+	chainpack::RpcValue value(const std::string &name, const chainpack::RpcValue& default_value) const;
 	/// value is explicitly set from command line or in config file
 	/// defaultValue is not considered to be an explicitly set value
 	bool isValueSet(const std::string &name) const;
-	bool setValue(const std::string &name, const chainpack::RpcValue val, bool throw_exc = true);
+	bool setValue(const std::string &name, const chainpack::RpcValue& val, bool throw_exc = true);
 protected:
 	chainpack::RpcValue value_helper(const std::string &name, bool throw_exception) const;
 	std::tuple<std::string, std::string> applicationDirAndName() const;

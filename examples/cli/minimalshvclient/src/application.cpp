@@ -76,8 +76,8 @@ void Application::unsubscribeChanges(const string &shv_path)
 }
 
 void Application::callShvMethod(const std::string &shv_path, const std::string &method, const shv::chainpack::RpcValue &params, const QObject *context
-								, std::function<void (const shv::chainpack::RpcValue &)> success_callback
-								, std::function<void (const shv::chainpack::RpcError &)> error_callback)
+								, const std::function<void (const shv::chainpack::RpcValue &)>& success_callback
+								, const std::function<void (const shv::chainpack::RpcError &)>& error_callback)
 {
 	auto *rpcc = RpcCall::create(m_rpcConnection)
 			->setShvPath(shv_path)

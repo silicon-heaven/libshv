@@ -12,7 +12,7 @@ namespace shv::core::utils {
 //                                         Crypt
 //===================================================================
 /// http://www.math.utah.edu/~pa/Random/Random.html
-Crypt::Crypt(Crypt::Generator gen)
+Crypt::Crypt(const Crypt::Generator& gen)
 	: m_generator(gen)
 {
 	if(m_generator == nullptr)
@@ -31,7 +31,7 @@ Crypt::Generator Crypt::createGenerator(uint32_t a, uint32_t b, uint32_t max_ran
 	return ret;
 }
 
-void Crypt::setGenerator(Generator gen)
+void Crypt::setGenerator(const Generator& gen)
 {
 	m_generator = gen;
 }

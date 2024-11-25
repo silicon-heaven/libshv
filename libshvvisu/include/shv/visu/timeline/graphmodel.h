@@ -77,7 +77,7 @@ public:
 	Q_SIGNAL void xRangeChanged(XRange range);
 	Q_SIGNAL void channelCountChanged(qsizetype cnt);
 public:
-	static double valueToDouble(const QVariant v, core::utils::ShvTypeDescr::Type type_id = core::utils::ShvTypeDescr::Type::Invalid, bool *ok = nullptr);
+	static double valueToDouble(const QVariant& v, core::utils::ShvTypeDescr::Type type_id = core::utils::ShvTypeDescr::Type::Invalid, bool *ok = nullptr);
 protected:
 	QString guessTypeName(qsizetype channel_ix) const;
 protected:

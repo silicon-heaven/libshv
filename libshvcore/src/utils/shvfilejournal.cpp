@@ -102,7 +102,7 @@ const std::string ShvFileJournal::FILE_EXT = ".log2";
 
 ShvFileJournal::ShvFileJournal() = default;
 
-ShvFileJournal::ShvFileJournal(std::string device_id)
+ShvFileJournal::ShvFileJournal(const std::string& device_id)
 {
 	setDeviceId(device_id);
 }
