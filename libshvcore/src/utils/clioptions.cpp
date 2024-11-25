@@ -421,8 +421,8 @@ std::string CLIOptions::applicationName() const
 void CLIOptions::printHelp(std::ostream &os) const
 {
 	using namespace std;
-	os << applicationName() << " [OPTIONS]" << endl << endl;
-	os << "OPTIONS:" << endl << endl;
+	os << applicationName() << " [OPTIONS]\n\n";
+	os << "OPTIONS:\n\n";
 	for(const auto &kv : m_options) {
 		const Option &opt = kv.second;
 		os << utils::join(opt.names(), ", ");
@@ -437,15 +437,15 @@ void CLIOptions::printHelp(std::ostream &os) const
 			os << " DEFAULT=" << def_val.toStdString();
 		if(opt.isMandatory())
 			os << " MANDATORY";
-		os << endl;
+		os << '\n';
 		const std::string& oc = opt.comment();
 		if(!oc.empty())
-			os << "\t" << oc << endl;
+			os << "\t" << oc << '\n';
 	}
-	os << NecroLog::cliHelp() << std::endl;
+	os << NecroLog::cliHelp() << '\n';
 	std::string topics = NecroLog::registeredTopicsInfo();
 	if(!topics.empty())
-		std::cout << topics << std::endl;
+		std::cout << topics << '\n';
 }
 
 void CLIOptions::printHelp() const
@@ -457,16 +457,16 @@ void CLIOptions::dump(std::ostream &os) const
 {
 	for(const auto &kv : m_options) {
 		const Option &opt = kv.second;
-		os << kv.first << '(' << utils::join(opt.names(), ", ") << ')' << ": " << opt.value().asString() << std::endl;
+		os << kv.first << '(' << utils::join(opt.names(), ", ") << ')' << ": " << opt.value().asString() << '\n';
 	}
 }
 
 void CLIOptions::dump() const
 {
 	using namespace std;
-	std::cout<< "=============== options values dump ==============" << endl;
+	std::cout<< "=============== options values dump ==============\n";
 	dump(std::cout);
-	std::cout << "-------------------------------------------------" << endl;
+	std::cout << "-------------------------------------------------\n";
 }
 
 void CLIOptions::addParseError(const std::string& err)
