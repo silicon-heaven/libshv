@@ -42,10 +42,10 @@ private:
 	void saveSettings();
 
 	shv::chainpack::RpcValue getLogParams();
-	void parseLog(shv::chainpack::RpcValue log);
+	void parseLog(const shv::chainpack::RpcValue& log);
 
 	void showInfo(const QString &msg = QString(), bool is_error = false);
-	void saveData(const std::string &data, QString ext);
+	void saveData(const std::string &data, const QString& ext);
 	std::string loadData(const QString &ext);
 
 #if SHVVISU_HAS_TIMEZONE

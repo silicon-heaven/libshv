@@ -367,12 +367,12 @@ AccessLevel ShvNode::grantToAccessLevel(const RpcValue &acces_grant) const
 	return basicGrantToAccessLevel(acces_grant);
 }
 
-void ShvNode::treeWalk(std::function<void (ShvNode *parent_nd, const StringViewList &shv_path)> callback)
+void ShvNode::treeWalk(const std::function<void (ShvNode *parent_nd, const StringViewList &shv_path)>& callback)
 {
 	treeWalk_helper(callback, this, {});
 }
 
-void ShvNode::treeWalk_helper(std::function<void (ShvNode *, const ShvNode::StringViewList &)> callback, ShvNode *parent_nd, const ShvNode::StringViewList &shv_path)
+void ShvNode::treeWalk_helper(const std::function<void (ShvNode *, const ShvNode::StringViewList &)>& callback, ShvNode *parent_nd, const ShvNode::StringViewList &shv_path)
 {
 	callback(parent_nd, shv_path);
 	const auto child_names = parent_nd->childNames(shv_path);
@@ -1024,7 +1024,7 @@ ValueProxyShvNode::ValueProxyShvNode(const std::string &node_id, int value_id, V
 	}
 }
 
-void ValueProxyShvNode::onShvValueChanged(int value_id, chainpack::RpcValue val)
+void ValueProxyShvNode::onShvValueChanged(int value_id, const chainpack::RpcValue& val)
 {
 	if(value_id == m_valueId && isSignal()) {
 		RpcSignal sig;

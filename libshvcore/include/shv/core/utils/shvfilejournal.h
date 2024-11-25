@@ -20,7 +20,7 @@ public:
 	static const std::string FILE_EXT;
 public:
 	ShvFileJournal();
-	ShvFileJournal(std::string device_id);
+	ShvFileJournal(const std::string& device_id);
 
 	void setJournalDir(std::string s);
 	const std::string& journalDir();

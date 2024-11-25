@@ -13,26 +13,26 @@ ShvJournalEntry::MetaType::MetaType()
 //==============================================================
 ShvJournalEntry::ShvJournalEntry() = default;
 
-ShvJournalEntry::ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_, std::string domain_, int short_time, ValueFlags flags, int64_t epoch_msec)
+ShvJournalEntry::ShvJournalEntry(const std::string& path_, const shv::chainpack::RpcValue& value_, const std::string& domain_, int short_time, ValueFlags flags, int64_t epoch_msec)
 	: epochMsec(epoch_msec)
-	, path(std::move(path_))
+	, path(path_)
 	, value{value_}
 	, shortTime(short_time)
-	, domain(std::move(domain_))
+	, domain(domain_)
 	, valueFlags(flags)
 {
 }
 
-ShvJournalEntry::ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_)
+ShvJournalEntry::ShvJournalEntry(const std::string& path_, const shv::chainpack::RpcValue& value_)
 	: ShvJournalEntry(path_, value_, DOMAIN_VAL_CHANGE, NO_SHORT_TIME, NO_VALUE_FLAGS)
 {
 }
-ShvJournalEntry::ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_, int short_time)
+ShvJournalEntry::ShvJournalEntry(const std::string& path_, const shv::chainpack::RpcValue& value_, int short_time)
 	: ShvJournalEntry(path_, value_, DOMAIN_VAL_FASTCHANGE, short_time, NO_VALUE_FLAGS)
 {
 }
-ShvJournalEntry::ShvJournalEntry(std::string path_, shv::chainpack::RpcValue value_, std::string domain_)
-	: ShvJournalEntry(path_, value_, std::move(domain_), NO_SHORT_TIME, NO_VALUE_FLAGS)
+ShvJournalEntry::ShvJournalEntry(const std::string& path_, const shv::chainpack::RpcValue& value_, const std::string& domain_)
+	: ShvJournalEntry(path_, value_, domain_, NO_SHORT_TIME, NO_VALUE_FLAGS)
 {
 }
 
@@ -67,7 +67,7 @@ chainpack::RpcValue ShvJournalEntry::toRpcValueMap() const
 	return m;
 }
 
-chainpack::RpcValue ShvJournalEntry::toRpcValueList(std::function< chainpack::RpcValue (const std::string &)> map_path) const
+chainpack::RpcValue ShvJournalEntry::toRpcValueList(const std::function< chainpack::RpcValue (const std::string &)>& map_path) const
 {
 	using namespace shv::chainpack;
 	RpcList rec;
@@ -122,7 +122,7 @@ ShvJournalEntry ShvJournalEntry::fromRpcValueMap(const chainpack::RpcValue::Map 
 	return ret;
 }
 
-ShvJournalEntry ShvJournalEntry::fromRpcValueList(const chainpack::RpcList &row, std::function<std::string (const chainpack::RpcValue &)> unmap_path, std::string *err)
+ShvJournalEntry ShvJournalEntry::fromRpcValueList(const chainpack::RpcList &row, const std::function<std::string (const chainpack::RpcValue &)>& unmap_path, std::string *err)
 {
 	using Column = ShvLogHeader::Column;
 	chainpack::RpcValue dt = row.value(Column::Timestamp);

@@ -35,17 +35,17 @@ public:
 	static constexpr auto KEY_SIGNALS = "signals";
 public:
 	struct SHVCHAINPACK_DECL_EXPORT Signal {
-		Signal(std::string name, std::optional<std::string> param_type = {});
+		Signal(const std::string& name, const std::optional<std::string>& param_type = {});
 		std::string name;
 		std::optional<std::string> param_type;
 	};
 
 	MetaMethod();
 	MetaMethod(
-		std::string name,
+		const std::string& name,
 		unsigned flags = 0,
-		std::optional<std::string> param = {},
-		std::optional<std::string> result = {},
+		const std::optional<std::string>& param = {},
+		const std::optional<std::string>& result = {},
 		AccessLevel access_level = AccessLevel::Browse,
 		const std::vector<Signal>& signal_definitions = {},
 		const std::string& description = {},
@@ -53,7 +53,7 @@ public:
 		const RpcValue::Map& extra = {});
 
 	// SHV 2 compatibility constructor
-	MetaMethod(std::string name,
+	MetaMethod(const std::string& name,
 		Signature signature,
 		unsigned flags,
 		const std::string &access_grant,

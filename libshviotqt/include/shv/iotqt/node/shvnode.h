@@ -68,9 +68,9 @@ public:
 	static chainpack::AccessLevel basicGrantToAccessLevel(const chainpack::RpcValue &acces_grant);
 	virtual chainpack::AccessLevel grantToAccessLevel(const chainpack::RpcValue &acces_grant) const;
 
-	void treeWalk(std::function<void (ShvNode *parent_nd, const StringViewList &shv_path)> callback);
+	void treeWalk(const std::function<void (ShvNode *parent_nd, const StringViewList &shv_path)>& callback);
 private:
-	static void treeWalk_helper(std::function<void (ShvNode *parent_nd, const StringViewList &shv_path)> callback, ShvNode *parent_nd, const StringViewList &shv_path);
+	static void treeWalk_helper(const std::function<void (ShvNode *parent_nd, const StringViewList &shv_path)>& callback, ShvNode *parent_nd, const StringViewList &shv_path);
 public:
 	virtual size_t methodCount(const StringViewList &shv_path);
 	virtual const shv::chainpack::MetaMethod* metaMethod(const StringViewList &shv_path, size_t ix);
@@ -234,7 +234,7 @@ protected:
 	bool isReadable();
 	bool isSignal();
 
-	Q_SLOT void onShvValueChanged(int value_id, shv::chainpack::RpcValue val);
+	Q_SLOT void onShvValueChanged(int value_id, const shv::chainpack::RpcValue& val);
 protected:
 	int m_valueId;
 	Type m_type;

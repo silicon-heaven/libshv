@@ -138,7 +138,7 @@ const chainpack::MetaMethod *BrokerAclNode::metaMethod(const iotqt::node::ShvNod
 	SHV_EXCEPTION("Invalid method index: " + std::to_string(ix) + " on shv path: " + shv_path.join('/'));
 }
 
-std::string BrokerAclNode::saveConfigFile(const std::string &file_name, const chainpack::RpcValue val)
+std::string BrokerAclNode::saveConfigFile(const std::string &file_name, const chainpack::RpcValue& val)
 {
 	BrokerApp *app = BrokerApp::instance();
 	std::string fn = app->cliOptions()->configDir() + '/' + file_name;

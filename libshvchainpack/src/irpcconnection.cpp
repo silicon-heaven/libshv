@@ -73,27 +73,27 @@ int IRpcConnection::callMethod(const RpcRequest &rq)
 	return id;
 }
 
-int IRpcConnection::callShvMethod(const std::string &shv_path, std::string method, const RpcValue &params)
+int IRpcConnection::callShvMethod(const std::string &shv_path, const std::string& method, const RpcValue &params)
 {
 	return callShvMethod(shv_path, method, params, {});
 }
 
-int IRpcConnection::callShvMethod(const std::string &shv_path, std::string method, const RpcValue &params, const RpcValue &user_id)
+int IRpcConnection::callShvMethod(const std::string &shv_path, const std::string& method, const RpcValue &params, const RpcValue &user_id)
 {
 	int id = nextRequestId();
 	return callShvMethod(id, shv_path, method, params, user_id);
 }
 
-int IRpcConnection::callShvMethod(int rq_id, const std::string &shv_path, std::string method, const RpcValue &params)
+int IRpcConnection::callShvMethod(int rq_id, const std::string &shv_path, const std::string& method, const RpcValue &params)
 {
 	return callShvMethod(rq_id, shv_path, method, params, {});
 }
 
-int IRpcConnection::callShvMethod(int rq_id, const std::string &shv_path, std::string method, const RpcValue &params, const RpcValue &user_id)
+int IRpcConnection::callShvMethod(int rq_id, const std::string &shv_path, const std::string& method, const RpcValue &params, const RpcValue &user_id)
 {
 	RpcRequest rq;
 	rq.setRequestId(rq_id);
-	rq.setMethod(std::move(method));
+	rq.setMethod(method);
 	if(params.isValid())
 		rq.setParams(params);
 	if(user_id.isValid())
@@ -104,7 +104,7 @@ int IRpcConnection::callShvMethod(int rq_id, const std::string &shv_path, std::s
 	return rq_id;
 }
 
-int IRpcConnection::callMethodSubscribeGlob(std::string glob)
+int IRpcConnection::callMethodSubscribeGlob(const std::string& glob)
 {
 	logSubscriptionsD() << "call subscribe for connection id:" << connectionId() << "glob:" << glob;
 	int rq_id = nextRequestId();
@@ -119,13 +119,13 @@ int IRpcConnection::callMethodSubscribeGlob(std::string glob)
 	return 0;
 }
 
-int IRpcConnection::callMethodSubscribe(const std::string &shv_path, std::string method, const std::string& source)
+int IRpcConnection::callMethodSubscribe(const std::string &shv_path, const std::string& method, const std::string& source)
 {
 	int rq_id = nextRequestId();
 	return callMethodSubscribe(rq_id, shv_path, method, source);
 }
 
-int IRpcConnection::callMethodSubscribe(int rq_id, const std::string &shv_path, std::string method, const std::string& source)
+int IRpcConnection::callMethodSubscribe(int rq_id, const std::string &shv_path, const std::string& method, const std::string& source)
 {
 	logSubscriptionsD() << "call subscribe for connection id:" << connectionId() << "path:" << shv_path << "method:" << method << "source:" << source;
 	if(m_shvApiVersion == ShvApiVersion::V3) {
@@ -142,18 +142,18 @@ int IRpcConnection::callMethodSubscribe(int rq_id, const std::string &shv_path, 
 						 , Rpc::METH_SUBSCRIBE
 						 , RpcValue::Map{
 							 {Rpc::PAR_PATH, shv_path},
-							 {Rpc::PAR_METHOD, std::move(method)},
+							 {Rpc::PAR_METHOD, method},
 							 {Rpc::PAR_SOURCE, source},
 						 });
 }
 
-int IRpcConnection::callMethodUnsubscribe(const std::string &shv_path, std::string method, const std::string& source)
+int IRpcConnection::callMethodUnsubscribe(const std::string &shv_path, const std::string& method, const std::string& source)
 {
 	int rq_id = nextRequestId();
 	return callMethodUnsubscribe(rq_id, shv_path, method, source);
 }
 
-int IRpcConnection::callMethodUnsubscribe(int rq_id, const std::string &shv_path, std::string method, const std::string& source)
+int IRpcConnection::callMethodUnsubscribe(int rq_id, const std::string &shv_path, const std::string& method, const std::string& source)
 {
 	logSubscriptionsD() << "call unsubscribe for connection id:" << connectionId() << "path:" << shv_path << "method:" << method << "source:" << source;
 	if(m_shvApiVersion == ShvApiVersion::V3) {
@@ -170,7 +170,7 @@ int IRpcConnection::callMethodUnsubscribe(int rq_id, const std::string &shv_path
 						 , Rpc::METH_UNSUBSCRIBE
 						 , RpcValue::Map{
 							 {Rpc::PAR_PATH, shv_path},
-							 {Rpc::PAR_METHOD, std::move(method)},
+							 {Rpc::PAR_METHOD, method},
 							 {Rpc::PAR_SOURCE, source},
 						 });
 }

@@ -15,8 +15,8 @@ public:
 private:
 	void callShvMethod(const std::string &shv_path, const std::string &method, const shv::chainpack::RpcValue &params,
 						const QObject *context = nullptr,
-						std::function<void(const shv::chainpack::RpcValue &)> success_callback = nullptr,
-						std::function<void (const shv::chainpack::RpcError &)> error_callback = nullptr);
+						const std::function<void(const shv::chainpack::RpcValue &)>& success_callback = nullptr,
+						const std::function<void (const shv::chainpack::RpcError &)>& error_callback = nullptr);
 	void subscribeChanges(const std::string &shv_path);
 	void unsubscribeChanges(const std::string &shv_path);
 	void onRpcMessageReceived(const shv::chainpack::RpcMessage &msg);

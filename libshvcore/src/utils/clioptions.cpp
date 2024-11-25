@@ -223,7 +223,7 @@ RpcValue CLIOptions::value(const std::string &name) const
 	return ret;
 }
 
-RpcValue CLIOptions::value(const std::string& name, const RpcValue default_value) const
+RpcValue CLIOptions::value(const std::string& name, const RpcValue& default_value) const
 {
 	RpcValue ret = value_helper(name, !shv::core::Exception::Throw);
 	if(!ret.isValid())
@@ -254,7 +254,7 @@ bool CLIOptions::optionExists(const std::string &name) const
 	return option(name, !shv::core::Exception::Throw).isValid();
 }
 
-bool CLIOptions::setValue(const std::string& name, const RpcValue val, bool throw_exc)
+bool CLIOptions::setValue(const std::string& name, const RpcValue& val, bool throw_exc)
 {
 	Option o = option(name, false);
 	if(optionExists(name)) {
