@@ -9,20 +9,19 @@
 namespace shv::visu::logview {
 
 namespace Ui {
-class DataViewWidget;
+class DataViewFilterSelector;
 }
 
-class SHVVISU_DECL_EXPORT DataViewWidget : public QWidget
+class SHVVISU_DECL_EXPORT DataViewFilterSelector : public QWidget
 {
 	Q_OBJECT
 
 public:
-	explicit DataViewWidget(QWidget *parent = nullptr);
-	~DataViewWidget() override;
+	explicit DataViewFilterSelector(QWidget *parent = nullptr);
+	~DataViewFilterSelector() override;
 
 	void init(const QString &site_path, timeline::Graph *graph);
 	void setPredefinedViews(const QVector<timeline::Graph::VisualSettings> &views);
-	const QVector<timeline::Graph::VisualSettings> &predefinedViews();
 	void applyPredefinedView(const QString &name);
 
 private:
@@ -33,6 +32,6 @@ private:
 	QString m_sitePath;
 	QVector<timeline::Graph::VisualSettings> m_predefinedViews;
 
-	Ui::DataViewWidget *ui;
+	Ui::DataViewFilterSelector *ui;
 };
 }

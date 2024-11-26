@@ -227,7 +227,7 @@ DlgLogInspector::DlgLogInspector(const QString &shv_path, QWidget *parent) :
 	m_graph->setModel(m_graphModel);
 	m_graphWidget->setGraph(m_graph);
 
-	ui->wDataView->init(ui->edShvPath->text(), m_graph);
+	ui->wDataViewFilterSelector->init(ui->edShvPath->text(), m_graph);
 
 #if SHVVISU_HAS_TIMEZONE
 	connect(ui->cbxTimeZone, &QComboBox::currentTextChanged, this, [this](const QString &) {
