@@ -72,22 +72,41 @@
     </message>
 </context>
 <context>
-    <name>shv::visu::logview::DataViewWidget</name>
+    <name>shv::visu::logview::DataViewFilterSelector</name>
     <message>
         <source>Form</source>
-        <translation>Formular</translation>
-    </message>
-    <message>
-        <source>Show filter dialog</source>
-        <translation>Filterdialog anzeigen</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation>...</translation>
+        <translation type="obsolete">Formular</translation>
     </message>
     <message>
         <source>Show/hide raw data</source>
-        <translation>Rohdaten anzeigen/ausblenden</translation>
+        <translation type="unfinished">Rohdaten anzeigen/ausblenden</translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished">...</translation>
+    </message>
+    <message>
+        <source>Show filter dialog</source>
+        <translation type="unfinished">Filterdialog anzeigen</translation>
+    </message>
+</context>
+<context>
+    <name>shv::visu::logview::DataViewWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="vanished">Formular</translation>
+    </message>
+    <message>
+        <source>Show filter dialog</source>
+        <translation type="vanished">Filterdialog anzeigen</translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="vanished">...</translation>
+    </message>
+    <message>
+        <source>Show/hide raw data</source>
+        <translation type="vanished">Rohdaten anzeigen/ausblenden</translation>
     </message>
 </context>
 <context>

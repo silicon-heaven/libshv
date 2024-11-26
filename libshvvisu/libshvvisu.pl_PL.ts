@@ -72,22 +72,33 @@
     </message>
 </context>
 <context>
-    <name>shv::visu::logview::DataViewWidget</name>
-    <message>
-        <source>Form</source>
-        <translation>Formularz</translation>
-    </message>
-    <message>
-        <source>Show filter dialog</source>
-        <translation>Pokaż okno dialogowe filtra</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation>...</translation>
-    </message>
+    <name>shv::visu::logview::DataViewFilterSelector</name>
     <message>
         <source>Show/hide raw data</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished">...</translation>
+    </message>
+    <message>
+        <source>Show filter dialog</source>
+        <translation type="unfinished">Pokaż okno dialogowe filtra</translation>
+    </message>
+</context>
+<context>
+    <name>shv::visu::logview::DataViewWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="vanished">Formularz</translation>
+    </message>
+    <message>
+        <source>Show filter dialog</source>
+        <translation type="vanished">Pokaż okno dialogowe filtra</translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="vanished">...</translation>
     </message>
 </context>
 <context>
