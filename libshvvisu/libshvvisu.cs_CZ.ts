@@ -72,22 +72,41 @@
     </message>
 </context>
 <context>
-    <name>shv::visu::logview::DataViewWidget</name>
+    <name>shv::visu::logview::DataViewFilterSelector</name>
     <message>
         <source>Form</source>
-        <translation>Formulář</translation>
-    </message>
-    <message>
-        <source>Show filter dialog</source>
-        <translation>Zobrazit dialogové okno filtru</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation>...</translation>
+        <translation type="obsolete">Formulář</translation>
     </message>
     <message>
         <source>Show/hide raw data</source>
-        <translation>Zobrazit/schovat surová data</translation>
+        <translation type="unfinished">Zobrazit/schovat surová data</translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished">...</translation>
+    </message>
+    <message>
+        <source>Show filter dialog</source>
+        <translation type="unfinished">Zobrazit dialogové okno filtru</translation>
+    </message>
+</context>
+<context>
+    <name>shv::visu::logview::DataViewWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="vanished">Formulář</translation>
+    </message>
+    <message>
+        <source>Show filter dialog</source>
+        <translation type="vanished">Zobrazit dialogové okno filtru</translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="vanished">...</translation>
+    </message>
+    <message>
+        <source>Show/hide raw data</source>
+        <translation type="vanished">Zobrazit/schovat surová data</translation>
     </message>
 </context>
 <context>

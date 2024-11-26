@@ -72,13 +72,9 @@
     </message>
 </context>
 <context>
-    <name>shv::visu::logview::DataViewWidget</name>
+    <name>shv::visu::logview::DataViewFilterSelector</name>
     <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show filter dialog</source>
+        <source>Show/hide raw data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -86,7 +82,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show/hide raw data</source>
+        <source>Show filter dialog</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

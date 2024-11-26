@@ -72,22 +72,41 @@
     </message>
 </context>
 <context>
-    <name>shv::visu::logview::DataViewWidget</name>
+    <name>shv::visu::logview::DataViewFilterSelector</name>
     <message>
         <source>Form</source>
-        <translation>Formulár</translation>
+        <translation type="obsolete">Formulár</translation>
     </message>
     <message>
         <source>Show/hide raw data</source>
-        <translation>Zobraziť/skryť surová data</translation>
+        <translation type="unfinished">Zobraziť/skryť surová data</translation>
     </message>
     <message>
         <source>...</source>
-        <translation>...</translation>
+        <translation type="unfinished">...</translation>
     </message>
     <message>
         <source>Show filter dialog</source>
-        <translation>Zobraziť filter kanálov</translation>
+        <translation type="unfinished">Zobraziť filter kanálov</translation>
+    </message>
+</context>
+<context>
+    <name>shv::visu::logview::DataViewWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="vanished">Formulár</translation>
+    </message>
+    <message>
+        <source>Show/hide raw data</source>
+        <translation type="vanished">Zobraziť/skryť surová data</translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="vanished">...</translation>
+    </message>
+    <message>
+        <source>Show filter dialog</source>
+        <translation type="vanished">Zobraziť filter kanálov</translation>
     </message>
 </context>
 <context>
