@@ -56,7 +56,7 @@
        <item>
         <widget class="QDateTimeEdit" name="edSince">
          <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
          <property name="specialValueText">
           <string>Not defined</string>
@@ -104,7 +104,7 @@
        <item>
         <widget class="QDateTimeEdit" name="edUntil">
          <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
          <property name="specialValueText">
           <string>Not defined</string>
@@ -160,7 +160,7 @@
      <item>
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
+        <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -206,7 +206,7 @@
       <item row="2" column="1">
        <widget class="QSpinBox" name="edMaxRecordCount">
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
         <property name="minimum">
          <number>0</number>
@@ -228,7 +228,7 @@
       <item row="2" column="5">
        <spacer name="horizontalSpacer">
         <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
+         <enum>Qt::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -241,7 +241,7 @@
       <item row="3" column="1">
        <widget class="QSpinBox" name="edTimeout">
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
         <property name="suffix">
          <string> sec</string>
@@ -347,10 +347,10 @@
    <item>
     <widget class="QFrame" name="frame_2">
      <property name="frameShape">
-      <enum>QFrame::Shape::NoFrame</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Shadow::Raised</enum>
+      <enum>QFrame::Raised</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="leftMargin">
@@ -410,7 +410,7 @@
       <item>
        <spacer name="horizontalSpacer_4">
         <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
+         <enum>Qt::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -421,7 +421,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="shv::visu::logview::DataViewWidget" name="wDataView" native="true"/>
+       <widget class="shv::visu::logview::DataViewFilterSelector" name="wDataViewFilterSelector" native="true"/>
       </item>
      </layout>
     </widget>
@@ -459,7 +459,7 @@
             <x>0</x>
             <y>0</y>
             <width>1152</width>
-            <height>295</height>
+            <height>354</height>
            </rect>
           </property>
          </widget>
@@ -486,7 +486,7 @@
          <item>
           <spacer name="horizontalSpacer_3">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -564,9 +564,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>shv::visu::logview::DataViewWidget</class>
+   <class>shv::visu::logview::DataViewFilterSelector</class>
    <extends>QWidget</extends>
-   <header>shv/visu/logview/dataviewwidget.h</header>
+   <header>shv/visu/logview/dataviewfilterselector.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

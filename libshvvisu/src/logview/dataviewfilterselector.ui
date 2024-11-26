@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>shv::visu::logview::DataViewWidget</class>
- <widget class="QWidget" name="shv::visu::logview::DataViewWidget">
+ <class>shv::visu::logview::DataViewFilterSelector</class>
+ <widget class="QWidget" name="shv::visu::logview::DataViewFilterSelector">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>54</width>
-    <height>23</height>
+    <width>58</width>
+    <height>24</height>
    </rect>
   </property>
   <property name="windowTitle">
