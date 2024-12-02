@@ -690,7 +690,69 @@ QVariantMap Graph::mergeMaps(const QVariantMap &base, const QVariantMap &overlay
 
 void Graph::makeXAxis()
 {
-	if (m_model->xAxisType() == GraphModel::XAxisType::Timeline) {
+	if (m_model->xAxisType() == GraphModel::XAxisType::Value) {
+		static constexpr int64_t Value = 1;
+		static constexpr int64_t Kilo = 1000 * Value;
+		static constexpr int64_t Mega = 1000 * Kilo;
+		static constexpr int64_t Giga = 1000 * Mega;
+
+		static const std::map<int64_t, XAxis> intervals {
+			{1 * Value, {0, 1, XAxis::LabelScale::Value}},
+			{2 * Value, {0, 2, XAxis::LabelScale::Value}},
+			{5 * Value, {0, 5, XAxis::LabelScale::Value}},
+			{10 * Value, {0, 5, XAxis::LabelScale::Value}},
+			{20 * Value, {0, 5, XAxis::LabelScale::Value}},
+			{50 * Value, {0, 5, XAxis::LabelScale::Value}},
+			{100 * Value, {0, 5, XAxis::LabelScale::Value}},
+			{200 * Value, {0, 5, XAxis::LabelScale::Value}},
+			{500 * Value, {0, 5, XAxis::LabelScale::Value}},
+			{1 * Kilo, {0, 1, XAxis::LabelScale::Kilo}},
+			{2 * Kilo, {0, 2, XAxis::LabelScale::Kilo}},
+			{5 * Kilo, {0, 5, XAxis::LabelScale::Kilo}},
+			{10 * Kilo, {0, 5, XAxis::LabelScale::Kilo}},
+			{20 * Kilo, {0, 5, XAxis::LabelScale::Kilo}},
+			{50 * Kilo, {0, 5, XAxis::LabelScale::Kilo}},
+			{100 * Kilo, {0, 5, XAxis::LabelScale::Kilo}},
+			{200 * Kilo, {0, 5, XAxis::LabelScale::Kilo}},
+			{500 * Kilo, {0, 5, XAxis::LabelScale::Kilo}},
+			{1 * Mega, {0, 1, XAxis::LabelScale::Mega}},
+			{2 * Mega, {0, 2, XAxis::LabelScale::Mega}},
+			{5 * Mega, {0, 5, XAxis::LabelScale::Mega}},
+			{10 * Mega, {0, 5, XAxis::LabelScale::Mega}},
+			{20 * Mega, {0, 5, XAxis::LabelScale::Mega}},
+			{50 * Mega, {0, 5, XAxis::LabelScale::Mega}},
+			{100 * Mega, {0, 5, XAxis::LabelScale::Mega}},
+			{200 * Mega, {0, 5, XAxis::LabelScale::Mega}},
+			{500 * Mega, {0, 5, XAxis::LabelScale::Mega}},
+			{1 * Giga, {0, 1, XAxis::LabelScale::Giga}},
+			{2 * Giga, {0, 2, XAxis::LabelScale::Giga}},
+			{5 * Giga, {0, 5, XAxis::LabelScale::Giga}},
+			{10 * Giga, {0, 5, XAxis::LabelScale::Giga}},
+			{20 * Giga, {0, 5, XAxis::LabelScale::Giga}},
+			{50 * Giga, {0, 5, XAxis::LabelScale::Giga}},
+			{100 * Giga, {0, 5, XAxis::LabelScale::Giga}},
+			{200 * Giga, {0, 5, XAxis::LabelScale::Giga}},
+			{500 * Giga, {0, 5, XAxis::LabelScale::Giga}},
+		};
+		int tick_units = 5;
+		int tick_px = u2px(tick_units);
+		timemsec_t t1 = posToTime(0);
+		timemsec_t t2 = posToTime(tick_px);
+		int64_t interval = t2 - t1;
+		if(interval > 0) {
+			auto lb = intervals.lower_bound(interval);
+			if(lb == intervals.end())
+				lb = --intervals.end();
+			XAxis &axis = m_state.xAxis;
+			axis = lb->second;
+			axis.tickInterval = lb->first;
+		}
+		else {
+			XAxis &axis = m_state.xAxis;
+			axis.tickInterval = 0;
+		}
+	}
+	else if (m_model->xAxisType() == GraphModel::XAxisType::Timeline) {
 		shvLogFuncFrame();
 		static constexpr int64_t MSec = 1;
 		static constexpr int64_t Sec = 1000 * MSec;
@@ -1640,6 +1702,18 @@ void Graph::drawXAxis(QPainter *painter)
 			text = QStringLiteral("%1").arg(t);
 			break;
 		}
+		case XAxis::LabelScale::Kilo: {
+			text = QStringLiteral("%1").arg(t / 1000);
+			break;
+		}
+		case XAxis::LabelScale::Mega: {
+			text = QStringLiteral("%1").arg(t / 1000000);
+			break;
+		}
+		case XAxis::LabelScale::Giga: {
+			text = QStringLiteral("%1").arg(t / 1000000000);
+			break;
+		}
 		}
 		QRect r = fm.boundingRect(text);
 		int inset = u2px(0.2);
@@ -1672,9 +1746,18 @@ void Graph::drawXAxis(QPainter *painter)
 			break;
 		}
 		case XAxis::LabelScale::Value: {
-			text = QStringLiteral("");
+			text = m_model->xAxisUnits();
 			break;
 		}
+		case XAxis::LabelScale::Kilo:
+			text = "k" + m_model->xAxisUnits();
+			break;
+		case XAxis::LabelScale::Mega:
+			text = "M" + m_model->xAxisUnits();
+			break;
+		case XAxis::LabelScale::Giga:
+			text = "G" + m_model->xAxisUnits();
+			break;
 		}
 
 		if (!text.isEmpty()) {

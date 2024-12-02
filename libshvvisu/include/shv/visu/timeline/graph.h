@@ -310,7 +310,7 @@ protected:
 
 	struct SHVVISU_DECL_EXPORT XAxis
 	{
-		enum class LabelScale {MSec, Sec, Min, Hour, Day, Month, Year, Value};
+		enum class LabelScale {MSec, Sec, Min, Hour, Day, Month, Year, Value, Kilo, Mega, Giga};
 		timemsec_t tickInterval = 0;
 		int subtickEvery = 1;
 		double tickLen = 0.15;
