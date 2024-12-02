@@ -33,7 +33,7 @@ runs:
 
     - name: Install trompeloeil
       if: runner.os != 'Windows'
-      run: curl -o trompeloeil.deb http://de.archive.ubuntu.com/ubuntu/pool/universe/t/trompeloeil-cpp/libtrompeloeil-cpp-dev_43-3_amd64.deb && sudo dpkg -i trompeloeil.deb
+      run: curl -o trompeloeil.deb http://de.archive.ubuntu.com/ubuntu/pool/universe/t/trompeloeil-cpp/libtrompeloeil-cpp-dev_47-1build1_amd64.deb && sudo dpkg -i trompeloeil.deb
       shell: bash
 
     # Windows deps
