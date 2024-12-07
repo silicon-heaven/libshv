@@ -489,17 +489,6 @@ const RpcIMap& RpcValue::asIMap() const
 	return *try_convert_or_default(m_value, static_empty_imap());
 }
 
-std::pair<const uint8_t *, size_t> RpcValue::asBytes() const&
-{
-	using Ret = std::pair<const uint8_t *, size_t>;
-	if(type() == Type::Blob) {
-		const Blob &blob = asBlob();
-		return Ret(blob.data(), blob.size());
-	}
-	const String &s = asString();
-	return Ret(reinterpret_cast<const uint8_t*>(s.data()), s.size());
-}
-
 size_t RpcValue::count() const
 {
 	return std::visit([] (const auto& x) {

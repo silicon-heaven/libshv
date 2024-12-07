@@ -308,8 +308,6 @@ public:
 	const RpcValue::String &asString() const;
 	const RpcValue::Blob &asBlob() const;
 
-	std::pair<const uint8_t*, size_t> asBytes() const&;
-
 	const RpcList &asList() const;
 	const Map &asMap() const;
 	const IMap &asIMap() const;
