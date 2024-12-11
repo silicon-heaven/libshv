@@ -15,7 +15,7 @@ ChainPackReader::ChainPackReader(std::istream &in)
 void ChainPackReader::throwParseException(const std::string &msg)
 {
 	std::array<char, 64> buff;
-	auto err_pos = m_in.tellg();
+	auto err_pos = readCount();
 	auto l = m_in.readsome(buff.data(), buff.size() - 1);
 	buff[l] = 0;
 	auto dump = shv::chainpack::utils::hexDump(buff.data(), l);
@@ -256,8 +256,7 @@ void ChainPackReader::parseIMap(RpcValue &out_val)
 
 void ChainPackReader::read(RpcValue::MetaData &meta_data)
 {
-	auto b = reinterpret_cast<const uint8_t*>(ccpcp_unpack_take_byte(&m_inCtx));
-	m_inCtx.current--;
+	auto b = reinterpret_cast<const uint8_t*>(ccpcp_unpack_peek_byte(&m_inCtx));
 	if(b && *b == CP_MetaMap) {
 		cchainpack_unpack_next(&m_inCtx);
 		parseMetaData(meta_data);

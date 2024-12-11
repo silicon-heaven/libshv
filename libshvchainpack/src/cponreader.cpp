@@ -16,7 +16,7 @@ CponReader::CponReader(std::istream &in)
 void CponReader::throwParseException(const std::string &msg)
 {
 	std::array<char, 64> buff;
-	auto err_pos = m_in.tellg();
+	auto err_pos = readCount();
 	auto l = m_in.readsome(buff.data(), buff.size() - 1);
 	buff[l] = 0;
 	std::string msg2 = m_inCtx.err_msg? m_inCtx.err_msg: "";
