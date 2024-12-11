@@ -714,7 +714,10 @@ void RpcValue::append(const RpcValue &val)
 
 RpcMetaData RpcValue::takeMeta()
 {
-	return *std::exchange(m_meta, nullptr);
+	if (m_meta) {
+		return *std::exchange(m_meta, nullptr);
+	}
+	return RpcMetaData();
 }
 
 std::string RpcValue::toPrettyString(const std::string &indent) const
