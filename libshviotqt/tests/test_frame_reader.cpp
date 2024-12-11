@@ -1,3 +1,4 @@
+#include "shv/chainpack/utils.h"
 #include <shv/coreqt/rpc.h>
 #include <shv/coreqt/log.h>
 #include <shv/coreqt/utils.h>
@@ -29,21 +30,26 @@ doctest::String toString(const QList<int>& lst)
 	return ('[' + sl.join(',') + ']').toLatin1().data();
 }
 
-vector<string> msg_to_raw_data(const vector<string> &cpons)
+std::string write_stream_frame(const std::string &cpon) {
+	auto rv = RpcValue::fromCpon(cpon);
+	auto msg = RpcMessage(rv);
+	StreamFrameWriter wr;
+	wr.addFrame(msg.toRpcFrame());
+	QByteArray ba;
+	{
+		QBuffer buffer(&ba);
+		buffer.open(QIODevice::WriteOnly);
+		wr.flushToDevice(&buffer);
+	}
+	return std::string(ba.constData(), ba.size());
+}
+
+vector<string> msg_to_raw_stream_data(const vector<string> &cpons)
 {
 	vector<string> ret;
 	for (const auto &cpon : cpons) {
-		auto rv = RpcValue::fromCpon(cpon);
-		auto msg = RpcMessage(rv);
-		StreamFrameWriter wr;
-		wr.addFrame(msg.toRpcFrame());
-		QByteArray ba;
-		{
-			QBuffer buffer(&ba);
-			buffer.open(QIODevice::WriteOnly);
-			wr.flushToDevice(&buffer);
-		}
-		ret.emplace_back(ba.constData(), ba.size());
+		// shvInfo() << cpon << "-->" << ba;
+		ret.push_back(write_stream_frame(cpon));
 	}
 	return ret;
 }
@@ -66,12 +72,25 @@ vector<string> msg_to_raw_data_serial(const vector<string> &cpons, SerialFrameWr
 	return ret;
 }
 
+bool frame_eq(const RpcFrame &frm1, const RpcFrame &frm2)
+{
+	return frm1.toFrameData() == frm2.toFrameData();
+}
+
 void test_valid_data(FrameReader *rd, const vector<string> &data)
 {
 	const auto& rq1 = data[0];
 	const auto& rs1 = data[1];
 	const auto& rs2 = data[2];
 	const auto& sig1 = data[3];
+	const auto& dummy = data[4];
+
+	{
+		auto ret = rd->addData(dummy);
+		REQUIRE(ret.isEmpty());
+		auto frames = rd->takeFrames();
+		REQUIRE(frames.size() == 1);
+	}
 	{
 		auto ret = rd->addData(rq1);
 		REQUIRE(ret.isEmpty());
@@ -123,11 +142,36 @@ const vector<string> cpons = {
 	R"(<1:1,8:3>i{2:true})",
 	R"(<1:1,8:2>i{2:true})",
 	R"(<1:1,9:"shv",10:"lsmod">i{1:{"cze":true}})",
+	R"(<>i{})",
 };
+
+DOCTEST_TEST_CASE("Stream FrameWriter")
+{
+	DOCTEST_SUBCASE("Trivial message")
+	{
+		auto data = write_stream_frame(R"(<>i{})");
+		auto ba = QByteArray::fromHex("03018aff").toStdString();
+		REQUIRE(data == ba);
+	}
+	DOCTEST_SUBCASE("Trivial message 2")
+	{
+		auto data = write_stream_frame(R"(<1:1>i{})");
+		auto ba = QByteArray::fromHex("07018b4141ff8aff").toStdString();
+		REQUIRE(data == ba);
+	}
+	DOCTEST_SUBCASE("Some message")
+	{
+		auto data = write_stream_frame(R"(<1:1,8:3,9:"shv",10:"ls">i{1:"cze"})");
+		REQUIRE(data[1] == 1); // protocol chainpack
+		REQUIRE(data[2] == static_cast<char>(0x8b)); // meta map
+		REQUIRE(data[data.size() - 1] == static_cast<char>(0xff));
+		REQUIRE(data[data.size() - 2] == 'e');
+	}
+}
 
 DOCTEST_TEST_CASE("Stream FrameReader")
 {
-	auto data = msg_to_raw_data(cpons);
+	auto data = msg_to_raw_stream_data(cpons);
 
 	DOCTEST_SUBCASE("Valid data")
 	{
@@ -138,6 +182,23 @@ DOCTEST_TEST_CASE("Stream FrameReader")
 	{
 		StreamFrameReader rd;
 		test_incomplete_data(&rd, data);
+	}
+}
+
+DOCTEST_TEST_CASE("Stream FrameReader 3 messaqes at once")
+{
+	auto data1 = QByteArray::fromHex("3f018b414148694986004a86026c734b82c020a54e860273755089860862726f6b657249648603636d6c860773687655736572860566616e6461ff517fff8aff");
+	auto data = (data1 + data1 + data1).toStdString();
+
+	StreamFrameReader rd;
+	auto ret = rd.addData(data);
+	REQUIRE(ret.isEmpty());
+	for (const auto &frame1 : rd.takeFrames()) {
+		auto msg = frame1.toRpcMessage();
+		auto frame2 = msg.toRpcFrame();
+		CAPTURE(QByteArray::fromStdString(frame1.data).toHex());
+		CAPTURE(QByteArray::fromStdString(frame2.data).toHex());
+		REQUIRE(frame_eq(frame1, frame2));
 	}
 }
 
