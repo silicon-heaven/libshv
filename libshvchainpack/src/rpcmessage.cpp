@@ -98,32 +98,23 @@ RpcMessage RpcFrame::toRpcMessage(std::string *errmsg) const
 
 std::string RpcFrame::toFrameHead() const
 {
+	std::ostringstream out;
+	std::unique_ptr<AbstractStreamWriter> wr;
 	switch (protocol) {
-	case Rpc::ProtocolType::ChainPack: {
-		std::ostringstream out;
-		{
-			ChainPackWriter wr(out);
-			wr << meta;
-		}
-		auto ret = out.str();
-		ret = static_cast<char>(protocol) + ret;
-		ret += data;
-		return ret;
-	}
-	case Rpc::ProtocolType::Cpon: {
-		std::ostringstream out;
-		{
-			CponWriter wr(out);
-			wr << meta;
-		}
-		auto ret = out.str();
-		ret = static_cast<char>(protocol) + ret;
-		return ret;
-	}
-	default: {
+	case Rpc::ProtocolType::ChainPack:
+		wr = std::make_unique<ChainPackWriter>(out);
+		break;
+	case Rpc::ProtocolType::Cpon:
+		wr = std::make_unique<CponWriter>(out);
+		break;
+	default:
 		throw std::runtime_error("Invalid protocol type");
 	}
-	}
+	wr->write(meta);
+	wr->flush();
+	auto ret = out.str();
+	ret = static_cast<char>(protocol) + ret;
+	return ret;
 }
 
 std::string RpcFrame::toFrameData() const
@@ -136,38 +127,28 @@ std::string RpcFrame::toFrameData() const
 RpcFrame RpcFrame::fromFrameData(const std::string &frame_data)
 {
 	std::istringstream in(frame_data);
+	std::unique_ptr<AbstractStreamReader> rd;
 	auto protocol = static_cast<Rpc::ProtocolType>(in.get());
 	switch (protocol) {
-	case Rpc::ProtocolType::ChainPack: {
-		ChainPackReader rd(in);
-		RpcValue::MetaData meta;
-		rd.read(meta);
-		if(meta.isEmpty())
-			throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
-		auto pos = in.tellg();
-		if(pos < 0)
-			throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
-		auto data = std::string(frame_data, static_cast<size_t>(pos));
-		RpcFrame frame(protocol, std::move(meta), std::move(data));
-		return frame;
-	}
-	case Rpc::ProtocolType::Cpon: {
-		CponReader rd(in);
-		RpcValue::MetaData meta;
-		rd.read(meta);
-		if(meta.isEmpty())
-			throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
-		auto pos = in.tellg();
-		if(pos < 0)
-			throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
-		auto data = std::string(frame_data, static_cast<size_t>(pos));
-		RpcFrame frame(protocol, std::move(meta), std::move(data));
-		return frame;
-	}
+	case Rpc::ProtocolType::ChainPack:
+		rd = std::make_unique<ChainPackReader>(in);
+		break;
+	case Rpc::ProtocolType::Cpon:
+		rd = std::make_unique<CponReader>(in);
+		break;
 	default:
 		throw std::runtime_error("Invalid protocol type");
 	}
-	return {};
+	RpcValue::MetaData meta;
+	rd->read(meta);
+	if(meta.isEmpty())
+		throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
+	auto pos = rd->readCount();
+	if(pos < 0)
+		throw ParseException(CCPCP_RC_MALFORMED_INPUT, "Metadata missing", -1, {});
+	auto data = std::string(frame_data, static_cast<size_t>(pos));
+	RpcFrame frame(protocol, std::move(meta), std::move(data));
+	return frame;
 }
 
 //==================================================================

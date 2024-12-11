@@ -32,6 +32,8 @@ public:
 
 	virtual void read(RpcValue::MetaData &meta_data) = 0;
 	virtual void read(RpcValue &val) = 0;
+
+	ssize_t readCount() const;
 protected:
 	// NOLINTNEXTLINE(cppcoreguidelines-avoid-const-or-ref-data-members)
 	std::istream &m_in;
