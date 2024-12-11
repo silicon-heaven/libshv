@@ -98,7 +98,7 @@ int FrameReader::tryToReadMeta(std::istringstream &in)
 			try {
 				m_meta = {};
 				rd->read(m_meta);
-				auto data_start = in.tellg();
+				auto data_start = rd->readCount();
 				if (data_start == -1) {
 					// meta was read without error, but without closing brackets
 					return 0;
