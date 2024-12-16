@@ -164,7 +164,8 @@ DlgLogInspector::DlgLogInspector(const QString &shv_path, QWidget *parent) :
 
 	m_logModel = new LogModel(this);
 	m_logSortFilterProxy = new shv::visu::logview::LogSortFilterProxyModel(this);
-	m_logSortFilterProxy->setShvPathColumn(LogModel::ColPath);
+	m_logSortFilterProxy->setChannelFilterPathColumn(LogModel::ColPath);
+	m_logSortFilterProxy->setFulltextFilterPathColumn(LogModel::ColPath);
 	m_logSortFilterProxy->setValueColumn(LogModel::ColValue);
 	m_logSortFilterProxy->setSourceModel(m_logModel);
 	ui->tblData->setModel(m_logSortFilterProxy);
