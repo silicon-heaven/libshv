@@ -355,8 +355,7 @@ ResultType impl_to_int(const RpcValue::VariantType& value)
 	return std::visit([] (const auto& x) {
 		using TypeX = std::remove_cvref_t<decltype(x)>;
 		if constexpr (std::is_same<TypeX, int64_t>() ||
-					  std::is_same<TypeX, uint64_t>() ||
-					  std::is_same<TypeX, bool>()) {
+							 std::is_same<TypeX, uint64_t>()) {
 			return static_cast<ResultType>(x);
 		} else if constexpr (std::is_same<TypeX, double>()) {
 			return static_cast<ResultType>(convert_to_int(x));
@@ -370,7 +369,8 @@ ResultType impl_to_int(const RpcValue::VariantType& value)
 				   std::is_same<TypeX, CowPtr<RpcValue::Blob>>() ||
 				   std::is_same<TypeX, CowPtr<RpcMap>>() ||
 				   std::is_same<TypeX, CowPtr<RpcIMap>>() ||
-				   std::is_same<TypeX, CowPtr<RpcList>>()) {
+				   std::is_same<TypeX, CowPtr<RpcList>>() ||
+				   std::is_same<TypeX, bool>()) { // Casting a bool to an int is prohibited.
 			return ResultType{0};
 		} else {
 			static_assert(not_implemented_for_type<TypeX>, "impl_to_int not implemented for this type");
