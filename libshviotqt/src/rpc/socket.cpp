@@ -28,6 +28,9 @@ void FrameWriter::addFrame(const chainpack::RpcFrame &frame)
 {
 	try {
 		auto frame_head = frame.toFrameHead();
+		logRpcData().nospace() << "FRAME DATA WRITE " << (frame_head.length() + frame.data.length())
+							   << " bytes of data:\n"
+							   << [&frame_head, &frame]() { return shv::chainpack::utils::hexDump(frame_head + frame.data); }();
 		addFrameData(frame_head, frame.data);
 	} catch (const std::runtime_error &e) {
 		shvWarning() << "Error converting frame to data:" << e.what();

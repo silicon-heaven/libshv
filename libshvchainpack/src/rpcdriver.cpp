@@ -50,7 +50,6 @@ void RpcDriver::sendRpcFrame(RpcFrame &&frame)
 			writeFrame(frame2);
 		}
 		else {
-			//logRpcData().nospace() << "FRAME DATA WRITE " << frame_data.size() << " bytes of data:\n" << shv::chainpack::utils::hexDump(frame_data);
 			writeFrame(frame);
 		}
 	}

@@ -70,7 +70,7 @@ RpcValue AbstractStreamReader::read(std::string *error)
 	return ret;
 }
 
-ssize_t AbstractStreamReader::readCount() const
+int64_t AbstractStreamReader::readCount() const
 {
 	auto count = m_in.tellg();
 	if (count >= 0) {
