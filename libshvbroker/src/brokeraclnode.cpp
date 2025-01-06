@@ -62,6 +62,9 @@ static const std::vector<cp::MetaMethod> meta_methods_acl_subnode {
 	{M_VALUE, cp::MetaMethod::Flag::None, {}, "RpcValue", shv::chainpack::AccessLevel::Read},
 };
 
+//========================================================
+// EtcAclRootNode
+//========================================================
 static const std::string M_SAVE_TO_CONFIG_FILES = "saveToConfigFiles";
 static const std::vector<cp::MetaMethod> meta_methods_acl_root {
 	shv::chainpack::methods::DIR,
@@ -69,9 +72,6 @@ static const std::vector<cp::MetaMethod> meta_methods_acl_root {
 	{M_SAVE_TO_CONFIG_FILES, cp::MetaMethod::Flag::None, {}, "RpcValue", shv::chainpack::AccessLevel::Config},
 };
 
-//========================================================
-// EtcAclRootNode
-//========================================================
 EtcAclRootNode::EtcAclRootNode(shv::iotqt::node::ShvNode *parent)
 	: Super("acl", &meta_methods_acl_root, parent)
 {
