@@ -1,9 +1,10 @@
 #include "aclmanagersqlite.h"
 #include "appnode.h"
 #include "brokeraclnode.h"
-#include "brokerappnode.h"
+// #include "brokerappnode.h"
 #include "brokerrootnode.h"
 #include "clientshvnode.h"
+#include "dotbrokernode.h"
 #include "rpc/brokertcpserver.h"
 #include "rpc/clientconnectiononbroker.h"
 #include "rpc/masterbrokerconnection.h"
@@ -97,35 +98,6 @@ const auto sig_term_fd = [] {
 }
 #endif
 
-class ClientsNode : public shv::iotqt::node::MethodsTableNode
-{
-	using Super = shv::iotqt::node::MethodsTableNode;
-public:
-	ClientsNode(shv::iotqt::node::ShvNode *parent = nullptr)
-		: Super(std::string(), &m_metaMethods, parent)
-		, m_metaMethods {
-			shv::chainpack::methods::DIR,
-			shv::chainpack::methods::LS,
-		}
-	{ }
-
-	StringList childNames(const StringViewList &shv_path) override
-	{
-		auto sl = Super::childNames(shv_path);
-		if(shv_path.empty()) {
-			std::vector<int> ids;
-			ids.reserve(sl.size());
-			for(const auto &s : sl)
-				ids.push_back(std::stoi(s));
-			std::sort(ids.begin(), ids.end());
-			for (size_t i = 0; i < ids.size(); ++i)
-				sl[i] = std::to_string(ids[i]);
-		}
-		return sl;
-	}
-private:
-	std::vector<cp::MetaMethod> m_metaMethods;
-};
 
 class MasterBrokersNode : public shv::iotqt::node::MethodsTableNode
 {
@@ -140,87 +112,6 @@ public:
 	{ }
 private:
 	std::vector<cp::MetaMethod> m_metaMethods;
-};
-
-class MountsNode : public shv::iotqt::node::ShvNode
-{
-	using Super = shv::iotqt::node::ShvNode;
-public:
-	MountsNode(shv::iotqt::node::ShvNode *parent = nullptr)
-		: Super(parent)
-	{ }
-
-	size_t methodCount(const StringViewList &shv_path) override
-	{
-		if(shv_path.empty())
-			return m_metaMethods.size() - 1;
-		if(shv_path.size() == 1)
-			return m_metaMethods.size();
-		return Super::methodCount(shv_path);
-	}
-
-	const shv::chainpack::MetaMethod *metaMethod(const StringViewList &shv_path, size_t ix) override
-	{
-		if(methodCount(shv_path) <= ix)
-			SHV_EXCEPTION("Invalid method index: " + std::to_string(ix) + " of: " + std::to_string(methodCount(shv_path)));
-		if(shv_path.empty())
-			return &(m_metaMethods[ix]);
-		if(shv_path.size() == 1)
-			return &(m_metaMethods[ix]);
-		return Super::metaMethod(shv_path, ix);
-	}
-
-	StringList childNames(const StringViewList &shv_path) override
-	{
-		if(shv_path.empty()) {
-			BrokerApp *app = BrokerApp::instance();
-			StringList lst;
-			for(int id : app->clientConnectionIds()) {
-				rpc::ClientConnectionOnBroker *conn = app->clientConnectionById(id);
-				const string mp = conn->mountPoint();
-				if(!mp.empty())
-					lst.push_back(shv::core::utils::ShvPath::SHV_PATH_QUOTE + mp + shv::core::utils::ShvPath::SHV_PATH_QUOTE);
-			}
-			std::sort(lst.begin(), lst.end());
-			return lst;
-		}
-
-		if(shv_path.size() == 1) {
-			return StringList();
-		}
-
-		return Super::childNames(shv_path);
-	}
-
-	shv::chainpack::RpcValue callMethod(const StringViewList &shv_path, const std::string &method, const shv::chainpack::RpcValue &params, const shv::chainpack::RpcValue &user_id) override
-	{
-		if(shv_path.size() == 1) {
-			if(method == METH_CLIENT_IDS) {
-				BrokerApp *app = BrokerApp::instance();
-				std::string path = std::string{shv::core::utils::slice(shv_path.at(0), 1, -1)};
-				auto *nd1 = app->m_nodesTree->cd(path);
-				if(nd1 == nullptr)
-					SHV_EXCEPTION("Cannot find node on path: " + path);
-				auto *nd = qobject_cast<ClientShvNode*>(nd1);
-				if(nd == nullptr)
-					SHV_EXCEPTION("Wrong node type on path: " + path + ", looking for ClientShvNode, found: " + nd1->metaObject()->className());
-				cp::RpcList lst;
-				for(rpc::ClientConnectionOnBroker *conn : nd->connections())
-					lst.push_back(conn->connectionId());
-				return cp::RpcValue{lst};
-			}
-		}
-		return Super::callMethod(shv_path, method, params, user_id);
-	}
-private:
-	static constexpr auto METH_CLIENT_IDS = "clientIds";
-	static const std::vector<cp::MetaMethod> m_metaMethods;
-};
-
-const std::vector<cp::MetaMethod> MountsNode::m_metaMethods = {
-	shv::chainpack::methods::DIR,
-	shv::chainpack::methods::LS,
-	{METH_CLIENT_IDS, cp::MetaMethod::Flag::IsGetter, {}, "List", shv::chainpack::AccessLevel::Config},
 };
 
 #ifdef WITH_SHV_LDAP
@@ -294,13 +185,8 @@ BrokerApp::BrokerApp(int &argc, char **argv, AppCliOptions *cli_opts)
 #endif
 	m_nodesTree = new shv::iotqt::node::ShvNodeTree(new BrokerRootNode(), this);
 	connect(m_nodesTree->root(), &shv::iotqt::node::ShvRootNode::sendRpcMessage, this, &BrokerApp::onRootNodeSendRpcMesage);
-	auto *bn = new BrokerAppNode();
-	m_nodesTree->mount(cp::Rpc::DIR_BROKER_APP, bn);
 	m_nodesTree->mount(cp::Rpc::DIR_APP, new AppNode());
-	m_nodesTree->mount(BROKER_CURRENT_CLIENT_SHV_PATH, new CurrentClientShvNode());
-	m_nodesTree->mount(std::string(cp::Rpc::DIR_BROKER) + "/clients", new ClientsNode());
-	m_nodesTree->mount(std::string(cp::Rpc::DIR_BROKER) + "/masters", new MasterBrokersNode());
-	m_nodesTree->mount(std::string(cp::Rpc::DIR_BROKER) + "/mounts", new MountsNode());
+	m_nodesTree->mount(cp::Rpc::DIR_BROKER, new DotBrokerNode());
 	auto etc_acl_root_node = new EtcAclRootNode();
 	m_nodesTree->mount(std::string(cp::Rpc::DIR_BROKER) + "/etc/acl", etc_acl_root_node);
 

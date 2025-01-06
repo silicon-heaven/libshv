@@ -30,7 +30,6 @@ inline unsigned qHash(const std::string &s) noexcept //Q_DECL_NOEXCEPT_EXPR(noex
 #include <shv/broker/ldap/ldapconfig.h>
 #endif
 #include <shv/broker/azureconfig.h>
-#include <set>
 
 class QSocketNotifier;
 class QSqlDatabase;
@@ -104,6 +103,9 @@ public:
 
 	const std::string& brokerId() const;
 
+	rpc::ClientConnectionOnBroker* clientConnectionById(int connection_id);
+	std::vector<int> clientConnectionIds();
+
 protected:
 	virtual void initDbConfigSqlConnection();
 	virtual AclManager* createAclManager();
@@ -116,9 +118,6 @@ private:
 	void startTcpServers();
 
 	void startWebSocketServers();
-
-	rpc::ClientConnectionOnBroker* clientConnectionById(int connection_id);
-	std::vector<int> clientConnectionIds();
 
 	void createMasterBrokerConnections();
 	QList<rpc::MasterBrokerConnection*> masterBrokerConnections() const;

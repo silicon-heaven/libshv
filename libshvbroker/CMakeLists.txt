@@ -17,6 +17,7 @@ qt_add_library(libshvbroker
 	src/rpc/ssl_common.cpp
 	src/subscriptionsnode.cpp
 	src/tunnelsecretlist.cpp
+	src/dotbrokernode.h src/dotbrokernode.cpp
 
 	include/shv/broker/shvbrokerglobal.h
 	include/shv/broker/tunnelsecretlist.h

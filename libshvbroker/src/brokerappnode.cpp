@@ -75,7 +75,7 @@ static const auto M_BROKER_ID = "brokerId";
 static const auto M_MASTER_BROKER_ID = "masterBrokerId";
 
 BrokerAppNode::BrokerAppNode(shv::iotqt::node::ShvNode *parent)
-	: Super("", &m_metaMethods, parent)
+	: Super("app", &m_metaMethods, parent)
 	, m_metaMethods {
 		shv::chainpack::methods::DIR,
 		shv::chainpack::methods::LS,
