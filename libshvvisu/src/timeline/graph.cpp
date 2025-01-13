@@ -37,7 +37,7 @@ static const int VALUE_NOT_AVILABLE_Y = std::numeric_limits<int>::max();
 //==========================================
 void Graph::Style::init(QWidget *widget)
 {
-	QFont f = widget->font();
+	const QFont& f = widget->font();
 	setFont(f);
 	QFontMetrics fm(f, widget);
 	setUnitSize(fm.lineSpacing());

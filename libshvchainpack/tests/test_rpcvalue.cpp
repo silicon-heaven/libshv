@@ -51,8 +51,7 @@ DOCTEST_TEST_CASE("RpcValue")
 	{
 		nDebug() << "================================= takeMeta Test =====================================";
 		auto rpcval = RpcValue::fromCpon(R"(<1:2,2:12,8:"foo",9:[1,2,3],"bar":"baz",>{"META":17,"18":19})");
-		auto rv1 = rpcval;
-		auto rv2 = rv1;
+		const auto& rv1 = rpcval;
 		auto rv3 = rv1;
 		rv3.takeMeta();
 		REQUIRE(rv1.metaData().isEmpty() == false);

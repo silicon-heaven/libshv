@@ -50,7 +50,7 @@ public:
 	static bool matchWild(const shv::core::StringViewList &path_lst, const shv::core::StringViewList &pattern_lst);
 
 	template<typename T>
-	static void forEachDirAndSubdirs(const T &map, const std::string &root_dir, std::function<void (typename T::const_iterator)> fn)
+	static void forEachDirAndSubdirs(const T &map, const std::string &root_dir, const std::function<void (typename T::const_iterator)>& fn)
 	{
 		for (auto it = map.lower_bound(root_dir); it != map.end(); ) {
 			const auto &key = it->first;
@@ -69,7 +69,7 @@ public:
 	}
 
 	template<typename T>
-	static void forEachDirAndSubdirsDeleteIf(T &map, const std::string &root_dir, std::function<bool (typename T::const_iterator)> fn)
+	static void forEachDirAndSubdirsDeleteIf(T &map, const std::string &root_dir, const std::function<bool (typename T::const_iterator)>& fn)
 	{
 		for (auto it = map.lower_bound(root_dir); it != map.end(); ) {
 			const auto &key = it->first;

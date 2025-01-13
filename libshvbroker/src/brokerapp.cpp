@@ -792,7 +792,7 @@ public:
 	Q_SIGNAL void resultReady(const chainpack::UserLoginResult& s, std::string user_name, const std::vector<std::string>& shv_groups);
 
 private:
-	QFuture<QJsonDocument> do_request(auto url)
+	QFuture<QJsonDocument> do_request(const auto& url)
 	{
 		QNetworkRequest request;
 		request.setRawHeader("Authorization", QByteArray("Bearer ") + QByteArray::fromStdString(m_ctx.userLogin().password));
