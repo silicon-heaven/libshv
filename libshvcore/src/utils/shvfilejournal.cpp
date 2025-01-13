@@ -17,7 +17,6 @@
 #include <filesystem>
 #include <fstream>
 #include <sstream>
-#include <algorithm>
 
 #define logWShvJournal() shvCWarning("ShvJournal")
 #define logIShvJournal() shvCInfo("ShvJournal")
