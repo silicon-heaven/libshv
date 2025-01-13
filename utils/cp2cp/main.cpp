@@ -44,6 +44,7 @@ USAGE:
 
 )";
 
+namespace {
 int replace_str(std::string& str, const std::string& from, const std::string& to)
 {
 	int i = 0;
@@ -61,6 +62,7 @@ void help(const std::string &app_name)
 	std::cout << app_name << cp2cp_help;
 	std::cout << NecroLog::cliHelp();
 	exit(0);
+}
 }
 
 int main(int argc, char *argv[])

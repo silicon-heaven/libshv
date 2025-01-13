@@ -733,6 +733,7 @@ ShvDeviceDescription &ShvDeviceDescription::setPropertyDescription(const ShvProp
 //=====================================================================
 // ShvLogTypeInfo
 //=====================================================================
+namespace {
 template<typename T>
 typename std::map<std::string, T>::const_iterator find_longest_prefix(const std::map<std::string, T> &map, const std::string &path)
 {
@@ -757,6 +758,7 @@ typename std::map<std::string, T>::const_iterator find_longest_prefix(const std:
 		}
 	}
 	return map.cend();
+}
 }
 
 bool ShvTypeInfo::isPathBlacklisted(const std::string &shv_path) const

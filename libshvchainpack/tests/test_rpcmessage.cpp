@@ -27,10 +27,11 @@ namespace {
 }
 
 namespace shv::chainpack {
-
+// NOLINTBEGIN(misc-use-internal-linkage)
 doctest::String toString(const RpcValue& value) {
 	return value.toCpon().c_str();
 }
+// NOLINTEND(misc-use-internal-linkage)
 }
 
 DOCTEST_TEST_CASE("RpcMessage")

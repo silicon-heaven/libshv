@@ -14,6 +14,7 @@ namespace cp = shv::chainpack;
 using cp::RpcValue;
 using namespace std::string_literals;
 
+namespace {
 // https://stackoverflow.com/a/56766138
 template <typename T>
 constexpr auto type_name()
@@ -36,8 +37,10 @@ constexpr auto type_name()
     name.remove_suffix(suffix.size());
     return name;
 }
+}
 
 namespace std {
+// NOLINTBEGIN(misc-use-internal-linkage)
     template <typename Type>
     doctest::String toString(const std::vector<Type>& values) {
         std::ostringstream res;
@@ -53,7 +56,9 @@ namespace std {
         return res.str().c_str();
     }
 }
+// NOLINTEND(misc-use-internal-linkage)
 
+namespace {
 const auto journal_dir = std::filesystem::path{TEST_FILES_DIR} / "getlog";
 
 std::function<shv::core::utils::ShvJournalFileReader()> create_reader(std::vector<shv::core::utils::ShvJournalEntry> entries)
@@ -93,6 +98,7 @@ auto as_vector(shv::core::utils::ShvLogRpcValueReader& reader)
 		res.push_back(reader.entry());
 	}
 	return res;
+}
 }
 
 DOCTEST_TEST_CASE("getLog")

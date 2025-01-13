@@ -9,6 +9,7 @@
 #include <doctest/doctest.h>
 #include <doctest/trompeloeil.hpp>
 
+namespace {
 // https://stackoverflow.com/a/56766138
 template <typename T>
 constexpr auto type_name()
@@ -31,7 +32,9 @@ constexpr auto type_name()
     name.remove_suffix(suffix.size());
     return name;
 }
+}
 
+// NOLINTBEGIN(misc-use-internal-linkage)
 namespace std {
     template <typename Type>
     doctest::String toString(const std::vector<Type>& values) {
@@ -44,6 +47,7 @@ namespace std {
         return res.str().c_str();
     }
 }
+// NOLINTEND(misc-use-internal-linkage)
 
 class MockAclManager : public trompeloeil::mock_interface<shv::broker::AclManager> {
 public:

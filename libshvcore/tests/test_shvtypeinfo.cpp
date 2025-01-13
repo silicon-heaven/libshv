@@ -14,6 +14,7 @@ using namespace shv::chainpack;
 using namespace shv::core::utils;
 using namespace std;
 
+namespace {
 RpcValue read_cpon_file(const string &fn)
 {
 	shvInfo() << "reading file: " << fn;
@@ -41,8 +42,9 @@ void write_cpon_file(const string &fn, const RpcValue &log)
 	}
 }
 
-static const std::string FILES_DIR = DEF_FILES_DIR;
-static const std::string TEST_DIR = "test_ShvTypeInfo";
+const std::string FILES_DIR = DEF_FILES_DIR;
+const std::string TEST_DIR = "test_ShvTypeInfo";
+}
 
 int main(int argc, char** argv)
 {

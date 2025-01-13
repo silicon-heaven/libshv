@@ -36,7 +36,7 @@ std::string int_to_hex( T i )
 }
 
 namespace shv::chainpack {
-
+// NOLINTBEGIN(misc-use-internal-linkage)
 doctest::String toString(const RpcValue& value) {
 	return value.toCpon().c_str();
 }
@@ -45,6 +45,7 @@ doctest::String toString(const RpcDecimal& value) {
 	sb << "RpcDecimal(" << value.mantissa() << ',' << value.exponent() << ')';
 	return sb.str().c_str();
 }
+// NOLINTEND(misc-use-internal-linkage)
 
 }
 
