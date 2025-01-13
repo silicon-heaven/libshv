@@ -11,14 +11,14 @@
 #define ldapE() shvCError("ldap")
 
 namespace shv::ldap {
-std::vector<std::string> getGroupsForUser(const std::unique_ptr<shv::ldap::Ldap>& my_ldap, const std::string_view& base_dn, const std::vector<std::string>& field_names, const std::string_view& user_name) {
+std::vector<std::string> getGroupsForUser(const std::unique_ptr<shv::ldap::Ldap>& my_ldap, const std::string& base_dn, const std::vector<std::string>& field_names, const std::string& user_name) {
 	std::vector<std::string> res;
 	auto filter = QStringLiteral("(|");
 	for (const auto& field_name : field_names) {
 		filter += QStringLiteral(R"((%1=%2))").arg(field_name.data(), user_name.data());
 	}
 	filter += ')';
-	auto entries = my_ldap->search(base_dn.data(), qPrintable(filter), {"memberOf"});
+	auto entries = my_ldap->search(base_dn, qPrintable(filter), {"memberOf"});
 	for (const auto& entry : entries) {
 		for (const auto& [key, values]: entry.keysAndValues) {
 			for (const auto& v : values) {
@@ -32,7 +32,7 @@ std::vector<std::string> getGroupsForUser(const std::unique_ptr<shv::ldap::Ldap>
 	return res;
 }
 
-std::map<std::string, std::vector<std::string>> getAllUsersWithGroups(const std::unique_ptr<shv::ldap::Ldap>& my_ldap, const std::string_view& base_dn, const std::vector<std::string>& field_names)
+std::map<std::string, std::vector<std::string>> getAllUsersWithGroups(const std::unique_ptr<shv::ldap::Ldap>& my_ldap, const std::string& base_dn, const std::vector<std::string>& field_names)
 {
 	std::map<std::string, std::vector<std::string>> res;
 	for (const auto& user : my_ldap->search(base_dn, "objectClass=person", field_names)) {
@@ -97,7 +97,7 @@ Ldap::Ldap(LDAP* conn)
 	throwIfError(ret, "Couldn't set rebind procedure");
 }
 
-std::unique_ptr<Ldap> Ldap::create(const std::string_view& hostname)
+std::unique_ptr<Ldap> Ldap::create(const std::string& hostname)
 {
 	LDAP* conn;
 	auto ret = OpenLDAP::ldap_initialize(&conn, hostname.data());
@@ -118,7 +118,7 @@ void Ldap::connect()
 	throwIfError(ret, "Couldn't connect to the LDAP server");
 }
 
-void Ldap::bindSasl(const std::string_view& bind_dn, const std::string_view& bind_pw)
+void Ldap::bindSasl(const std::string& bind_dn, const std::string& bind_pw)
 {
 	auto pw_copy = wrap(strdup(bind_pw.data()), std::free); // Yes, you have to make a copy.
 	berval cred {
@@ -140,7 +140,7 @@ void Ldap::bindWithLastCreds()
 	bindSasl(m_lastBindDn.value(), m_lastBindPw.value());
 }
 
-std::vector<Entry> Ldap::search(const std::string_view& base_dn, const std::string_view& filter, const std::vector<std::string> requested_attr)
+std::vector<Entry> Ldap::search(const std::string& base_dn, const std::string& filter, const std::vector<std::string> requested_attr)
 {
 	ldapI() << "search, base_dn:" << base_dn << "filter:" << filter << "requested_attr:" << [&requested_attr] {
 		std::string res;
