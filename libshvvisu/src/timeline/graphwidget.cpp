@@ -23,7 +23,6 @@
 #include <QMessageBox>
 #include <QToolTip>
 #include <algorithm>
-#include <algorithm>
 
 #if QT_VERSION_MAJOR < 6
 #include <QDesktopWidget>

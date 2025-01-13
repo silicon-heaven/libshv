@@ -4,8 +4,6 @@
 
 #include <algorithm>
 
-#include <algorithm>
-
 namespace shv::coreqt::data {
 ValueChange::ValueX::ValueX(TimeStamp value)
 	: timeStamp(value)
