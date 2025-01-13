@@ -49,11 +49,6 @@ runs:
         readarray -t FILES < <(find '${{github.workspace}}' -name \*.cpp |
           grep -v 3rdparty/ |
           grep -v build.*/ |
-          grep -v "libshviotqt/tests/serialportsocket/test_serialportsocket.cpp" |
-          grep -v "libshvchainpack/tests/test_rpcvalue.cpp" |
-          grep -v "libshvchainpack/tests/test_accessgrant.cpp" |
-          grep -v "libshvchainpack/tests/test_shvlog.cpp" |
-          grep -v "libshvcore/tests/test_shvtypeinfo.cpp" |
-          grep -v "libshvcore/src/utils/getlog.cpp" # This one never finishes.
+          grep -v "libshvchainpack/tests/test_accessgrant.cpp"
           )
         printf '%s\n' "${FILES[@]}" | parallel --verbose --jobs "$(nproc)" --plus _=[{#}/{##}] ${{ inputs.lint_program_with_args }} {}
