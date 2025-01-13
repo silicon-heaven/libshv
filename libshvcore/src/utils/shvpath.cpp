@@ -3,6 +3,8 @@
 
 #include <shv/core/stringview.h>
 
+#include <algorithm>
+
 namespace shv::core::utils {
 
 bool shvpath::startsWithPath(const std::string_view &str, const std::string_view &path, size_t *pos)
@@ -66,8 +68,7 @@ StringView ShvPath::firstDir(const StringView &shv_path, size_t *next_dir_pos)
 {
 	StringView dir = core::utils::getToken(shv_path, SHV_PATH_DELIM, SHV_PATH_QUOTE);
 	size_t next_pos = dir.size() + 1;
-	if(next_pos > shv_path.size())
-		next_pos = shv_path.size();
+	next_pos = std::min(next_pos, shv_path.size());
 	if(dir.size() >= 2 && dir.at(0) == SHV_PATH_QUOTE && dir.at(dir.size() - 1) == SHV_PATH_QUOTE) {
 		dir = dir.substr(1, dir.size() - 2);
 	}

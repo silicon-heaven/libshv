@@ -22,6 +22,8 @@
 #include <QMimeData>
 #include <QMessageBox>
 #include <QToolTip>
+#include <algorithm>
+#include <algorithm>
 
 #if QT_VERSION_MAJOR < 6
 #include <QDesktopWidget>
@@ -586,18 +588,14 @@ bool GraphWidget::scrollByMouseOuterOverlap(const QPoint &mouse_pos)
 	auto *vs = scroll_area->verticalScrollBar();
 	if (mouse_pos.y() - view_port_top < 5) {
 		int diff = view_port_top - mouse_pos.y();
-		if (diff < 5) {
-			diff = 5;
-		}
+		diff = std::max(diff, 5);
 		vs->setValue(vs->value() - diff);
 		moveDropMarker(mapFromGlobal(mouse_pos));
 		return true;
 	}
 	if (mouse_pos.y() + 5 > view_port_bottom) {
 		int diff = mouse_pos.y() - view_port_bottom;
-		if (diff < 5) {
-			diff = 5;
-		}
+		diff = std::max(diff, 5);
 		vs->setValue(vs->value() + diff);
 		moveDropMarker(mapFromGlobal(mouse_pos));
 		return true;

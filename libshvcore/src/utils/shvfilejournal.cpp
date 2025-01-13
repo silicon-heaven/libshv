@@ -13,6 +13,7 @@
 
 #include <shv/chainpack/rpc.h>
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -92,8 +93,7 @@ int64_t str_to_size(const std::string &str)
 	case 'G': n *= 1024 * 1024 * 1024; break;
 	default: break;
 	}
-	if(n < 1024)
-		n = 1024;
+	n = std::max<int64_t>(n, 1024);
 	return n;
 }
 }
@@ -231,8 +231,7 @@ void ShvFileJournal::appendThrow(const ShvJournalEntry &entry)
 	int64_t msec = entry.epochMsec;
 	if(msec == 0)
 		msec = RpcValue::DateTime::now().msecsSinceEpoch(); //m_appendLogTSNowFn();
-	if(msec < m_journalContext.recentTimeStamp)
-		msec = m_journalContext.recentTimeStamp;
+	msec = std::max(msec, m_journalContext.recentTimeStamp);
 	e.epochMsec = msec;
 	int64_t journal_file_start_msec = 0;
 	if(m_journalContext.files.empty() || m_journalContext.lastFileSize > m_fileSizeLimit) {

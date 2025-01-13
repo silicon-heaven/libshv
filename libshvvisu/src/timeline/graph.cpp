@@ -20,6 +20,7 @@
 #include <QSvgGenerator>
 #endif
 
+#include <algorithm>
 #include <cmath>
 
 namespace shv::visu::timeline {
@@ -605,10 +606,8 @@ void Graph::setYRangeZoom(qsizetype channel_ix, const YRange &r)
 {
 	GraphChannel *ch = channelAt(channel_ix);
 	ch->m_state.yRangeZoom = r;
-	if(ch->m_state.yRangeZoom.min < ch->m_state.yRange.min)
-		ch->m_state.yRangeZoom.min = ch->m_state.yRange.min;
-	if(ch->m_state.yRangeZoom.max > ch->m_state.yRange.max)
-		ch->m_state.yRangeZoom.max = ch->m_state.yRange.max;
+	ch->m_state.yRangeZoom.min = std::max(ch->m_state.yRangeZoom.min, ch->m_state.yRange.min);
+	ch->m_state.yRangeZoom.max = std::min(ch->m_state.yRangeZoom.max, ch->m_state.yRange.max);
 	makeYAxis(channel_ix);
 }
 
@@ -645,10 +644,8 @@ void Graph::zoomToSelection(bool zoom_vertically)
 
 void Graph::sanityXRangeZoom()
 {
-	if(m_state.xRangeZoom.min < m_state.xRange.min)
-		m_state.xRangeZoom.min = m_state.xRange.min;
-	if(m_state.xRangeZoom.max > m_state.xRange.max)
-		m_state.xRangeZoom.max = m_state.xRange.max;
+	m_state.xRangeZoom.min = std::max(m_state.xRangeZoom.min, m_state.xRange.min);
+	m_state.xRangeZoom.max = std::min(m_state.xRangeZoom.max, m_state.xRange.max);
 }
 
 void Graph::clearMiniMapCache()
@@ -1145,8 +1142,7 @@ void Graph::makeLayout(const QRect &pref_rect)
 			const Rest &r = rests[i];
 			GraphChannel *ch = channelAt(r.index);
 			qsizetype h = u2px(ch->m_effectiveStyle.heightRange());
-			if(h > fair_rest)
-				h = fair_rest;
+			h = std::min(h, fair_rest);
 			ch->m_layout.graphAreaRect.setHeight(static_cast<int>(ch->m_layout.graphAreaRect.height() + h));
 			h_rest -= h;
 		}

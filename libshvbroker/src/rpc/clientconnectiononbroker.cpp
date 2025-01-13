@@ -13,6 +13,7 @@
 #include <QCryptographicHash>
 #include <QTcpSocket>
 #include <QTimer>
+#include <algorithm>
 
 #define logSubscriptionsD() nCDebug("Subscr").color(NecroLog::Color::Yellow)
 #define logSubsResolveD() nCDebug("SubsRes").color(NecroLog::Color::LightGreen)
@@ -78,8 +79,7 @@ int ClientConnectionOnBroker::idleTime() const
 	if(!m_idleWatchDogTimer || !m_idleWatchDogTimer->isActive())
 		return -1;
 	int t = m_idleWatchDogTimer->interval() - m_idleWatchDogTimer->remainingTime();
-	if(t < 0)
-		t = 0;
+	t = std::max(t, 0);
 	return t;
 }
 
