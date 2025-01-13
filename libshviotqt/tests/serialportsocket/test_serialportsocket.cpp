@@ -29,6 +29,7 @@ int main(int argc, char** argv)
 	return doctest::Context(argc, argv).run();
 }
 
+namespace {
 std::tuple<SerialPortSocket*, MockSerialPort*> init_connection(MockRpcConnection &conn)
 {
 	auto *serial = new MockSerialPort("TestSend", &conn);
@@ -37,6 +38,7 @@ std::tuple<SerialPortSocket*, MockSerialPort*> init_connection(MockRpcConnection
 	conn.setSocket(socket);
 	conn.connectToHost(QUrl());
 	return make_tuple(socket, serial);
+}
 }
 
 DOCTEST_TEST_CASE("Send")

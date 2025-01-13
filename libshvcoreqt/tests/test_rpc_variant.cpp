@@ -36,10 +36,12 @@ DOCTEST_TEST_CASE("RpcValue to QVariant conversion and vice versa")
 }
 
 using shv::chainpack::RpcValue;
+// NOLINTBEGIN(misc-use-internal-linkage)
 doctest::String toString(const QString& str)
 {
 	return str.toLatin1().data();
 }
+// NOLINTEND(misc-use-internal-linkage)
 
 DOCTEST_TEST_CASE("shv2mqtt utils")
 {

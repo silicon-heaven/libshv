@@ -16,6 +16,7 @@ using namespace shv::iotqt::rpc;
 using namespace shv::chainpack;
 using namespace std;
 
+// NOLINTBEGIN(misc-use-internal-linkage)
 doctest::String toString(const QString& str)
 {
 	return str.toLatin1().data();
@@ -29,7 +30,9 @@ doctest::String toString(const QList<int>& lst)
 	}
 	return ('[' + sl.join(',') + ']').toLatin1().data();
 }
+// NOLINTEND(misc-use-internal-linkage)
 
+namespace {
 std::string write_stream_frame(const std::string &cpon) {
 	auto rv = RpcValue::fromCpon(cpon);
 	auto msg = RpcMessage(rv);
@@ -144,6 +147,7 @@ const vector<string> cpons = {
 	R"(<1:1,9:"shv",10:"lsmod">i{1:{"cze":true}})",
 	R"(<>i{})",
 };
+}
 
 DOCTEST_TEST_CASE("Stream FrameWriter")
 {

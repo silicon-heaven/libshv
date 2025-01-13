@@ -3,9 +3,11 @@
 
 #include <doctest/doctest.h>
 
+// NOLINTBEGIN(misc-use-internal-linkage)
 doctest::String toString(const QString& str) {
 	return str.toStdString().c_str();
 }
+// NOLINTEND(misc-use-internal-linkage)
 
 using namespace shv::coreqt::utils;
 DOCTEST_TEST_CASE("joinPath")

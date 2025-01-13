@@ -38,21 +38,6 @@ void LogSortFilterProxyModel::setFulltextFilterPathColumn(int column)
 	m_fulltextFilterPathColumn = column;
 }
 
-bool startsWithPath(const QStringView &str, const QStringView &path)
-{
-	if (path.empty())
-		return true;
-	if (str.startsWith(path)) {
-		if (str.size() == path.size())
-			return true;
-		if (str[path.size()] == shv::core::utils::ShvPath::SHV_PATH_DELIM)
-			return true;
-		if (path[path.size() - 1] == shv::core::utils::ShvPath::SHV_PATH_DELIM) // path contains trailing /
-			return true;
-	}
-	return false;
-}
-
 bool LogSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
 	bool is_row_accepted = true;
