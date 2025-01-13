@@ -2,6 +2,10 @@
 
 #include <shv/coreqt/exception.h>
 
+#include <algorithm>
+
+#include <algorithm>
+
 namespace shv::coreqt::data {
 ValueChange::ValueX::ValueX(TimeStamp value)
 	: timeStamp(value)
@@ -232,36 +236,24 @@ void SerieData::updateValueChange(const_iterator position, const ValueChange &ne
 void SerieData::extendRange(int &min, int &max) const
 {
 	if (!empty()) {
-		if (at(0).valueX.intValue < min) {
-			min = at(0).valueX.intValue;
-		}
-		if (back().valueX.intValue > max) {
-			max = back().valueX.intValue;
-		}
+		min = std::min(at(0).valueX.intValue, min);
+		max = std::max(back().valueX.intValue, max);
 	}
 }
 
 void SerieData::extendRange(double &min, double &max) const
 {
 	if (!empty()) {
-		if (at(0).valueX.doubleValue < min) {
-			min = at(0).valueX.doubleValue;
-		}
-		if (back().valueX.doubleValue > max) {
-			max = back().valueX.doubleValue;
-		}
+		min = std::min(at(0).valueX.doubleValue, min);
+		max = std::max(back().valueX.doubleValue, max);
 	}
 }
 
 void SerieData::extendRange(ValueChange::TimeStamp &min, ValueChange::TimeStamp &max) const
 {
 	if (!empty()) {
-		if (at(0).valueX.timeStamp < min) {
-			min = at(0).valueX.timeStamp;
-		}
-		if (back().valueX.timeStamp > max) {
-			max = back().valueX.timeStamp;
-		}
+		min = std::min(at(0).valueX.timeStamp, min);
+		max = std::max(back().valueX.timeStamp, max);
 	}
 }
 

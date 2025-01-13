@@ -6,6 +6,8 @@
 
 #include <shv/chainpack/rpc.h>
 
+#include <algorithm>
+
 #define logDShvJournal() shvCDebug("ShvJournal")
 
 namespace cp = shv::chainpack;
@@ -69,8 +71,7 @@ void ShvJournalFileWriter::appendMonotonic(const ShvJournalEntry &entry)
 		msec = cp::RpcValue::DateTime::now().msecsSinceEpoch();
 	int64_t msec2 = msec;
 	if(m_recentTimeStamp > 0) {
-		if(msec < m_recentTimeStamp)
-			msec = m_recentTimeStamp;
+		msec = std::max(msec, m_recentTimeStamp);
 	}
 	else {
 		m_recentTimeStamp = msec;

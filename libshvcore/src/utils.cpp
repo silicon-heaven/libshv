@@ -4,6 +4,7 @@
 
 #include <shv/chainpack/compat.h>
 #include <shv/chainpack/utils.h>
+#include <algorithm>
 #include <cstring>
 #include <regex>
 #include <sstream>
@@ -203,17 +204,10 @@ StringViewList utils::split(StringView strv, char delim, char quote, SplitBehavi
 
 StringView utils::slice(StringView s, int start, int end)
 {
-	if(start < 0)
-		start = 0;
-	if(start > static_cast<int>(s.size()))
-		start = static_cast<int>(s.size());
+	start = std::clamp(start, 0, static_cast<int>(s.size()));
 	end = static_cast<int>(s.size()) + end;
-	if(end < 0)
-		end = 0;
-	if(end > static_cast<int>(s.size()))
-		end = static_cast<int>(s.size());
-	if(end < start)
-		end = start;
+	end = std::clamp(end, 0, static_cast<int>(s.size()));
+	end = std::max(end, start);
 	return s.substr(static_cast<size_t>(start), static_cast<size_t>(end - start));
 }
 
@@ -518,8 +512,7 @@ std::pair<size_t, size_t> indexOfBrackets(const std::string &haystack, size_t be
 {
 	if(begin_pos + open_bracket.size() > haystack.size())
 		return std::pair<size_t, size_t>(std::string::npos, std::string::npos);
-	if(end_pos > haystack.size())
-		end_pos = haystack.size();
+	end_pos = std::min(end_pos, haystack.size());
 	if(end_pos < begin_pos)
 		return std::pair<size_t, size_t>(std::string::npos, std::string::npos);
 	auto open0 = find_str(haystack, begin_pos, end_pos, open_bracket);
