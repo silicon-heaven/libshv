@@ -217,7 +217,7 @@ chainpack::RpcValue LocalFSNode::ndWrite(const QString &path, const chainpack::R
 		SHV_EXCEPTION("Cannot open file " + f.fileName().toStdString() + " for writing.");
 	}
 	if (methods_params.isList()){
-		chainpack::RpcList params = methods_params.asList();
+		const chainpack::RpcList& params = methods_params.asList();
 
 		if (params.size() != 2){
 			SHV_EXCEPTION("Cannot write to file " + f.fileName().toStdString() + ". Invalid parameters count.");

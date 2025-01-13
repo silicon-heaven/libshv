@@ -111,7 +111,7 @@ public:
 	}
 
 private:
-	const std::vector<ShvJournalEntry>& m_entries;
+	const std::vector<ShvJournalEntry>& m_entries; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
 	std::optional<std::vector<ShvJournalEntry>::const_iterator> m_entriesIter;
 };
 
