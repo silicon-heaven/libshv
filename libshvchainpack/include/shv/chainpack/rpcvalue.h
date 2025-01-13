@@ -135,7 +135,7 @@ private:
 	struct MsTz {
 		int64_t tz: 7, msec: 57;
 	};
-	MsTz m_dtm = {0, 0};
+	MsTz m_dtm = {.tz = 0, .msec = 0};
 };
 
 class SHVCHAINPACK_DECL_EXPORT RpcDecimal

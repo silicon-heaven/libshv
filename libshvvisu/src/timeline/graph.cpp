@@ -1119,9 +1119,9 @@ void Graph::makeLayout(const QRect &pref_rect)
 		ch->m_effectiveStyle = mergeMaps(m_defaultChannelStyle, ch->style());
 		int ch_h = u2px(ch->m_effectiveStyle.heightMin());
 		if(ch->isMaximized())
-			rests << Rest{i, pref_rect.height()};
+			rests << Rest{.index = i, .rest = pref_rect.height()};
 		else
-			rests << Rest{i, u2px(ch->m_effectiveStyle.heightRange())};
+			rests << Rest{.index = i, .rest = u2px(ch->m_effectiveStyle.heightRange())};
 		ch->m_layout.graphAreaRect.setLeft(x_axis_pos);
 		ch->m_layout.graphAreaRect.setWidth(grid_w);
 		ch->m_layout.graphAreaRect.setHeight(ch_h);
@@ -1348,7 +1348,7 @@ Graph::VisualSettings Graph::visualSettings() const
 	VisualSettings visual_settings;
 	for (int ix : visibleChannels()) {
 		const GraphChannel *channel = channelAt(ix);
-		visual_settings.channels << VisualSettings::Channel{ channel->shvPath(), channel->style() };
+		visual_settings.channels << VisualSettings::Channel{ .shvPath = channel->shvPath(), .style = channel->style() };
 	}
 
 	return visual_settings;
@@ -2690,8 +2690,8 @@ Graph::VisualSettings Graph::VisualSettings::fromJson(const QString &json)
 			for (int i = 0; i < array.count(); ++i) {
 				QJsonObject item = array[i].toObject();
 				settings.channels << VisualSettings::Channel({
-											 item["shvPath"].toString(),
-											 item["style"].toVariant().toMap()
+											 .shvPath = item["shvPath"].toString(),
+											 .style = item["style"].toVariant().toMap()
 										 });
 			}
 		}

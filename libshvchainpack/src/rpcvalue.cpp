@@ -922,7 +922,7 @@ long long parse_ISO_DateTime(const std::string &s, std::tm &tm, int &msec, int64
 }
 
 RpcDateTime::RpcDateTime()
-	: m_dtm{0, 0}
+	: m_dtm{.tz = 0, .msec = 0}
 {
 }
 
