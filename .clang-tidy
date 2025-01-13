@@ -69,6 +69,7 @@ Checks:
   - -modernize-use-constraints
   - -modernize-use-default-member-init
   - -modernize-use-nodiscard
+  - -modernize-use-ranges # Might not be supported by all compilers.
   - -modernize-use-trailing-return-type
   - -modernize-use-using
   - -performance-enum-size
