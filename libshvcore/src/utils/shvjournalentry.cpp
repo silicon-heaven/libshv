@@ -109,7 +109,7 @@ ShvJournalEntry ShvJournalEntry::fromRpcValueMap(const chainpack::RpcValue::Map 
 	ShvJournalEntry ret;
 	// check timestamp first, it can contain time-zone, which is not supported currently, but we plan to do it in future
 	chainpack::RpcValue::DateTime dt = m.value(ShvLogHeader::Column::name(ShvLogHeader::Column::Timestamp)).toDateTime();
-	if(!dt.isZero())
+	if(dt.msecsSinceEpoch() != 0)
 		ret.epochMsec = dt.msecsSinceEpoch();
 	else
 		ret.epochMsec = m.value("epochMsec").toInt64();

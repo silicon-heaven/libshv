@@ -86,7 +86,6 @@ public:
 	RpcDateTime();
 	int64_t msecsSinceEpoch() const;
 	int utcOffsetMin() const;
-	bool isZero() const;
 
 	static RpcDateTime now();
 	static RpcDateTime fromLocalString(const std::string &local_date_time_str);
