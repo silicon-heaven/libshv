@@ -1,4 +1,4 @@
-﻿#include <shv/iotqt/rpc/serverconnection.h>
+﻿#include "serverconnection.h"
 #include <shv/iotqt/rpc/socketrpcconnection.h>
 #include <shv/iotqt/rpc/socket.h>
 

@@ -2,6 +2,8 @@
 
 #include <QWebSocketServer>
 
+#include <optional>
+
 class QWebSocket;
 
 namespace shv::broker::rpc {

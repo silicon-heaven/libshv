@@ -10,10 +10,14 @@ qt_add_library(libshvbroker
 	src/clientconnectionnode.cpp
 	src/clientshvnode.cpp
 	src/currentclientshvnode.cpp
+	src/rpc/tcpserver.cpp
+	src/rpc/tcpserver.h
 	src/rpc/brokertcpserver.cpp
 	src/rpc/clientconnectiononbroker.cpp
 	src/rpc/commonrpcclienthandle.cpp
 	src/rpc/masterbrokerconnection.cpp
+	src/rpc/serverconnection.cpp
+	src/rpc/serverconnection.h
 	src/rpc/ssl_common.cpp
 	src/subscriptionsnode.cpp
 	src/tunnelsecretlist.cpp
