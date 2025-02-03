@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/iotqt/rpc/tcpserver.h>
+#include "tcpserver.h"
 
 #include <QSslConfiguration>
 
