@@ -936,11 +936,6 @@ int RpcDateTime::utcOffsetMin() const
 	return m_dtm.tz * 15;
 }
 
-bool RpcDateTime::isZero() const
-{
-	return msecsSinceEpoch() == 0;
-}
-
 RpcDateTime RpcDateTime::now()
 {
 	std::chrono::time_point<std::chrono::system_clock> p1 = std::chrono::system_clock::now();
