@@ -382,7 +382,9 @@ void ClientConnection::sendHello()
 
 void ClientConnection::sendLogin(const shv::chainpack::RpcValue &server_hello)
 {
-	m_connectionState.loginRequestId = callShvMethod({}, cp::Rpc::METH_LOGIN, createLoginParams(server_hello));
+	createLoginParams(server_hello, [this] (const auto& login_params) {
+		m_connectionState.loginRequestId = callShvMethod({}, cp::Rpc::METH_LOGIN, login_params);
+	});
 }
 
 void ClientConnection::checkBrokerConnected()
@@ -457,8 +459,36 @@ void ClientConnection::onSocketConnectedChanged(bool is_connected)
 	}
 }
 
-chainpack::RpcValue ClientConnection::createLoginParams(const chainpack::RpcValue &server_hello) const
+void ClientConnection::createLoginParams(const chainpack::RpcValue &server_hello, const std::function<void(chainpack::RpcValue)>& params_callback) const
 {
+	auto impl_ret = [this, params_callback] (const auto& user_name, const auto& pass) {
+
+		params_callback(cp::RpcValue::Map {
+			{
+				"login", cp::RpcValue::Map {
+					{"user", user_name},
+					{"password", pass},
+					{"type", chainpack::UserLogin::loginTypeToString(loginType())},
+				},
+			},
+			{"options", connectionOptions()},
+		});
+	};
+
+	if(loginType() == chainpack::IRpcConnection::LoginType::AzureAccessToken) {
+		if (!m_azurePasswordCallback.has_value()) {
+			throw std::logic_error("Can't do azure login without setting an azure login callback");
+		}
+		if (!server_hello.asMap().contains("azureClientId")) {
+			shvError() << "Broker didn't send azureClientId";
+		}
+
+		m_azurePasswordCallback.value()(server_hello.asMap().value("azureClientId").toString(), [impl_ret] (const auto& azure_access_token) {
+			shvDebug() << "AzureAccessToken:" << azure_access_token;
+			impl_ret("", azure_access_token);
+		});
+		return;
+	}
 	shvDebug() << server_hello.toCpon() << "login type:" << static_cast<int>(loginType());
 	std::string user_name = user();
 	std::string pass;
@@ -490,23 +520,11 @@ chainpack::RpcValue ClientConnection::createLoginParams(const chainpack::RpcValu
 		pass = password();
 		shvDebug() << "plain password:" << pass;
 	}
-	else if(loginType() == chainpack::IRpcConnection::LoginType::AzureAccessToken) {
-		user_name = "";
-		pass = password();
-		shvDebug() << "AzureAccessToken:" << pass;
-	}
 	else {
 		shvError() << "Login type:" << chainpack::UserLogin::loginTypeToString(loginType()) << "not supported";
 	}
-	return cp::RpcValue::Map {
-		{"login", cp::RpcValue::Map {
-			{"user", user_name},
-			{"password", pass},
-			{"type", chainpack::UserLogin::loginTypeToString(loginType())},
-		 },
-		},
-		{"options", connectionOptions()},
-	};
+
+	impl_ret(user_name, pass);
 }
 
 bool ClientConnection::isShvPathMutedInLog(const std::string &shv_path, const std::string &method) const
