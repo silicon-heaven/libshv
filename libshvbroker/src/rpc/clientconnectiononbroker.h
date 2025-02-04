@@ -20,7 +20,7 @@ class ClientConnectionOnBroker : public shv::iotqt::rpc::ServerConnection, publi
 
 	using Super = shv::iotqt::rpc::ServerConnection;
 public:
-	ClientConnectionOnBroker(shv::iotqt::rpc::Socket* socket, QObject *parent = nullptr);
+	ClientConnectionOnBroker(shv::iotqt::rpc::Socket* socket, const std::optional<std::string>& azureClientId, QObject *parent = nullptr);
 	~ClientConnectionOnBroker() override;
 
 	int connectionId() const override;

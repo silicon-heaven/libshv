@@ -26,8 +26,8 @@ using namespace std;
 
 namespace shv::broker::rpc {
 
-ClientConnectionOnBroker::ClientConnectionOnBroker(shv::iotqt::rpc::Socket *socket, QObject *parent)
-	: Super(socket, parent)
+ClientConnectionOnBroker::ClientConnectionOnBroker(shv::iotqt::rpc::Socket *socket, const std::optional<std::string>& azureClientId, QObject *parent)
+	: Super(socket, azureClientId, parent)
 {
 	shvDebug() << __FUNCTION__;
 	connect(this, &ClientConnectionOnBroker::socketConnectedChanged, this, &ClientConnectionOnBroker::onSocketConnectedChanged);

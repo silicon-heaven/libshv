@@ -12,9 +12,10 @@
 
 namespace shv::broker::rpc {
 
-BrokerTcpServer::BrokerTcpServer(SslMode ssl_mode, QObject *parent)
+BrokerTcpServer::BrokerTcpServer(SslMode ssl_mode, const std::optional<std::string>& azureClientId, QObject *parent)
 	: Super(parent)
 	, m_sslMode(ssl_mode)
+	, m_azureClientId(azureClientId)
 {
 }
 
@@ -86,10 +87,10 @@ void BrokerTcpServer::incomingConnection(qintptr socket_descriptor)
 shv::iotqt::rpc::ServerConnection *BrokerTcpServer::createServerConnection(QTcpSocket *socket, QObject *parent)
 {
 	if (m_sslMode == SecureMode) {
-		return new ClientConnectionOnBroker(new shv::iotqt::rpc::SslSocket(qobject_cast<QSslSocket *>(socket)), parent);
+		return new ClientConnectionOnBroker(new shv::iotqt::rpc::SslSocket(qobject_cast<QSslSocket *>(socket)), m_azureClientId, parent);
 	}
 
-	return new ClientConnectionOnBroker(new shv::iotqt::rpc::TcpSocket(socket), parent);
+	return new ClientConnectionOnBroker(new shv::iotqt::rpc::TcpSocket(socket), m_azureClientId, parent);
 }
 
 }
