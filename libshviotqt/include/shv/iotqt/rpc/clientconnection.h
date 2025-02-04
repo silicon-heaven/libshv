@@ -30,6 +30,7 @@ public:
 	SHV_FIELD_IMPL(std::string, u, U, ser)
 	SHV_FIELD_BOOL_IMPL2(p, P, eerVerify, true)
 	SHV_FIELD_IMPL(std::string, p, P, assword)
+	SHV_FIELD_IMPL(std::optional<std::function<void(const std::string&, const std::function<void(const std::string&)>&)>>, a, setA, zurePasswordCallback)
 	SHV_FIELD_IMPL(shv::chainpack::IRpcConnection::LoginType, l, L, oginType)
 	SHV_FIELD_IMPL2(shv::chainpack::RpcValue, c, C, onnectionOptions, shv::chainpack::RpcValue::Map())
 	SHV_FIELD_IMPL2(int, h, H, eartBeatInterval, 60)
@@ -94,7 +95,7 @@ protected:
 
 	bool isLoginPhase() const;
 	void processLoginPhase(const chainpack::RpcMessage &msg);
-	shv::chainpack::RpcValue createLoginParams(const shv::chainpack::RpcValue &server_hello) const;
+	void createLoginParams(const shv::chainpack::RpcValue &server_hello, const std::function<void(chainpack::RpcValue)>& params_callback) const;
 
 	struct ConnectionState
 	{

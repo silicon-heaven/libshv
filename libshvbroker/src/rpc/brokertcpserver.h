@@ -4,6 +4,8 @@
 
 #include <QSslConfiguration>
 
+#include <optional>
+
 namespace shv::broker::rpc {
 
 class ClientConnectionOnBroker;
