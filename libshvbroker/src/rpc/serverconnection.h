@@ -22,7 +22,7 @@ class SHVIOTQT_DECL_EXPORT ServerConnection : public SocketRpcConnection
 
 	using Super = SocketRpcConnection;
 public:
-	explicit ServerConnection(Socket *socket, QObject *parent = nullptr);
+	explicit ServerConnection(Socket *socket, const std::optional<std::string>& azureClientId, QObject *parent = nullptr);
 	~ServerConnection() Q_DECL_OVERRIDE;
 
 	const std::string& connectionName();
@@ -63,6 +63,8 @@ protected:
 	bool m_loginOk = false;
 
 	shv::chainpack::RpcValue m_connectionOptions;
+
+	std::optional<std::string> m_azureClientId;
 };
 
 }

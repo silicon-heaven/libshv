@@ -21,8 +21,9 @@ namespace shv::iotqt::rpc {
 
 static const int s_initPhaseTimeout = 10000;
 
-ServerConnection::ServerConnection(Socket *socket, QObject *parent)
+ServerConnection::ServerConnection(Socket *socket, const std::optional<std::string>& azureClientId, QObject *parent)
 	: Super(parent)
+	, m_azureClientId(azureClientId)
 {
 	setSocket(socket);
 	connect(this, &ServerConnection::socketConnectedChanged, [this](bool is_connected) {
@@ -126,8 +127,11 @@ void ServerConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 			shvInfo() << "sending hello response:" << connectionName();
 			m_userLoginContext.serverNounce = std::to_string(std::rand());
 			cp::RpcValue::Map params {
-				{"nonce", m_userLoginContext.serverNounce}
+				{"nonce", m_userLoginContext.serverNounce},
 			};
+			if (m_azureClientId.has_value()) {
+				params.emplace("azureClientId", m_azureClientId.value());
+			}
 			sendResponse(rq.requestId(), params);
 			return;
 		}

@@ -43,6 +43,7 @@ public:
 	CLIOPTION_GETTER_SETTER2(std::string, "ldap.searchBaseDN", l, setL, dapSearchBaseDN)
 	CLIOPTION_GETTER_SETTER2(chainpack::RpcList, "ldap.searchAttrs", l, setL, dapSearchAttrs)
 	CLIOPTION_GETTER_SETTER2(chainpack::RpcList, "ldap.groupMapping", l, setL, dapGroupMapping)
+	CLIOPTION_GETTER_SETTER2(std::string, "azure.clientId", a, setA, zureClientId)
 	CLIOPTION_GETTER_SETTER2(chainpack::RpcList, "azure.groupMapping", a, setA, zureGroupMapping)
 };
 }

@@ -15,7 +15,7 @@ class WebSocketServer : public QWebSocketServer
 	Q_OBJECT
 	using Super = QWebSocketServer;
 public:
-	WebSocketServer(SslMode secureMode, QObject *parent = nullptr);
+	WebSocketServer(SslMode secureMode, const std::optional<std::string>& azureClientId, QObject *parent = nullptr);
 	~WebSocketServer() override;
 
 	bool start(int port = 0);
@@ -28,5 +28,6 @@ private:
 	void unregisterConnection(int connection_id);
 private:
 	std::map<int, ClientConnectionOnBroker*> m_connections;
+	std::optional<std::string> m_azureClientId;
 };
 }
