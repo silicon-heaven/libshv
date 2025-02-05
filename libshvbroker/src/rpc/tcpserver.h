@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/iotqt/shviotqtglobal.h>
+#include <shv/broker/shvbrokerglobal.h>
 
 #include <shv/core/utils.h>
 #include <shv/chainpack/rpcvalue.h>
@@ -13,7 +13,7 @@ namespace shv::iotqt::rpc {
 
 class ServerConnection;
 
-class SHVIOTQT_DECL_EXPORT TcpServer : public QTcpServer
+class SHVBROKER_DECL_EXPORT TcpServer : public QTcpServer
 {
 	Q_OBJECT
 
