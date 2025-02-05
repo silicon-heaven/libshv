@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/iotqt/shviotqtglobal.h>
+#include <shv/broker/shvbrokerglobal.h>
 #include <shv/iotqt/rpc/socketrpcconnection.h>
 
 #include <shv/chainpack/irpcconnection.h>
@@ -16,7 +16,7 @@ namespace shv::iotqt::rpc {
 
 class Socket;
 
-class SHVIOTQT_DECL_EXPORT ServerConnection : public SocketRpcConnection
+class SHVBROKER_DECL_EXPORT ServerConnection : public SocketRpcConnection
 {
 	Q_OBJECT
 
