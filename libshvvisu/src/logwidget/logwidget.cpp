@@ -172,10 +172,11 @@ void LogWidget::setLogTableModel(LogTableModelBase *m)
 		m_logTableModel = m;
 		m_filterModel->setSourceModel(m_logTableModel);
 		if(m_logTableModel) {
-			connect(m_logTableModel, &LogTableModelBase::logRowInserted, this, &LogWidget::scrollToLastRow, Qt::UniqueConnection);
+			// https://invent.kde.org/sdk/clazy/-/issues/22
+			connect(m_logTableModel, &LogTableModelBase::logRowInserted, this, &LogWidget::scrollToLastRow, Qt::UniqueConnection); // clazy:exclude=lambda-unique-connection
 			QScrollBar *sb = ui->tableView->verticalScrollBar();
 			if(sb)
-				connect(sb, &QScrollBar::valueChanged, this, &LogWidget::onVerticalScrollBarValueChanged, Qt::UniqueConnection);
+				connect(sb, &QScrollBar::valueChanged, this, &LogWidget::onVerticalScrollBarValueChanged, Qt::UniqueConnection); // clazy:exclude=lambda-unique-connection
 		}
 	}
 }
