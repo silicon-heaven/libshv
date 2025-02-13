@@ -32,26 +32,6 @@ jobs:
       - name: Build and test
         uses: ./.github/actions/build-and-test
 
-  ubuntu-qt6-5:
-    name: Qt 6.5.3 / Ubuntu 22.04
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Setup CMake
-        uses: ./.github/actions/cmake
-        with:
-          qt_version: 6.5.3
-          qt_target: desktop
-          use_qt6: ON
-          modules: qtserialport qtwebsockets
-          asan: true
-
-      - name: Build and test
-        uses: ./.github/actions/build-and-test
-
   ubuntu-qt6-8:
     name: Qt 6.8.2 / Ubuntu 22.04
     runs-on: ubuntu-22.04
