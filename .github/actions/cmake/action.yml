@@ -22,6 +22,9 @@ inputs:
   additional_cmake_args:
     description: "Additional args to pass to CMake"
     default: ""
+  asan:
+    description: "Specify if ASAN/UBSAN should be enabled"
+    default: "false"
 
 runs:
   using: "composite"
@@ -103,6 +106,13 @@ runs:
         # Need to use Ninja with MSVC, otherwise ccache doesn't work. And I don't want to use MSBuild anyway. Hopefully
         # that won't be an issue.
         echo cmake_extra_args="${cmake_extra_args} '-G Ninja'" >> "$GITHUB_ENV"
+      shell: bash
+
+    - name: Enable ASAN/UBSAN
+      if: inputs.asan == 'true'
+      run: |
+        echo CFLAGS="-fsanitize=address,undefined ${CFLAGS}" >> "$GITHUB_ENV"
+        echo CXXFLAGS="-fsanitize=address,undefined ${CXXFLAGS}" >> "$GITHUB_ENV"
       shell: bash
 
     - name: Configure CMake
