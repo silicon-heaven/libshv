@@ -1,10 +1,11 @@
 #pragma once
 #include <shv/broker/groupmapping.h>
 
+#include <optional>
 #include <string>
 #include <vector>
 
 struct AzureConfig {
-	std::string clientId;
+	std::optional<std::string> clientId;
 	std::vector<GroupMapping> groupMapping;
 };
