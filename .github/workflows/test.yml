@@ -15,9 +15,6 @@ jobs:
   ubuntu-qt5:
     name: Qt 5.15.2 / Ubuntu 22.04
     runs-on: ubuntu-22.04
-    env:
-      CFLAGS: -fsanitize=address,undefined
-      CXXFLAGS: -fsanitize=address,undefined
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,6 +27,7 @@ jobs:
           qt_target: desktop
           use_qt6: OFF
           modules: ""
+          asan: true
 
       - name: Build and test
         uses: ./.github/actions/build-and-test
@@ -37,9 +35,6 @@ jobs:
   ubuntu-qt6-5:
     name: Qt 6.5.3 / Ubuntu 22.04
     runs-on: ubuntu-22.04
-    env:
-      CFLAGS: -fsanitize=address,undefined
-      CXXFLAGS: -fsanitize=address,undefined
     steps:
       - uses: actions/checkout@v4
         with:
@@ -52,6 +47,7 @@ jobs:
           qt_target: desktop
           use_qt6: ON
           modules: qtserialport qtwebsockets
+          asan: true
 
       - name: Build and test
         uses: ./.github/actions/build-and-test
@@ -59,9 +55,6 @@ jobs:
   ubuntu-qt6-8:
     name: Qt 6.8.2 / Ubuntu 22.04
     runs-on: ubuntu-22.04
-    env:
-      CFLAGS: -fsanitize=address,undefined
-      CXXFLAGS: -fsanitize=address,undefined
     steps:
       - uses: actions/checkout@v4
         with:
@@ -75,6 +68,7 @@ jobs:
           qt_arch: linux_gcc_64
           use_qt6: ON
           modules: qtserialport qtwebsockets
+          asan: true
 
       - name: Build and test
         uses: ./.github/actions/build-and-test
