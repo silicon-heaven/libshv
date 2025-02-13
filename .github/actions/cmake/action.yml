@@ -60,7 +60,7 @@ runs:
 
     # Qt
     - name: Install Qt
-      uses: jurplel/install-qt-action@v4
+      uses: Kidev/install-qt-action@v4.4.2 # Needed for WASM
       with:
         cache: true
         aqtversion: ">=3.2.0"
