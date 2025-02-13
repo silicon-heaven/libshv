@@ -57,7 +57,7 @@ runs:
 
     # Qt
     - name: Install Qt
-      uses: jurplel/install-qt-action@v3
+      uses: jurplel/install-qt-action@v4
       with:
         cache: true
         aqtversion: ">=3.2.0"
