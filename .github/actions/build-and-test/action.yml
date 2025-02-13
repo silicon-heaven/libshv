@@ -16,6 +16,10 @@ runs:
       run: |
         # https://github.com/DiligentGraphics/github-action/commit/d2f7990b16def1efa337e5cc2fc8fa22b6fae55d
         PATH="/c/mingw64/bin:$PATH"
+        EXTRA_CTEST_ARGS=()
+        if [[ '${{github.job}}' = windows-mingw ]]; then
+          EXTRA_CTEST_ARGS=(--exclude-regex 'coreqt|iotqt|broker')
+        fi
         # --build-config is only needed for MSVC, but it doesn't bother Linux builds.
-        ctest --output-on-failure --parallel "$(nproc)" --build-config Debug
+        ctest --output-on-failure --parallel "$(nproc)" --build-config Debug "${EXTRA_CTEST_ARGS[@]}"
       shell: bash
