@@ -290,12 +290,8 @@ BrokerApp::BrokerApp(int &argc, char **argv, AppCliOptions *cli_opts)
 	if (cli_opts->azureGroupMapping_isset()) {
 		shvInfo() << "Enabling LDAP authentication";
 
-		if (!cli_opts->azureClientId_isset()) {
-			SHV_EXCEPTION("Azure Client ID not set");
-		}
-
 		m_azureConfig = AzureConfig {
-			.clientId = cli_opts->azureClientId(),
+			.clientId = cli_opts->azureClientId_isset() ? std::optional{cli_opts->azureClientId()} : std::nullopt,
 			.groupMapping = transform_cli_group_mapping(cli_opts->azureGroupMapping())
 		};
 	}
@@ -433,7 +429,7 @@ void BrokerApp::startTcpServers()
 
 	std::optional<std::string> azureClientId;
 	if (m_azureConfig.has_value()) {
-		azureClientId.emplace(m_azureConfig.value().clientId);
+		azureClientId = m_azureConfig.value().clientId;
 	}
 
 	if(opts->serverPort_isset()) {
@@ -478,7 +474,7 @@ void BrokerApp::startWebSocketServers()
 
 	std::optional<std::string> azureClientId;
 	if (m_azureConfig.has_value()) {
-		azureClientId.emplace(m_azureConfig.value().clientId);
+		azureClientId = m_azureConfig.value().clientId;
 	}
 
 	if(opts->serverWebsocketPort_isset()) {
