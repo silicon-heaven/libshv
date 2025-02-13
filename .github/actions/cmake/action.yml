@@ -7,6 +7,9 @@ inputs:
   qt_arch:
     description: "Specify Qt version to use"
     default: "gcc_64"
+  qt_target:
+    description: "Specify Qt version to use"
+    required: true
   use_qt6:
     description: "Specify whether we're using Qt 5 or Qt 6"
     required: true
@@ -65,7 +68,7 @@ runs:
         arch: ${{ inputs.qt_arch }}
         install-deps: false
         modules: ${{ inputs.modules }}
-        target: ${{ inputs.qt_arch == 'android_arm64_v8a' && 'android' || 'desktop' }}
+        target: ${{ inputs.qt_target }}
         extra: --autodesktop
 
     - name: ccache
@@ -78,24 +81,24 @@ runs:
     - name: Android-specific stuff
       if: inputs.qt_arch == 'android_arm64_v8a'
       run: |
-        chmod +x "${Qt6_DIR}/bin/qt-cmake"
-        echo cmake_extra_args="${cmake_extra_args} '-DQT_HOST_PATH=$(realpath "${Qt6_DIR}/../gcc_64")'" >> "$GITHUB_ENV"
-        echo CMAKE_BIN="${Qt6_DIR}/bin/qt-cmake" >> "$GITHUB_ENV"
+        chmod +x "${QT_ROOT_DIR}/bin/qt-cmake"
+        echo cmake_extra_args="${cmake_extra_args} '-DQT_HOST_PATH=$(realpath "${QT_ROOT_DIR}/../gcc_64")'" >> "$GITHUB_ENV"
+        echo CMAKE_BIN="${QT_ROOT_DIR}/bin/qt-cmake" >> "$GITHUB_ENV"
       shell: bash
 
     - name: Add Werror
-      if: inputs.qt_arch != 'win64_msvc2019_64'
+      if: runner.os != 'Windows'
       run: |
         echo CFLAGS="-Werror ${CFLAGS}" >> "$GITHUB_ENV"
         echo CXXFLAGS="-Werror ${CXXFLAGS}" >> "$GITHUB_ENV"
       shell: bash
 
     - name: Setup MSVC toolchain
-      if: inputs.qt_arch == 'win64_msvc2019_64'
+      if: inputs.qt_arch == 'win64_msvc2022_64'
       uses: ilammy/msvc-dev-cmd@v1.13.0
 
     - name: Use Ninja with MSVC
-      if: inputs.qt_arch == 'win64_msvc2019_64'
+      if: inputs.qt_arch == 'win64_msvc2022_64'
       run: |
         # Need to use Ninja with MSVC, otherwise ccache doesn't work. And I don't want to use MSBuild anyway. Hopefully
         # that won't be an issue.

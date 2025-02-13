@@ -27,6 +27,7 @@ jobs:
         uses: ./.github/actions/cmake
         with:
           qt_version: 5.15.2
+          qt_target: desktop
           use_qt6: OFF
           modules: ""
 
@@ -48,6 +49,7 @@ jobs:
         uses: ./.github/actions/cmake
         with:
           qt_version: 6.5.3
+          qt_target: desktop
           use_qt6: ON
           modules: qtserialport qtwebsockets
 
@@ -55,7 +57,7 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   ubuntu-qt6-8:
-    name: Qt 6.8.0 / Ubuntu 22.04
+    name: Qt 6.8.2 / Ubuntu 22.04
     runs-on: ubuntu-22.04
     env:
       CFLAGS: -fsanitize=address,undefined
@@ -68,7 +70,8 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.8.0
+          qt_version: 6.8.2
+          qt_target: desktop
           qt_arch: linux_gcc_64
           use_qt6: ON
           modules: qtserialport qtwebsockets
@@ -77,7 +80,7 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   windows-mingw:
-    name: Qt 6.5.3 / Windows MinGW
+    name: Qt 6.8.2 / Windows MinGW
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
@@ -87,7 +90,8 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.5.3
+          qt_version: 6.8.2
+          qt_target: desktop
           qt_arch: win64_mingw
           use_qt6: ON
           modules: qtserialport qtwebsockets
@@ -101,7 +105,7 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   windows-msvc:
-    name: Qt 6.5.3 / Windows MSVC
+    name: Qt 6.8.2 / Windows MSVC
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
@@ -111,8 +115,9 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.5.3
-          qt_arch: win64_msvc2019_64
+          qt_version: 6.8.2
+          qt_target: desktop
+          qt_arch: win64_msvc2022_64
           use_qt6: ON
           modules: qtserialport qtwebsockets
           # Need to get all binaries in the same directory, otherwise the tests can't find the dlls.
@@ -125,7 +130,7 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   android:
-    name: Qt 6.7.3 / Android
+    name: Qt 6.8.2 / Android
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -135,7 +140,8 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.7.3
+          qt_version: 6.8.2
+          qt_target: android
           qt_arch: android_arm64_v8a
           use_qt6: ON
           modules: qtserialport qtwebsockets
@@ -145,7 +151,7 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   wasm:
-    name: WebAssembly / Qt 6.6.3
+    name: WebAssembly / Qt 6.8.2
     runs-on: ubuntu-22.04
     env:
       emsdk_cache_dir: "emsdk-cache"
@@ -169,7 +175,8 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.6.3
+          qt_version: 6.8.2
+          qt_target: wasm
           qt_arch: wasm_singlethread
           use_qt6: ON
           modules: qtwebsockets
