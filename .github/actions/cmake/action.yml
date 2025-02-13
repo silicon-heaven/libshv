@@ -67,6 +67,7 @@ runs:
       with:
         cache: true
         aqtversion: ">=3.2.0"
+        host: ${{ inputs.qt_target == 'wasm' && 'all_os' || null }}
         version: ${{ inputs.qt_version }}
         arch: ${{ inputs.qt_arch }}
         install-deps: false
