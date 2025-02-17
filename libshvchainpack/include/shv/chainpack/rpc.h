@@ -2,6 +2,8 @@
 
 #include <shv/chainpack/shvchainpackglobal.h>
 
+#include <string_view>
+
 namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT Rpc
@@ -29,6 +31,8 @@ public:
 	static constexpr auto KEY_SECRET = "secret";
 	static constexpr auto KEY_SHV_USER = "shvUser";
 	static constexpr auto KEY_BROKER_ID = "brokerId";
+	static constexpr auto KEY_OAUTH2 = "oauth2";
+	static constexpr auto AZURE_CLIENT_ID_SUFFIX = std::string_view{"@azure"};
 
 	static constexpr auto METH_HELLO = "hello";
 	static constexpr auto METH_LOGIN = Rpc::KEY_LOGIN;

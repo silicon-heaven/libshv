@@ -130,7 +130,7 @@ void ServerConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 				{"nonce", m_userLoginContext.serverNounce},
 			};
 			if (m_azureClientId.has_value()) {
-				params.emplace("azureClientId", m_azureClientId.value());
+				params.emplace(chainpack::Rpc::KEY_OAUTH2, chainpack::RpcValue::List{m_azureClientId.value() + chainpack::Rpc::AZURE_CLIENT_ID_SUFFIX.data()});
 			}
 			sendResponse(rq.requestId(), params);
 			return;

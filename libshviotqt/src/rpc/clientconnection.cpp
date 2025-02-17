@@ -479,12 +479,38 @@ void ClientConnection::createLoginParams(const chainpack::RpcValue &server_hello
 		if (!m_azurePasswordCallback.has_value()) {
 			throw std::logic_error("Can't do azure login without setting an azure login callback");
 		}
-		if (!server_hello.asMap().contains("azureClientId")) {
-			shvError() << "Broker didn't send azureClientId";
+
+		if (!server_hello.asMap().contains(chainpack::Rpc::KEY_OAUTH2)) {
+			shvError() << "Broker didn't send oauth2";
+			return;
 		}
 
-		m_azurePasswordCallback.value()(server_hello.asMap().value("azureClientId").toString(), [impl_ret] (const auto& azure_access_token) {
-			shvDebug() << "AzureAccessToken:" << azure_access_token;
+		const auto& oauth2 = server_hello.asMap().valref(chainpack::Rpc::KEY_OAUTH2);
+		if (!oauth2.isList()) {
+			shvError() << "Broker didn't send oauth2 as list:" << oauth2;
+			return;
+		}
+
+		const auto& oauth2_lst = oauth2.asList();
+
+		auto azure_oauth2 = std::ranges::find_if(oauth2_lst, [] (const auto& oauth2_entry) {
+			return oauth2_entry.asString().ends_with(chainpack::Rpc::AZURE_CLIENT_ID_SUFFIX);
+		});
+
+		if (azure_oauth2 == oauth2_lst.end()) {
+			shvError() << "Broker didn't send Azure oauth2:" << oauth2;
+			return;
+		}
+
+		if (!azure_oauth2->isString()) {
+			shvError() << "Broker didn't send Azure oauth2 as string:" << *azure_oauth2;
+			return;
+		}
+
+		auto azure_client_id = azure_oauth2->asString().substr(0, azure_oauth2->asString().size() - chainpack::Rpc::AZURE_CLIENT_ID_SUFFIX.size());
+
+		m_azurePasswordCallback.value()(azure_client_id, [impl_ret] (const auto& azure_access_token) {
+			shvDebug() << "Azure access token:" << azure_access_token;
 			impl_ret("", azure_access_token);
 		});
 		return;
