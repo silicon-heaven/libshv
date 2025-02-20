@@ -129,9 +129,6 @@ void ServerConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 			cp::RpcValue::Map params {
 				{"nonce", m_userLoginContext.serverNounce},
 			};
-			if (m_azureClientId.has_value()) {
-				params.emplace("azureClientId", m_azureClientId.value());
-			}
 			sendResponse(rq.requestId(), params);
 			return;
 		}
