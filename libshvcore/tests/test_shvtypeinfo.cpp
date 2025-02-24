@@ -83,6 +83,8 @@ DOCTEST_TEST_CASE("ShvTypeInfo")
 			}
 			{
 				auto pi = type_info.pathInfo("devices/tc/TC01/status");
+				// auto s = pi.propertyDescription.toRpcValue().toCpon();
+				REQUIRE(pi.propertyDescription.isValid());
 				REQUIRE(pi.deviceType == "TC_G3");
 				REQUIRE(pi.devicePath == "devices/tc/TC01");
 				REQUIRE(pi.propertyDescription.typeName() == "StatusTC");
@@ -123,7 +125,7 @@ DOCTEST_TEST_CASE("ShvTypeInfo")
 				auto td2 = type_info.findTypeDescription(fd.typeName());
 				REQUIRE(td2.type() == ShvTypeDescr::Type::Enum);
 				auto fd2 = td2.field("Ready");
-				REQUIRE(fd2.value() == 3);
+				REQUIRE(fd2.bitRange() == 3);
 				REQUIRE(fd2.label() == "Ready");
 			}
 			{
@@ -257,7 +259,8 @@ DOCTEST_TEST_CASE("ShvTypeInfo")
 			INFO("propertyDescriptionForPath: ", pi.propertyDescription.toRpcValue().toCpon());
 			CAPTURE(pi.propertyDescription .toRpcValue().toCpon());
 			REQUIRE(pi.deviceType == "ElboxHeating");
-			REQUIRE(pi.propertyDescription.isValid() == false);
+			REQUIRE(pi.propertyDescription.name() == "temperature");
+			REQUIRE(!pi.propertyDescription.isValid());
 		}
 	}
 

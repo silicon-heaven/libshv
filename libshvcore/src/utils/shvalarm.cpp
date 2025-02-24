@@ -132,7 +132,7 @@ std::vector<ShvAlarm> ShvAlarm::checkAlarms(const ShvTypeInfo &type_info, const 
 				const ShvFieldDescr &fld_descr = flds[i];
 				if(string alarm = fld_descr.alarm(); !alarm.empty()) {
 					has_alarm_definition = true;
-					if(value == fld_descr.value())
+					if(value == fld_descr.bitRange())
 						active_alarm_ix = i;
 				}
 			}
