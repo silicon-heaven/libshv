@@ -17,11 +17,11 @@ public:
 	ShvDescriptionBase();
 	ShvDescriptionBase(const chainpack::RpcValue &v);
 
+	bool isValid() const;
+
 	std::string name() const;
 	void setName(const std::string &n);
 
-	bool isEmpty() const;
-	bool isValid() const;
 	chainpack::RpcValue dataValue(const std::string &key, const chainpack::RpcValue &default_val = {}) const;
 
 	bool operator==(const ShvDescriptionBase &o) const;
@@ -35,42 +35,7 @@ protected:
 	chainpack::RpcValue m_data;
 };
 
-class SHVCORE_DECL_EXPORT ShvFieldDescr : public ShvDescriptionBase
-{
-	using Super = ShvDescriptionBase;
-public:
-	ShvFieldDescr();
-	ShvFieldDescr(const std::string &name,
-				  const std::string &type_name = {},
-				  const chainpack::RpcValue &value = {},
-				  chainpack::RpcValue::Map &&tags = {});
-
-	std::string typeName() const;
-	std::string label() const;
-	std::string description() const;
-	chainpack::RpcValue value() const;
-	std::string visualStyleName() const;
-	std::string alarm() const;
-	int alarmLevel() const;
-
-	std::string unit() const;
-
-	ShvFieldDescr &setTypeName(const std::string &type_name);
-	ShvFieldDescr &setLabel(const std::string &label);
-	ShvFieldDescr &setDescription(const std::string &description);
-	ShvFieldDescr &setUnit(const std::string &unit);
-	ShvFieldDescr &setVisualStyleName(const std::string &visual_style_name);
-	ShvFieldDescr &setAlarm(const std::string &alarm);
-
-	chainpack::RpcValue toRpcValue() const;
-	static ShvFieldDescr fromRpcValue(const chainpack::RpcValue &v);
-
-	shv::chainpack::RpcValue bitfieldValue(uint64_t val) const;
-	uint64_t setBitfieldValue(uint64_t bitfield, uint64_t uval) const;
-private:
-	std::pair<unsigned, unsigned> bitRange() const;
-};
-
+class ShvFieldDescr;
 class SHVCORE_DECL_EXPORT ShvTypeDescr : public ShvDescriptionBase
 {
 	using Super = ShvDescriptionBase;
@@ -98,13 +63,25 @@ public:
 	ShvTypeDescr(Type t, std::vector<ShvFieldDescr> &&flds, SampleType st = SampleType::Continuous, chainpack::RpcValue::Map &&tags = {});
 
 	Type type() const;
-	ShvTypeDescr& setType(Type t);
+	void setType(Type t);
 	std::string typeName() const;
-	ShvTypeDescr& setTypeName(const std::string &type_name);
+	void setTypeName(const std::string &type_name);
 	std::vector<ShvFieldDescr> fields() const;
 	ShvTypeDescr &setFields(const std::vector<ShvFieldDescr> &fields);
 	SampleType sampleType() const; // = SampleType::Continuous;
 	ShvTypeDescr &setSampleType(SampleType st);
+
+	int decimalPlaces() const;
+	void setDecimalPlaces(int n);
+	std::string unit() const;
+	void setUnit(const std::string &unit);
+	std::string label() const;
+	void setLabel(const std::string &label);
+	std::string description() const;
+	void setDescription(const std::string &description);
+
+	std::string visualStyleName() const;
+	void setVisualStyleName(const std::string &visual_style_name);
 
 	// name of TypeDescr which is super-set of this one
 	// setting this property effectivelly excudes this type description
@@ -112,8 +89,6 @@ public:
 	// localized in super-type already
 	std::string restrictionOfType() const;
 	bool isSiteSpecificLocalization() const;
-
-	bool isValid() const;
 
 	ShvFieldDescr field(const std::string &field_name) const;
 	shv::chainpack::RpcValue fieldValue(const shv::chainpack::RpcValue &val, const std::string &field_name) const;
@@ -124,13 +99,35 @@ public:
 	static std::string sampleTypeToString(SampleType t);
 	static SampleType sampleTypeFromString(const std::string &s);
 
-	int decimalPlaces() const;
-	ShvTypeDescr& setDecimalPlaces(int n);
-
 	chainpack::RpcValue toRpcValue() const;
 	static ShvTypeDescr fromRpcValue(const chainpack::RpcValue &v);
 
 	chainpack::RpcValue defaultRpcValue() const;
+
+	[[deprecated]] chainpack::RpcValue value() const { return bitRange(); }
+	chainpack::RpcValue bitRange() const;
+	shv::chainpack::RpcValue bitfieldValue(uint64_t val) const;
+	uint64_t setBitfieldValue(uint64_t bitfield, uint64_t uval) const;
+private:
+	std::pair<unsigned, unsigned> bitRangePair() const;
+};
+
+class SHVCORE_DECL_EXPORT ShvFieldDescr : public ShvTypeDescr
+{
+	using Super = ShvDescriptionBase;
+public:
+	ShvFieldDescr();
+	ShvFieldDescr(const std::string &name,
+				  const std::string &type_name = {},
+				  const chainpack::RpcValue &value = {},
+				  chainpack::RpcValue::Map &&tags = {});
+
+	std::string alarm() const;
+	void setAlarm(const std::string &alarm);
+	int alarmLevel() const;
+
+	chainpack::RpcValue toRpcValue() const;
+	static ShvFieldDescr fromRpcValue(const chainpack::RpcValue &v);
 };
 
 using ShvMethodDescr = shv::chainpack::MetaMethod;
@@ -144,8 +141,8 @@ public:
 
 	std::vector<ShvMethodDescr> methods() const;
 	ShvMethodDescr method(const std::string &name) const;
-	ShvPropertyDescr& addMethod(const ShvMethodDescr &method_descr);
-	ShvPropertyDescr& setMethod(const ShvMethodDescr &method_descr);
+	void addMethod(const ShvMethodDescr &method_descr);
+	void setMethod(const ShvMethodDescr &method_descr);
 
 	chainpack::RpcValue toRpcValue() const;
 	static ShvPropertyDescr fromRpcValue(const chainpack::RpcValue &v, chainpack::RpcValue::Map *extra_tags = nullptr);
@@ -168,7 +165,7 @@ public:
 	 * Redefinition of properties in restricted device is not allowed.
 	 *
 	 * This property is not well designed and it will be deprecated.
-  	 * New properties 'documentType' and 'controllerType' will be used instead. 
+	 * New properties 'documentType' and 'controllerType' will be used instead.
 	 */
 	std::string restrictionOfDevice;
 	/*
@@ -179,7 +176,8 @@ public:
 	static ShvDeviceDescription fromRpcValue(const chainpack::RpcValue &v);
 	chainpack::RpcValue toRpcValue() const;
 
-	ShvDeviceDescription& setPropertyDescription(const ShvPropertyDescr &property_descr);
+	void setPropertyDescription(const ShvPropertyDescr &property_descr);
+	void removePropertyDescription(const std::string &property_name);
 
 	Properties::iterator findProperty(const std::string &name);
 	Properties::const_iterator findProperty(const std::string &name) const;

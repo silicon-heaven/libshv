@@ -49,13 +49,6 @@ std::string ShvDescriptionBase::name() const
 	return m_data.asMap().value(KEY_NAME).asString();
 }
 
-bool ShvDescriptionBase::isValid() const
-{
-	const auto has_name = hasName();
-	const auto size = m_data.asMap().size();
-	return size > 1 && has_name;
-}
-
 RpcValue ShvDescriptionBase::dataValue(const std::string &key, const chainpack::RpcValue &default_val) const
 {
 	const auto &m = m_data.asMap();
@@ -78,9 +71,9 @@ void ShvDescriptionBase::setName(const std::string &n)
 	setDataValue(KEY_NAME, n);
 }
 
-bool ShvDescriptionBase::isEmpty() const
+bool ShvDescriptionBase::isValid() const
 {
-	return m_data.asMap().empty();
+	return !m_data.asMap().empty();
 }
 
 void ShvDescriptionBase::setDataValue(const std::string &key, const chainpack::RpcValue &val)
@@ -108,8 +101,9 @@ void ShvDescriptionBase::mergeTags(chainpack::RpcValue::Map &map)
 		map.merge(tags);
 	}
 }
+
 //=====================================================================
-// ShvTypeDescrField
+// ShvFieldDescr
 //=====================================================================
 ShvFieldDescr::ShvFieldDescr() = default;
 
@@ -119,31 +113,6 @@ ShvFieldDescr::ShvFieldDescr(const std::string &name, const std::string &type_na
 	setName(name);
 	setDataValue(KEY_TYPE_NAME, type_name);
 	setDataValue(KEY_VALUE, value);
-}
-
-std::string ShvFieldDescr::typeName() const
-{
-	return dataValue(KEY_TYPE_NAME).asString();
-}
-
-std::string ShvFieldDescr::label() const
-{
-	return dataValue(KEY_LABEL).asString();
-}
-
-std::string ShvFieldDescr::description() const
-{
-	return dataValue(KEY_DESCRIPTION).asString();
-}
-
-RpcValue ShvFieldDescr::value() const
-{
-	return dataValue(KEY_VALUE);
-}
-
-std::string ShvFieldDescr::visualStyleName() const
-{
-	return dataValue(KEY_VISUAL_STYLE).asString();
 }
 
 std::string ShvFieldDescr::alarm() const
@@ -156,45 +125,9 @@ int ShvFieldDescr::alarmLevel() const
 	return dataValue(KEY_ALARM_LEVEL).toInt();
 }
 
-std::string ShvFieldDescr::unit() const
-{
-	return dataValue(KEY_UNIT).asString();
-}
-
-ShvFieldDescr &ShvFieldDescr::setTypeName(const std::string &type_name)
-{
-	setDataValue(KEY_TYPE_NAME, type_name);
-	return *this;
-}
-
-ShvFieldDescr &ShvFieldDescr::setLabel(const std::string &label)
-{
-	setDataValue(KEY_LABEL, label);
-	return *this;
-}
-
-ShvFieldDescr &ShvFieldDescr::setDescription(const std::string &description)
-{
-	setDataValue(KEY_DESCRIPTION, description);
-	return *this;
-}
-
-ShvFieldDescr &ShvFieldDescr::setUnit(const std::string &unit)
-{
-	setDataValue(KEY_UNIT, unit);
-	return *this;
-}
-
-ShvFieldDescr &ShvFieldDescr::setVisualStyleName(const std::string &visual_style_name)
-{
-	setDataValue(KEY_VISUAL_STYLE, visual_style_name);
-	return *this;
-}
-
-ShvFieldDescr &ShvFieldDescr::setAlarm(const std::string &alarm)
+void ShvFieldDescr::setAlarm(const std::string &alarm)
 {
 	setDataValue(KEY_ALARM, alarm);
-	return *this;
 }
 
 RpcValue ShvFieldDescr::toRpcValue() const
@@ -210,57 +143,6 @@ ShvFieldDescr ShvFieldDescr::fromRpcValue(const RpcValue &v)
 	ShvFieldDescr ret;
 	ret.setData(v);
 	return ret;
-}
-
-std::pair<unsigned, unsigned> ShvFieldDescr::bitRange() const
-{
-	unsigned bit_no1 = 0;
-	unsigned bit_no2 = 0;
-	if(value().isList()) {
-		const auto val = value();
-		const auto &lst = val.asList();
-		bit_no1 = lst.value(0).toUInt();
-		bit_no2 = lst.value(1).toUInt();
-		if(bit_no2 < bit_no1) {
-			shvError() << "Invalid bit specification:" << value().toCpon();
-			bit_no2 = bit_no1;
-		}
-	}
-	else {
-		bit_no1 = bit_no2 = value().toUInt();
-	}
-	return std::pair<unsigned, unsigned>(bit_no1, bit_no2);
-}
-
-RpcValue ShvFieldDescr::bitfieldValue(uint64_t uval) const
-{
-	if(!isValid())
-		return {};
-	auto [bit_no1, bit_no2] = bitRange();
-	uint64_t mask = ~((~static_cast<uint64_t>(0)) << (bit_no2 + 1));
-	shvDebug() << "bits:" << bit_no1 << bit_no2 << (bit_no1 == bit_no2) << "uval:" << uval << "mask:" << mask;
-	uval = (uval & mask) >> bit_no1;
-	shvDebug() << "uval masked and rotated right by:" << bit_no1 << "bits, uval:" << uval;
-	RpcValue result;
-	if(bit_no1 == bit_no2)
-		result = uval != 0;
-	else
-		result = uval;
-	return result;
-}
-
-uint64_t ShvFieldDescr::setBitfieldValue(uint64_t bitfield, uint64_t uval) const
-{
-	if(!isValid())
-		return uval;
-	auto [bit_no1, bit_no2] = bitRange();
-	uint64_t mask = ~((~static_cast<uint64_t>(0)) << (bit_no2 - bit_no1 + 1));
-	uval &= mask;
-	mask <<= bit_no1;
-	uval <<= bit_no1;
-	bitfield &= ~mask;
-	bitfield |= uval;
-	return bitfield;
 }
 
 //=====================================================================
@@ -291,32 +173,142 @@ ShvTypeDescr::Type ShvTypeDescr::type() const
 	return static_cast<Type>(dataValue(KEY_TYPE).toInt());
 }
 
-ShvTypeDescr &ShvTypeDescr::setType(Type t)
+void ShvTypeDescr::setType(Type t)
 {
-	auto type_name = typeToString(t);
 	setDataValue(KEY_TYPE, static_cast<int>(t));
-	setName(type_name);
-	return *this;
 }
 
 std::string ShvTypeDescr::typeName() const
 {
-	return name();
+	if (auto tn = dataValue(KEY_TYPE_NAME).asString(); !tn.empty()) {
+		return tn;
+	}
+	return typeToString(type());
 }
 
-ShvTypeDescr &ShvTypeDescr::setTypeName(const std::string &type_name)
+void ShvTypeDescr::setTypeName(const std::string &type_name)
 {
-	auto t = typeFromString(type_name);
-	setType(t);
-	return *this;
+	setDataValue(KEY_TYPE_NAME, type_name);
+	if (type() == Type::Invalid) {
+		auto t = typeFromString(type_name);
+		setType(t);
+	}
+}
+
+RpcValue ShvTypeDescr::bitRange() const
+{
+	// we must use key value for backward compatibility
+	return dataValue(KEY_VALUE);
+}
+
+std::pair<unsigned, unsigned> ShvTypeDescr::bitRangePair() const
+{
+	unsigned bit_no1 = 0;
+	unsigned bit_no2 = 0;
+	if(bitRange().isList()) {
+		const auto val = bitRange();
+		const auto &lst = val.asList();
+		bit_no1 = lst.value(0).toUInt();
+		bit_no2 = lst.value(1).toUInt();
+		if(bit_no2 < bit_no1) {
+			shvError() << "Invalid bit specification:" << bitRange().toCpon();
+			bit_no2 = bit_no1;
+		}
+	}
+	else {
+		bit_no1 = bit_no2 = bitRange().toUInt();
+	}
+	return std::pair<unsigned, unsigned>(bit_no1, bit_no2);
+}
+
+RpcValue ShvTypeDescr::bitfieldValue(uint64_t uval) const
+{
+	if(!isValid())
+		return {};
+	auto [bit_no1, bit_no2] = bitRangePair();
+	uint64_t mask = ~((~static_cast<uint64_t>(0)) << (bit_no2 + 1));
+	shvDebug() << "bits:" << bit_no1 << bit_no2 << (bit_no1 == bit_no2) << "uval:" << uval << "mask:" << mask;
+	uval = (uval & mask) >> bit_no1;
+	shvDebug() << "uval masked and rotated right by:" << bit_no1 << "bits, uval:" << uval;
+	RpcValue result;
+	if(bit_no1 == bit_no2)
+		result = uval != 0;
+	else
+		result = uval;
+	return result;
+}
+
+uint64_t ShvTypeDescr::setBitfieldValue(uint64_t bitfield, uint64_t uval) const
+{
+	if(!isValid())
+		return uval;
+	auto [bit_no1, bit_no2] = bitRangePair();
+	uint64_t mask = ~((~static_cast<uint64_t>(0)) << (bit_no2 - bit_no1 + 1));
+	uval &= mask;
+	mask <<= bit_no1;
+	uval <<= bit_no1;
+	bitfield &= ~mask;
+	bitfield |= uval;
+	return bitfield;
+}
+
+int ShvTypeDescr::decimalPlaces() const
+{
+	return dataValue(KEY_DEC_PLACES).toInt();
+}
+
+void ShvTypeDescr::setDecimalPlaces(int n)
+{
+	setDataValue(KEY_DEC_PLACES, n);
+}
+
+std::string ShvTypeDescr::unit() const
+{
+	return dataValue(KEY_UNIT).asString();
+}
+
+void ShvTypeDescr::setUnit(const std::string &unit)
+{
+	setDataValue(KEY_UNIT, unit);
+}
+
+std::string ShvTypeDescr::label() const
+{
+	return dataValue(KEY_LABEL).asString();
+}
+
+void ShvTypeDescr::setLabel(const std::string &label)
+{
+	setDataValue(KEY_LABEL, label);
+}
+
+std::string ShvTypeDescr::description() const
+{
+	return dataValue(KEY_DESCRIPTION).asString();
+}
+
+void ShvTypeDescr::setDescription(const std::string &description)
+{
+	setDataValue(KEY_DESCRIPTION, description);
+}
+
+std::string ShvTypeDescr::visualStyleName() const
+{
+	return dataValue(KEY_VISUAL_STYLE).asString();
+}
+
+void ShvTypeDescr::setVisualStyleName(const std::string &visual_style_name)
+{
+	setDataValue(KEY_VISUAL_STYLE, visual_style_name);
 }
 
 std::vector<ShvFieldDescr> ShvTypeDescr::fields() const
 {
 	std::vector<ShvFieldDescr> ret;
 	auto flds = dataValue(KEY_FIELDS);
-	for(const RpcValue &rv : flds.asList())
+	for(const RpcValue &rv : flds.asList()) {
 		ret.push_back(ShvFieldDescr::fromRpcValue(rv));
+	}
 	return ret;
 }
 
@@ -354,11 +346,6 @@ bool ShvTypeDescr::isSiteSpecificLocalization() const
 	return dataValue(KEY_SITE_SPECIFIC_LOCALIZATION).toBool();
 }
 
-bool ShvTypeDescr::isValid() const
-{
-	return type() != Type::Invalid;
-}
-
 ShvFieldDescr ShvTypeDescr::field(const std::string &field_name) const
 {
 	auto flds = dataValue(KEY_FIELDS);
@@ -379,7 +366,7 @@ RpcValue ShvTypeDescr::fieldValue(const chainpack::RpcValue &val, const std::str
 	case Type::Map:
 		return val.asMap().value(field_name);
 	case Type::Enum:
-		return field(field_name).value().toInt();
+		return field(field_name).bitRange().toInt();
 	default:
 		break;
 	}
@@ -461,17 +448,6 @@ RpcValue ShvTypeDescr::defaultRpcValue() const
 	}
 
 	return RpcValue::fromType(RpcValue::Type::Null);
-}
-
-int ShvTypeDescr::decimalPlaces() const
-{
-	return dataValue(KEY_DEC_PLACES).toInt();
-}
-
-ShvTypeDescr &ShvTypeDescr::setDecimalPlaces(int n)
-{
-	setDataValue(KEY_DEC_PLACES, n);
-	return *this;
 }
 
 RpcValue ShvTypeDescr::toRpcValue() const
@@ -569,15 +545,14 @@ ShvMethodDescr ShvPropertyDescr::method(const std::string &name) const
 	return {};
 }
 
-ShvPropertyDescr &ShvPropertyDescr::addMethod(const ShvMethodDescr &method_descr)
+void ShvPropertyDescr::addMethod(const ShvMethodDescr &method_descr)
 {
 	RpcList new_methods = dataValue(KEY_METHODS).asList();
 	new_methods.push_back(method_descr.toRpcValue());
 	setDataValue(KEY_METHODS, new_methods);
-	return *this;
 }
 
-ShvPropertyDescr &ShvPropertyDescr::setMethod(const ShvMethodDescr &method_descr)
+void ShvPropertyDescr::setMethod(const ShvMethodDescr &method_descr)
 {
 	auto method_list = methods();
 	bool method_found = false;
@@ -596,7 +571,6 @@ ShvPropertyDescr &ShvPropertyDescr::setMethod(const ShvMethodDescr &method_descr
 		new_methods.push_back(mm.toRpcValue());
 	}
 	setDataValue(KEY_METHODS, new_methods);
-	return *this;
 }
 
 RpcValue ShvPropertyDescr::toRpcValue() const
@@ -606,7 +580,9 @@ RpcValue ShvPropertyDescr::toRpcValue() const
 	for (const auto &m : methods()) {
 		mml.push_back(m.toMap());
 	}
-	rv.set(KEY_METHODS, mml);
+	if (!mml.empty()) {
+		rv.set(KEY_METHODS, mml);
+	}
 	return rv;
 }
 
@@ -711,23 +687,22 @@ RpcValue ShvDeviceDescription::toRpcValue() const
 	return ret;
 }
 
-ShvDeviceDescription &ShvDeviceDescription::setPropertyDescription(const ShvPropertyDescr &property_descr)
+void ShvDeviceDescription::setPropertyDescription(const ShvPropertyDescr &property_descr)
 {
 	auto property_name = property_descr.name();
-	if(property_descr.isValid()) {
-		if(auto it = findProperty(property_name); it != properties.end()) {
-			*it = property_descr;
-		}
-		else {
-			properties.push_back(property_descr);
-		}
+	if(auto it = findProperty(property_name); it != properties.end()) {
+		*it = property_descr;
 	}
 	else {
-		if(auto it = findProperty(property_name); it != properties.end()) {
-			properties.erase(it);
-		}
+		properties.push_back(property_descr);
 	}
-	return *this;
+}
+
+void ShvDeviceDescription::removePropertyDescription(const std::string &property_name)
+{
+	if(auto it = findProperty(property_name); it != properties.end()) {
+		properties.erase(it);
+	}
 }
 
 //=====================================================================
@@ -936,7 +911,10 @@ ShvTypeInfo::PathInfo ShvTypeInfo::pathInfo(const std::string &shv_path) const
 	ret.devicePath = device_path;
 	ret.deviceType = device_type;
 	if(deviation_found) {
-		ret.propertyDescription.setName(cut_sufix(cut_prefix(shv_path, ret.devicePath), ret.fieldPath));
+		// property can removed by deviation if set to infalid
+		if (ret.propertyDescription.isValid()) {
+			ret.propertyDescription.setName(cut_sufix(cut_prefix(shv_path, ret.devicePath), ret.fieldPath));
+		}
 	}
 	else {
 		const auto &[property_descr, field_path] = findPropertyDescription(device_type, property_path);
@@ -999,8 +977,9 @@ ShvTypeDescr ShvTypeInfo::typeDescriptionForPath(const std::string &shv_path) co
 RpcValue ShvTypeInfo::extraTagsForPath(const std::string &shv_path) const
 {
 	auto it = m_extraTags.find(shv_path);
-	if( it == m_extraTags.end())
+	if( it == m_extraTags.end()) {
 		return {};
+	}
 
 	return it->second;
 }
@@ -1191,7 +1170,7 @@ RpcValue ShvTypeInfo::applyTypeDescription(const chainpack::RpcValue &val, const
 		int ival = val.toInt();
 		if(translate_enums) {
 			for(const ShvFieldDescr &fld : type_descr.fields()) {
-				if(fld.value().toInt() == ival)
+				if(fld.bitRange().toInt() == ival)
 					return fld.name();
 			}
 			return "UNKNOWN_" + val.toCpon();
@@ -1325,7 +1304,7 @@ void ShvTypeInfo::fromNodesTree_helper(const RpcValue::Map &node_types,
 	if(!property_descr_map.empty()) {
 		RpcValue::Map extra_tags;
 		property_descr = shv::core::utils::ShvPropertyDescr::fromRpcValue(property_descr_map, &extra_tags);
-		if(!property_descr.isEmpty()) {
+		if(property_descr.isValid()) {
 			property_descr.setName(current_property_path);
 			current_device_description->properties.push_back(property_descr);
 		}
