@@ -911,7 +911,7 @@ ShvTypeInfo::PathInfo ShvTypeInfo::pathInfo(const std::string &shv_path) const
 	ret.devicePath = device_path;
 	ret.deviceType = device_type;
 	if(deviation_found) {
-		// property can removed by deviation if set to infalid
+		// property can removed by deviation if set to invalid
 		if (ret.propertyDescription.isValid()) {
 			ret.propertyDescription.setName(cut_sufix(cut_prefix(shv_path, ret.devicePath), ret.fieldPath));
 		}
