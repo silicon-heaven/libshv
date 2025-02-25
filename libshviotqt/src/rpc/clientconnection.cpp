@@ -8,6 +8,7 @@
 
 #include <shv/iotqt/utils.h>
 
+#include <shv/coreqt/rpc.h>
 #include <shv/coreqt/log.h>
 
 #include <shv/core/exception.h>
@@ -28,6 +29,10 @@
 #ifdef QT_SERIALPORT_LIB
 #include <shv/iotqt/rpc/serialportsocket.h>
 #include <QSerialPort>
+#endif
+#ifdef WITH_SHV_OAUTH2_AZURE
+#include <QOAuth2AuthorizationCodeFlow>
+#include <QOAuthHttpServerReplyHandler>
 #endif
 
 #ifdef WITH_SHV_WEBSOCKETS
@@ -77,6 +82,13 @@ void ClientConnection::setConnectionUrl(const QUrl &url)
 	}
 	if(auto password = query.queryItemValue("password"); !password.isEmpty()) {
 		setPassword(password.toStdString());
+	}
+	if(auto workflow = query.queryItemValue("workflow"); !workflow.isEmpty()) {
+		if (workflow == "oauth2-azure") {
+			m_oauth2Azure = true;
+		} else {
+			throw std::runtime_error{"unsupported workflow " + workflow.toStdString()};
+		}
 	}
 	m_connectionUrl.setUserInfo({});
 }
@@ -186,6 +198,7 @@ void ClientConnection::setCliOptions(const ClientAppCliOptions *cli_opts)
 		setPassword(cli_opts->password());
 	shvDebug() << cli_opts->loginType() << "-->" << static_cast<int>(shv::chainpack::UserLogin::loginTypeFromString(cli_opts->loginType()));
 	setLoginType(shv::chainpack::UserLogin::loginTypeFromString(cli_opts->loginType()));
+
 
 	setHeartBeatInterval(cli_opts->heartBeatInterval());
 	{
@@ -384,12 +397,17 @@ void ClientConnection::sendLogin(const shv::chainpack::RpcValue &server_hello)
 {
 	createLoginParams(server_hello, [this] (const auto& login_params) {
 		m_connectionState.loginRequestId = callShvMethod({}, cp::Rpc::METH_LOGIN, login_params);
+		m_connectionState.oAuth2WaitingForUser = false;
 	});
 }
 
 void ClientConnection::checkBrokerConnected()
 {
 	shvDebug() << "check broker connected: " << isSocketConnected();
+	if (m_connectionState.oAuth2WaitingForUser) {
+		shvInfo() << "Still waiting for OAuth2 user interaction";
+		return;
+	}
 	if(!isBrokerConnected()) {
 		abortSocket();
 		m_connectionState = ConnectionState();
@@ -451,11 +469,23 @@ void ClientConnection::onSocketConnectedChanged(bool is_connected)
 				}
 			});
 			sendHello();
+#ifdef WITH_SHV_OAUTH2_AZURE
+			if (m_oauth2Azure && !m_connectionState.oAuth2WaitingForUser) {
+				m_loginType = LoginType::Token;
+				m_user = "";
+				m_password = "";
+				m_connectionState.workflowsRequestId = callShvMethod({}, cp::Rpc::METH_WORKFLOWS);
+			}
+#endif
 		}
 	}
 	else {
 		shvInfo() << objectName() << "connection id:" << connectionId() << "Socket disconnected from RPC server";
-		setState(State::NotConnected);
+		if (m_connectionState.oAuth2WaitingForUser) {
+			shvInfo() << "Socket disconnected, but we're waiting for OAuth2 user interaction";
+		} else {
+			setState(State::NotConnected);
+		}
 	}
 }
 
@@ -475,20 +505,22 @@ void ClientConnection::createLoginParams(const chainpack::RpcValue &server_hello
 		});
 	};
 
-	if(loginType() == chainpack::IRpcConnection::LoginType::AzureAccessToken) {
-		if (!m_azurePasswordCallback.has_value()) {
-			throw std::logic_error("Can't do azure login without setting an azure login callback");
+	if(loginType() == chainpack::IRpcConnection::LoginType::AzureAccessToken || loginType() == chainpack::IRpcConnection::LoginType::Token) {
+		if (m_connectionState.oAuth2WaitingForUser && m_connectionState.token.has_value()) {
+			impl_ret("", m_connectionState.token.value());
+			return;
 		}
-		if (!server_hello.asMap().contains("azureClientId")) {
-			shvError() << "Broker didn't send azureClientId";
+		if (!m_tokenPasswordCallback) {
+			throw std::logic_error("Can't do token login without setting a token login callback");
 		}
 
-		m_azurePasswordCallback.value()(server_hello.asMap().value("azureClientId").toString(), [impl_ret] (const auto& azure_access_token) {
-			shvDebug() << "AzureAccessToken:" << azure_access_token;
-			impl_ret("", azure_access_token);
+		m_tokenPasswordCallback([impl_ret] (const auto& token) {
+			shvDebug() << "Token:" << token;
+			impl_ret("", token);
 		});
 		return;
 	}
+
 	shvDebug() << server_hello.toCpon() << "login type:" << static_cast<int>(loginType());
 	std::string user_name = user();
 	std::string pass;
@@ -516,7 +548,7 @@ void ClientConnection::createLoginParams(const chainpack::RpcValue &server_hello
 		QByteArray sha1 = hash.result().toHex();
 		pass = std::string(sha1.constData(), static_cast<size_t>(sha1.size()));
 	}
-	else if(loginType() == chainpack::IRpcConnection::LoginType::Plain) {
+	else if(loginType() == chainpack::IRpcConnection::LoginType::Plain || loginType() == chainpack::IRpcConnection::LoginType::Token) {
 		pass = password();
 		shvDebug() << "plain password:" << pass;
 	}
@@ -604,6 +636,74 @@ bool ClientConnection::isLoginPhase() const
 	return state() == State::SocketConnected;
 }
 
+
+#define azureInfo() shvCInfo("azure")
+#define azureWarning() shvCWarning("azure")
+#define azureError() shvCError("azure")
+
+#ifdef WITH_SHV_OAUTH2_AZURE
+QFuture<std::variant<QFuture<QString>, QFuture<QString>>> ClientConnection::doAzureAuth(const QString& client_id, const QString& authorize_url, const QString& token_url, const QString& scopes)
+{
+	auto oauth2 = new QOAuth2AuthorizationCodeFlow(this);
+	auto replyHandler = new QOAuthHttpServerReplyHandler(oauth2);
+	replyHandler->setCallbackText(R"(
+		Azure authentication successful. You can now close this tab, or it will close automatically in 3 seconds.
+		<script>
+			window.setTimeout(() => {window.close();}, 3000);
+		</script>
+	)");
+	oauth2->setReplyHandler(replyHandler);
+	oauth2->setClientIdentifier(client_id);
+	oauth2->setAuthorizationUrl(authorize_url);
+	oauth2->setAccessTokenUrl(token_url);
+	oauth2->setScope(scopes);
+	QObject::connect(oauth2, &QOAuth2AuthorizationCodeFlow::authorizeWithBrowser, this, [this] (const auto& url) {
+		emit authorizeWithBrowser(url);
+	});
+
+	QObject::connect(oauth2, &QOAuth2AuthorizationCodeFlow::statusChanged, [] (const QOAuth2AuthorizationCodeFlow::Status& status) {
+		azureInfo() << "Status changed: " << [status] {
+			using Status = QOAuth2AuthorizationCodeFlow::Status;
+			switch (status) {
+			case Status::NotAuthenticated: return "NotAuthenticated";
+			case Status::TemporaryCredentialsReceived: return "TemporaryCredentialsReceived";
+			case Status::Granted: return "Granted";
+			case Status::RefreshingToken: return "RefreshingToken";
+			}
+			return "<unknown status>";
+		}();
+	});
+
+	m_connectionState.oAuth2WaitingForUser = true;
+	oauth2->grant();
+	return QtFuture::whenAny(
+		QtFuture::connect(oauth2, &QOAuth2AuthorizationCodeFlow::granted).then([oauth2] {
+		return oauth2->token();
+	}), QtFuture::connect(oauth2, &QOAuth2AuthorizationCodeFlow::error).then([] (std::tuple<const QString&, const QString&, const QUrl&> errors) {
+		auto [error, error_description, error_url] = errors;
+		auto res = QStringLiteral("Failed to authenticate with Azure.\n");
+		auto append_error_if_not_empty = [&res] (const auto& error_prefix, const auto& error_str) {
+			if (!error_str.isEmpty()) {
+				res += error_prefix;
+				res += error_str;
+				res += '\n';
+			}
+		};
+		append_error_if_not_empty("Error: ", error);
+		// The error description is a percent encoded string with plus signs instead of spaces.
+		append_error_if_not_empty("Description: ", QUrl::fromPercentEncoding(error_description.toLatin1().replace('+', ' ')));
+		// The error url is actually inside the path the QUrl. Urgh. The reason is that Azure precent-encodes the URL,
+		// and Qt doesn't expect that.
+		append_error_if_not_empty("URL: ", error_url.path());
+		azureWarning() << res;
+		return res;
+	})).then([oauth2] (const std::variant<QFuture<QString>, QFuture<QString>>& result) {
+		oauth2->deleteLater();
+		return result;
+	});
+}
+#endif
+
 void ClientConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 {
 	do {
@@ -619,9 +719,90 @@ void ClientConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 		if(id == 0)
 			break;
 		if(m_connectionState.helloRequestId == id) {
+			if (m_oauth2Azure && !m_connectionState.token.has_value()) {
+				// `:hello` is always sent and received for compatibility reasons, but we want to login with Azure.
+				// If we already have the token, we'll login now.
+				return;
+			}
 			sendLogin(resp.result());
 			return;
 		}
+
+
+#ifdef WITH_SHV_OAUTH2_AZURE
+		if (m_connectionState.workflowsRequestId == id) {
+			if (!resp.result().isList()) {
+				shvError() << "Invalid `:workflows` response, expected List, got:" << resp.result().toCpon();
+				return;
+			}
+
+			const auto& lst = resp.result().asList();
+
+			if (m_oauth2Azure) {
+				auto oauth2_azure_workflow = std::ranges::find_if(lst, [] (const chainpack::RpcValue& workflow) {
+					return workflow.asMap().value("type").asString() == "oauth2-azure";
+				});
+
+				auto azure_unsupported = [this] (const auto& err) {
+					setState(State::ConnectionError);
+					emit brokerLoginError(chainpack::RpcError::createInternalError(std::string{"Azure login is not supported by the server: "} + err));
+				};
+
+				if (oauth2_azure_workflow == lst.end()) {
+					azure_unsupported("no azure workflow");
+					return;
+				}
+
+				if (!oauth2_azure_workflow->isMap()) {
+					azure_unsupported("oauth2-azure workflow is not a map");
+					return;
+				}
+
+				const auto& oauth2_azure_workflow_map = oauth2_azure_workflow->asMap();
+				#define CHECK_FIELD(field_name, var_name) \
+					if (!oauth2_azure_workflow_map.contains(field_name)) { \
+						azure_unsupported("no " field_name); \
+						return; \
+					} \
+					auto var_name = oauth2_azure_workflow_map.at(field_name).to<QString>();
+
+				CHECK_FIELD("clientId", client_id)
+				CHECK_FIELD("authorizeUrl", authorize_url)
+				CHECK_FIELD("tokenUrl", token_url);
+				CHECK_FIELD("scopes", scopes);
+				m_tokenPasswordCallback = [this, client_id, authorize_url, token_url, scopes] (const auto& token_callback) {
+					doAzureAuth(client_id, authorize_url, token_url, scopes).then([this, token_callback] (const std::variant<QFuture<QString>, QFuture<QString>>& result_or_error) {
+						if (result_or_error.index() == 0) {
+							auto result = std::get<0>(result_or_error);
+							// This can happen due to a bug: https://bugreports.qt.io/browse/QTBUG-115580
+							if (!result.isValid()) {
+								return;
+							}
+							auto token = "oauth2-azure:"+ std::get<0>(result_or_error).result().toStdString();
+							m_connectionState.token = token;
+							if(!isSocketConnected()) {
+								auto url = connectionUrl();
+								connectToHost(url);
+							} else {
+								token_callback(token);
+							}
+						} else {
+							auto error = std::get<1>(result_or_error);
+							// This can happen due to a bug: https://bugreports.qt.io/browse/QTBUG-115580
+							if (!error.isValid()) {
+								return;
+							}
+							setState(State::ConnectionError);
+							emit brokerLoginError(chainpack::RpcError::createInternalError(std::get<1>(result_or_error).result().toStdString()));
+						}
+					});
+				};
+				sendLogin(resp.result());
+			}
+			return;
+		}
+#endif
+
 		if(m_connectionState.loginRequestId == id) {
 			m_connectionState.loginResult = resp.result();
 			setState(State::BrokerConnected);
@@ -643,7 +824,4 @@ const char *ClientConnection::stateToString(ClientConnection::State state)
 	}
 	return "this could never happen";
 }
-
 }
-
-

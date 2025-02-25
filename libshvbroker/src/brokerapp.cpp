@@ -719,6 +719,17 @@ private:
 void BrokerApp::checkLogin(const chainpack::UserLoginContext &ctx, const QObject* connection_ctx, const std::function<void(chainpack::UserLoginResult)>& cb)
 {
 	auto user_login = ctx.userLogin();
+	if (user_login.loginType == chainpack::IRpcConnection::LoginType::Token) {
+		constexpr auto AZURE_TOKEN_PREFIX = std::string_view{"oauth2-azure:"};
+		if (user_login.password.starts_with(AZURE_TOKEN_PREFIX)) {
+			user_login.loginType = chainpack::UserLogin::LoginType::AzureAccessToken;
+			user_login.password.erase(0, AZURE_TOKEN_PREFIX.size());
+		} else {
+			cb(chainpack::UserLoginResult(false, "Unsupported token: '" + user_login.password + '\''));
+			return;
+		}
+	}
+
 	if (user_login.loginType == chainpack::UserLogin::LoginType::AzureAccessToken && m_azureConfig) {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
 		auto azure_auth = new AzureAuth(user_login, *m_azureConfig);

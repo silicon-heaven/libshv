@@ -24,6 +24,5 @@ public:
 	CLIOPTION_GETTER_SETTER2(int, "rpc.reconnectInterval", r, setR, econnectInterval)
 	CLIOPTION_GETTER_SETTER2(int, "rpc.heartbeatInterval", h, setH, eartBeatInterval)
 };
-
 }
 

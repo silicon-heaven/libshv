@@ -161,8 +161,9 @@ if(LIBSHV_WITH_COREQT)
 		if(EMSCRIPTEN)
 			find_package(Qt6 COMPONENTS Core LinguistTools Network OPTIONAL_COMPONENTS Svg WebSockets Widgets)
 		else()
-			find_package(Qt6 COMPONENTS Core LinguistTools Network Sql SerialPort OPTIONAL_COMPONENTS Svg WebSockets Widgets)
+			find_package(Qt6 COMPONENTS Core LinguistTools Network Sql SerialPort OPTIONAL_COMPONENTS NetworkAuth Svg WebSockets Widgets)
 		endif()
+		set(QtNetworkAuth_FOUND ${Qt6NetworkAuth_FOUND})
 		set(QtWebSockets_FOUND ${Qt6WebSockets_FOUND})
 		set(QtSvg_FOUND ${Qt6Svg_FOUND})
 		set(Qt_FOUND ${Qt6_FOUND})
@@ -197,9 +198,19 @@ if(LIBSHV_WITH_WEBSOCKETS AND NOT QtWebSockets_FOUND)
 	message(FATAL_ERROR "SHV websocket support explicitly enabled, but Qt WebSockets weren't found!")
 endif()
 
+# We'll error out if the user has explicitly enabled Azure OAuth2 support, but Qt NetworkAuth isn't available.
+if(LIBSHV_WITH_OAUTH2_AZURE AND NOT QtNetworkAuth_FOUND)
+	message(FATAL_ERROR "OAuth2 Azure explicitly enabled, but Qt NetworkAuth wasn't found!")
+endif()
+
 # Otherwise enable websocket support based on whether we found Qt6 WebSockets.
 if(NOT DEFINED LIBSHV_WITH_WEBSOCKETS)
 	set(LIBSHV_WITH_WEBSOCKETS ${QtWebSockets_FOUND})
+endif()
+
+# Otherwise enable OAuth2 Azure support based on whether we found Qt6 NetworkAuth.
+if(NOT DEFINED LIBSHV_WITH_OAUTH2_AZURE)
+	set(LIBSHV_WITH_OAUTH2_AZURE ${QtNetworkAuth_FOUND})
 endif()
 
 if(LIBSHV_WITH_WEBSOCKETS)
