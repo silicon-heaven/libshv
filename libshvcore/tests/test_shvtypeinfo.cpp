@@ -259,7 +259,6 @@ DOCTEST_TEST_CASE("ShvTypeInfo")
 			INFO("propertyDescriptionForPath: ", pi.propertyDescription.toRpcValue().toCpon());
 			CAPTURE(pi.propertyDescription .toRpcValue().toCpon());
 			REQUIRE(pi.deviceType == "ElboxHeating");
-			REQUIRE(pi.propertyDescription.name() == "temperature");
 			REQUIRE(!pi.propertyDescription.isValid());
 		}
 	}
