@@ -641,9 +641,9 @@ namespace {
 class AzureAuth : public QObject {
 	Q_OBJECT
 public:
-	AzureAuth(const chainpack::UserLoginContext& ctx, const AzureConfig& azure_config)
+	AzureAuth(const chainpack::UserLogin& user_login, const AzureConfig& azure_config)
 		: m_azureConfig(azure_config)
-		, m_ctx(ctx)
+		, m_userLogin(user_login)
 		, m_manager(new QNetworkAccessManager(this))
 	{
 		do_request(QUrl{"https://graph.microsoft.com/v1.0/me"}).then(this, [this] (const QJsonDocument& json) {
@@ -695,7 +695,7 @@ private:
 	QFuture<QJsonDocument> do_request(const auto& url)
 	{
 		QNetworkRequest request;
-		request.setRawHeader("Authorization", QByteArray("Bearer ") + QByteArray::fromStdString(m_ctx.userLogin().password));
+		request.setRawHeader("Authorization", QByteArray("Bearer ") + QByteArray::fromStdString(m_userLogin.password));
 		request.setUrl(url);
 		auto reply = m_manager->get(request);
 		return QtFuture::connect(reply, &QNetworkReply::finished).then([reply]() {
@@ -710,7 +710,7 @@ private:
 	}
 
 	AzureConfig m_azureConfig;
-	chainpack::UserLoginContext m_ctx;
+	chainpack::UserLogin m_userLogin;
 	std::string m_username;
 	QNetworkAccessManager* m_manager;
 };
@@ -718,9 +718,10 @@ private:
 
 void BrokerApp::checkLogin(const chainpack::UserLoginContext &ctx, const QObject* connection_ctx, const std::function<void(chainpack::UserLoginResult)>& cb)
 {
-	if (ctx.userLogin().loginType == chainpack::UserLogin::LoginType::AzureAccessToken && m_azureConfig) {
+	auto user_login = ctx.userLogin();
+	if (user_login.loginType == chainpack::UserLogin::LoginType::AzureAccessToken && m_azureConfig) {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
-		auto azure_auth = new AzureAuth(ctx, *m_azureConfig);
+		auto azure_auth = new AzureAuth(user_login, *m_azureConfig);
 		connect(azure_auth, &AzureAuth::resultReady, connection_ctx, [cb, azure_auth] (const auto& azure_result, const auto& user_name, const auto& shv_groups) {
 			BrokerApp::instance()->aclManager()->setGroupForAzureUser(user_name, shv_groups);
 			cb(azure_result);
@@ -733,14 +734,14 @@ void BrokerApp::checkLogin(const chainpack::UserLoginContext &ctx, const QObject
 	}
 	auto result = BrokerApp::instance()->aclManager()->checkPassword(ctx);
 	// If the user exists in the ACL manager, we'll take the result as decisive.
-	if (aclManager()->user(ctx.userLogin().user).isValid()) {
+	if (aclManager()->user(user_login.user).isValid()) {
 		cb(result);
 		return;
 	}
 
 #ifdef WITH_SHV_LDAP
 	if (m_ldapConfig) {
-		if (ctx.userLogin().loginType == chainpack::IRpcConnection::LoginType::Plain) {
+		if (user_login.loginType == chainpack::IRpcConnection::LoginType::Plain) {
 				auto auth_thread = new LdapAuthThread(ctx, *m_ldapConfig);
 				connect(auth_thread, &LdapAuthThread::resultReady, connection_ctx, [cb] (const auto& ldap_result, const auto& user_name, const auto& shv_groups) {
 					BrokerApp::instance()->aclManager()->setGroupForLdapUser(user_name, shv_groups);
