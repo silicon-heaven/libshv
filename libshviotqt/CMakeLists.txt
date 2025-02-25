@@ -69,6 +69,11 @@ if(LIBSHV_WITH_WEBSOCKETS)
 	target_link_libraries(libshviotqt PUBLIC Qt::WebSockets)
 endif()
 
+if(LIBSHV_WITH_OAUTH2_AZURE)
+	target_compile_definitions(libshviotqt PUBLIC WITH_SHV_OAUTH2_AZURE)
+	target_link_libraries(libshviotqt PUBLIC Qt::Gui Qt::NetworkAuth)
+endif()
+
 function(add_shviotqt_serialportsocket_test test_name)
 	add_executable(test_iotqt_${test_name}
 		tests/serialportsocket/test_${test_name}.cpp

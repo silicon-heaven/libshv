@@ -32,6 +32,7 @@ public:
 
 	static constexpr auto METH_HELLO = "hello";
 	static constexpr auto METH_LOGIN = Rpc::KEY_LOGIN;
+	static constexpr auto METH_WORKFLOWS = "workflows";
 
 	static constexpr auto METH_GET = "get";
 	static constexpr auto METH_SET = "set";

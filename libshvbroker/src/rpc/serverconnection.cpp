@@ -14,6 +14,7 @@
 #include <QTimer>
 #include <QCryptographicHash>
 #include <QHostAddress>
+#include <QUrl>
 
 namespace cp = shv::chainpack;
 
@@ -114,6 +115,10 @@ bool ServerConnection::isLoginPhase() const
 	return !m_loginOk;
 }
 
+const auto AZURE_AUTH_URL = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize";
+const auto AZURE_ACCESS_TOKEN_URL = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
+const auto AZURE_SCOPES = "User.Read";
+
 void ServerConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 {
 	cp::RpcRequest rq(msg);
@@ -129,6 +134,23 @@ void ServerConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 			cp::RpcValue::Map params {
 				{"nonce", m_userLoginContext.serverNounce},
 			};
+			sendResponse(rq.requestId(), params);
+			return;
+		}
+		if(m_helloReceived && !m_loginReceived && rq.method() == shv::chainpack::Rpc::METH_WORKFLOWS) {
+			cp::RpcValue::List params {
+				"PLAIN",
+				"SHA1",
+			};
+			if (m_azureClientId.has_value()) {
+				params.emplace_back(cp::RpcValue::Map {
+					{"type", "oauth2-azure"},
+					{"clientId", m_azureClientId.value()},
+					{"authorizeUrl", AZURE_AUTH_URL},
+					{"tokenUrl", AZURE_ACCESS_TOKEN_URL},
+					{"scopes", AZURE_SCOPES},
+				});
+			}
 			sendResponse(rq.requestId(), params);
 			return;
 		}

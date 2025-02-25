@@ -12,6 +12,9 @@
 #include <QElapsedTimer>
 #include <QObject>
 #include <QUrl>
+#ifdef WITH_SHV_OAUTH2_AZURE
+#include <QFuture>
+#endif
 
 class QTimer;
 
@@ -30,10 +33,12 @@ public:
 	SHV_FIELD_IMPL(std::string, u, U, ser)
 	SHV_FIELD_BOOL_IMPL2(p, P, eerVerify, true)
 	SHV_FIELD_IMPL(std::string, p, P, assword)
-	SHV_FIELD_IMPL(std::optional<std::function<void(const std::string&, const std::function<void(const std::string&)>&)>>, a, setA, zurePasswordCallback)
 	SHV_FIELD_IMPL(shv::chainpack::IRpcConnection::LoginType, l, L, oginType)
+	SHV_FIELD_IMPL(std::function<void(const std::function<void(const std::string&)>&)>, t, T, okenPasswordCallback)
 	SHV_FIELD_IMPL2(shv::chainpack::RpcValue, c, C, onnectionOptions, shv::chainpack::RpcValue::Map())
 	SHV_FIELD_IMPL2(int, h, H, eartBeatInterval, 60)
+	SHV_FIELD_IMPL2(bool, o, O, auth2Azure, false)
+
 
 public:
 	explicit ClientConnection(QObject *parent = nullptr);
@@ -63,6 +68,7 @@ public:
 	Q_SIGNAL void rpcMessageReceived(const shv::chainpack::RpcMessage &msg);
 
 	bool isBrokerConnected() const;
+	Q_SIGNAL void authorizeWithBrowser(const QUrl& url);
 	Q_SIGNAL void brokerConnectedChanged(bool is_connected);
 	Q_SIGNAL void brokerLoginError(const shv::chainpack::RpcError &err);
 
@@ -102,8 +108,11 @@ protected:
 		State state = State::NotConnected;
 		int helloRequestId = 0;
 		int loginRequestId = 0;
+		int workflowsRequestId = 0;
 		int pingRqId = 0;
 		shv::chainpack::RpcValue loginResult;
+		bool oAuth2WaitingForUser = false;
+		std::optional<std::string> token;
 	};
 	ConnectionState m_connectionState;
 private:
@@ -112,6 +121,9 @@ private:
 	const std::string& pingShvPath() const;
 
 	static void tst_connectionUrlFromString();
+#ifdef WITH_SHV_OAUTH2_AZURE
+	QFuture<std::variant<QFuture<QString>, QFuture<QString>>> doAzureAuth(const QString& client_id, const QString& authorize_url, const QString& token_url, const QString& scopes);
+#endif
 private:
 	QUrl m_connectionUrl;
 	QTimer *m_checkBrokerConnectedTimer = nullptr;

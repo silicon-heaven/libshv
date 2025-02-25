@@ -47,7 +47,7 @@ jobs:
           qt_target: desktop
           qt_arch: linux_gcc_64
           use_qt6: ON
-          modules: qtserialport qtwebsockets
+          modules: qtserialport qtwebsockets qtnetworkauth
           asan: true
 
       - name: Build and test
@@ -68,7 +68,7 @@ jobs:
           qt_target: desktop
           qt_arch: win64_mingw
           use_qt6: ON
-          modules: qtserialport qtwebsockets
+          modules: qtserialport qtwebsockets qtnetworkauth
           # Need to get all binaries in the same directory, otherwise the tests can't find the dlls.
           additional_cmake_args: |
             -DLIBSHV_WITH_LDAP=OFF \
@@ -93,7 +93,7 @@ jobs:
           qt_target: desktop
           qt_arch: win64_msvc2022_64
           use_qt6: ON
-          modules: qtserialport qtwebsockets
+          modules: qtserialport qtwebsockets qtnetworkauth
           # Need to get all binaries in the same directory, otherwise the tests can't find the dlls.
           additional_cmake_args: |
             -DLIBSHV_WITH_LDAP=OFF \
@@ -118,7 +118,7 @@ jobs:
           qt_target: android
           qt_arch: android_arm64_v8a
           use_qt6: ON
-          modules: qtserialport qtwebsockets
+          modules: qtserialport qtwebsockets qtnetworkauth
           additional_cmake_args: -DLIBSHV_WITH_LDAP=OFF
 
       - name: Build and test
