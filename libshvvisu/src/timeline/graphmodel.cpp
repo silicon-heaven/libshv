@@ -356,7 +356,7 @@ void GraphModel::setLocalizedChannelPath(qsizetype channel_ix, const QStringList
 QString GraphModel::typeDescrFieldName(const shv::core::utils::ShvTypeDescr &type_descr, int field_index)
 {
 	for (const auto &field : type_descr.fields()) {
-		if (field_index == field.value().toInt()) {
+		if (field_index == field.bitRange().toInt()) {
 			return QString::fromStdString(field.name());
 		}
 	}
