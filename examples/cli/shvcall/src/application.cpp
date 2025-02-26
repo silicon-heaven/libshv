@@ -15,6 +15,10 @@ Application::Application(int &argc, char **argv, AppCliOptions *cli_opts)
 	, m_cliOptions(cli_opts)
 {
 	m_rpcConnection = new si::rpc::DeviceConnection(this);
+	connect(m_rpcConnection, &si::rpc::ClientConnection::brokerLoginError, this, [this] (const auto& err) {
+		shvError() << "Couldn't login to broker:" << err.toString();
+		m_rpcConnection->close();
+	});
 
 	m_rpcConnection->setCliOptions(cli_opts);
 
