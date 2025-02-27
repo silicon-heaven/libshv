@@ -1,4 +1,4 @@
-add_library(libshvvisu
+qt_add_library(libshvvisu
 	images/images.qrc
 	src/logview/dataviewfilterselector.cpp
 	src/logview/dataviewfilterselector.ui
