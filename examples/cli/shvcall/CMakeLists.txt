@@ -1,4 +1,4 @@
-add_executable(shvcall
+qt_add_executable(shvcall
     src/appclioptions.cpp
     src/application.cpp
     src/main.cpp

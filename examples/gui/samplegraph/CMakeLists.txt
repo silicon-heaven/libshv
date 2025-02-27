@@ -1,4 +1,4 @@
-add_executable(samplegraph
+qt_add_executable(samplegraph
 	main.cpp
 	mainwindow.cpp
 	timelinegraphwidget.h timelinegraphwidget.cpp timelinegraphwidget.ui
