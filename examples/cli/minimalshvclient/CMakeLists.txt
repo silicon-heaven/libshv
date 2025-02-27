@@ -1,8 +1,12 @@
-add_executable(minimalshvclient
+qt_add_executable(minimalshvclient
 	src/main.cpp
 	src/application.cpp
 	)
 
-target_link_libraries(minimalshvclient libshviotqt)
+target_link_libraries(minimalshvclient PRIVATE libshviotqt)
 
-install(TARGETS minimalshvclient)
+if(ANDROID)
+	install(TARGETS minimalshvclient LIBRARY DESTINATION lib)
+else()
+	install(TARGETS minimalshvclient)
+endif()

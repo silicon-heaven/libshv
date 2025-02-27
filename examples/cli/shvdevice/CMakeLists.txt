@@ -1,9 +1,13 @@
-add_executable(shvdevice
+qt_add_executable(shvdevice
 	src/main.cpp
 	src/appclioptions.cpp
 	src/application.cpp
 	)
 
-target_link_libraries(shvdevice libshviotqt)
+target_link_libraries(shvdevice PRIVATE libshviotqt)
 
-install(TARGETS shvdevice)
+if(ANDROID)
+	install(TARGETS shvdevice LIBRARY DESTINATION lib)
+else()
+	install(TARGETS shvdevice)
+endif()
