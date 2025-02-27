@@ -109,6 +109,16 @@ runs:
         echo cmake_extra_args="${cmake_extra_args} '-G Ninja'" >> "$GITHUB_ENV"
       shell: bash
 
+    - name: WASM-specific stuff
+      if: inputs.qt_arch == 'wasm_singlethread'
+      run: |
+        QT_DIR="$(dirname "${QT_ROOT_DIR}")"
+        CMAKE_BIN="${QT_DIR}/wasm_singlethread/bin/qt-cmake"
+        chmod +x "${CMAKE_BIN}"
+        echo CMAKE_BIN="${CMAKE_BIN}" >> "$GITHUB_ENV"
+        echo cmake_extra_args="'-DBUILD_SHARED_LIBS=OFF' '-DQT_HOST_PATH=$(realpath "${QT_DIR}/gcc_64")'" >> "$GITHUB_ENV"
+      shell: bash
+
     - name: Enable ASAN/UBSAN
       if: inputs.asan == 'true'
       run: |
