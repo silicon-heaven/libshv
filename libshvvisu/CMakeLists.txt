@@ -76,6 +76,19 @@ target_include_directories(libshvvisu PUBLIC
 	)
 target_compile_definitions(libshvvisu PRIVATE SHVVISU_BUILD_DLL)
 
+function(add_shvvisu_test test_name)
+	add_executable(test_visu_${test_name}
+		tests/test_${test_name}.cpp
+		)
+	target_compile_definitions(test_visu_${test_name} PRIVATE DEF_FILES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests/files")
+	target_link_libraries(test_visu_${test_name} libshvvisu doctest::doctest)
+	add_test(NAME test_visu_${test_name} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:test_visu_${test_name}>)
+endfunction(add_shvvisu_test)
+
+if(BUILD_TESTING)
+	add_shvvisu_test(timeline)
+endif()
+
 if(LIBSHV_WITH_SVG)
 	target_compile_definitions(libshvvisu PUBLIC WITH_SHV_SVG)
 	target_link_libraries(libshvvisu PUBLIC Qt::Svg)
