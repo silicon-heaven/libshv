@@ -144,56 +144,96 @@ double GraphModel::valueToDouble(const QVariant& v, shv::core::utils::ShvTypeDes
 	}
 }
 
-qsizetype GraphModel::lessTimeIndex(qsizetype channel, timemsec_t time) const
+std::optional<qsizetype> GraphModel::lessTimeIndex(qsizetype channel, timemsec_t time) const
 {
-	qsizetype ix = lessOrEqualTimeIndex(channel, time);
-	Sample s = sampleValue(channel, ix);
-	if(s.time == time)
-		return ix - 1;
+	if(channel < 0 || channel > channelCount() || count(channel) == 0)
+		return {};
+
+	auto ix = lessOrEqualTimeIndex(channel, time);
+	if (!ix) {
+		return {};
+	}
+
+	Sample s = sampleValue(channel, ix.value());
+	if(s.time == time) {
+		if (auto ret = ix.value() - 1;  ret >= 0) {
+			return ret;
+		}
+
+		return {};
+	}
+
 	return ix;
 }
 
-qsizetype GraphModel::lessOrEqualTimeIndex(qsizetype channel, timemsec_t time) const
+std::optional<qsizetype> GraphModel::lessOrEqualTimeIndex(qsizetype channel, timemsec_t time) const
 {
-	if(channel < 0 || channel > channelCount())
-		return -1;
+	if(channel < 0 || channel > channelCount() || count(channel) == 0)
+		return {};
 
-	qsizetype first = 0;
-	auto cnt = count(channel);
-	bool found = false;
-	while (cnt > 0) {
-		auto step = cnt / 2;
-		auto pivot = first + step;
-		if (sampleAt(channel, pivot).time <= time) {
-			first = pivot;
-			if(step)
-				cnt -= step;
-			else
-				cnt = 0;
-			found = true;
+	const auto &samples = m_samples.at(channel);
+	auto it = std::lower_bound(samples.constBegin(), samples.constEnd(), time, [](const Sample &s, const timemsec_t value) {
+		return s.time < value;
+	});
+
+	if (it == samples.cend()) {
+		if (!samples.isEmpty()) {
+			it--;
 		}
-		else {
-			cnt = step;
-			found = false;
+	}
+	else {
+		if (it->time != time) {
+			if (it == samples.cbegin()) {
+				return {};
+			}
+
+			it--;
 		}
-	};
-	qsizetype ret = found? first: -1;
-	return ret;
+	}
+
+	return std::distance(samples.cbegin(), it);
 }
 
-qsizetype GraphModel::greaterTimeIndex(qsizetype channel, timemsec_t time) const
+std::optional<qsizetype> GraphModel::greaterTimeIndex(qsizetype channel, timemsec_t time) const
 {
-	qsizetype ix = lessOrEqualTimeIndex(channel, time);
-	return ix + 1;
+	if(channel < 0 || channel > channelCount() || count(channel) == 0)
+		return {};
+
+	const auto &samples = m_samples.at(channel);
+	auto it = std::upper_bound(samples.cbegin(), samples.constEnd(), time, [](const timemsec_t value, const Sample &s) {
+		return s.time > value;
+	});
+
+	if (it == samples.cend()) {
+		return {};
+	}
+
+	return std::distance(samples.cbegin(), it);
 }
 
-qsizetype GraphModel::greaterOrEqualTimeIndex(qsizetype channel, timemsec_t time) const
+std::optional<qsizetype> GraphModel::greaterOrEqualTimeIndex(qsizetype channel, timemsec_t time) const
 {
-	qsizetype ix = lessOrEqualTimeIndex(channel, time);
-	Sample s = sampleValue(channel, ix);
-	if(s.time == time)
-		return ix;
-	return ix + 1;
+	if(channel < 0 || channel > channelCount() || count(channel) == 0)
+		return {};
+
+	const auto &samples = m_samples.at(channel);
+	auto it = std::upper_bound(samples.cbegin(), samples.constEnd(), time, [](const timemsec_t value, const Sample &s) {
+		return s.time > value;
+	});
+
+	if (it == samples.cend()) {
+		return {};
+	}
+
+	if (it == samples.cbegin()) {
+		return std::distance(samples.cbegin(), it);
+	}
+
+	if (auto prev = std::prev(it); (prev->time == time)) {
+		--it;
+	}
+
+	return std::distance(samples.cbegin(), it);
 }
 
 void GraphModel::beginAppendValues()

@@ -61,10 +61,10 @@ public:
 	/// displaySampleValue() returns original time and value
 	virtual Sample displaySampleValue(qsizetype channel, qsizetype ix) const;
 
-	qsizetype lessTimeIndex(qsizetype channel, timemsec_t time) const;
-	qsizetype lessOrEqualTimeIndex(qsizetype channel, timemsec_t time) const;
-	qsizetype greaterTimeIndex(qsizetype channel, timemsec_t time) const;
-	qsizetype greaterOrEqualTimeIndex(qsizetype channel, timemsec_t time) const;
+	std::optional<qsizetype> lessTimeIndex(qsizetype channel, timemsec_t time) const;
+	std::optional<qsizetype> lessOrEqualTimeIndex(qsizetype channel, timemsec_t time) const;
+	std::optional<qsizetype> greaterTimeIndex(qsizetype channel, timemsec_t time) const;
+	std::optional<qsizetype> greaterOrEqualTimeIndex(qsizetype channel, timemsec_t time) const;
 
 	virtual void beginAppendValues();
 	virtual void endAppendValues();
