@@ -52,12 +52,8 @@ void ChannelProbe::nextSample()
 	auto model_ix = ch->modelIndex();
 	auto ix = m->greaterTimeIndex(model_ix, m_currentTime);
 
-	if(ix >= 0) {
-		Sample s = m->sampleValue(model_ix, ix);
-
-		if (s.isValid()) {
-			setCurrentTime(s.time);
-		}
+	if(ix) {
+		setCurrentTime(m->sampleValue(model_ix, ix.value()).time);
 	}
 }
 
@@ -68,12 +64,8 @@ void ChannelProbe::prevSample()
 	auto model_ix = ch->modelIndex();
 	auto ix = m->lessTimeIndex(model_ix, m_currentTime);
 
-	if(ix >= 0) {
-		Sample s = m->sampleValue(model_ix, ix);
-
-		if (s.isValid()) {
-			setCurrentTime(s.time);
-		}
+	if(ix) {
+		setCurrentTime(m->sampleValue(model_ix, ix.value()).time);
 	}
 }
 

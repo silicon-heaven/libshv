@@ -14,6 +14,6 @@ Sample::Sample(timemsec_t t, QVariant &&v) : time(t), value(std::move(v))
 
 bool Sample::isValid() const
 {
-	return value.isValid() && time > 0;
+	return value.isValid();
 }
 }

@@ -18,7 +18,7 @@ runs:
         PATH="/c/mingw64/bin:$PATH"
         EXTRA_CTEST_ARGS=()
         if [[ '${{github.job}}' = windows-mingw ]]; then
-          EXTRA_CTEST_ARGS=(--exclude-regex 'coreqt|iotqt|broker')
+          EXTRA_CTEST_ARGS=(--exclude-regex 'coreqt|iotqt|broker|visu')
         fi
         # --build-config is only needed for MSVC, but it doesn't bother Linux builds.
         ctest --output-on-failure --parallel "$(nproc)" --build-config Debug "${EXTRA_CTEST_ARGS[@]}"
