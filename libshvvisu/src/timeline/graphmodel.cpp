@@ -178,7 +178,7 @@ std::optional<qsizetype> GraphModel::lessOrEqualTimeIndex(qsizetype channel, tim
 
 	if (it == samples.cend()) {
 		if (!samples.isEmpty()) {
-			it--;
+			return samples.size() - 1;
 		}
 	}
 	else {
@@ -222,15 +222,17 @@ std::optional<qsizetype> GraphModel::greaterOrEqualTimeIndex(qsizetype channel, 
 	});
 
 	if (it == samples.cend()) {
+		if (samples.last().time == time) {
+			return samples.size() - 1;
+		}
+
 		return {};
 	}
 
-	if (it == samples.cbegin()) {
-		return std::distance(samples.cbegin(), it);
-	}
-
-	if (auto prev = std::prev(it); (prev->time == time)) {
-		--it;
+	if ((it != samples.cbegin())) {
+		if (auto prev = std::prev(it); (prev->time == time) ) {
+			--it;
+		}
 	}
 
 	return std::distance(samples.cbegin(), it);
