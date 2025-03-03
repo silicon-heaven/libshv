@@ -2114,19 +2114,16 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 	if(m_model->xAxisType() == GraphModel::XAxisType::Histogram) {
 		int bar_width = sample2point(Sample{1, 0}, channel_meta_type_id).x() - sample2point(Sample{0, 0}, channel_meta_type_id).x();
 
-		auto ix1 = graph_model->greaterOrEqualTimeIndex(model_ix, xrange.min);
-		if (!ix1) {
-			ix1 = 0;
-		}
-		auto ix2 = graph_model->lessOrEqualTimeIndex(model_ix, xrange.max);
-		if (!ix2) {
-			ix2 = graph_model->count(model_ix) -1;
-		}
+		auto ix1_opt = graph_model->greaterOrEqualTimeIndex(model_ix, xrange.min);
+		auto ix1 = ix1_opt.value_or(0);
+
+		auto ix2_opt = graph_model->lessOrEqualTimeIndex(model_ix, xrange.max);
+		auto ix2 = ix2_opt.value_or(graph_model->count(model_ix) -1);
 
 		int x_axis_y = sample2point(Sample{xrange.min, 0}, channel_meta_type_id).y();
 		std::optional<int> last_x;
 
-		for (auto i = ix1.value(); i <= ix2.value(); ++i) {
+		for (auto i = ix1; i <= ix2; ++i) {
 			Sample sample = graph_model->sampleAt(model_ix, i);
 			auto current_point = sample2point(sample, channel_meta_type_id);
 			if (last_x && last_x.value() == current_point.x()) {
@@ -2142,18 +2139,14 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 		}
 	}
 	else if (channel_info.typeDescr.sampleType() == shv::core::utils::ShvTypeDescr::SampleType::Discrete) {
-		auto ix1 = graph_model->greaterOrEqualTimeIndex(model_ix, xrange.min);
-		if (!ix1) {
-			ix1 = 0;
-		}
+		auto ix1_opt = graph_model->greaterOrEqualTimeIndex(model_ix, xrange.min);
+		auto ix1 = ix1_opt.value_or(0);
 
-		auto ix2 = graph_model->lessOrEqualTimeIndex(model_ix, xrange.max);
-		if (!ix2) {
-			ix2 = graph_model->count(model_ix) -1;
-		}
+		auto ix2_opt = graph_model->lessOrEqualTimeIndex(model_ix, xrange.max);
+		auto ix2 = ix2_opt.value_or(graph_model->count(model_ix) -1);
 
 		std::optional<int> last_x;
-		for (auto i = ix1.value(); i <= ix2.value(); ++i) {
+		for (auto i = ix1; i <= ix2; ++i) {
 			Sample sample = graph_model->sampleAt(model_ix, i);
 			auto current_point = sample2point(sample, channel_meta_type_id);
 			if (last_x && last_x.value() == current_point.x()) {
@@ -2223,27 +2216,24 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 		};
 		SamePixelValue prev_point;
 
-		auto ix1 = graph_model->lessTimeIndex(model_ix, xrange.min);
-		if (!ix1) {
-			ix1 = 0;
-		}
-		else {
-			prev_point = sample2point(graph_model->sampleAt(model_ix, ix1.value()), channel_meta_type_id);
-			ix1 = ix1.value() + 1;
+		qsizetype ix1 = 0;
+		auto ix1_opt = graph_model->lessTimeIndex(model_ix, xrange.min);
+		if (ix1_opt) {
+			prev_point = sample2point(graph_model->sampleAt(model_ix, ix1_opt.value()), channel_meta_type_id);
+			ix1 = ix1_opt.value() + 1;
 		}
 
-		auto ix2 = graph_model->greaterTimeIndex(model_ix, xrange.max);
-		if (!ix2) {
-			ix2 = graph_model->count(model_ix) -1;
-		}
+		auto ix2_opt = graph_model->greaterTimeIndex(model_ix, xrange.max);
+		auto ix2 = ix2_opt.value_or(graph_model->count(model_ix) -1);
+		Q_ASSERT(ix2 < samples_cnt);
 
-		shvDebug() << "iterating samples from:" << ix1.value() << "to:" << ix2.value() << "cnt:" << (ix2.value() - ix1.value() + 1);
+		shvDebug() << "iterating samples from:" << ix1 << "to:" << ix2 << "cnt:" << (ix2 - ix1 + 1);
 		int x_axis_y = sample2point(Sample{xrange.min, 0}, channel_meta_type_id).y();
 		// we need one more point, because the previous one is painted
 		// when current is going to be active
 		// we cannot paint current point unless we know y-range for more same-pixel values
 		// this is why the sample paint is one step delayed
-		for (auto i = ix1.value(); i <= ix2.value() + 1; ++i) { // iterate extra one more step to draw lines to the end of x axis
+		for (auto i = ix1; i <= ix2 + 1; ++i) { // iterate extra one more step to draw lines to the end of x axis
 			shvDebug() << "processing sample on index:" << i;
 
 			QPoint current_point;
@@ -2254,7 +2244,6 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 				current_point = QPoint{effective_dest_rect.right() + 1, prev_point.y2};
 			}
 			else {
-				Q_ASSERT(i < samples_cnt);
 				Sample s = graph_model->sampleAt(model_ix, i);
 				current_point = sample2point(s, channel_meta_type_id);
 			}

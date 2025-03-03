@@ -22,8 +22,10 @@ void GraphModel::clear()
 
 qsizetype GraphModel::count(qsizetype channel) const
 {
-	if(channel < 0 || channel > channelCount())
+	if(channel < 0 || channel >= channelCount()) {
 		return 0;
+	}
+
 	return m_samples.at(channel).count();
 }
 
@@ -146,9 +148,6 @@ double GraphModel::valueToDouble(const QVariant& v, shv::core::utils::ShvTypeDes
 
 std::optional<qsizetype> GraphModel::lessTimeIndex(qsizetype channel, timemsec_t time) const
 {
-	if(channel < 0 || channel > channelCount() || count(channel) == 0)
-		return {};
-
 	auto ix = lessOrEqualTimeIndex(channel, time);
 	if (!ix) {
 		return {};
@@ -168,7 +167,7 @@ std::optional<qsizetype> GraphModel::lessTimeIndex(qsizetype channel, timemsec_t
 
 std::optional<qsizetype> GraphModel::lessOrEqualTimeIndex(qsizetype channel, timemsec_t time) const
 {
-	if(channel < 0 || channel > channelCount() || count(channel) == 0)
+	if(channel < 0 || channel >= channelCount() || count(channel) == 0)
 		return {};
 
 	const auto &samples = m_samples.at(channel);
@@ -196,7 +195,7 @@ std::optional<qsizetype> GraphModel::lessOrEqualTimeIndex(qsizetype channel, tim
 
 std::optional<qsizetype> GraphModel::greaterTimeIndex(qsizetype channel, timemsec_t time) const
 {
-	if(channel < 0 || channel > channelCount() || count(channel) == 0)
+	if(channel < 0 || channel >= channelCount() || count(channel) == 0)
 		return {};
 
 	const auto &samples = m_samples.at(channel);
@@ -213,7 +212,7 @@ std::optional<qsizetype> GraphModel::greaterTimeIndex(qsizetype channel, timemse
 
 std::optional<qsizetype> GraphModel::greaterOrEqualTimeIndex(qsizetype channel, timemsec_t time) const
 {
-	if(channel < 0 || channel > channelCount() || count(channel) == 0)
+	if(channel < 0 || channel >= channelCount() || count(channel) == 0)
 		return {};
 
 	const auto &samples = m_samples.at(channel);
@@ -260,7 +259,7 @@ void GraphModel::endAppendValues()
 
 void GraphModel::appendValue(qsizetype channel, Sample &&sample)
 {
-	if(channel < 0 || channel > channelCount()) {
+	if(channel < 0 || channel >= channelCount()) {
 		shvError() << "Invalid channel index:" << channel;
 		return;
 	}
