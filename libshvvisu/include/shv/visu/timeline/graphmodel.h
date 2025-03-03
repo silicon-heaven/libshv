@@ -3,6 +3,7 @@
 #include <shv/visu/timeline/sample.h>
 #include <shv/visu/shvvisuglobal.h>
 
+#include <optional>
 #include <QObject>
 #include <QVariant>
 #include <QVector>
