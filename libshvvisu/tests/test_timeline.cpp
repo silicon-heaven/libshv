@@ -31,6 +31,11 @@ DOCTEST_TEST_CASE("Graph model")
 			REQUIRE(graph_model.lessOrEqualTimeIndex(ch_ix, 1) == 0);
 		}
 
+		DOCTEST_SUBCASE("value equals last sample time value")
+		{
+			REQUIRE(graph_model.lessOrEqualTimeIndex(ch_ix, 10) == 2);
+		}
+
 		DOCTEST_SUBCASE("value equals sample time value")
 		{
 			REQUIRE(graph_model.lessOrEqualTimeIndex(ch_ix, 4) == 1);
@@ -58,6 +63,11 @@ DOCTEST_TEST_CASE("Graph model")
 		DOCTEST_SUBCASE("value equals first sample time value")
 		{
 			REQUIRE(!graph_model.lessTimeIndex(ch_ix, 1).has_value());
+		}
+
+		DOCTEST_SUBCASE("value equals last sample time value")
+		{
+			REQUIRE(graph_model.lessTimeIndex(ch_ix, 10) == 1);
 		}
 
 		DOCTEST_SUBCASE("value equals sample time value")
@@ -88,6 +98,11 @@ DOCTEST_TEST_CASE("Graph model")
 			REQUIRE(graph_model.greaterTimeIndex(ch_ix, 1) == 1);
 		}
 
+		DOCTEST_SUBCASE("value equals last sample time value")
+		{
+			REQUIRE(!graph_model.greaterTimeIndex(ch_ix, 10).has_value());
+		}
+
 		DOCTEST_SUBCASE("value equals sample time value")
 		{
 			REQUIRE(graph_model.greaterTimeIndex(ch_ix, 4) == 2);
@@ -114,6 +129,11 @@ DOCTEST_TEST_CASE("Graph model")
 		DOCTEST_SUBCASE("value equals first sample time value")
 		{
 			REQUIRE(graph_model.greaterOrEqualTimeIndex(ch_ix, 1) == 0);
+		}
+
+		DOCTEST_SUBCASE("value equals last sample time value")
+		{
+			REQUIRE(graph_model.greaterOrEqualTimeIndex(ch_ix, 10) == 2);
 		}
 
 		DOCTEST_SUBCASE("value equals sample time value")
