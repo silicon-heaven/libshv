@@ -28,9 +28,15 @@ DOCTEST_TEST_CASE("Graph model")
 
 	graph_model.appendChannel(EMPTY_CHANNEL, {}, td);
 	size_t empty_ch_ix = graph_model.channelCount() -1;
+	size_t invalid_ch_ix = graph_model.channelCount();
 
 	DOCTEST_SUBCASE("lessOrEqualTimeIndex")
 	{
+		DOCTEST_SUBCASE("invalid channel")
+		{
+			REQUIRE(!graph_model.lessOrEqualTimeIndex(invalid_ch_ix, 1).has_value());
+		}
+
 		DOCTEST_SUBCASE("empty channel")
 		{
 			REQUIRE(!graph_model.lessOrEqualTimeIndex(empty_ch_ix, 1).has_value());
@@ -70,9 +76,14 @@ DOCTEST_TEST_CASE("Graph model")
 
 	DOCTEST_SUBCASE("lessTimeIndex")
 	{
+		DOCTEST_SUBCASE("invalid channel")
+		{
+			REQUIRE(!graph_model.lessTimeIndex(invalid_ch_ix, 1).has_value());
+		}
+
 		DOCTEST_SUBCASE("empty channel")
 		{
-			REQUIRE(!graph_model.lessOrEqualTimeIndex(empty_ch_ix, 1).has_value());
+			REQUIRE(!graph_model.lessTimeIndex(empty_ch_ix, 1).has_value());
 		}
 
 		DOCTEST_SUBCASE("value equals first sample time value")
@@ -108,9 +119,14 @@ DOCTEST_TEST_CASE("Graph model")
 
 	DOCTEST_SUBCASE("greaterTimeIndex")
 	{
+		DOCTEST_SUBCASE("invalid channel")
+		{
+			REQUIRE(!graph_model.greaterTimeIndex(invalid_ch_ix, 1).has_value());
+		}
+
 		DOCTEST_SUBCASE("empty channel")
 		{
-			REQUIRE(!graph_model.lessOrEqualTimeIndex(empty_ch_ix, 1).has_value());
+			REQUIRE(!graph_model.greaterTimeIndex(empty_ch_ix, 1).has_value());
 		}
 
 		DOCTEST_SUBCASE("value equals first sample time value")
@@ -146,9 +162,14 @@ DOCTEST_TEST_CASE("Graph model")
 
 	DOCTEST_SUBCASE("greaterOrEqualTimeIndex")
 	{
+		DOCTEST_SUBCASE("invalid channel")
+		{
+			REQUIRE(!graph_model.greaterOrEqualTimeIndex(invalid_ch_ix, 1).has_value());
+		}
+
 		DOCTEST_SUBCASE("empty channel")
 		{
-			REQUIRE(!graph_model.lessOrEqualTimeIndex(empty_ch_ix, 1).has_value());
+			REQUIRE(!graph_model.greaterOrEqualTimeIndex(empty_ch_ix, 1).has_value());
 		}
 
 		DOCTEST_SUBCASE("value equals first sample time value")
