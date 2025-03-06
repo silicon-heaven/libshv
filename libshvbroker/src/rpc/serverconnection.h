@@ -1,5 +1,6 @@
 #pragma once
 
+#include <shv/broker/azureconfig.h>
 #include <shv/broker/shvbrokerglobal.h>
 #include <shv/iotqt/rpc/socketrpcconnection.h>
 
@@ -22,7 +23,7 @@ class SHVBROKER_DECL_EXPORT ServerConnection : public SocketRpcConnection
 
 	using Super = SocketRpcConnection;
 public:
-	explicit ServerConnection(Socket *socket, const std::optional<std::string>& azureClientId, QObject *parent = nullptr);
+	explicit ServerConnection(Socket *socket, const std::optional<AzureConfig>& azureConfig, QObject *parent = nullptr);
 	~ServerConnection() Q_DECL_OVERRIDE;
 
 	const std::string& connectionName();
@@ -64,7 +65,7 @@ protected:
 
 	shv::chainpack::RpcValue m_connectionOptions;
 
-	std::optional<std::string> m_azureClientId;
+	std::optional<AzureConfig> m_azureConfig;
 };
 
 }
