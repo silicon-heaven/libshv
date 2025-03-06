@@ -22,9 +22,9 @@ namespace shv::iotqt::rpc {
 
 static const int s_initPhaseTimeout = 10000;
 
-ServerConnection::ServerConnection(Socket *socket, const std::optional<std::string>& azureClientId, QObject *parent)
+ServerConnection::ServerConnection(Socket *socket, const std::optional<AzureConfig>& azureConfig, QObject *parent)
 	: Super(parent)
-	, m_azureClientId(azureClientId)
+	, m_azureConfig(azureConfig)
 {
 	setSocket(socket);
 	connect(this, &ServerConnection::socketConnectedChanged, [this](bool is_connected) {
@@ -115,10 +115,6 @@ bool ServerConnection::isLoginPhase() const
 	return !m_loginOk;
 }
 
-const auto AZURE_AUTH_URL = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize";
-const auto AZURE_ACCESS_TOKEN_URL = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
-const auto AZURE_SCOPES = "User.Read";
-
 void ServerConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 {
 	cp::RpcRequest rq(msg);
@@ -142,13 +138,14 @@ void ServerConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 				"PLAIN",
 				"SHA1",
 			};
-			if (m_azureClientId.has_value()) {
+			if (m_azureConfig.has_value()) {
+				const auto& azure = m_azureConfig.value();
 				params.emplace_back(cp::RpcValue::Map {
 					{"type", "oauth2-azure"},
-					{"clientId", m_azureClientId.value()},
-					{"authorizeUrl", AZURE_AUTH_URL},
-					{"tokenUrl", AZURE_ACCESS_TOKEN_URL},
-					{"scopes", AZURE_SCOPES},
+					{"clientId", azure.clientId},
+					{"authorizeUrl", azure.authorizeUrl},
+					{"tokenUrl", azure.tokenUrl},
+					{"scopes", azure.scopes},
 				});
 			}
 			sendResponse(rq.requestId(), params);

@@ -14,9 +14,9 @@
 
 namespace shv::broker::rpc {
 
-WebSocketServer::WebSocketServer(SslMode secureMode, const std::optional<std::string>& azureClientId, QObject *parent)
+WebSocketServer::WebSocketServer(SslMode secureMode, const std::optional<AzureConfig>& azureConfig, QObject *parent)
 	: Super("shvbroker", secureMode, parent)
-	, m_azureClientId(azureClientId)
+	, m_azureConfig(azureConfig)
 {
 	if (secureMode == SecureMode) {
 		const QSslConfiguration ssl_configuration = load_ssl_configuration(BrokerApp::instance()->cliOptions());
@@ -64,7 +64,7 @@ ClientConnectionOnBroker *WebSocketServer::connectionById(int connection_id)
 
 ClientConnectionOnBroker *WebSocketServer::createServerConnection(QWebSocket *socket, QObject *parent)
 {
-	return new ClientConnectionOnBroker(new shv::iotqt::rpc::WebSocket(socket), m_azureClientId, parent);
+	return new ClientConnectionOnBroker(new shv::iotqt::rpc::WebSocket(socket), m_azureConfig, parent);
 }
 
 void WebSocketServer::onNewConnection()

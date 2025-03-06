@@ -287,11 +287,18 @@ BrokerApp::BrokerApp(int &argc, char **argv, AppCliOptions *cli_opts)
 		shvWarning() << "LDAP has been configured, but this broker wasn't compiled with LDAP support. LDAP will NOT be enabled.";
 #endif
 	}
-	if (cli_opts->azureGroupMapping_isset()) {
-		shvInfo() << "Enabling LDAP authentication";
+	if (cli_opts->azureGroupMapping_isset() &&
+		cli_opts->azureClientId_isset() &&
+		cli_opts->azureAuthorizeUrl_isset() &&
+		cli_opts->azureTokenUrl_isset() &&
+		cli_opts->azureScopes_isset()) {
+		shvInfo() << "Enabling Azure authentication";
 
 		m_azureConfig = AzureConfig {
-			.clientId = cli_opts->azureClientId_isset() ? std::optional{cli_opts->azureClientId()} : std::nullopt,
+			.clientId = cli_opts->azureClientId(),
+			.authorizeUrl = cli_opts->azureAuthorizeUrl(),
+			.tokenUrl = cli_opts->azureTokenUrl(),
+			.scopes = cli_opts->azureScopes(),
 			.groupMapping = transform_cli_group_mapping(cli_opts->azureGroupMapping())
 		};
 	}
@@ -427,18 +434,13 @@ void BrokerApp::startTcpServers()
 {
 	const auto *opts = cliOptions();
 
-	std::optional<std::string> azureClientId;
-	if (m_azureConfig.has_value()) {
-		azureClientId = m_azureConfig.value().clientId;
-	}
-
 	if(opts->serverPort_isset()) {
 		// port must be set explicitly to enable server
 		SHV_SAFE_DELETE(m_tcpServer);
 		int port = opts->serverPort();
 		if(port > 0) {
 			shvInfo() << "Starting plain socket server on port" << port;
-			m_tcpServer = new rpc::BrokerTcpServer(rpc::BrokerTcpServer::NonSecureMode, azureClientId, this);
+			m_tcpServer = new rpc::BrokerTcpServer(rpc::BrokerTcpServer::NonSecureMode, m_azureConfig, this);
 			if(!m_tcpServer->start(port)) {
 				SHV_EXCEPTION("Cannot start TCP server!");
 			}
@@ -453,7 +455,7 @@ void BrokerApp::startTcpServers()
 		int port = opts->serverSslPort();
 		if(port > 0) {
 			shvInfo() << "Starting SSL server on port" << port;
-			m_sslServer = new rpc::BrokerTcpServer(rpc::BrokerTcpServer::SecureMode, azureClientId, this);
+			m_sslServer = new rpc::BrokerTcpServer(rpc::BrokerTcpServer::SecureMode, m_azureConfig, this);
 			if(!m_sslServer->loadSslConfig()) {
 				SHV_EXCEPTION("Cannot start SSL server, invalid SSL config!");
 			}
@@ -472,16 +474,11 @@ void BrokerApp::startWebSocketServers()
 #ifdef WITH_SHV_WEBSOCKETS
 	auto *opts = cliOptions();
 
-	std::optional<std::string> azureClientId;
-	if (m_azureConfig.has_value()) {
-		azureClientId = m_azureConfig.value().clientId;
-	}
-
 	if(opts->serverWebsocketPort_isset()) {
 		SHV_SAFE_DELETE(m_webSocketServer);
 		int port = opts->serverWebsocketPort();
 		if(port > 0) {
-			m_webSocketServer = new rpc::WebSocketServer(QWebSocketServer::NonSecureMode, azureClientId, this);
+			m_webSocketServer = new rpc::WebSocketServer(QWebSocketServer::NonSecureMode, m_azureConfig, this);
 			shvInfo() << "Starting ws server on port" << port;
 			if(!m_webSocketServer->start(port)) {
 				SHV_EXCEPTION("Cannot start WebSocket server!");
@@ -495,7 +492,7 @@ void BrokerApp::startWebSocketServers()
 		SHV_SAFE_DELETE(m_webSocketSslServer);
 		int port = opts->serverWebsocketSslPort();
 		if(port > 0) {
-			m_webSocketSslServer = new rpc::WebSocketServer(QWebSocketServer::SecureMode, azureClientId, this);
+			m_webSocketSslServer = new rpc::WebSocketServer(QWebSocketServer::SecureMode, m_azureConfig, this);
 			shvInfo() << "Starting wss server on port" << port;
 			if(!m_webSocketSslServer->start(port)) {
 				SHV_EXCEPTION("Cannot start WebSocket SSL server!");

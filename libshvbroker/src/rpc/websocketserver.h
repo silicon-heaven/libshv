@@ -1,5 +1,6 @@
 #pragma once
 
+#include <shv/broker/azureconfig.h>
 #include <QWebSocketServer>
 
 #include <optional>
@@ -15,7 +16,7 @@ class WebSocketServer : public QWebSocketServer
 	Q_OBJECT
 	using Super = QWebSocketServer;
 public:
-	WebSocketServer(SslMode secureMode, const std::optional<std::string>& azureClientId, QObject *parent = nullptr);
+	WebSocketServer(SslMode secureMode, const std::optional<AzureConfig>& azureConfig, QObject *parent = nullptr);
 	~WebSocketServer() override;
 
 	bool start(int port = 0);
@@ -28,6 +29,6 @@ private:
 	void unregisterConnection(int connection_id);
 private:
 	std::map<int, ClientConnectionOnBroker*> m_connections;
-	std::optional<std::string> m_azureClientId;
+	std::optional<AzureConfig> m_azureConfig;
 };
 }
