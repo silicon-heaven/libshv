@@ -45,7 +45,10 @@ AppCliOptions::AppCliOptions()
 	addOption("ldap.searchBaseDN").setType(cp::RpcValue::Type::String).setNames("--ldap-search-base-dn").setComment("Set the base DN for LDAP searches (the DN where user entries live)");
 	addOption("ldap.searchAttrs").setType(cp::RpcValue::Type::List).setNames("--ldap-search-attrs").setComment("Set the LDAP attributes containing the login name for LDAP user entries");
 	addOption("ldap.groupMapping").setType(cp::RpcValue::Type::List).setComment("Set the mapping of LDAP groups to shv groups as an ordered list of pairs");
-	addOption("azure.clientId").setType(cp::RpcValue::Type::String).setComment("Set the ClientID of the registered Azure app (it will be send in response to `hello`");
+	addOption("azure.clientId").setType(cp::RpcValue::Type::String).setComment("Set the ClientID of the registered Azure app");
+	addOption("azure.authorizeUrl").setType(cp::RpcValue::Type::String).setComment("Set the authorize URL of the registered Azure app");
+	addOption("azure.tokenUrl").setType(cp::RpcValue::Type::String).setComment("Set the token URL of the registered Azure app");
+	addOption("azure.scopes").setType(cp::RpcValue::Type::String).setComment("Set the scopes of the registered Azure app");
 	addOption("azure.groupMapping").setType(cp::RpcValue::Type::List).setComment("Set the mapping of Azure groups to shv groups as an ordered list of pairs");
 }
 }
