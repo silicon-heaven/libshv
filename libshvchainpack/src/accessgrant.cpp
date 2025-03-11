@@ -85,12 +85,12 @@ UserLogin UserLogin::fromRpcValue(const RpcValue &val)
 	if(val.isMap()) {
 		const RpcValue::Map &m = val.asMap();
 		ret.user = m.value("user").toString();
-		ret.password = m.value("password").toString();
 		const RpcValue::String lts = m.value("type").toString();
 		if(lts.empty())
 			ret.loginType = LoginType::Sha1;
 		else
 			ret.loginType = loginTypeFromString(lts);
+		ret.password = m.value(ret.loginType == LoginType::Token ? "token" : "password").toString();
 	}
 	return ret;
 }

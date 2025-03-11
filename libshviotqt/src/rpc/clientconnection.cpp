@@ -492,12 +492,11 @@ void ClientConnection::onSocketConnectedChanged(bool is_connected)
 void ClientConnection::createLoginParams(const chainpack::RpcValue &server_hello, const std::function<void(chainpack::RpcValue)>& params_callback) const
 {
 	auto impl_ret = [this, params_callback] (const auto& user_name, const auto& pass) {
-
 		params_callback(cp::RpcValue::Map {
 			{
 				"login", cp::RpcValue::Map {
 					{"user", user_name},
-					{"password", pass},
+					{LoginType() == chainpack::IRpcConnection::LoginType::Token ? "token" : "password", pass},
 					{"type", chainpack::UserLogin::loginTypeToString(loginType())},
 				},
 			},
