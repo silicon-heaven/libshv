@@ -1141,7 +1141,7 @@ void Graph::makeLayout(const QRect &pref_rect)
 			auto fair_rest = h_rest / (rests.count() - i);
 			const Rest &r = rests[i];
 			GraphChannel *ch = channelAt(r.index);
-			qsizetype h = u2px(ch->m_effectiveStyle.heightRange());
+			qsizetype h = r.rest;
 			h = std::min(h, fair_rest);
 			ch->m_layout.graphAreaRect.setHeight(static_cast<int>(ch->m_layout.graphAreaRect.height() + h));
 			h_rest -= h;
