@@ -496,7 +496,7 @@ void ClientConnection::createLoginParams(const chainpack::RpcValue &server_hello
 			{
 				"login", cp::RpcValue::Map {
 					{"user", user_name},
-					{LoginType() == chainpack::IRpcConnection::LoginType::Token ? "token" : "password", pass},
+					{loginType() == chainpack::IRpcConnection::LoginType::Token ? "token" : "password", pass},
 					{"type", chainpack::UserLogin::loginTypeToString(loginType())},
 				},
 			},
