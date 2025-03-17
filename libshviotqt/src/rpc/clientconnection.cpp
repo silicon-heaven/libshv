@@ -812,6 +812,12 @@ void ClientConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 	restartIfAutoConnect();
 }
 
+void ClientConnection::onRpcFrameReceived(chainpack::RpcFrame&& frame)
+{
+	emit rpcFrameReceived();
+	Super::onRpcFrameReceived(std::move(frame));
+}
+
 const char *ClientConnection::stateToString(ClientConnection::State state)
 {
 	switch (state) {

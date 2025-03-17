@@ -17,6 +17,7 @@ RpcResponseCallBack::RpcResponseCallBack(ClientConnection *conn, int rq_id, QObj
 	: QObject(parent)
 {
 	setRequestId(rq_id);
+	connect(conn, &ClientConnection::rpcFrameReceived, this, &RpcResponseCallBack::onRpcFrameReceived);
 	connect(conn, &ClientConnection::rpcMessageReceived, this, &RpcResponseCallBack::onRpcMessageReceived);
 	connect(conn, &ClientConnection::responseMetaReceived, this, &RpcResponseCallBack::onResponseMetaReceived);
 	connect(conn, &ClientConnection::dataChunkReceived, this, &RpcResponseCallBack::onDataChunkReceived);
@@ -90,6 +91,17 @@ void RpcResponseCallBack::abort()
 	deleteLater();
 }
 
+void RpcResponseCallBack::onRpcFrameReceived()
+{
+	if (m_isFinished) {
+		return;
+	}
+
+	if (m_timeoutTimer && m_responseMetaReceived) {
+		m_responseFrameReceived = true;
+	}
+}
+
 void RpcResponseCallBack::onRpcMessageReceived(const chainpack::RpcMessage &msg)
 {
 	if(m_isFinished)
@@ -129,6 +141,11 @@ void RpcResponseCallBack::onDataChunkReceived()
 {
 	if(m_isFinished)
 		return;
+
+	if (m_responseFrameReceived) {
+		return;
+	}
+
 	if(m_timeoutTimer && m_responseMetaReceived) {
 		// response is being received
 		m_timeoutTimer->start();
