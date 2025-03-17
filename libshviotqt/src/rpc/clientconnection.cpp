@@ -735,8 +735,8 @@ void ClientConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 				return;
 			}
 
-			const auto result = resp.result();
-			const auto& lst = result.asList();
+			const auto workflows_result = resp.result();
+			const auto& lst = workflows_result.asList();
 
 			if (m_oauth2Azure) {
 				auto oauth2_azure_workflow = std::ranges::find_if(lst, [] (const chainpack::RpcValue& workflow) {
@@ -773,9 +773,9 @@ void ClientConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 				m_tokenPasswordCallback = [this, client_id, authorize_url, token_url, scopes] (const auto& token_callback) {
 					doAzureAuth(client_id, authorize_url, token_url, scopes).then([this, token_callback] (const std::variant<QFuture<QString>, QFuture<QString>>& result_or_error) {
 						if (result_or_error.index() == 0) {
-							auto result = std::get<0>(result_or_error);
+							auto azure_auth_token_result = std::get<0>(result_or_error);
 							// This can happen due to a bug: https://bugreports.qt.io/browse/QTBUG-115580
-							if (!result.isValid()) {
+							if (!azure_auth_token_result.isValid()) {
 								return;
 							}
 							auto token = "oauth2-azure:"+ std::get<0>(result_or_error).result().toStdString();
