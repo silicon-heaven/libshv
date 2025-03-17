@@ -65,6 +65,8 @@ public:
 	void setCheckBrokerConnectedInterval(int ms);
 	int checkBrokerConnectedInterval() const;
 
+	void onRpcFrameReceived(chainpack::RpcFrame&&) override;
+	Q_SIGNAL void rpcFrameReceived();
 	Q_SIGNAL void rpcMessageReceived(const shv::chainpack::RpcMessage &msg);
 
 	bool isBrokerConnected() const;
