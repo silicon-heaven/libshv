@@ -213,6 +213,12 @@ if(NOT DEFINED LIBSHV_WITH_OAUTH2_AZURE)
 	set(LIBSHV_WITH_OAUTH2_AZURE ${QtNetworkAuth_FOUND})
 endif()
 
+if(LIBSHV_WITH_OAUTH2_AZURE)
+	message(STATUS "OAuth2 Azure support enabled")
+else()
+	message(STATUS "OAuth2 Azure support disabled")
+endif()
+
 if(LIBSHV_WITH_WEBSOCKETS)
 	message(STATUS "SHV websocket support enabled")
 else()
