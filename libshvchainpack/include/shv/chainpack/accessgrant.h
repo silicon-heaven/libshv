@@ -14,7 +14,7 @@ struct UserLogin;
 
 struct SHVCHAINPACK_DECL_EXPORT UserLoginContext
 {
-	std::string serverNounce;
+	std::optional<std::string> serverNounce;
 	std::string clientType;
 	shv::chainpack::RpcRequest loginRequest;
 	int connectionId = 0;
