@@ -180,12 +180,15 @@ chainpack::UserLoginResult AclManager::checkPassword(const chainpack::UserLoginC
 		}
 	}
 	if(usr_login_type == LoginType::Sha1) {
+		if (!login_context.serverNounce.has_value()) {
+			return cp::UserLoginResult(false, "Can't use SHA1 login without using `:hello` first");
+		}
 		/// login_type == "SHA1" is default
 		logAclManagerM() << "user_login_type: SHA1";
 		if(acl_pwd.format == shv::iotqt::acl::AclPassword::Format::Plain)
 			acl_pwd.password = shv::iotqt::utils::sha1Hex(acl_pwd.password);
 
-		std::string nonce = login_context.serverNounce + acl_pwd.password;
+		std::string nonce = login_context.serverNounce.value() + acl_pwd.password;
 		QCryptographicHash hash(QCryptographicHash::Algorithm::Sha1);
 #if QT_VERSION_MAJOR >= 6 && QT_VERSION_MINOR >= 3
 		hash.addData(QByteArrayView(nonce.data(), static_cast<int>(nonce.length())));

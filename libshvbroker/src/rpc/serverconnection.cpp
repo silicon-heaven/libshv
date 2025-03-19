@@ -29,7 +29,6 @@ ServerConnection::ServerConnection(Socket *socket, const std::optional<AzureConf
 	setSocket(socket);
 	connect(this, &ServerConnection::socketConnectedChanged, [this](bool is_connected) {
 		if(is_connected) {
-			m_helloReceived = m_loginReceived = false;
 			setConnectionName(peerAddress() + ':' + std::to_string(peerPort()));
 		}
 	});
@@ -122,18 +121,17 @@ void ServerConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 		if(!msg.isRequest())
 			SHV_EXCEPTION("Initial message is not RPC request! Dropping client connection. " + connectionName() + " " + msg.toCpon());
 
-		if(!m_helloReceived && !m_loginReceived && rq.method() == shv::chainpack::Rpc::METH_HELLO) {
+		if(!m_loginReceived && rq.method() == shv::chainpack::Rpc::METH_HELLO) {
 			shvInfo().nospace() << "Client hello received from: " << socket()->peerAddress().toString().toStdString() << ':' << socket()->peerPort();
-			m_helloReceived = true;
 			shvInfo() << "sending hello response:" << connectionName();
 			m_userLoginContext.serverNounce = std::to_string(std::rand());
 			cp::RpcValue::Map params {
-				{"nonce", m_userLoginContext.serverNounce},
+				{"nonce", m_userLoginContext.serverNounce.value()},
 			};
 			sendResponse(rq.requestId(), params);
 			return;
 		}
-		if(m_helloReceived && !m_loginReceived && rq.method() == shv::chainpack::Rpc::METH_WORKFLOWS) {
+		if(!m_loginReceived && rq.method() == shv::chainpack::Rpc::METH_WORKFLOWS) {
 			cp::RpcValue::List params {
 				"PLAIN",
 				"SHA1",
@@ -151,7 +149,7 @@ void ServerConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 			sendResponse(rq.requestId(), params);
 			return;
 		}
-		if(m_helloReceived && !m_loginReceived && rq.method() == shv::chainpack::Rpc::METH_LOGIN) {
+		if(!m_loginReceived && rq.method() == shv::chainpack::Rpc::METH_LOGIN) {
 			shvInfo() << "Client login received";// << profile;// << "device id::" << m.value("deviceId").toStdString();
 			m_loginReceived = true;
 			m_userLoginContext.loginRequest = msg;
