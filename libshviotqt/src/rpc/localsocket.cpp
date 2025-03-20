@@ -93,11 +93,7 @@ LocalSocket::LocalSocket(QLocalSocket *socket, Protocol protocol, QObject *paren
 	});
 }
 
-LocalSocket::~LocalSocket()
-{
-	delete m_frameReader;
-	delete m_frameWriter;
-}
+LocalSocket::~LocalSocket() = default;
 
 void LocalSocket::connectToHost(const QUrl &url)
 {
