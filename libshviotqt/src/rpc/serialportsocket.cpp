@@ -223,11 +223,9 @@ void SerialFrameWriter::resetCommunication()
 // SerialPortSocket
 //======================================================
 SerialPortSocket::SerialPortSocket(QSerialPort *port, QObject *parent)
-	: Super(parent)
+	: Super(new SerialFrameReader(SerialFrameReader::CrcCheck::Yes), new SerialFrameWriter(SerialFrameWriter::CrcCheck::Yes), parent)
 	, m_port(port)
 {
-	m_frameReader = new SerialFrameReader(SerialFrameReader::CrcCheck::Yes);
-	m_frameWriter = new SerialFrameWriter(SerialFrameWriter::CrcCheck::Yes);
 	m_port->setParent(this);
 
 	connect(m_port, &QSerialPort::readyRead, this, &SerialPortSocket::onDataReadyRead);
@@ -300,9 +298,8 @@ void SerialPortSocket::setReceiveTimeout(int millis)
 			m_readDataTimeout = new QTimer(this);
 			m_readDataTimeout->setSingleShot(true);
 			connect(m_readDataTimeout, &QTimer::timeout, this, [this]() {
-				auto *frame_reader = dynamic_cast<SerialFrameReader*>(m_frameReader);
-				Q_ASSERT(frame_reader);
-				if(frame_reader->readState() != SerialFrameReader::ReadState::WaitingForStx) {
+				auto &frame_reader = dynamic_cast<SerialFrameReader&>(frameReader());
+				if(frame_reader.readState() != SerialFrameReader::ReadState::WaitingForStx) {
 					resetCommunication();
 				}
 			});
@@ -366,18 +363,18 @@ void SerialPortSocket::onDataReadyRead()
 {
 	auto ba = m_port->readAll();
 	string_view escaped_data(ba.constData(), ba.size());
-	for (auto rqid : m_frameReader->addData(escaped_data)) {
+	for (auto rqid : frameReader().addData(escaped_data)) {
 		emit responseMetaReceived(rqid);
 	}
 	emit dataChunkReceived();
-	if (!m_frameReader->isEmpty()) {
+	if (!frameReader().isEmpty()) {
 		emit readyRead();
 	}
 }
 
 void SerialPortSocket::flushWriteBuffer()
 {
-	m_frameWriter->flushToDevice(m_port);
+	frameWriter().flushToDevice(m_port);
 	m_port->flush();
 }
 

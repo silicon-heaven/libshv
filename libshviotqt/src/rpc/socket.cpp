@@ -191,8 +191,10 @@ void StreamFrameWriter::addFrameData(const std::string &frame_head, const std::s
 //======================================================
 // Socket
 //======================================================
-Socket::Socket(QObject *parent)
+Socket::Socket(FrameReader* frame_reader, FrameWriter* frame_writer, QObject *parent)
 	: QObject(parent)
+	, m_frameReader(frame_reader)
+	, m_frameWriter(frame_writer)
 {
 
 }
@@ -276,16 +278,24 @@ void Socket::clearWriteBuffer()
 	m_frameWriter->clear();
 }
 
+FrameReader& Socket::frameReader()
+{
+	return *m_frameReader;
+}
+
+FrameWriter& Socket::frameWriter()
+{
+	return *m_frameWriter;
+}
+
 //======================================================
 // TcpSocket
 //======================================================
 TcpSocket::TcpSocket(QTcpSocket *socket, QObject *parent)
-	: Super(parent)
+	: Super(new StreamFrameReader(), new StreamFrameWriter(), parent)
 	, m_socket(socket)
 {
 	m_socket->setParent(this);
-	m_frameReader = new StreamFrameReader();
-	m_frameWriter = new StreamFrameWriter();
 
 	connect(m_socket, &QTcpSocket::connected, this, &Socket::connected);
 	connect(m_socket, &QTcpSocket::disconnected, this, &Socket::disconnected);
@@ -346,11 +356,11 @@ void TcpSocket::onDataReadyRead()
 	auto ba = m_socket->readAll();
 	try {
 		std::string_view data(ba.constData(), ba.size());
-		for (auto rqid : m_frameReader->addData(data)) {
+		for (auto rqid : frameReader().addData(data)) {
 			emit responseMetaReceived(rqid);
 		}
 		emit dataChunkReceived();
-		if (!m_frameReader->isEmpty()) {
+		if (!frameReader().isEmpty()) {
 			emit readyRead();
 		}
 	}
@@ -362,7 +372,7 @@ void TcpSocket::onDataReadyRead()
 
 void TcpSocket::flushWriteBuffer()
 {
-	m_frameWriter->flushToDevice(m_socket);
+	frameWriter().flushToDevice(m_socket);
 	m_socket->flush();
 }
 

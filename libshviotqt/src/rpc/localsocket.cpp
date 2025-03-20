@@ -27,24 +27,36 @@ QAbstractSocket::SocketState LocalSocket_convertState(QLocalSocket::LocalSocketS
 	}
 	return QAbstractSocket::UnconnectedState;
 }
+
+template <typename Type>
+Type* make(LocalSocket::Protocol protocol)
+{
+	switch (protocol) {
+	case shv::iotqt::rpc::LocalSocket::Protocol::Serial:
+#ifndef QT_SERIALPORT_LIB
+		throw std::runtime_error("libshv wasn't compiled with serial port support");
+#endif
+		if constexpr (std::same_as<Type, FrameReader>) {
+			return new SerialFrameReader(SerialFrameReader::CrcCheck::No);
+		} else {
+			return new SerialFrameWriter(SerialFrameWriter::CrcCheck::No);
+		}
+	case shv::iotqt::rpc::LocalSocket::Protocol::Stream:
+		if constexpr (std::same_as<Type, FrameReader>) {
+			return new StreamFrameReader();
+		} else {
+			return new StreamFrameWriter();
+		}
+	default:
+		throw std::runtime_error("Unknown protocol " + std::to_string(static_cast<int>(protocol)));
+	}
+}
 }
 
 LocalSocket::LocalSocket(QLocalSocket *socket, Protocol protocol, QObject *parent)
-	: Super(parent)
+	: Super(make<FrameReader>(protocol), make<FrameWriter>(protocol), parent)
 	, m_socket(socket)
 {
-	if (protocol == Protocol::Serial) {
-#ifdef QT_SERIALPORT_LIB
-		m_frameReader = new SerialFrameReader(SerialFrameReader::CrcCheck::No);
-		m_frameWriter = new SerialFrameWriter(SerialFrameWriter::CrcCheck::No);
-#else
-		throw std::runtime_error("libshv wasn't compiled with serial port support");
-#endif
-	}
-	else {
-		m_frameReader = new StreamFrameReader();
-		m_frameWriter = new StreamFrameWriter();
-	}
 	m_socket->setParent(this);
 
 	connect(m_socket, &QLocalSocket::connected, this, &Socket::connected);
@@ -141,11 +153,11 @@ void LocalSocket::onDataReadyRead()
 	auto ba = m_socket->readAll();
 	try {
 		std::string_view escaped_data(ba.constData(), ba.size());
-		for (auto rqid : m_frameReader->addData(escaped_data)) {
+		for (auto rqid : frameReader().addData(escaped_data)) {
 			emit responseMetaReceived(rqid);
 		}
 		emit dataChunkReceived();
-		if (!m_frameReader->isEmpty()) {
+		if (!frameReader().isEmpty()) {
 			emit readyRead();
 		}
 	}
@@ -157,7 +169,7 @@ void LocalSocket::onDataReadyRead()
 
 void LocalSocket::flushWriteBuffer()
 {
-	m_frameWriter->flushToDevice(m_socket);
+	frameWriter().flushToDevice(m_socket);
 	m_socket->flush();
 }
 
