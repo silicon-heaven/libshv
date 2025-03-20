@@ -152,8 +152,8 @@ public:
 	Sample timeToSample(qsizetype channel_ix, timemsec_t time) const;
 	std::pair<Sample, int> posToSample(const QPoint &pos) const;
 	Sample timeToPreviousSample(qsizetype channel_ix, timemsec_t time) const;
-	qsizetype posToChannel(const QPoint &pos) const;
-	qsizetype posToChannelHeader(const QPoint &pos) const;
+	std::optional<qsizetype> posToChannel(const QPoint &pos) const;
+	std::optional<qsizetype> posToChannelHeader(const QPoint &pos) const;
 	Sample posToData(const QPoint &pos) const;
 	QPoint dataToPos(qsizetype ch_ix, const Sample &s) const;
 

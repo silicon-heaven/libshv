@@ -433,10 +433,11 @@ Sample Graph::timeToPreviousSample(qsizetype channel_ix, timemsec_t time) const
 
 Sample Graph::posToData(const QPoint &pos) const
 {
-	qsizetype ch_ix = posToChannel(pos);
-	if(ch_ix < 0)
+	auto ch_ix = posToChannel(pos);
+	if(!ch_ix)
 		return Sample();
-	const GraphChannel *ch = channelAt(ch_ix);
+
+	const GraphChannel *ch = channelAt(ch_ix.value());
 	auto point2data = pointToDataFn(ch->graphDataGridRect(), DataRect{xRangeZoom(), ch->yRangeZoom()});
 	return point2data? point2data(pos): Sample();
 }
@@ -501,7 +502,7 @@ QRect Graph::selectionRect() const
 	return m_state.selectionRect;
 }
 
-qsizetype Graph::posToChannel(const QPoint &pos) const
+std::optional<qsizetype> Graph::posToChannel(const QPoint &pos) const
 {
 	for (qsizetype i = 0; i < channelCount(); ++i) {
 		const GraphChannel *ch = channelAt(i);
@@ -510,17 +511,15 @@ qsizetype Graph::posToChannel(const QPoint &pos) const
 			return i;
 		}
 	}
-	return -1;
+	return {};
 }
 
-qsizetype Graph::posToChannelHeader(const QPoint &pos) const
+std::optional<qsizetype> Graph::posToChannelHeader(const QPoint &pos) const
 {
-	if (m_layout.cornerCellRect.contains(pos)) {
-		return -1;
+	if ((m_layout.cornerCellRect.contains(pos)) || (m_layout.cornerCellRect.right() < pos.x())) {
+		return {};
 	}
-	if (m_layout.cornerCellRect.right() < pos.x()) {
-		return -1;
-	}
+
 	for (qsizetype i = 0; i < channelCount(); ++i) {
 		const GraphChannel *ch = channelAt(i);
 
@@ -529,7 +528,7 @@ qsizetype Graph::posToChannelHeader(const QPoint &pos) const
 		}
 	}
 
-	return -1;
+	return {};
 }
 
 XRange Graph::xRange() const
@@ -625,18 +624,18 @@ void Graph::zoomToSelection(bool zoom_vertically)
 	xrange.max = posToTime(selectionRect().right());
 	xrange.normalize();
 	if(zoom_vertically) {
-		qsizetype ch1 = posToChannel(selectionRect().topLeft());
-		qsizetype ch2 = posToChannel(selectionRect().bottomRight());
-		if(ch1 == ch2 && ch1 >= 0) {
-			const GraphChannel *ch = channelAt(ch1);
+		auto ch1 = posToChannel(selectionRect().topLeft());
+		auto ch2 = posToChannel(selectionRect().bottomRight());
+
+		if(ch1 && ch2 && (ch1.value() == ch2.value())) {
+			const GraphChannel *ch = channelAt(ch1.value());
 			if(ch) {
 				YRange yrange;
 				yrange.min = ch->posToValue(selectionRect().top());
 				yrange.max = ch->posToValue(selectionRect().bottom());
 				yrange.normalize();
-				setYRangeZoom(ch1, yrange);
+				setYRangeZoom(ch1.value(), yrange);
 			}
-
 		}
 	}
 	setXRangeZoom(xrange);
@@ -931,18 +930,18 @@ std::pair<Sample, int> Graph::posToSample(const QPoint &pos) const
 {
 	auto ch_ix = posToChannel(pos);
 	timemsec_t time = posToTime(pos.x());
-	const GraphChannel *ch = channelAt(ch_ix);
+	const GraphChannel *ch = channelAt(ch_ix.value());
 	const GraphModel::ChannelInfo channel_info = model()->channelInfo(ch->modelIndex());
 	shvDebug() << channel_info.shvPath << channel_info.typeDescr.toRpcValue().toCpon();
 	auto channel_sample_type = channel_info.typeDescr.sampleType();
 	Sample s;
 	if (channel_sample_type == shv::core::utils::ShvTypeDescr::SampleType::Discrete) {
-		s = timeToPreviousSample(ch_ix, time);
+		s = timeToPreviousSample(ch_ix.value(), time);
 	}
 	else {
-		s = timeToSample(ch_ix, time);
+		s = timeToSample(ch_ix.value(), time);
 	}
-	return {s, ch_ix};
+	return {s, ch_ix.value()};
 }
 
 QVariantMap Graph::sampleValues(qsizetype channel_ix, const shv::visu::timeline::Sample &s) const
@@ -2443,25 +2442,28 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 				auto sel_rect = selectionRect();
 				auto ch1_ix = posToChannel(sel_rect.bottomLeft());
 				auto ch2_ix = posToChannel(sel_rect.topLeft());
-				auto *ch1 = channelAt(ch1_ix);
-				auto *ch2 = channelAt(ch2_ix);
-				auto t1 = posToTime(sel_rect.left());
-				auto t2 = posToTime(sel_rect.right());
-				auto y1 = ch1->posToValue(sel_rect.bottom());
-				auto y2 = ch2->posToValue(sel_rect.top());
 
-				if (m_model->xAxisType() == GraphModel::XAxisType::Timeline) {
-					info_text = tr("t1: %1").arg(timeToStringTZ(t1));
-					info_text += '\n' + tr("duration: %1").arg(durationToString(t2 - t1));
-				}
-				else {
-					info_text = tr("x1: %1").arg(timeToStringTZ(t1));
-					info_text += '\n' + tr("width: %1").arg(durationToString(t2 - t1));
-				}
+				if(ch1_ix && ch2_ix) {
+					auto *ch1 = channelAt(ch1_ix.value());
+					auto *ch2 = channelAt(ch2_ix.value());
+					auto t1 = posToTime(sel_rect.left());
+					auto t2 = posToTime(sel_rect.right());
+					auto y1 = ch1->posToValue(sel_rect.bottom());
+					auto y2 = ch2->posToValue(sel_rect.top());
 
-				if(ch1 == ch2) {
-					info_text += '\n' + tr("y1: %1").arg(y1);
-					info_text += '\n' + tr("diff: %1").arg(y2 - y1);
+					if (m_model->xAxisType() == GraphModel::XAxisType::Timeline) {
+						info_text = tr("t1: %1").arg(timeToStringTZ(t1));
+						info_text += '\n' + tr("duration: %1").arg(durationToString(t2 - t1));
+					}
+					else {
+						info_text = tr("x1: %1").arg(timeToStringTZ(t1));
+						info_text += '\n' + tr("width: %1").arg(durationToString(t2 - t1));
+					}
+
+					if(ch1 == ch2) {
+						info_text += '\n' + tr("y1: %1").arg(y1);
+						info_text += '\n' + tr("diff: %1").arg(y2 - y1);
+					}
 				}
 			}
 			else {
