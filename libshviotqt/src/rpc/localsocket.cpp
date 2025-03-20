@@ -29,7 +29,7 @@ QAbstractSocket::SocketState LocalSocket_convertState(QLocalSocket::LocalSocketS
 }
 
 template <typename Type>
-Type* make(LocalSocket::Protocol protocol)
+std::unique_ptr<Type> make(LocalSocket::Protocol protocol)
 {
 	switch (protocol) {
 	case shv::iotqt::rpc::LocalSocket::Protocol::Serial:
@@ -37,15 +37,15 @@ Type* make(LocalSocket::Protocol protocol)
 		throw std::runtime_error("libshv wasn't compiled with serial port support");
 #endif
 		if constexpr (std::same_as<Type, FrameReader>) {
-			return new SerialFrameReader(SerialFrameReader::CrcCheck::No);
+			return std::make_unique<SerialFrameReader>(SerialFrameReader::CrcCheck::No);
 		} else {
-			return new SerialFrameWriter(SerialFrameWriter::CrcCheck::No);
+			return std::make_unique<SerialFrameWriter>(SerialFrameWriter::CrcCheck::No);
 		}
 	case shv::iotqt::rpc::LocalSocket::Protocol::Stream:
 		if constexpr (std::same_as<Type, FrameReader>) {
-			return new StreamFrameReader();
+			return std::make_unique<StreamFrameReader>();
 		} else {
-			return new StreamFrameWriter();
+			return std::make_unique<StreamFrameWriter>();
 		}
 	default:
 		throw std::runtime_error("Unknown protocol " + std::to_string(static_cast<int>(protocol)));
