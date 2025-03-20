@@ -110,8 +110,8 @@ bool GraphWidget::event(QEvent *ev)
 			auto *help_event = static_cast<QHelpEvent *>(ev);
 			auto channel_ix = gr->posToChannelHeader(help_event->pos());
 
-			if (channel_ix > -1) {
-				GraphModel::ChannelInfo channel_info = gr->channelInfo(channel_ix);
+			if (channel_ix) {
+				GraphModel::ChannelInfo channel_info = gr->channelInfo(channel_ix.value());
 				QString tooltip;
 
 				if (channel_info.name.isEmpty()) {
@@ -199,7 +199,7 @@ int GraphWidget::posToChannelVerticalHeader(const QPoint &pos) const
 	return -1;
 }
 
-qsizetype GraphWidget::posToChannel(const QPoint &pos) const
+std::optional<qsizetype> GraphWidget::posToChannel(const QPoint &pos) const
 {
 	const Graph *gr = graph();
 	auto ch_ix = gr->posToChannel(pos);
@@ -315,10 +315,10 @@ void GraphWidget::mouseReleaseEvent(QMouseEvent *event)
 		if(old_mouse_op == MouseOperation::GraphDataAreaLeftCtrlPress) {
 			if(event->modifiers() == Qt::ControlModifier) {
 				auto channel_ix = posToChannel(event->pos());
-				if(channel_ix >= 0) {
-					removeProbes(channel_ix);
+				if(channel_ix) {
+					removeProbes(channel_ix.value());
 					timemsec_t time = m_graph->posToTime(event->pos().x());
-					createProbe(channel_ix, time);
+					createProbe(channel_ix.value(), time);
 					event->accept();
 					return;
 				}
@@ -326,9 +326,9 @@ void GraphWidget::mouseReleaseEvent(QMouseEvent *event)
 		}
 		else if(old_mouse_op == MouseOperation::GraphDataAreaLeftCtrlShiftPress) {
 			auto channel_ix = posToChannel(event->pos());
-			if(channel_ix >= 0) {
+			if(channel_ix) {
 				timemsec_t time = m_graph->posToTime(event->pos().x());
-				createProbe(channel_ix, time);
+				createProbe(channel_ix.value(), time);
 				event->accept();
 				return;
 			}
@@ -356,8 +356,8 @@ void GraphWidget::mouseReleaseEvent(QMouseEvent *event)
 		if(old_mouse_op == MouseOperation::GraphDataAreaRightPress) {
 			if(event->modifiers() == Qt::NoModifier) {
 				auto ch_ix = posToChannel(event->pos());
-				if(ch_ix >= 0) {
-					showChannelContextMenu(ch_ix, event->pos());
+				if(ch_ix) {
+					showChannelContextMenu(ch_ix.value(), event->pos());
 					event->accept();
 					update();
 					return;
@@ -464,8 +464,10 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 	case MouseOperation::GraphDataAreaLeftCtrlShiftPress:
 		return;
 	case MouseOperation::ChannelHeaderResizeHeight: {
-		gr->resizeChannelHeight(m_resizeChannelIx, pos.y() - m_recentMousePos.y());
-		m_recentMousePos = pos;
+		if (m_resizeChannelIx) {
+			gr->resizeChannelHeight(m_resizeChannelIx.value(), pos.y() - m_recentMousePos.y());
+			m_recentMousePos = pos;
+		}
 		return;
 	}
 	case MouseOperation::GraphVerticalHeaderResizeWidth: {
@@ -518,9 +520,9 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 	}
 
 	auto ch_ix = posToChannel(pos);
-	if(ch_ix >= 0 && !isMouseAboveMiniMap(pos)) {
+	if(ch_ix && !isMouseAboveMiniMap(pos)) {
 		setCursor(Qt::BlankCursor);
-		gr->setCrossHairPos({ch_ix, pos});
+		gr->setCrossHairPos({ch_ix.value(), pos});
 	}
 	else {
 		hideCrossHair();
@@ -740,18 +742,24 @@ void GraphWidget::showGraphSelectionContextMenu(const QPoint &mouse_pos)
 		m_graph->zoomToSelection(true);
 		update();
 	});
-	qsizetype sel_ch1 = m_graph->posToChannel(m_graph->selectionRect().topLeft());
-	qsizetype sel_ch2 = m_graph->posToChannel(m_graph->selectionRect().bottomRight());
-	if (sel_ch1 != sel_ch2 || sel_ch1 < 0) {
-		act_zoom_channel->setEnabled(false);
-	}
+
+	auto sel_ch1 = m_graph->posToChannel(m_graph->selectionRect().topLeft());
+	auto sel_ch2 = m_graph->posToChannel(m_graph->selectionRect().bottomRight());
+
+	bool is_one_channel_selected = (sel_ch1 && sel_ch2 && (sel_ch1.value() == sel_ch2.value()));
+	act_zoom_channel->setEnabled(is_one_channel_selected);
 
 	menu.addAction(tr("Show selection info"), this, [this]() {
 		auto sel_rect = m_graph->selectionRect();
-		auto ch1_ix = m_graph->posToChannel(sel_rect.bottomLeft());
-		auto ch2_ix = m_graph->posToChannel(sel_rect.topLeft());
-		auto *ch1 = m_graph->channelAt(ch1_ix);
-		auto *ch2 = m_graph->channelAt(ch2_ix);
+		auto ch1_ix = m_graph->posToChannel(sel_rect.topLeft());
+		auto ch2_ix = m_graph->posToChannel(sel_rect.bottomRight());
+
+		if (!ch1_ix || !ch2_ix) {
+			return;
+		}
+
+		auto *ch1 = m_graph->channelAt(ch1_ix.value());
+		auto *ch2 = m_graph->channelAt(ch2_ix.value());
 		auto t1 = m_graph->posToTime(sel_rect.left());
 		auto t2 = m_graph->posToTime(sel_rect.right());
 		auto y1 = ch1->posToValue(sel_rect.bottom());
@@ -897,21 +905,23 @@ bool GraphWidget::isMouseAboveChannelResizeHandle(const QPoint &mouse_pos, Qt::E
 
 	auto channel_ix = gr->posToChannelHeader(mouse_pos);
 
-	if (channel_ix > -1) {
-		const GraphChannel *ch = gr->channelAt(channel_ix);
-		QRect header_rect = ch->verticalHeaderRect();
+	if (!channel_ix) {
+		return false;
+	}
 
-		switch (header_edge) {
-		case Qt::Edge::BottomEdge:
-			return (header_rect.bottom() - mouse_pos.y() < MARGIN);
-			break;
-		case Qt::Edge::RightEdge:
-			return (header_rect.right() - mouse_pos.x() < MARGIN);
-			break;
-		default:
-			shvWarning() << "Unsupported resize header edge option";
-			break;
-		}
+	const GraphChannel *ch = gr->channelAt(channel_ix.value());
+	QRect header_rect = ch->verticalHeaderRect();
+
+	switch (header_edge) {
+	case Qt::Edge::BottomEdge:
+		return (header_rect.bottom() - mouse_pos.y() < MARGIN);
+		break;
+	case Qt::Edge::RightEdge:
+		return (header_rect.right() - mouse_pos.x() < MARGIN);
+		break;
+	default:
+		shvWarning() << "Unsupported resize header edge option";
+		break;
 	}
 
 	return false;
