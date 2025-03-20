@@ -223,7 +223,7 @@ void SerialFrameWriter::resetCommunication()
 // SerialPortSocket
 //======================================================
 SerialPortSocket::SerialPortSocket(QSerialPort *port, QObject *parent)
-	: Super(new SerialFrameReader(SerialFrameReader::CrcCheck::Yes), new SerialFrameWriter(SerialFrameWriter::CrcCheck::Yes), parent)
+	: Super(std::make_unique<SerialFrameReader>(SerialFrameReader::CrcCheck::Yes), std::make_unique<SerialFrameWriter>(SerialFrameWriter::CrcCheck::Yes), parent)
 	, m_port(port)
 {
 	m_port->setParent(this);

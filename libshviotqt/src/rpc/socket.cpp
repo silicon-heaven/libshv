@@ -191,18 +191,12 @@ void StreamFrameWriter::addFrameData(const std::string &frame_head, const std::s
 //======================================================
 // Socket
 //======================================================
-Socket::Socket(FrameReader* frame_reader, FrameWriter* frame_writer, QObject *parent)
+Socket::Socket(std::unique_ptr<FrameReader> frame_reader, std::unique_ptr<FrameWriter> frame_writer, QObject *parent)
 	: QObject(parent)
-	, m_frameReader(frame_reader)
-	, m_frameWriter(frame_writer)
+	, m_frameReader(std::move(frame_reader))
+	, m_frameWriter(std::move(frame_writer))
 {
 
-}
-
-Socket::~Socket()
-{
-	delete m_frameReader;
-	delete m_frameWriter;
 }
 
 const char * Socket::schemeToString(Scheme schema)
@@ -292,7 +286,7 @@ FrameWriter& Socket::frameWriter()
 // TcpSocket
 //======================================================
 TcpSocket::TcpSocket(QTcpSocket *socket, QObject *parent)
-	: Super(new StreamFrameReader(), new StreamFrameWriter(), parent)
+	: Super(std::make_unique<StreamFrameReader>(), std::make_unique<StreamFrameWriter>(), parent)
 	, m_socket(socket)
 {
 	m_socket->setParent(this);

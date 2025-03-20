@@ -85,8 +85,7 @@ class SHVIOTQT_DECL_EXPORT Socket : public QObject
 public:
 	enum class Scheme { Tcp = 0, Ssl, WebSocket, WebSocketSecure, SerialPort, LocalSocket, LocalSocketSerial };
 public:
-	explicit Socket(FrameReader* frame_reader, FrameWriter* frame_writer, QObject *parent = nullptr);
-	~Socket() override;
+	explicit Socket(std::unique_ptr<FrameReader> frame_reader, std::unique_ptr<FrameWriter> frame_writer, QObject *parent = nullptr);
 
 	static const char* schemeToString(Scheme schema);
 	static Scheme schemeFromString(const std::string &schema);
@@ -128,8 +127,8 @@ protected:
 	FrameReader& frameReader();
 	FrameWriter& frameWriter();
 private:
-	FrameReader *m_frameReader = nullptr;
-	FrameWriter *m_frameWriter = nullptr;
+	std::unique_ptr<FrameReader> m_frameReader;
+	std::unique_ptr<FrameWriter> m_frameWriter;
 };
 
 class SHVIOTQT_DECL_EXPORT TcpSocket : public Socket
