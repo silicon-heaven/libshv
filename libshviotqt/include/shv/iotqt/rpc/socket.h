@@ -85,7 +85,7 @@ class SHVIOTQT_DECL_EXPORT Socket : public QObject
 public:
 	enum class Scheme { Tcp = 0, Ssl, WebSocket, WebSocketSecure, SerialPort, LocalSocket, LocalSocketSerial };
 public:
-	explicit Socket(QObject *parent = nullptr);
+	explicit Socket(FrameReader* frame_reader, FrameWriter* frame_writer, QObject *parent = nullptr);
 	~Socket() override;
 
 	static const char* schemeToString(Scheme schema);
@@ -124,7 +124,10 @@ public:
 protected:
 	virtual void flushWriteBuffer() = 0;
 	virtual void clearWriteBuffer();
-protected:
+
+	FrameReader& frameReader();
+	FrameWriter& frameWriter();
+private:
 	FrameReader *m_frameReader = nullptr;
 	FrameWriter *m_frameWriter = nullptr;
 };

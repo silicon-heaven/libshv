@@ -8,12 +8,10 @@
 namespace shv::iotqt::rpc {
 
 WebSocket::WebSocket(QWebSocket *socket, QObject *parent)
-	: Super(parent)
+	: Super(new StreamFrameReader(), new StreamFrameWriter(), parent)
 	, m_socket(socket)
 {
 	m_socket->setParent(this);
-	m_frameReader = new StreamFrameReader();
-	m_frameWriter = new StreamFrameWriter();
 
 	connect(m_socket, &QWebSocket::connected, this, &Socket::connected);
 	connect(m_socket, &QWebSocket::disconnected, this, &Socket::disconnected);
@@ -77,7 +75,7 @@ void WebSocket::ignoreSslErrors()
 
 void WebSocket::flushWriteBuffer()
 {
-	m_frameWriter->flushToWebSocket(m_socket);
+	frameWriter().flushToWebSocket(m_socket);
 	m_socket->flush();
 }
 
@@ -86,11 +84,11 @@ void WebSocket::onTextMessageReceived(const QString &message)
 	shvDebug() << "text message received:" << message;
 	auto data = message.toUtf8();
 	try {
-		for (auto rqid : m_frameReader->addData(std::string_view(data.constData(), data.size()))) {
+		for (auto rqid : frameReader().addData(std::string_view(data.constData(), data.size()))) {
 			emit responseMetaReceived(rqid);
 		}
 		emit dataChunkReceived();
-		if (!m_frameReader->isEmpty()) {
+		if (!frameReader().isEmpty()) {
 			emit readyRead();
 		}
 	}
@@ -103,11 +101,11 @@ void WebSocket::onBinaryMessageReceived(const QByteArray &message)
 {
 	try {
 		shvDebug() << "binary message received:" << message;
-		for (auto rqid : m_frameReader->addData(std::string_view(message.constData(), message.size()))) {
+		for (auto rqid : frameReader().addData(std::string_view(message.constData(), message.size()))) {
 			emit responseMetaReceived(rqid);
 		}
 		emit dataChunkReceived();
-		if (!m_frameReader->isEmpty()) {
+		if (!frameReader().isEmpty()) {
 			emit readyRead();
 		}
 	}
