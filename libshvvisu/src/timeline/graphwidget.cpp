@@ -748,6 +748,11 @@ void GraphWidget::showGraphSelectionContextMenu(const QPoint &mouse_pos)
 		auto sel_rect = m_graph->selectionRect();
 		auto ch1_ix = m_graph->posToChannel(sel_rect.topLeft());
 		auto ch2_ix = m_graph->posToChannel(sel_rect.bottomRight());
+
+		if (!ch1_ix || !ch2_ix) {
+			return;
+		}
+
 		auto *ch1 = m_graph->channelAt(ch1_ix.value());
 		auto *ch2 = m_graph->channelAt(ch2_ix.value());
 		auto t1 = m_graph->posToTime(sel_rect.left());
