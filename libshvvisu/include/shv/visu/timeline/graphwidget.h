@@ -66,7 +66,7 @@ protected:
 	bool isMouseAboveRightMiniMapHandle(const QPoint &pos) const;
 	bool isMouseAboveMiniMapSlider(const QPoint &pos) const;
 	int posToChannelVerticalHeader(const QPoint &pos) const;
-	qsizetype posToChannel(const QPoint &pos) const;
+	std::optional<qsizetype> posToChannel(const QPoint &pos) const;
 	void scrollToCurrentMousePosOnDrag();
 	bool scrollByMouseOuterOverlap(const QPoint &mouse_pos);
 	void moveDropMarker(const QPoint &mouse_pos);
@@ -92,7 +92,7 @@ protected:
 	};
 	MouseOperation m_mouseOperation = MouseOperation::None;
 	QPoint m_recentMousePos;
-	qsizetype m_resizeChannelIx = -1;
+	std::optional<qsizetype> m_resizeChannelIx;
 
 	struct ChannelHeaderMoveContext
 	{
