@@ -738,26 +738,16 @@ void GraphWidget::showGraphSelectionContextMenu(const QPoint &mouse_pos)
 		m_graph->zoomToSelection(false);
 		update();
 	});
+
 	auto *act_zoom_channel = menu.addAction(tr("Zoom channel to selection"), this, [this]() {
 		m_graph->zoomToSelection(true);
 		update();
 	});
 
-	auto sel_ch1 = m_graph->posToChannel(m_graph->selectionRect().topLeft());
-	auto sel_ch2 = m_graph->posToChannel(m_graph->selectionRect().bottomRight());
-
-	bool is_one_channel_selected = (sel_ch1 && sel_ch2 && (sel_ch1.value() == sel_ch2.value()));
-	act_zoom_channel->setEnabled(is_one_channel_selected);
-
-	menu.addAction(tr("Show selection info"), this, [this]() {
+	auto *act_show_selection_info = menu.addAction(tr("Show selection info"), this, [this]() {
 		auto sel_rect = m_graph->selectionRect();
 		auto ch1_ix = m_graph->posToChannel(sel_rect.topLeft());
 		auto ch2_ix = m_graph->posToChannel(sel_rect.bottomRight());
-
-		if (!ch1_ix || !ch2_ix) {
-			return;
-		}
-
 		auto *ch1 = m_graph->channelAt(ch1_ix.value());
 		auto *ch2 = m_graph->channelAt(ch2_ix.value());
 		auto t1 = m_graph->posToTime(sel_rect.left());
@@ -783,6 +773,12 @@ void GraphWidget::showGraphSelectionContextMenu(const QPoint &mouse_pos)
 			s += '\n' + tr("diff: %1").arg(y2 - y1);
 		QMessageBox::information(this, tr("Selection info"), s);
 	});
+
+	auto sel_ch1 = m_graph->posToChannel(m_graph->selectionRect().topLeft());
+	auto sel_ch2 = m_graph->posToChannel(m_graph->selectionRect().bottomRight());
+
+	act_zoom_channel->setEnabled(sel_ch1 && sel_ch2 && (sel_ch1.value() == sel_ch2.value()));
+	act_show_selection_info->setEnabled(sel_ch1 && sel_ch2);
 
 	menu.exec(mapToGlobal(mouse_pos));
 }
