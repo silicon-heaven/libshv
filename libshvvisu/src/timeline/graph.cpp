@@ -926,9 +926,13 @@ QString Graph::elidedText(const QString &text, const QFont &font, const QRect &r
 	return res;
 }
 
-std::pair<Sample, int> Graph::posToSample(const QPoint &pos) const
+std::optional<std::pair<Sample, int>> Graph::posToSample(const QPoint &pos) const
 {
 	auto ch_ix = posToChannel(pos);
+	if (!ch_ix) {
+		return {};
+	}
+
 	timemsec_t time = posToTime(pos.x());
 	const GraphChannel *ch = channelAt(ch_ix.value());
 	const GraphModel::ChannelInfo channel_info = model()->channelInfo(ch->modelIndex());
@@ -941,7 +945,8 @@ std::pair<Sample, int> Graph::posToSample(const QPoint &pos) const
 	else {
 		s = timeToSample(ch_ix.value(), time);
 	}
-	return {s, ch_ix.value()};
+
+	return std::pair<Sample, int>{s, ch_ix.value()};
 }
 
 QVariantMap Graph::sampleValues(qsizetype channel_ix, const shv::visu::timeline::Sample &s) const
@@ -989,8 +994,12 @@ const QRect& Graph::cornerCellRect() const
 
 QVariantMap Graph::toolTipValues(const QPoint &pos) const
 {
-	const auto[sample, channel_ix] = posToSample(pos);
-	return sampleValues(channel_ix, sample);
+	const auto sample_channel_ix = posToSample(pos);
+	if (!sample_channel_ix) {
+		return {};
+	}
+
+	return sampleValues(sample_channel_ix->second, sample_channel_ix->first);
 }
 
 QRect Graph::southFloatingBarRect() const
