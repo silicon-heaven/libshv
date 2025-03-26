@@ -31,6 +31,7 @@ public:
 		m_frames = {};
 		return frames;
 	}
+	virtual void resetCommunication();
 protected:
 	int tryToReadMeta(std::istringstream &in);
 protected:
@@ -38,7 +39,6 @@ protected:
 	chainpack::Rpc::ProtocolType m_protocol;
 	chainpack::RpcValue::MetaData m_meta;
 	std::optional<size_t> m_dataStart;
-
 };
 
 class SHVIOTQT_DECL_EXPORT FrameWriter
@@ -60,10 +60,12 @@ protected:
 
 class SHVIOTQT_DECL_EXPORT StreamFrameReader : public FrameReader
 {
+	using Super = FrameReader;
 public:
 	~StreamFrameReader() override = default;
 
 	QList<int> addData(std::string_view data) override;
+	void resetCommunication() override;
 private:
 	std::string m_readBuffer;
 };

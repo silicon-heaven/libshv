@@ -81,6 +81,14 @@ void FrameWriter::flushToWebSocket(QWebSocket *socket)
 //======================================================
 // FrameReader
 //======================================================
+void FrameReader::resetCommunication()
+{
+	m_frames.clear();
+	m_protocol = {};
+	m_meta = {};
+	m_dataStart = {};
+}
+
 int FrameReader::tryToReadMeta(std::istringstream &in)
 {
 	if (!m_dataStart.has_value()) {
@@ -170,6 +178,12 @@ QList<int> StreamFrameReader::addData(std::string_view data)
 	return response_request_ids;
 }
 
+void StreamFrameReader::resetCommunication()
+{
+	 m_readBuffer.clear();
+	 Super::resetCommunication();
+}
+
 //======================================================
 // StreamFrameWriter
 //======================================================
@@ -242,6 +256,8 @@ bool Socket::isOpen() const
 
 void Socket::resetCommunication()
 {
+	Q_ASSERT(m_frameReader);
+	m_frameReader->resetCommunication();
 	Q_ASSERT(m_frameWriter);
 	if (isOpen()) {
 		m_frameWriter->resetCommunication();

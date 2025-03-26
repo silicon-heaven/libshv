@@ -13,6 +13,7 @@ namespace shv::iotqt::rpc {
 
 class SHVIOTQT_DECL_EXPORT SerialFrameReader : public FrameReader
 {
+	using Super = FrameReader;
 public:
 	enum class ReadState {WaitingForStx, WaitingForEtx, WaitingForCrc};
 	enum class CrcCheck {No, Yes};
@@ -22,6 +23,7 @@ public:
 
 	QList<int> addData(std::string_view data) override;
 	ReadState readState() const { return m_readState; }
+	void resetCommunication() override;
 private:
 	bool inEscape() const;
 	void setState(ReadState state);
