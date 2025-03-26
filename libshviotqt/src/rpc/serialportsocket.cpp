@@ -114,6 +114,16 @@ QList<int> SerialFrameReader::addData(std::string_view data)
 	return response_request_ids;
 }
 
+void SerialFrameReader::resetCommunication()
+{
+	m_readState = ReadState::WaitingForStx;
+	m_recentByte = 0;
+	m_readBuffer.clear();
+	m_crcBuffer.clear();
+	m_crcDigest = {};
+	Super::resetCommunication();
+}
+
 bool SerialFrameReader::inEscape() const
 {
 	return m_recentByte == ESC;
