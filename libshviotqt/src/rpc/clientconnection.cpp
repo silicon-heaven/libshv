@@ -222,38 +222,6 @@ void ClientConnection::setProtocolType(chainpack::Rpc::ProtocolType protocol_typ
 
 void ClientConnection::open()
 {
-	if(!hasSocket()) {
-		QUrl url = connectionUrl();
-		auto scheme = Socket::schemeFromString(url.scheme().toStdString());
-		Socket *socket;
-		if(scheme == Socket::Scheme::WebSocket || scheme == Socket::Scheme::WebSocketSecure) {
-#ifdef WITH_SHV_WEBSOCKETS
-			socket = new WebSocket(new QWebSocket());
-#else
-			SHV_EXCEPTION("Web socket support is not part of this build.");
-#endif
-		}
-		else if(scheme == Socket::Scheme::LocalSocket) {
-			socket = new LocalSocket(new QLocalSocket(), LocalSocket::Protocol::Stream);
-		}
-		else if(scheme == Socket::Scheme::LocalSocketSerial) {
-			socket = new LocalSocket(new QLocalSocket(), LocalSocket::Protocol::Serial);
-		}
-#ifdef QT_SERIALPORT_LIB
-		else if(scheme == Socket::Scheme::SerialPort) {
-			socket = new SerialPortSocket(new QSerialPort());
-		}
-#endif
-		else {
-	#ifndef QT_NO_SSL
-			QSslSocket::PeerVerifyMode peer_verify_mode = isPeerVerify() ? QSslSocket::AutoVerifyPeer : QSslSocket::VerifyNone;
-			socket = scheme == Socket::Scheme::Ssl ? new SslSocket(new QSslSocket(), peer_verify_mode): new TcpSocket(new QTcpSocket());
-	#else
-			socket = new TcpSocket(new QTcpSocket());
-	#endif
-		}
-		setSocket(socket);
-	}
 	checkBrokerConnected();
 	if(m_checkBrokerConnectedInterval > 0) {
 		shvInfo() << "Starting check-connected timer, interval:" << m_checkBrokerConnectedInterval/1000 << "sec.";
@@ -411,6 +379,7 @@ void ClientConnection::checkBrokerConnected()
 	if(!isBrokerConnected()) {
 		abortSocket();
 		m_connectionState = ConnectionState();
+		setSocket(createSocket());
 		auto url = connectionUrl();
 		shvInfo().nospace() << "connecting to: " << url.toString();
 		setState(State::Connecting);
@@ -456,7 +425,7 @@ void ClientConnection::onSocketConnectedChanged(bool is_connected)
 		shvInfo() << objectName() << "connection id:" << connectionId() << "Socket connected to RPC server";
 		shvInfo() << "peer:" << peerAddress() << "port:" << peerPort();
 		setState(State::SocketConnected);
-		socket()->resetCommunication();
+		socket().resetCommunication();
 		if(loginType() == LoginType::None) {
 			shvInfo() << "Connection scheme:" << connectionUrl().scheme() << " is skipping login phase.";
 			setState(State::BrokerConnected);
@@ -628,6 +597,37 @@ void ClientConnection::muteShvPathInLog(const std::string &shv_path, const std::
 void ClientConnection::setRawRpcMessageLog(bool b)
 {
 	m_rawRpcMessageLog = b;
+}
+
+std::unique_ptr<Socket> ClientConnection::createSocket()
+{
+	QUrl url = connectionUrl();
+	auto scheme = Socket::schemeFromString(url.scheme().toStdString());
+	std::unique_ptr<Socket> socket;
+	if(scheme == Socket::Scheme::WebSocket || scheme == Socket::Scheme::WebSocketSecure) {
+#ifdef WITH_SHV_WEBSOCKETS
+		return std::make_unique<WebSocket>(new QWebSocket());
+#else
+		SHV_EXCEPTION("Web socket support is not part of this build.");
+#endif
+	}
+	if(scheme == Socket::Scheme::LocalSocket) {
+		return std::make_unique<LocalSocket>(new QLocalSocket(), LocalSocket::Protocol::Stream);
+	}
+	if(scheme == Socket::Scheme::LocalSocketSerial) {
+		return std::make_unique<LocalSocket>(new QLocalSocket(), LocalSocket::Protocol::Serial);
+	}
+#ifdef QT_SERIALPORT_LIB
+	if(scheme == Socket::Scheme::SerialPort) {
+		return std::make_unique<SerialPortSocket>(new QSerialPort());
+	}
+#endif
+#ifndef QT_NO_SSL
+	QSslSocket::PeerVerifyMode peer_verify_mode = isPeerVerify() ? QSslSocket::AutoVerifyPeer : QSslSocket::VerifyNone;
+	return (scheme == Socket::Scheme::Ssl)? std::make_unique<SslSocket>(new QSslSocket(), peer_verify_mode): std::make_unique<TcpSocket>(new QTcpSocket());
+#else
+	return std::make_unique<TcpSocket>(new QTcpSocket());
+#endif
 }
 
 bool ClientConnection::isLoginPhase() const

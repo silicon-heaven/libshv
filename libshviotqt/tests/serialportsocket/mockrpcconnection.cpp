@@ -10,12 +10,12 @@ MockRpcConnection::MockRpcConnection(QObject *parent)
 
 void MockRpcConnection::close()
 {
-	socket()->close();
+	socket().close();
 }
 
 void MockRpcConnection::abort()
 {
-	socket()->abort();
+	socket().abort();
 }
 
 void MockRpcConnection::onRpcMessageReceived(const shv::chainpack::RpcMessage &msg)

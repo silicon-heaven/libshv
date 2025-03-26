@@ -26,28 +26,27 @@ SocketRpcConnection::SocketRpcConnection(QObject *parent)
 SocketRpcConnection::~SocketRpcConnection()
 {
 	abortSocket();
-	SHV_SAFE_DELETE(m_socket);
 }
 
-void SocketRpcConnection::setSocket(Socket *socket)
+void SocketRpcConnection::setSocket(std::unique_ptr<Socket> socket)
 {
 	socket->setParent(nullptr);
-	m_socket = socket;
-	connect(socket, &Socket::responseMetaReceived, this, &SocketRpcConnection::responseMetaReceived);
-	connect(socket, &Socket::dataChunkReceived, this, &SocketRpcConnection::dataChunkReceived);
-	connect(socket, &Socket::sslErrors, this, &SocketRpcConnection::sslErrors);
-	connect(socket, &Socket::error, this, &SocketRpcConnection::onSocketError);
+	m_socket = std::move(socket);
+	connect(m_socket.get(), &Socket::responseMetaReceived, this, &SocketRpcConnection::responseMetaReceived);
+	connect(m_socket.get(), &Socket::dataChunkReceived, this, &SocketRpcConnection::dataChunkReceived);
+	connect(m_socket.get(), &Socket::sslErrors, this, &SocketRpcConnection::sslErrors);
+	connect(m_socket.get(), &Socket::error, this, &SocketRpcConnection::onSocketError);
 
 	bool is_test_run = QCoreApplication::instance() == nullptr;
-	connect(socket, &Socket::readyRead, this, &SocketRpcConnection::onReadyRead, is_test_run? Qt::AutoConnection: Qt::QueuedConnection);
-	connect(socket, &Socket::connected, this, [this]() {
+	connect(m_socket.get(), &Socket::readyRead, this, &SocketRpcConnection::onReadyRead, is_test_run? Qt::AutoConnection: Qt::QueuedConnection);
+	connect(m_socket.get(), &Socket::connected, this, [this]() {
 		shvDebug() << this << "Socket connected!!!";
 		emit socketConnectedChanged(true);
 	});
-	connect(socket, &Socket::stateChanged, this, [this](QAbstractSocket::SocketState state) {
+	connect(m_socket.get(), &Socket::stateChanged, this, [this](QAbstractSocket::SocketState state) {
 		shvDebug() << this << "Socket state changed" << static_cast<int>(state);
 	});
-	connect(socket, &Socket::disconnected, this, [this]() {
+	connect(m_socket.get(), &Socket::disconnected, this, [this]() {
 		shvDebug() << this << "Socket disconnected!!!";
 		emit socketConnectedChanged(false);
 	});
@@ -56,14 +55,15 @@ void SocketRpcConnection::setSocket(Socket *socket)
 
 bool SocketRpcConnection::hasSocket() const
 {
-	return m_socket != nullptr;
+	return !!m_socket;
 }
 
-Socket *SocketRpcConnection::socket()
+Socket &SocketRpcConnection::socket()
 {
-	if(!m_socket)
+	if(!m_socket) {
 		SHV_EXCEPTION("Socket is NULL!");
-	return m_socket;
+	}
+	return *m_socket;
 }
 
 bool SocketRpcConnection::isSocketConnected() const
@@ -73,17 +73,19 @@ bool SocketRpcConnection::isSocketConnected() const
 
 void SocketRpcConnection::ignoreSslErrors()
 {
-	m_socket->ignoreSslErrors();
+	if (m_socket) {
+		m_socket->ignoreSslErrors();
+	}
 }
 
 void SocketRpcConnection::connectToHost(const QUrl &url)
 {
-	socket()->connectToHost(url);
+	socket().connectToHost(url);
 }
 
 void SocketRpcConnection::onReadyRead()
 {
-	auto frames = socket()->takeFrames();
+	auto frames = socket().takeFrames();
 	for (auto begin = std::make_move_iterator(frames.begin()), end = std::make_move_iterator(frames.end()); begin != end; ++begin) {
 		processRpcFrame(*begin);
 	}
@@ -91,19 +93,20 @@ void SocketRpcConnection::onReadyRead()
 
 void SocketRpcConnection::onSocketError(QAbstractSocket::SocketError socket_error)
 {
-	shvWarning() << "Socket error:" << socket_error << m_socket->errorString();
-	if (socket()->isOpen()) {
+	shvWarning() << "Socket error:" << socket_error << socket().errorString();
+	if (socket().isOpen()) {
 		// close socket to release file descriptor for reopen
 		// needed especially in case of serial port connection
 		closeSocket();
 	}
-	emit socketError(m_socket->errorString());
+	emit socketError(socket().errorString());
 }
 
 void SocketRpcConnection::onParseDataException(const chainpack::ParseException &e)
 {
-	if(m_socket)
+	if(m_socket) {
 		m_socket->onParseDataException(e);
+	}
 }
 
 bool SocketRpcConnection::isOpen()
@@ -113,7 +116,7 @@ bool SocketRpcConnection::isOpen()
 
 void SocketRpcConnection::writeFrame(const chainpack::RpcFrame &frame)
 {
-	socket()->writeFrame(frame);
+	socket().writeFrame(frame);
 }
 
 void SocketRpcConnection::sendRpcMessage(const shv::chainpack::RpcMessage &rpc_msg)
@@ -137,15 +140,17 @@ void SocketRpcConnection::abortSocket()
 
 std::string SocketRpcConnection::peerAddress() const
 {
-	if(m_socket)
+	if(m_socket) {
 		return m_socket->peerAddress().toString().toStdString();
+	}
 	return std::string();
 }
 
 int SocketRpcConnection::peerPort() const
 {
-	if(m_socket)
+	if(m_socket) {
 		return m_socket->peerPort();
+	}
 	return -1;
 }
 

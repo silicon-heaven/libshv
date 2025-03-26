@@ -83,6 +83,7 @@ public:
 	void muteShvPathInLog(const std::string &shv_path, const std::string &method);
 	void setRawRpcMessageLog(bool b);
 protected:
+	std::unique_ptr<Socket> createSocket();
 	bool isShvPathMutedInLog(const std::string &shv_path, const std::string &method) const;
 public:
 	/// IRpcConnection interface implementation

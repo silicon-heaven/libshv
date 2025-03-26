@@ -24,7 +24,7 @@ public:
 	explicit SocketRpcConnection(QObject *parent = nullptr);
 	~SocketRpcConnection() Q_DECL_OVERRIDE;
 
-	void setSocket(Socket *socket);
+	void setSocket(std::unique_ptr<Socket> socket);
 	bool hasSocket() const;
 
 	void connectToHost(const QUrl &url);
@@ -52,13 +52,13 @@ protected:
 	bool isOpen() Q_DECL_OVERRIDE;
 	void writeFrame(const shv::chainpack::RpcFrame &frame) override;
 
-	Socket* socket();
+	Socket& socket();
 	void onReadyRead();
 	virtual void onSocketError(QAbstractSocket::SocketError socket_error);
 
 	void onParseDataException(const shv::chainpack::ParseException &e) override;
 protected:
-	Socket *m_socket = nullptr;
+	std::unique_ptr<Socket> m_socket;
 };
 
 }
