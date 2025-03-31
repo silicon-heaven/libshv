@@ -626,29 +626,13 @@ void Graph::zoomToSelection(bool zoom_vertically)
 
 	if(zoom_vertically) {
 		auto ch1 = posToChannel(selectionRect().topLeft());	//top left is always starting point
+		auto ch2 = posToChannel(selectionRect().bottomRight());
 
-		if(ch1) {
+		if(ch1 && ch2 && (ch1.value() == ch2.value())) {
 			const GraphChannel *ch = channelAt(ch1.value());
 			YRange yrange;
 			yrange.min = ch->posToValue(selectionRect().top());
-
-			auto ch2 = posToChannel(selectionRect().bottomRight());
-
-			if (ch2) {
-				if (ch1 < ch2) {
-					yrange.max = ch->yRangeZoom().min;
-				}
-				else if (ch1 > ch2) {
-					yrange.max = ch->yRangeZoom().max;
-				}
-				else {
-					yrange.max = ch->posToValue(selectionRect().bottom());
-				}
-			}
-			else {
-				yrange.max = (selectionRect().top() < selectionRect().bottom())? ch->yRangeZoom().min: ch->yRangeZoom().max;
-			}
-
+			yrange.max = ch->posToValue(selectionRect().bottom());
 			yrange.normalize();
 			setYRangeZoom(ch1.value(), yrange);
 		}

@@ -555,5 +555,9 @@
         <source>y2: %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Reset zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>
