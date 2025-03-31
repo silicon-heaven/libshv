@@ -442,8 +442,29 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 		break;
 	}
 	case MouseOperation::GraphAreaSelection: {
+		auto ch1_ix = m_graph->posToChannel(m_recentMousePos);
+
+		if (ch1_ix) {
+			auto *ch1 = m_graph->channelAt(ch1_ix.value());
+
+			if (pos.x() < ch1->graphAreaRect().left()) {
+				pos.setX(ch1->graphAreaRect().left());
+			}
+			else if (pos.x() > ch1->graphAreaRect().right()) {
+				pos.setX(ch1->graphAreaRect().right());
+			}
+
+			if (pos.y() < ch1->graphAreaRect().top()) {
+				pos.setY(ch1->graphAreaRect().top());
+			}
+			else if (pos.y() > ch1->graphAreaRect().bottom()) {
+				pos.setY(ch1->graphAreaRect().bottom());
+			}
+		}
+
 		gr->setSelectionRect(QRect(m_recentMousePos, pos));
 		update();
+
 		break;
 	}
 	case MouseOperation::GraphAreaMove:
@@ -749,7 +770,7 @@ void GraphWidget::showGraphSelectionContextMenu(const QPoint &mouse_pos)
 		auto ch1_ix = m_graph->posToChannel(sel_rect.topLeft());
 		auto ch2_ix = m_graph->posToChannel(sel_rect.bottomRight());
 
-		if (!ch1_ix || !ch2_ix) {
+		if (!ch1_ix || !ch2_ix || ch1_ix.value() != ch2_ix.value()) {
 			return;
 		}
 
@@ -774,16 +795,15 @@ void GraphWidget::showGraphSelectionContextMenu(const QPoint &mouse_pos)
 
 		s += '\n' + tr("y1: %1").arg(y1);
 		s += '\n' + tr("y2: %1").arg(y2);
-		if(ch1 == ch2)
-			s += '\n' + tr("diff: %1").arg(y2 - y1);
+		s += '\n' + tr("diff: %1").arg(y2 - y1);
+
 		QMessageBox::information(this, tr("Selection info"), s);
 	});
 
 	auto sel_ch1 = m_graph->posToChannel(m_graph->selectionRect().topLeft());
-	auto sel_ch2 = m_graph->posToChannel(m_graph->selectionRect().bottomRight());
 
 	act_zoom_channel->setEnabled(sel_ch1.has_value());
-	act_show_selection_info->setEnabled(sel_ch1 && sel_ch2 && sel_ch1 == sel_ch2);
+	act_show_selection_info->setEnabled(sel_ch1.has_value());
 
 	menu.exec(mapToGlobal(mouse_pos));
 }
