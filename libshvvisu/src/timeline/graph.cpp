@@ -623,19 +623,34 @@ void Graph::zoomToSelection(bool zoom_vertically)
 	xrange.min = posToTime(selectionRect().left());
 	xrange.max = posToTime(selectionRect().right());
 	xrange.normalize();
-	if(zoom_vertically) {
-		auto ch1 = posToChannel(selectionRect().topLeft());
-		auto ch2 = posToChannel(selectionRect().bottomRight());
 
-		if(ch1 && ch2 && (ch1.value() == ch2.value())) {
+	if(zoom_vertically) {
+		auto ch1 = posToChannel(selectionRect().topLeft());	//top left is always starting point
+
+		if(ch1) {
 			const GraphChannel *ch = channelAt(ch1.value());
-			if(ch) {
-				YRange yrange;
-				yrange.min = ch->posToValue(selectionRect().top());
-				yrange.max = ch->posToValue(selectionRect().bottom());
-				yrange.normalize();
-				setYRangeZoom(ch1.value(), yrange);
+			YRange yrange;
+			yrange.min = ch->posToValue(selectionRect().top());
+
+			auto ch2 = posToChannel(selectionRect().bottomRight());
+
+			if (ch2) {
+				if (ch1 < ch2) {
+					yrange.max = ch->yRangeZoom().min;
+				}
+				else if (ch1 > ch2) {
+					yrange.max = ch->yRangeZoom().max;
+				}
+				else {
+					yrange.max = ch->posToValue(selectionRect().bottom());
+				}
 			}
+			else {
+				yrange.max = (selectionRect().top() < selectionRect().bottom())? ch->yRangeZoom().min: ch->yRangeZoom().max;
+			}
+
+			yrange.normalize();
+			setYRangeZoom(ch1.value(), yrange);
 		}
 	}
 	setXRangeZoom(xrange);

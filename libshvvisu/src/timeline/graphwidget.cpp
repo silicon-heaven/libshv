@@ -781,10 +781,9 @@ void GraphWidget::showGraphSelectionContextMenu(const QPoint &mouse_pos)
 
 	auto sel_ch1 = m_graph->posToChannel(m_graph->selectionRect().topLeft());
 	auto sel_ch2 = m_graph->posToChannel(m_graph->selectionRect().bottomRight());
-	bool is_one_channel_selected = sel_ch1 && sel_ch2 && (sel_ch1.value() == sel_ch2.value());
 
-	act_zoom_channel->setEnabled(is_one_channel_selected);
-	act_show_selection_info->setEnabled(is_one_channel_selected);
+	act_zoom_channel->setEnabled(sel_ch1.has_value());
+	act_show_selection_info->setEnabled(sel_ch1 && sel_ch2 && sel_ch1 == sel_ch2);
 
 	menu.exec(mapToGlobal(mouse_pos));
 }
@@ -823,6 +822,12 @@ void GraphWidget::showChannelContextMenu(qsizetype channel_ix, const QPoint &mou
 			timemsec_t time = m_graph->posToTime(mouse_pos.x());
 			createProbe(channel_ix, time);
 		});
+
+	menu.addAction(tr("Reset zoom"), this, [this, channel_ix]() {
+		m_graph->resetXZoom();
+		m_graph->resetYZoom(channel_ix);
+		this->update();
+	});
 	menu.addAction(tr("Reset X-zoom"), this, [this]() {
 		m_graph->resetXZoom();
 		this->update();
