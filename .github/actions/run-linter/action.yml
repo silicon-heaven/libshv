@@ -14,7 +14,7 @@ runs:
         CC: clang-15
         CXX: clang++-15
       with:
-        qt_version: 6.8.2
+        qt_version: 6.9.0
         qt_target: desktop
         qt_arch: linux_gcc_64
         use_qt6: ON
