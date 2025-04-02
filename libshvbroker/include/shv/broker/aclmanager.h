@@ -33,7 +33,7 @@ public:
 
 	std::vector<std::string> roles();
 	shv::iotqt::acl::AclRole role(const std::string &role_name);
-	void setRole(const std::string &role_name, const shv::iotqt::acl::AclRole &v);
+	void setRole(const std::string &role_name, const std::optional<shv::iotqt::acl::AclRole> &v);
 
 	std::vector<std::string> accessRoles();
 	shv::iotqt::acl::AclRoleAccessRules accessRoleRules(const std::string &role_name);
@@ -65,7 +65,7 @@ protected:
 
 	virtual std::vector<std::string> aclRoles() = 0;
 	virtual shv::iotqt::acl::AclRole aclRole(const std::string &role_name) = 0;
-	virtual void aclSetRole(const std::string &role_name, const shv::iotqt::acl::AclRole &r);
+	virtual void aclSetRole(const std::string &role_name, const std::optional<shv::iotqt::acl::AclRole> &r);
 
 	virtual std::vector<std::string> aclAccessRoles() = 0;
 	virtual shv::iotqt::acl::AclRoleAccessRules aclAccessRoleRules(const std::string &role_name) = 0;
