@@ -63,7 +63,7 @@ protected:
 
 	TROMPELOEIL_MAKE_MOCK0(aclRoles, std::vector<std::string>());
 	TROMPELOEIL_MAKE_MOCK1(aclRole, shv::iotqt::acl::AclRole(const std::string &role_name));
-	TROMPELOEIL_MAKE_MOCK2(aclSetRole, void(const std::string &role_name, const const std::optional<shv::iotqt::acl::AclRole> &r));
+	TROMPELOEIL_MAKE_MOCK2(aclSetRole, void(const std::string &role_name, const std::optional<shv::iotqt::acl::AclRole> &r));
 
 	TROMPELOEIL_MAKE_MOCK0(aclAccessRoles, std::vector<std::string>());
 	TROMPELOEIL_MAKE_MOCK1(aclAccessRoleRules, shv::iotqt::acl::AclRoleAccessRules(const std::string &role_name));
