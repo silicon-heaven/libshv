@@ -45,6 +45,10 @@ runs:
     # Windows deps
     - name: Install Windows deps
       if: runner.os == 'Windows'
+      env:
+        # Needed to build doctest
+        # https://github.com/doctest/doctest/issues/893
+        CMAKE_POLICY_VERSION_MINIMUM: 3.0
       run: |
         # https://github.com/microsoft/vcpkg/issues/41199#issuecomment-2378255699
         export SystemDrive="$SYSTEMDRIVE"
