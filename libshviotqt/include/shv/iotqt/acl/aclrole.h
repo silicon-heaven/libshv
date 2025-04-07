@@ -7,7 +7,8 @@
 #include <string>
 #include <vector>
 #include <limits>
-
+#include <optional>
+	
 namespace shv::iotqt::acl {
 
 struct SHVIOTQT_DECL_EXPORT AclRole
