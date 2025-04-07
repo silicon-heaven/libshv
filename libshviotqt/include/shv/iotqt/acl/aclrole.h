@@ -7,7 +7,8 @@
 #include <string>
 #include <vector>
 #include <limits>
-
+#include <optional>
+	
 namespace shv::iotqt::acl {
 
 struct SHVIOTQT_DECL_EXPORT AclRole
@@ -19,7 +20,7 @@ struct SHVIOTQT_DECL_EXPORT AclRole
 	AclRole(std::vector<std::string> roles_);
 
 	shv::chainpack::RpcValue toRpcValue() const;
-	static AclRole fromRpcValue(const shv::chainpack::RpcValue &v);
+	static std::optional<AclRole> fromRpcValue(const shv::chainpack::RpcValue &v);
 };
 
 } // namespace shv::iotqt::acl

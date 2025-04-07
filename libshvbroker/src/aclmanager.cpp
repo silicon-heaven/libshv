@@ -108,7 +108,7 @@ shv::iotqt::acl::AclRole AclManager::role(const std::string &role_name)
 	return it->second;
 }
 
-void AclManager::setRole(const std::string &role_name, const shv::iotqt::acl::AclRole &v)
+void AclManager::setRole(const std::string &role_name, const std::optional<shv::iotqt::acl::AclRole> &v)
 {
 	aclSetRole(role_name, v);
 	m_cache.aclRoles.clear();
@@ -229,7 +229,7 @@ void AclManager::aclSetUser(const std::string &user_name, const shv::iotqt::acl:
 	SHV_EXCEPTION("Users definition is read only.");
 }
 
-void AclManager::aclSetRole(const std::string &role_name, const shv::iotqt::acl::AclRole &r)
+void AclManager::aclSetRole(const std::string &role_name, const std::optional<shv::iotqt::acl::AclRole> &r)
 {
 	Q_UNUSED(role_name)
 	Q_UNUSED(r)
@@ -549,7 +549,7 @@ std::vector<std::string> AclManagerConfigFiles::aclRoles()
 shv::iotqt::acl::AclRole AclManagerConfigFiles::aclRole(const std::string &role_name)
 {
 	chainpack::RpcValue v = aclConfig(FILE_ACL_ROLES).asMap().value(role_name);
-	return shv::iotqt::acl::AclRole::fromRpcValue(v);
+	return shv::iotqt::acl::AclRole::fromRpcValue(v).value_or(shv::iotqt::acl::AclRole());
 }
 
 std::vector<std::string> AclManagerConfigFiles::aclAccessRoles()
