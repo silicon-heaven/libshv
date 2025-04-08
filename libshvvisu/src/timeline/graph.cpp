@@ -520,11 +520,12 @@ std::optional<qsizetype> Graph::posToChannelHeader(const QPoint &pos) const
 		return {};
 	}
 
-	for (qsizetype i = 0; i < channelCount(); ++i) {
-		const GraphChannel *ch = channelAt(i);
+	auto channels = visibleChannels();
+	for (qsizetype i = 0; i < channels.count(); ++i) {
+		const GraphChannel *ch = channelAt(channels[i]);
 
 		if(ch->verticalHeaderRect().contains(pos)) {
-			return i;
+			return channels[i];
 		}
 	}
 
