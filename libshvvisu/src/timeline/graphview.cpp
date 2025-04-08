@@ -16,7 +16,7 @@ GraphView::GraphView(QWidget *parent)
 void GraphView::makeLayout()
 {
 	if(auto *w = qobject_cast<GraphWidget*>(widget())) {
-		auto size = geometry().size();
+		auto size = viewport()->geometry().size();
 		w->makeLayout(size); // space for scroll bar
 		auto scrollbar_visible = (w->geometry().size() != size);
 
