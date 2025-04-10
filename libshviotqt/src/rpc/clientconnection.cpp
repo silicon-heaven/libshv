@@ -654,8 +654,15 @@ QFuture<std::variant<QFuture<QString>, QFuture<QString>>> ClientConnection::doAz
 	oauth2->setReplyHandler(replyHandler);
 	oauth2->setClientIdentifier(client_id);
 	oauth2->setAuthorizationUrl(authorize_url);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+	oauth2->setTokenUrl(token_url);
+	// We encode our scopes in a string, which Qt just joins, so it should be alright to just pass our scopes as one
+	// element to setRequestedScopeTokens.
+	oauth2->setRequestedScopeTokens({scopes.toLatin1()});
+#else
 	oauth2->setAccessTokenUrl(token_url);
 	oauth2->setScope(scopes);
+#endif
 	QObject::connect(oauth2, &QOAuth2AuthorizationCodeFlow::authorizeWithBrowser, this, [this] (const auto& url) {
 		emit authorizeWithBrowser(url);
 	});
@@ -675,10 +682,15 @@ QFuture<std::variant<QFuture<QString>, QFuture<QString>>> ClientConnection::doAz
 
 	m_connectionState.oAuth2WaitingForUser = true;
 	oauth2->grant();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+	constexpr auto error_signal = &QOAuth2AuthorizationCodeFlow::serverReportedErrorOccurred;
+#else
+	constexpr auto error_signal = &QOAuth2AuthorizationCodeFlow::error;
+#endif
 	return QtFuture::whenAny(
 		QtFuture::connect(oauth2, &QOAuth2AuthorizationCodeFlow::granted).then([oauth2] {
 		return oauth2->token();
-	}), QtFuture::connect(oauth2, &QOAuth2AuthorizationCodeFlow::error).then([] (std::tuple<const QString&, const QString&, const QUrl&> errors) {
+	}), QtFuture::connect(oauth2, error_signal).then([] (std::tuple<const QString&, const QString&, const QUrl&> errors) {
 		auto [error, error_description, error_url] = errors;
 		auto res = QStringLiteral("Failed to authenticate with Azure.\n");
 		auto append_error_if_not_empty = [&res] (const auto& error_prefix, const auto& error_str) {
