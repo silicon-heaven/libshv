@@ -25,7 +25,6 @@ public:
 	ReadState readState() const { return m_readState; }
 	void resetCommunication() override;
 private:
-	bool inEscape() const;
 	void setState(ReadState state);
 	void finishFrame();
 private:
