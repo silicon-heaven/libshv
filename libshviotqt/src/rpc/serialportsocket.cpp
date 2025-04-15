@@ -49,13 +49,17 @@ QList<int> SerialFrameReader::addData(std::string_view data)
 		}
 	};
 	auto add_byte = [this](string &buff, uint8_t b) {
-		if (inEscape()) {
+		if (m_recentByte == ESC) {
 			switch (b) {
 			case ESTX: buff += static_cast<char>(STX); break;
 			case EETX: buff += static_cast<char>(ETX); break;
 			case EATX: buff += static_cast<char>(ATX); break;
 			case EESC: buff += static_cast<char>(ESC); break;
-			default: throw std::runtime_error("Invalid escape sequence");
+			default: {
+				shvWarning() << "Invalid escape sequence:" << m_recentByte << b;
+				setState(ReadState::WaitingForStx);
+				break;
+			}
 			}
 		}
 		else {
@@ -124,11 +128,6 @@ void SerialFrameReader::resetCommunication()
 	Super::resetCommunication();
 }
 
-bool SerialFrameReader::inEscape() const
-{
-	return m_recentByte == ESC;
-}
-
 void SerialFrameReader::setState(ReadState state)
 {
 	m_readState = state;
@@ -159,11 +158,14 @@ void SerialFrameReader::finishFrame()
 			msg_crc <<= 8;
 			msg_crc += bb;
 		}
-		//logSerialPortSocketD() << "crc data:" << m_crcBuffer.toHex().toStdString();
-		//logSerialPortSocketD() << "crc received:" << shv::chainpack::utils::intToHex(msg_crc);
-		//logSerialPortSocketD() << "crc computed:" << shv::chainpack::utils::intToHex(m_crcDigest.remainder());
-		if(m_crcDigest.remainder() != msg_crc) {
-			logSerialPortSocketD() << "crc Error";
+		logSerialPortSocketD() << "crc data:" << QByteArray(m_crcBuffer.data(), m_crcBuffer.size()).toHex().toStdString();
+		logSerialPortSocketD() << "crc received:" << shv::chainpack::utils::intToHex(msg_crc);
+		logSerialPortSocketD() << "crc computed:" << shv::chainpack::utils::intToHex(m_crcDigest.finalize());
+		if(m_crcDigest.finalize() != msg_crc) {
+			auto err = QStringLiteral("CRC error, expected: %1, got: %2")
+					.arg(m_crcDigest.finalize(), 4, 16, QChar('0'))
+					.arg(msg_crc, 4, 16, QChar('0'));
+			shvWarning() << err;
 			setState(ReadState::WaitingForStx);
 			return;
 		}
@@ -210,7 +212,7 @@ void SerialFrameWriter::addFrameData(const std::string &frame_head, const std::s
 	if (m_withCrcCheck) {
 		shv::chainpack::Crc32Shv3 crc_digest;
 		crc_digest.add(data_to_write.constData() + 1, data_to_write.size() - 2);
-		auto crc = crc_digest.remainder();
+		auto crc = crc_digest.finalize();
 		for (int i = 0; i < 4; ++i) {
 			write_escaped((crc >> ((3 - i) * 8)) & 0xff);
 		}
