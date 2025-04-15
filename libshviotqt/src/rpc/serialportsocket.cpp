@@ -160,10 +160,10 @@ void SerialFrameReader::finishFrame()
 		}
 		logSerialPortSocketD() << "crc data:" << QByteArray(m_crcBuffer.data(), m_crcBuffer.size()).toHex().toStdString();
 		logSerialPortSocketD() << "crc received:" << shv::chainpack::utils::intToHex(msg_crc);
-		logSerialPortSocketD() << "crc computed:" << shv::chainpack::utils::intToHex(m_crcDigest.finalize());
-		if(m_crcDigest.finalize() != msg_crc) {
+		logSerialPortSocketD() << "crc computed:" << shv::chainpack::utils::intToHex(m_crcDigest.result());
+		if(m_crcDigest.result() != msg_crc) {
 			auto err = QStringLiteral("CRC error, expected: %1, got: %2")
-					.arg(m_crcDigest.finalize(), 4, 16, QChar('0'))
+					.arg(m_crcDigest.result(), 4, 16, QChar('0'))
 					.arg(msg_crc, 4, 16, QChar('0'));
 			shvWarning() << err;
 			setState(ReadState::WaitingForStx);
@@ -212,7 +212,7 @@ void SerialFrameWriter::addFrameData(const std::string &frame_head, const std::s
 	if (m_withCrcCheck) {
 		shv::chainpack::Crc32Shv3 crc_digest;
 		crc_digest.add(data_to_write.constData() + 1, data_to_write.size() - 2);
-		auto crc = crc_digest.finalize();
+		auto crc = crc_digest.result();
 		for (int i = 0; i < 4; ++i) {
 			write_escaped((crc >> ((3 - i) * 8)) & 0xff);
 		}
