@@ -16,7 +16,7 @@ ClientAppCliOptions::ClientAppCliOptions()
 	addOption("server.host").setType(cp::RpcValue::Type::String).setNames("-s", "--server-host").setComment("server host").setDefaultValue("localhost");
 	addOption("server.peerVerify").setType(cp::RpcValue::Type::Bool).setNames("--peer-verify").setComment("Verify peer's identity when establishing secured connection").setDefaultValue(true);
 
-	addOption("rpc.rpcTimeout").setType(cp::RpcValue::Type::Int).setNames("--rto", "--rpc-time-out").setComment("Set default RPC calls timeout [sec].").setDefaultValue(shv::chainpack::RpcDriver::defaultRpcTimeoutMsec() / 1000);
+	addOption("rpc.rpcTimeout").setType(cp::RpcValue::Type::Int).setNames("--rto", "--rpc-time-out").setComment("Set default RPC calls timeout [sec].").setDefaultValue(5);
 	addOption("rpc.reconnectInterval").setType(cp::RpcValue::Type::Int).setNames("--rci", "--rpc-reconnect-interval").setComment("Reconnect to broker if connection lost at least after reconnect-interval seconds. Disabled when set to 0").setDefaultValue(10);
 	addOption("rpc.heartbeatInterval").setType(cp::RpcValue::Type::Int).setNames("--hbi", "--rpc-heartbeat-interval").setComment("Send heart beat to broker every n sec. Disabled when set to 0").setDefaultValue(60);
 }

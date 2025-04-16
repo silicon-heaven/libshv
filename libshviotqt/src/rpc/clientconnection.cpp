@@ -176,8 +176,8 @@ void ClientConnection::setCliOptions(const ClientAppCliOptions *cli_opts)
 	setCheckBrokerConnectedInterval(cli_opts->reconnectInterval() * 1000);
 
 	if(cli_opts->rpcTimeout_isset()) {
-		cp::RpcDriver::setDefaultRpcTimeoutMsec(cli_opts->rpcTimeout() * 1000);
-		shvInfo() << "Default RPC timeout set to:" << cp::RpcDriver::defaultRpcTimeoutMsec() << "msec.";
+		setRpcTimeoutMsec(cli_opts->rpcTimeout() * 1000);
+		shvInfo() << "Default RPC timeout set to:" << rpcTimeoutMsec() << "msec.";
 	}
 
 	setConnectionString(QString::fromStdString(cli_opts->serverHost()));
@@ -462,7 +462,7 @@ void ClientConnection::onSocketConnectedChanged(bool is_connected)
 			setState(State::BrokerConnected);
 		}
 		else {
-			QTimer::singleShot(cp::RpcDriver::defaultRpcTimeoutMsec(), this, [this] () {
+			QTimer::singleShot(rpcTimeoutMsec(), this, [this] () {
 				if (state() != State::BrokerConnected) {
 					// login timeout
 					restartIfAutoConnect();
