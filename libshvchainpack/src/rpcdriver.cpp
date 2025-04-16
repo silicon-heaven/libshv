@@ -55,7 +55,7 @@ void RpcDriver::sendRpcFrame(RpcFrame &&frame)
 	}
 }
 
-int RpcDriver::rpcTimeoutMsec()
+int RpcDriver::rpcTimeoutMsec() const
 {
 	return m_rpcTimeoutMsec;
 }
