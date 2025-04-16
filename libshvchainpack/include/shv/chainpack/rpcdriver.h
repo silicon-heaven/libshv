@@ -19,8 +19,8 @@ public:
 	void sendRpcMessage(const RpcMessage &msg);
 	virtual void sendRpcFrame(RpcFrame &&frame);
 
-	static int defaultRpcTimeoutMsec();
-	static void setDefaultRpcTimeoutMsec(int msec);
+	int rpcTimeoutMsec();
+	void setRpcTimeoutMsec(int msec);
 
 	static std::string frameToPrettyCpon(const RpcFrame &frame);
 protected:
@@ -38,8 +38,7 @@ protected:
 	/// We must remember recent message protocol type to support legacy CPON clients
 	Rpc::ProtocolType m_clientProtocolType = Rpc::ProtocolType::Invalid;
 private:
-	// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
-	static int s_defaultRpcTimeoutMsec;
+	int m_rpcTimeoutMsec = 5000;
 };
 
 }

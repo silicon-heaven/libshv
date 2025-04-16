@@ -18,9 +18,6 @@ using namespace std;
 
 namespace shv::chainpack {
 
-// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
-int RpcDriver::s_defaultRpcTimeoutMsec = 5000;
-
 RpcDriver::RpcDriver() = default;
 
 RpcDriver::~RpcDriver() = default;
@@ -58,14 +55,14 @@ void RpcDriver::sendRpcFrame(RpcFrame &&frame)
 	}
 }
 
-int RpcDriver::defaultRpcTimeoutMsec()
+int RpcDriver::rpcTimeoutMsec()
 {
-	return s_defaultRpcTimeoutMsec;
+	return m_rpcTimeoutMsec;
 }
 
-void RpcDriver::setDefaultRpcTimeoutMsec(int msec)
+void RpcDriver::setRpcTimeoutMsec(int msec)
 {
-	s_defaultRpcTimeoutMsec = msec;
+	m_rpcTimeoutMsec = msec;
 }
 
 void RpcDriver::processRpcFrame(RpcFrame &&frame)
