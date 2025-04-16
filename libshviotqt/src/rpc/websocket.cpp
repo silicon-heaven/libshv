@@ -8,7 +8,7 @@
 namespace shv::iotqt::rpc {
 
 WebSocket::WebSocket(QWebSocket *socket, QObject *parent)
-	: Super(std::unique_ptr<StreamFrameReader>(), std::unique_ptr<StreamFrameWriter>(), parent)
+	: Super(std::make_unique<StreamFrameReader>(), std::make_unique<StreamFrameWriter>(), parent)
 	, m_socket(socket)
 {
 	m_socket->setParent(this);
