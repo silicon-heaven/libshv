@@ -19,7 +19,7 @@ public:
 	void sendRpcMessage(const RpcMessage &msg);
 	virtual void sendRpcFrame(RpcFrame &&frame);
 
-	int rpcTimeoutMsec();
+	int rpcTimeoutMsec() const;
 	void setRpcTimeoutMsec(int msec);
 
 	static std::string frameToPrettyCpon(const RpcFrame &frame);
