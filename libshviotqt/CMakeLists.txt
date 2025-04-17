@@ -71,7 +71,7 @@ endif()
 
 if(LIBSHV_WITH_OAUTH2_AZURE)
 	target_compile_definitions(libshviotqt PUBLIC WITH_SHV_OAUTH2_AZURE)
-	target_link_libraries(libshviotqt PUBLIC Qt::Gui Qt::NetworkAuth)
+	target_link_libraries(libshviotqt PUBLIC Qt::NetworkAuth)
 endif()
 
 function(add_shviotqt_serialportsocket_test test_name)
