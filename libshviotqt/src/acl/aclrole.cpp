@@ -42,7 +42,7 @@ std::optional<AclRole> AclRole::fromRpcValue(const shv::chainpack::RpcValue &v)
 		return std::nullopt;
 	}
 	else {
-		SHV_EXCEPTION("Invalid parameter type: " + std::string(v.typeName()));
+		throw shv::coreqt::Exception("Invalid parameter type: " + std::string(v.typeName()));
 	}
 	return ret;
 }
