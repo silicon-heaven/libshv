@@ -4,7 +4,7 @@ qt_add_executable(shvcall
     src/main.cpp
     )
 
-target_link_libraries(shvcall PRIVATE libshviotqt)
+target_link_libraries(shvcall PRIVATE libshviotqt Qt::Gui)
 
 if(ANDROID)
 	install(TARGETS shvcall LIBRARY DESTINATION lib)
