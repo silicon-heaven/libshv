@@ -28,7 +28,7 @@ protected:
 
 	std::vector<std::string> aclRoles() override;
 	shv::iotqt::acl::AclRole aclRole(const std::string &role_name) override;
-	void aclSetRole(const std::string &role_name, const shv::iotqt::acl::AclRole &r) override;
+	void aclSetRole(const std::string &role_name, const std::optional<shv::iotqt::acl::AclRole> &r) override;
 
 	std::vector<std::string> aclAccessRoles() override;
 	shv::iotqt::acl::AclRoleAccessRules aclAccessRoleRules(const std::string &role_name) override;

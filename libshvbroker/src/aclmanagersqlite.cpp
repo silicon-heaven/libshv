@@ -278,14 +278,21 @@ acl::AclRole AclManagerSqlite::aclRole(const std::string &role_name)
 	return ret;
 }
 
-void AclManagerSqlite::aclSetRole(const std::string &role_name, const acl::AclRole &r)
+void AclManagerSqlite::aclSetRole(const std::string &role_name, const std::optional<acl::AclRole> &r)
 {
-	QString qs = "INSERT OR REPLACE INTO " + TBL_ACL_ROLES + " (name, roles, profile) VALUES('%1', '%2', '%3')";
-	qs = qs.arg(QString::fromStdString(role_name));
-	qs = qs.arg(join_str_vec(r.roles));
-	qs = qs.arg(QString::fromStdString(r.profile.isValid()? r.profile.toCpon(): ""));
-	logAclManagerM() << qs;
-	execSql(qs);
+	if (r.has_value()) {
+		QString qs = "INSERT OR REPLACE INTO " + TBL_ACL_ROLES + " (name, roles, profile) VALUES('%1', '%2', '%3')";
+		qs = qs.arg(QString::fromStdString(role_name));
+		qs = qs.arg(join_str_vec(r.value().roles));
+		qs = qs.arg(QString::fromStdString(r.value().profile.isValid()? r.value().profile.toCpon(): ""));
+		logAclManagerM() << qs;
+		execSql(qs);
+	}
+	else {
+		QString qs = "DELETE FROM " + TBL_ACL_ROLES + " WHERE name='" + QString::fromStdString(role_name) + "'";
+		logAclManagerM() << qs;
+		execSql(qs);
+	}
 }
 
 std::vector<std::string> AclManagerSqlite::aclAccessRoles()

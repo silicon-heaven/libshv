@@ -1,6 +1,7 @@
 #include <shv/iotqt/acl/aclrole.h>
 
 #include <shv/chainpack/rpcvalue.h>
+#include <shv/core/exception.h>
 
 namespace shv::iotqt::acl {
 
@@ -21,7 +22,7 @@ shv::chainpack::RpcValue AclRole::toRpcValue() const
 	return m;
 }
 
-AclRole AclRole::fromRpcValue(const shv::chainpack::RpcValue &v)
+std::optional<AclRole> AclRole::fromRpcValue(const shv::chainpack::RpcValue &v)
 {
 	AclRole ret;
 	if(v.isMap()) {
@@ -37,7 +38,12 @@ AclRole AclRole::fromRpcValue(const shv::chainpack::RpcValue &v)
 		if(!ret.profile.isMap())
 			ret.profile = shv::chainpack::RpcValue();
 	}
+	else if(v.isNull()) {
+		return std::nullopt;
+	}
+	else {
+		throw shv::core::Exception("Invalid parameter type: " + std::string(v.typeName()));
+	}
 	return ret;
 }
-
 } // namespace shv
