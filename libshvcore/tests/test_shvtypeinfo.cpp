@@ -156,14 +156,23 @@ DOCTEST_TEST_CASE("ShvTypeInfo")
 				auto rv = read_cpon_file(FILES_DIR + "/nodesTree.cpon");
 				type_info = ShvTypeInfo::fromRpcValue(rv);
 				write_cpon_file(typeinfo_file_path, type_info.toRpcValue());
+				{
+					auto td = type_info.findTypeDescription("StatusTC");
+					REQUIRE(td.type() == ShvTypeDescr::Type::BitField);
+					REQUIRE(td.typeName() == "BitField");
+				}
 			}
 			DOCTEST_SUBCASE("Reloaded typeinfo")
 			{
 				auto rv2 = read_cpon_file(typeinfo_file_path);
-				type_info = ShvTypeInfo::fromRpcValue(rv2);
-
+				auto type_info2 = ShvTypeInfo::fromRpcValue(rv2);
 				{
-					auto pi = type_info.pathInfo("devices/signal/SA04/symbol/RED_LEFT/status");
+					auto td = type_info2.findTypeDescription("StatusTC");
+					REQUIRE(td.type() == ShvTypeDescr::Type::BitField);
+					REQUIRE(td.typeName() == "BitField");
+				}
+				{
+					auto pi = type_info2.pathInfo("devices/signal/SA04/symbol/RED_LEFT/status");
 					REQUIRE(pi.deviceType == "SignalSymbol_G3");
 					REQUIRE(pi.devicePath == "devices/signal/SA04/symbol/RED_LEFT");
 					REQUIRE(pi.propertyDescription.typeName() == "StatusSignalSymbol");
@@ -171,7 +180,7 @@ DOCTEST_TEST_CASE("ShvTypeInfo")
 					REQUIRE(pi.fieldPath.empty());
 				}
 				{
-					auto pi = type_info.pathInfo("devices/signal/SA04/symbol/WHITE/status");
+					auto pi = type_info2.pathInfo("devices/signal/SA04/symbol/WHITE/status");
 					REQUIRE(pi.deviceType == "SignalSymbol_G3");
 					REQUIRE(pi.devicePath == "devices/signal/SA04/symbol/WHITE");
 					REQUIRE(pi.propertyDescription.typeName() == "StatusSignalSymbolWhite");
@@ -179,14 +188,14 @@ DOCTEST_TEST_CASE("ShvTypeInfo")
 					REQUIRE(pi.fieldPath.empty());
 				}
 				{
-					auto pi = type_info.pathInfo("devices/signal/SG01/symbol/P80Y");
+					auto pi = type_info2.pathInfo("devices/signal/SG01/symbol/P80Y");
 					REQUIRE(pi.deviceType == "SignalSymbol_G3");
 					REQUIRE(pi.devicePath == "devices/signal/SG01/symbol/P80Y");
 					REQUIRE(pi.propertyDescription.typeName().empty());
 					REQUIRE(pi.propertyDescription.name().empty());
 					REQUIRE(pi.fieldPath.empty());
 				}
-				REQUIRE(type_info.propertyDescriptionForPath("devices/signal/SG01/symbol/P80Y/status").typeName() == "StatusSignalSymbolP80Y");
+				REQUIRE(type_info2.propertyDescriptionForPath("devices/signal/SG01/symbol/P80Y/status").typeName() == "StatusSignalSymbolP80Y");
 			}
 		}
 	}

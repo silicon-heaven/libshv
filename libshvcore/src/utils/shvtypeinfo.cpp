@@ -44,11 +44,6 @@ ShvDescriptionBase::ShvDescriptionBase(const chainpack::RpcValue &v)
 {
 }
 
-std::string ShvDescriptionBase::name() const
-{
-	return m_data.asMap().value(KEY_NAME).asString();
-}
-
 RpcValue ShvDescriptionBase::dataValue(const std::string &key, const chainpack::RpcValue &default_val) const
 {
 	const auto &m = m_data.asMap();
@@ -58,17 +53,6 @@ RpcValue ShvDescriptionBase::dataValue(const std::string &key, const chainpack::
 bool ShvDescriptionBase::operator==(const ShvDescriptionBase &o) const
 {
 	return m_data == o.m_data;
-}
-
-bool ShvDescriptionBase::hasName() const
-{
-	const auto &m = m_data.asMap();
-	return m.hasKey(KEY_NAME);
-}
-
-void ShvDescriptionBase::setName(const std::string &n)
-{
-	setDataValue(KEY_NAME, n);
 }
 
 bool ShvDescriptionBase::isValid() const
@@ -113,6 +97,16 @@ ShvFieldDescr::ShvFieldDescr(const std::string &name, const std::string &type_na
 	setName(name);
 	setDataValue(KEY_TYPE_NAME, type_name);
 	setDataValue(KEY_VALUE, value);
+}
+
+std::string ShvFieldDescr::name() const
+{
+	return m_data.asMap().value(KEY_NAME).asString();
+}
+
+void ShvFieldDescr::setName(const std::string &n)
+{
+	setDataValue(KEY_NAME, n);
 }
 
 std::string ShvFieldDescr::alarm() const
@@ -454,8 +448,8 @@ RpcValue ShvTypeDescr::toRpcValue() const
 {
 	RpcValue::Map map = m_data.asMap();
 
-	map[KEY_TYPE_NAME] = map.value(KEY_NAME);
-	map.setValue(KEY_NAME, {}); // erare obsolete
+	map[KEY_TYPE_NAME] = typeName();
+	map.setValue(KEY_NAME, {}); // erase obsolete
 	map.setValue(KEY_TYPE, {}); // erase obsolete
 
 	if(sampleType() == ShvTypeDescr::SampleType::Invalid || sampleType() == ShvTypeDescr::SampleType::Continuous)

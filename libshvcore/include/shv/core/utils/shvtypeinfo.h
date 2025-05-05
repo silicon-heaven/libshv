@@ -19,14 +19,10 @@ public:
 
 	bool isValid() const;
 
-	std::string name() const;
-	void setName(const std::string &n);
-
 	chainpack::RpcValue dataValue(const std::string &key, const chainpack::RpcValue &default_val = {}) const;
 
 	bool operator==(const ShvDescriptionBase &o) const;
 protected:
-	bool hasName() const;
 	void setDataValue(const std::string &key, const chainpack::RpcValue &val);
 
 	void setData(const chainpack::RpcValue &data);
@@ -121,6 +117,9 @@ public:
 				  const std::string &type_name = {},
 				  const chainpack::RpcValue &value = {},
 				  chainpack::RpcValue::Map &&tags = {});
+
+	std::string name() const;
+	void setName(const std::string &n);
 
 	std::string alarm() const;
 	void setAlarm(const std::string &alarm);
