@@ -190,7 +190,7 @@ bool GraphWidget::isMouseAboveMiniMapSlider(const QPoint &pos) const
 int GraphWidget::posToChannelVerticalHeader(const QPoint &pos) const
 {
 	const Graph *gr = graph();
-	for (int i = 0; i < gr->channelCount(); ++i) {
+	for (int i : gr->visibleChannels()) {
 		const GraphChannel *ch = gr->channelAt(i);
 		if(ch->verticalHeaderRect().contains(pos)) {
 			return i;
@@ -504,7 +504,7 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 
 		QRect header_rect;
 		int dragged_channel = -1;
-		for (int i = 0; i < gr->channelCount(); ++i) {
+		for (int i : gr->visibleChannels()) {
 			const GraphChannel *ch = gr->channelAt(i);
 			if (ch->verticalHeaderRect().contains(pos)) {
 				header_rect = ch->verticalHeaderRect();
@@ -554,8 +554,8 @@ void GraphWidget::moveDropMarker(const QPoint &mouse_pos)
 {
 	Q_ASSERT(m_channelHeaderMoveContext);
 	Graph *gr = graph();
-	int ix = moveChannelTragetIndex(mouse_pos);
-	if (ix < gr->channelCount()) {
+	int ix = moveChannelTargetIndex(mouse_pos);
+	if (ix < gr->visibleChannels().count()) {
 		QRect ch_rect = gr->channelAt(ix)->verticalHeaderRect();
 		m_channelHeaderMoveContext->channelDropMarker->move(ch_rect.left(), ch_rect.top() - m_channelHeaderMoveContext->channelDropMarker->height() / 2);
 	}
@@ -565,31 +565,34 @@ void GraphWidget::moveDropMarker(const QPoint &mouse_pos)
 	}
 }
 
-int GraphWidget::moveChannelTragetIndex(const QPoint &mouse_pos) const
+int GraphWidget::moveChannelTargetIndex(const QPoint &mouse_pos) const
 {
 	const Graph *gr = graph();
-	for (int i = 0; i < gr->channelCount(); ++i) {
+	auto visible_channels = gr->visibleChannels();
+	for (int v = 0; v < visible_channels.count(); ++v) {
+		int i = visible_channels[v];
 		const GraphChannel *ch = gr->channelAt(i);
 		QRect ch_rect = ch->verticalHeaderRect();
 		if (ch_rect.contains(mouse_pos)) {
 			if (mouse_pos.y() - ch_rect.top() <= ch_rect.bottom() - mouse_pos.y()) {
 				return i;
 			}
-			int j = i;
+			int w = v;
 
 			while (true) {
-				++j;
-				if (j >= gr->channelCount()) {
+				++w;
+				if (w >= visible_channels.count()) {
 					return i + 1;
 				}
+				int j = visible_channels[w];
 				if (gr->channelAt(j)->verticalHeaderRect().height()) {
 					return j;
 				}
 			}
 		}
 	}
-	if (gr->channelCount() && mouse_pos.y() > gr->channelAt(gr->channelCount() - 1)->verticalHeaderRect().bottom()) {
-		return static_cast<int>(gr->channelCount());
+	if (visible_channels.count() && mouse_pos.y() > gr->channelAt(visible_channels.last())->verticalHeaderRect().bottom()) {
+		return static_cast<int>(visible_channels.last() + 1);
 	}
 	return 0;
 }
@@ -742,9 +745,9 @@ void GraphWidget::dropEvent(QDropEvent *event)
 {
 	Q_ASSERT(m_channelHeaderMoveContext);
 #if QT_VERSION_MAJOR >= 6
-	int target_channel = moveChannelTragetIndex(event->position().toPoint());
+	int target_channel = moveChannelTargetIndex(event->position().toPoint());
 #else
-	int target_channel = moveChannelTragetIndex(event->pos());
+	int target_channel = moveChannelTargetIndex(event->pos());
 #endif
 	if (target_channel != m_channelHeaderMoveContext->draggedChannel) {
 		graph()->moveChannel(m_channelHeaderMoveContext->draggedChannel, target_channel);
