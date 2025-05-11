@@ -123,6 +123,7 @@ public:
 	void resetChannelsRanges();
 
 	qsizetype channelCount() const;
+	QVector<int> visibleChannels() const;
 	void clearChannels();
 	GraphChannel* appendChannel(qsizetype model_index = -1);
 	GraphChannel* channelAt(qsizetype ix, bool throw_exc = shv::core::Exception::Throw);
@@ -254,7 +255,6 @@ protected:
 	void drawLeftBottomText(QPainter *painter, const QPoint &left_bottom, const QString &text, const QFont &font, const QColor &color, const QColor &background);
 	void drawRightBottomText(QPainter *painter, const QPoint &right_bottom, const QString &text, const QFont &font, const QColor &color, const QColor &background);
 
-	QVector<int> visibleChannels() const;
 	int maximizedChannelIndex() const;
 
 	bool isChannelFlat(GraphChannel *ch);

@@ -70,7 +70,7 @@ protected:
 	void scrollToCurrentMousePosOnDrag();
 	bool scrollByMouseOuterOverlap(const QPoint &mouse_pos);
 	void moveDropMarker(const QPoint &mouse_pos);
-	int moveChannelTragetIndex(const QPoint &mouse_pos) const;
+	int moveChannelTargetIndex(const QPoint &mouse_pos) const;
 
 protected:
 	Graph *m_graph = nullptr;
