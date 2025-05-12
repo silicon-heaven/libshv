@@ -21,6 +21,8 @@ namespace shv::visu::svgscene {
 using XmlAttributes = Types::XmlAttributes;
 using CssAttributes = Types::CssAttributes;
 
+class RectItem;
+
 class SHVVISU_DECL_EXPORT SaxHandler
 {
 public:
@@ -43,7 +45,7 @@ public:
 	static QString point2str(QPointF r);
 	static QString rect2str(QRectF r);
 protected:
-	virtual QGraphicsRectItem *createRectItem(const SvgElement &el);
+	virtual RectItem *createRectItem(const SvgElement &el);
 	virtual QGraphicsItem *createGroupItem(const SvgElement &el);
 	virtual void installVisuController(QGraphicsItem *it, const SvgElement &el);
 	virtual void setXmlAttributes(QGraphicsItem *git, const SvgElement &el);
