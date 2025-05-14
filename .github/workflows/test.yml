@@ -130,7 +130,7 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   wasm:
-    name: WebAssembly / Qt 6.9.0
+    name: Qt 6.9.0 / WebAssembly
     runs-on: ubuntu-24.04
     env:
       emsdk_cache_dir: "emsdk-cache"
