@@ -16,6 +16,8 @@ qt_add_library(libshvvisu
 	src/svgscene/simpletextitem.cpp
 	src/svgscene/types.cpp
 	src/svgscene/visucontroller.cpp
+	src/svgscene/rectitem.cpp
+
 	src/timeline/channelfilter.cpp
 	src/timeline/channelfilterdialog.cpp
 	src/timeline/channelfilterdialog.ui
@@ -32,6 +34,7 @@ qt_add_library(libshvvisu
 	src/timeline/graphview.cpp
 	src/timeline/graphwidget.cpp
 	src/timeline/sample.cpp
+
 	src/widgets/timezonecombobox.cpp
 
 	include/shv/visu/logview/dataviewfilterselector.h
@@ -61,6 +64,8 @@ qt_add_library(libshvvisu
 	include/shv/visu/svgscene/saxhandler.h
 	include/shv/visu/svgscene/simpletextitem.h
 	include/shv/visu/svgscene/groupitem.h
+	include/shv/visu/svgscene/rectitem.h
+
 	include/shv/visu/errorlogmodel.h
 	)
 

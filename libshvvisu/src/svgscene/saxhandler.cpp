@@ -2,6 +2,7 @@
 #include "log.h"
 
 #include <shv/visu/svgscene/saxhandler.h>
+#include <shv/visu/svgscene/rectitem.h>
 
 #include <shv/visu/svgscene/types.h>
 #include <shv/visu/svgscene/simpletextitem.h>
@@ -1028,6 +1029,14 @@ bool SaxHandler::startElement()
 		qreal y = el.xmlAttributes.value(QStringLiteral("y")).toDouble();
 		qreal w = el.xmlAttributes.value(QStringLiteral("width")).toDouble();
 		qreal h = el.xmlAttributes.value(QStringLiteral("height")).toDouble();
+		qreal rx = el.xmlAttributes.value(QStringLiteral("rx")).toDouble();
+		qreal ry = el.xmlAttributes.value(QStringLiteral("ry")).toDouble();
+		if (rx == 0 && ry > 0) {
+			rx = ry;
+		}
+		else if (ry == 0 && rx > 0) {
+			ry = rx;
+		}
 		if(auto *text_item = dynamic_cast<QGraphicsTextItem*>(m_topLevelItem)) {
 			QTransform t;
 			t.translate(x, y);
@@ -1036,7 +1045,9 @@ bool SaxHandler::startElement()
 			return false;
 		}
 
-		QGraphicsRectItem *item = createRectItem(el);
+		auto *item = createRectItem(el);
+		item->setXRadius(rx);
+		item->setYRadius(ry);
 		setXmlAttributes(item, el);
 		item->setRect(QRectF(x, y, w, h));
 		setStyle(item, el.styleAttributes);
@@ -1153,10 +1164,10 @@ bool SaxHandler::startElement()
 
 }
 
-QGraphicsRectItem *SaxHandler::createRectItem(const SvgElement &el)
+RectItem *SaxHandler::createRectItem(const SvgElement &el)
 {
-	Q_UNUSED(el)
-	auto *item = new QGraphicsRectItem();
+	Q_UNUSED(el);
+	auto *item = new RectItem();
 	return item;
 }
 
