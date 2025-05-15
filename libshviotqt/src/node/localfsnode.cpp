@@ -63,6 +63,9 @@ LocalFSNode::LocalFSNode(const QString &root_path, const std::string &node_id, S
 
 chainpack::RpcValue LocalFSNode::callMethod(const ShvNode::StringViewList &shv_path, const std::string &method, const chainpack::RpcValue &params, const shv::chainpack::RpcValue &user_id)
 {
+	if (shv_path.indexOf("..") != -1) {
+		SHV_EXCEPTION("Path cannot contain '..' (parent directory references are not allowed).");
+	}
 	if(method == M_WRITE) {
 		return ndWrite(QString::fromStdString(shv_path.join('/')), params);
 	}
