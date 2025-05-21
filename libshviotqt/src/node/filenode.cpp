@@ -177,7 +177,7 @@ chainpack::RpcValue FileNode::readFileCompressed(const ShvNode::StringViewList &
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wuseless-cast"
 #endif
-	result.setMetaValue("size", static_cast<uint64_t>(result.asBlob().size()));
+	result.setMetaValue("size", static_cast<uint64_t>(blob.size()));
 #if defined __GNUC__ && !defined(__clang__)
 #pragma GCC diagnostic pop
 #endif
