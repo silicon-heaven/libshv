@@ -93,6 +93,8 @@ void RpcResponseCallBack::abort()
 
 void RpcResponseCallBack::onRpcFrameReceived()
 {
+	// reset timeout timer even if frame cannot be parsed to valid RpcMessage
+	// frame comming from PLC for example
 	if (m_isFinished) {
 		return;
 	}
@@ -104,23 +106,31 @@ void RpcResponseCallBack::onRpcFrameReceived()
 
 void RpcResponseCallBack::onRpcMessageReceived(const chainpack::RpcMessage &msg)
 {
-	if(m_isFinished)
+	if(m_isFinished) {
 		return;
+	}
 	shvLogFuncFrame() << this << msg.toPrettyString();
-	if(!msg.isResponse())
+	if(!msg.isResponse()) {
 		return;
+	}
 	RpcResponse rsp(msg);
-	if(rsp.peekCallerId() != 0 || !(rsp.requestId() == requestId()))
+	if(rsp.peekCallerId() != 0
+		|| rsp.requestId() != requestId()
+		|| rsp.delay().has_value()
+		) {
 		return;
+	}
 	m_isFinished = true;
-	if(m_timeoutTimer)
+	if(m_timeoutTimer) {
 		m_timeoutTimer->stop();
-	else
+	} else {
 		shvWarning() << "Callback was not started, time-out functionality cannot be provided!";
-	if(m_callBackFunction)
+	}
+	if(m_callBackFunction) {
 		m_callBackFunction(rsp);
-	else
+	} else {
 		emit finished(rsp);
+	}
 	deleteLater();
 }
 
