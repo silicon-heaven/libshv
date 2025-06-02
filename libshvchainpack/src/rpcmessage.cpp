@@ -958,4 +958,19 @@ RpcResponse& RpcResponse::setRequestId(const RpcValue &id)
 	return *this;
 }
 
+std::optional<double> RpcResponse::delay() const
+{
+	const auto &m = m_value.asIMap();
+	if (auto it = m.find(RpcMessage::MetaType::Key::Delay); it != m.end()) {
+		return it->second.toDouble();
+	}
+	return {};
+}
+
+RpcResponse &RpcResponse::setDelay(double d)
+{
+	setValue(RpcMessage::MetaType::Key::Delay, d);
+	return *this;
+}
+
 } // namespace shv

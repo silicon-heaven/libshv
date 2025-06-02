@@ -50,7 +50,7 @@ public:
 								AccessLevel = 17,
 								Source = 19,
 								MAX};};
-		struct Key { enum Enum {Params = 1, Result, Error, MAX};};
+		struct Key { enum Enum {Params = 1, Result, Error, Delay, MAX};};
 
 		MetaType();
 
@@ -289,5 +289,7 @@ public:
 	RpcResponse& setResult(const RpcValue &res);
 	RpcValue result() const;
 	RpcResponse& setRequestId(const RpcValue &id);
+	std::optional<double> delay() const;
+	RpcResponse& setDelay(double d);
 };
 } // namespace shv::chainpack

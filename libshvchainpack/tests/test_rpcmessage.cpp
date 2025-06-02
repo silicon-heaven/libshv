@@ -91,7 +91,21 @@ DOCTEST_TEST_CASE("RpcMessage")
 		REQUIRE(rs2.requestId() == rs.requestId());
 		REQUIRE(rs2.error() == rs.error());
 	}
-	DOCTEST_SUBCASE("RpcNotify")
+	DOCTEST_SUBCASE("RpcResponse delay")
+	{
+		RpcResponse rs;
+		rs.setRequestId(123).setDelay(42);
+		std::stringstream out;
+		RpcValue cp1 = rs.value();
+		{ ChainPackWriter wr(out); rs.write(wr); }
+		ChainPackReader rd(out);
+		RpcValue cp2 = rd.read();
+		REQUIRE(cp1.type() == cp2.type());
+		RpcResponse rs2(cp2);
+		REQUIRE(rs2.delay().value_or(0) == 42);
+		REQUIRE(rs2.requestId() == rs.requestId());
+	}
+	DOCTEST_SUBCASE("RpcSignal")
 	{
 		RpcRequest rq;
 		rq.setMethod("foo")
