@@ -36,13 +36,13 @@ std::unique_ptr<Type> make(LocalSocket::Protocol protocol)
 #ifndef QT_SERIALPORT_LIB
 		throw std::runtime_error("libshv wasn't compiled with serial port support");
 #endif
-		if constexpr (std::same_as<Type, FrameReader>) {
+		if constexpr (std::is_same_v<Type, FrameReader>) {
 			return std::make_unique<SerialFrameReader>(SerialFrameReader::CrcCheck::No);
 		} else {
 			return std::make_unique<SerialFrameWriter>(SerialFrameWriter::CrcCheck::No);
 		}
 	case shv::iotqt::rpc::LocalSocket::Protocol::Stream:
-		if constexpr (std::same_as<Type, FrameReader>) {
+		if constexpr (std::is_same_v<Type, FrameReader>) {
 			return std::make_unique<StreamFrameReader>();
 		} else {
 			return std::make_unique<StreamFrameWriter>();
