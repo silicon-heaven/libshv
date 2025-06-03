@@ -23,6 +23,7 @@
 using namespace shv::chainpack;
 
 #define logConfig() shvCMessage("Config")
+#define logNodeError() shvCMessage("NodeError")
 
 namespace shv::iotqt::node {
 
@@ -153,8 +154,9 @@ void ShvNode::handleRpcFrame(RpcFrame &&frame)
 			shvDebug() << "Metamethod:" << method << "on path:" << ShvPath::joinDirs(shv_path_list).asString() << "FOUND";
 			std::string errmsg;
 			RpcMessage rpc_msg = frame.toRpcMessage(&errmsg);
-			if(!errmsg.empty())
-				SHV_EXCEPTION(errmsg);
+			if(!errmsg.empty()) {
+				throw shv::chainpack::Exception("Decode RPC frame error: " + errmsg);
+			}
 
 			RpcRequest rq(rpc_msg);
 			chainpack::RpcValue ret_val = processRpcRequest(rq);
@@ -165,18 +167,22 @@ void ShvNode::handleRpcFrame(RpcFrame &&frame)
 		else {
 			std::string path = shv::core::utils::joinPath(shvPath().asString(), shv_path_str);
 			throw chainpack::RpcException(RpcResponse::Error::MethodNotFound,
-										  "Method: '" + method + "' on path '" + path + "' doesn't exist",
-										  std::string(__FILE__) + ":" + std::to_string(__LINE__));
+										  "Method: '" + method + "' on path '" + path + "' doesn't exist");
 		}
 	}
 	catch (const chainpack::RpcException &e) {
-		shvError() << "method:"  << method << "path:" << shv_path_str << "err code:" << e.errorCode() << "msg:" << e.message();
+		logNodeError() << "method:"  << method << "path:" << shv_path_str << "err code:" << e.errorCode() << "msg:" << e.message();
 		RpcResponse::Error err(e.message(), e.errorCode(), e.data());
+		resp.setError(err);
+	}
+	catch (const shv::chainpack::Exception &e) {
+		logNodeError() << e.message();
+		RpcResponse::Error err(e.message(), RpcResponse::Error::InvalidRequest);
 		resp.setError(err);
 	}
 	catch (const std::exception &e) {
 		std::string err_str = "method: " + method + " path: " + shv_path_str + " what: " +  e.what();
-		shvError() << err_str;
+		logNodeError() << err_str;
 		RpcResponse::Error err(err_str, RpcResponse::Error::MethodCallException);
 		resp.setError(err);
 	}
