@@ -53,7 +53,6 @@ protected:
 
 	void hideCrossHair();
 
-	virtual void showGraphSelectionContextMenu(const QPoint &mouse_pos);
 	virtual void showGraphContextMenu(const QPoint &mouse_pos);
 	virtual void showChannelContextMenu(qsizetype channel_ix, const QPoint &mouse_pos);
 protected:
@@ -72,6 +71,7 @@ protected:
 	void moveDropMarker(const QPoint &mouse_pos);
 	int moveChannelTargetIndex(const QPoint &mouse_pos) const;
 
+	static Graph::ZoomType zoomTypeFromRect(const QRect &rect);
 protected:
 	Graph *m_graph = nullptr;
 	QSize m_graphPreferredSize;
@@ -91,7 +91,7 @@ protected:
 		GraphDataAreaRightPress,
 	};
 	MouseOperation m_mouseOperation = MouseOperation::None;
-	QPoint m_recentMousePos;
+	QPoint m_mouseOperationStartPos;
 	std::optional<qsizetype> m_resizeChannelIx;
 
 	struct ChannelHeaderMoveContext
@@ -103,5 +103,7 @@ protected:
 		int draggedChannel;
 	};
 	ChannelHeaderMoveContext *m_channelHeaderMoveContext = nullptr;
+private:
+	Graph::ZoomType m_zoomType = Graph::ZoomType::ZoomToRect;
 };
 }

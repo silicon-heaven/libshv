@@ -617,28 +617,38 @@ void Graph::resetYZoom(qsizetype channel_ix)
 	setYRangeZoom(channel_ix, ch->yRange());
 }
 
-void Graph::zoomToSelection(bool zoom_vertically)
+void Graph::zoomToSelection(shv::visu::timeline::Graph::ZoomType zoom_type)
 {
 	shvLogFuncFrame();
-	XRange xrange;
-	xrange.min = posToTime(selectionRect().left());
-	xrange.max = posToTime(selectionRect().right());
-	xrange.normalize();
+	auto r = selectionRect().normalized();
 
-	if(zoom_vertically) {
-		auto ch1 = posToChannel(selectionRect().topLeft());	//top left is always starting point
-		auto ch2 = posToChannel(selectionRect().bottomRight());
-
-		if(ch1 && ch2 && (ch1.value() == ch2.value())) {
-			const GraphChannel *ch = channelAt(ch1.value());
-			YRange yrange;
-			yrange.min = ch->posToValue(selectionRect().top());
-			yrange.max = ch->posToValue(selectionRect().bottom());
-			yrange.normalize();
-			setYRangeZoom(ch1.value(), yrange);
+	auto set_x_zoom = [r, this]() {
+		XRange xrange(posToTime(r.left()), posToTime(r.right()));
+		setXRangeZoom(xrange.normalized());
+	};
+	auto set_y_zoom = [r, this]() {
+		auto chix = posToChannel(r.topLeft());
+		Q_ASSERT(chix);
+		if (chix.has_value()) {
+			const GraphChannel *ch = channelAt(chix.value());
+			Q_ASSERT(ch);
+			YRange yrange(ch->posToValue(r.top()), ch->posToValue(r.bottom()));
+			setYRangeZoom(chix.value(), yrange.normalized());
 		}
+	};
+
+	switch (zoom_type) {
+	case ZoomType::Horizontal:
+		set_x_zoom();
+		break;
+	case ZoomType::Vertical:
+		set_y_zoom();
+		break;
+	case ZoomType::ZoomToRect:
+		set_y_zoom();
+		set_x_zoom();
+		break;
 	}
-	setXRangeZoom(xrange);
 }
 
 void Graph::sanityXRangeZoom()
