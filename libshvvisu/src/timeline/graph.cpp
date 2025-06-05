@@ -1055,28 +1055,32 @@ QString Graph::durationToString(timemsec_t duration)
 		static constexpr timemsec_t MIN = 60 * SEC;
 		static constexpr timemsec_t HOUR = 60 * MIN;
 		static constexpr timemsec_t DAY = 24 * HOUR;
+		auto sign = duration < 0? "-": "";
+		if (duration < 0) {
+			duration = -duration;
+		}
 		if(duration < MIN) {
-			return tr("%1.%2 sec").arg(duration / SEC).arg(duration % SEC, 3, 10, QChar('0'));
+			return sign + tr("%1.%2 sec").arg(duration / SEC).arg(duration % SEC, 3, 10, QChar('0'));
 		}
 		if(duration < HOUR) {
 			const auto min = duration / MIN;
 			const auto sec = (duration % MIN) / SEC;
 			const auto msec = duration % SEC;
-			auto ret = tr("%1:%2.%3 min").arg(min).arg(sec, 2, 10, QChar('0')).arg(msec, 3, 10, QChar('0'));
+			auto ret = sign + tr("%1:%2.%3 min").arg(min).arg(sec, 2, 10, QChar('0')).arg(msec, 3, 10, QChar('0'));
 			return ret;
 		}
 		if(duration < DAY) {
 			const auto hour = duration / HOUR;
 			const auto min = (duration % HOUR) / MIN;
 			const auto sec = (duration % MIN) / SEC;
-			return tr("%1:%2:%3", "time").arg(hour).arg(min, 2, 10, QChar('0')).arg(sec, 2, 10, QChar('0'));
+			return sign + tr("%1:%2:%3", "time").arg(hour).arg(min, 2, 10, QChar('0')).arg(sec, 2, 10, QChar('0'));
 		}
 		{
 			const auto day = duration / DAY;
 			const auto hour = (duration % DAY) / HOUR;
 			const auto min = (duration % HOUR) / MIN;
 			const auto sec = (duration % MIN) / SEC;
-			return tr("%1 day %2:%3:%4").arg(day).arg(hour).arg(min, 2, 10, QChar('0')).arg(sec, 2, 10, QChar('0'));
+			return sign + tr("%1 day %2:%3:%4").arg(day).arg(hour).arg(min, 2, 10, QChar('0')).arg(sec, 2, 10, QChar('0'));
 		}
 	}
 
@@ -2456,7 +2460,7 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 		{
 			/// draw info
 			QString info_text;
-			if(selectionRect().isValid()) {
+			{
 				/// show selection info
 				auto sel_rect = selectionRect();
 				auto ch1_ix = posToChannel(sel_rect.bottomLeft());
@@ -2485,6 +2489,7 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 					}
 				}
 			}
+			/*
 			else {
 				/// show sample value
 				QVariant qv = toolTipValues(crossbar_pos).value(KEY_SAMPLE_PRETTY_VALUE);
@@ -2504,6 +2509,7 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 				}
 				info_text = lines.join('\n');
 			}
+			*/
 			if(!info_text.isEmpty()) {
 				QFontMetrics fm(m_style.font());
 				QRect info_rect = fm.boundingRect(QRect(), Qt::AlignLeft, info_text);
