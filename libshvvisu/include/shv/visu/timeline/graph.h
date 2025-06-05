@@ -196,7 +196,9 @@ public:
 	void enlargeYRange(qsizetype channel_ix, double step);
 	void setYRangeZoom(qsizetype channel_ix, const YRange &r);
 	void resetYZoom(qsizetype channel_ix);
-	void zoomToSelection(bool zoom_vertically);
+
+	enum class ZoomType { Horizontal, Vertical, ZoomToRect };
+	void zoomToSelection(ZoomType zoom_type);
 
 	const Style& style() const;
 	void setStyle(const Style &st);

@@ -33,6 +33,7 @@ struct Range
 	Range(T mn, T mx) : min(mn), max(mx) {}
 
 	Range& normalize() {if (min > max)  std::swap(min, max); return *this; }
+	Range normalized() const {auto r = *this; r.normalize(); return r;}
 	bool isValid() const { return interval() >= 0; }
 	bool isEmpty() const { return interval() == 0; }
 	bool contains(T t) const { return ((t >= min) && (t <= max)); }

@@ -617,28 +617,44 @@ void Graph::resetYZoom(qsizetype channel_ix)
 	setYRangeZoom(channel_ix, ch->yRange());
 }
 
-void Graph::zoomToSelection(bool zoom_vertically)
+void Graph::zoomToSelection(shv::visu::timeline::Graph::ZoomType zoom_type)
 {
 	shvLogFuncFrame();
-	XRange xrange;
-	xrange.min = posToTime(selectionRect().left());
-	xrange.max = posToTime(selectionRect().right());
-	xrange.normalize();
+	auto r = selectionRect().normalized();
 
-	if(zoom_vertically) {
-		auto ch1 = posToChannel(selectionRect().topLeft());	//top left is always starting point
-		auto ch2 = posToChannel(selectionRect().bottomRight());
-
-		if(ch1 && ch2 && (ch1.value() == ch2.value())) {
-			const GraphChannel *ch = channelAt(ch1.value());
-			YRange yrange;
-			yrange.min = ch->posToValue(selectionRect().top());
-			yrange.max = ch->posToValue(selectionRect().bottom());
-			yrange.normalize();
-			setYRangeZoom(ch1.value(), yrange);
+	auto set_x_zoom = [r, this]() {
+		if (r.width() == 0) {
+			return;
 		}
+		XRange xrange(posToTime(r.left()), posToTime(r.right()));
+		setXRangeZoom(xrange.normalized());
+	};
+	auto set_y_zoom = [r, this]() {
+		if (r.height() == 0) {
+			return;
+		}
+		auto chix = posToChannel(r.topLeft());
+		Q_ASSERT(chix);
+		if (chix.has_value()) {
+			const GraphChannel *ch = channelAt(chix.value());
+			Q_ASSERT(ch);
+			YRange yrange(ch->posToValue(r.top()), ch->posToValue(r.bottom()));
+			setYRangeZoom(chix.value(), yrange.normalized());
+		}
+	};
+
+	switch (zoom_type) {
+	case ZoomType::Horizontal:
+		set_x_zoom();
+		break;
+	case ZoomType::Vertical:
+		set_y_zoom();
+		break;
+	case ZoomType::ZoomToRect:
+		set_y_zoom();
+		set_x_zoom();
+		break;
 	}
-	setXRangeZoom(xrange);
 }
 
 void Graph::sanityXRangeZoom()
@@ -1045,28 +1061,32 @@ QString Graph::durationToString(timemsec_t duration)
 		static constexpr timemsec_t MIN = 60 * SEC;
 		static constexpr timemsec_t HOUR = 60 * MIN;
 		static constexpr timemsec_t DAY = 24 * HOUR;
+		auto sign = duration < 0? "-": "";
+		if (duration < 0) {
+			duration = -duration;
+		}
 		if(duration < MIN) {
-			return tr("%1.%2 sec").arg(duration / SEC).arg(duration % SEC, 3, 10, QChar('0'));
+			return sign + tr("%1.%2 sec").arg(duration / SEC).arg(duration % SEC, 3, 10, QChar('0'));
 		}
 		if(duration < HOUR) {
 			const auto min = duration / MIN;
 			const auto sec = (duration % MIN) / SEC;
 			const auto msec = duration % SEC;
-			auto ret = tr("%1:%2.%3 min").arg(min).arg(sec, 2, 10, QChar('0')).arg(msec, 3, 10, QChar('0'));
+			auto ret = sign + tr("%1:%2.%3 min").arg(min).arg(sec, 2, 10, QChar('0')).arg(msec, 3, 10, QChar('0'));
 			return ret;
 		}
 		if(duration < DAY) {
 			const auto hour = duration / HOUR;
 			const auto min = (duration % HOUR) / MIN;
 			const auto sec = (duration % MIN) / SEC;
-			return tr("%1:%2:%3", "time").arg(hour).arg(min, 2, 10, QChar('0')).arg(sec, 2, 10, QChar('0'));
+			return sign + tr("%1:%2:%3", "time").arg(hour).arg(min, 2, 10, QChar('0')).arg(sec, 2, 10, QChar('0'));
 		}
 		{
 			const auto day = duration / DAY;
 			const auto hour = (duration % DAY) / HOUR;
 			const auto min = (duration % HOUR) / MIN;
 			const auto sec = (duration % MIN) / SEC;
-			return tr("%1 day %2:%3:%4").arg(day).arg(hour).arg(min, 2, 10, QChar('0')).arg(sec, 2, 10, QChar('0'));
+			return sign + tr("%1 day %2:%3:%4").arg(day).arg(hour).arg(min, 2, 10, QChar('0')).arg(sec, 2, 10, QChar('0'));
 		}
 	}
 
@@ -2446,7 +2466,7 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 		{
 			/// draw info
 			QString info_text;
-			if(selectionRect().isValid()) {
+			{
 				/// show selection info
 				auto sel_rect = selectionRect();
 				auto ch1_ix = posToChannel(sel_rect.bottomLeft());
@@ -2475,6 +2495,7 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 					}
 				}
 			}
+			/*
 			else {
 				/// show sample value
 				QVariant qv = toolTipValues(crossbar_pos).value(KEY_SAMPLE_PRETTY_VALUE);
@@ -2494,6 +2515,7 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 				}
 				info_text = lines.join('\n');
 			}
+			*/
 			if(!info_text.isEmpty()) {
 				QFontMetrics fm(m_style.font());
 				QRect info_rect = fm.boundingRect(QRect(), Qt::AlignLeft, info_text);

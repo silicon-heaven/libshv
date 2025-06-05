@@ -243,21 +243,21 @@ void GraphWidget::mousePressEvent(QMouseEvent *event)
 		}
 		if(isMouseAboveMiniMapSlider(pos)) {
 			m_mouseOperation = MouseOperation::MiniMapScrollZoom;
-			m_recentMousePos = pos;
+			m_mouseOperationStartPos = pos;
 			event->accept();
 			return;
 		}
 		if (isMouseAboveChannelResizeHandle(pos, Qt::Edge::BottomEdge)) {
 			m_mouseOperation = MouseOperation::ChannelHeaderResizeHeight;
 			m_resizeChannelIx = graph()->posToChannelHeader(pos);
-			m_recentMousePos = pos;
+			m_mouseOperationStartPos = pos;
 			event->accept();
 			return;
 		}
 		if (isMouseAboveChannelResizeHandle(pos, Qt::Edge::RightEdge)) {
 			m_mouseOperation = MouseOperation::GraphVerticalHeaderResizeWidth;
 			m_resizeChannelIx = graph()->posToChannelHeader(pos);
-			m_recentMousePos = pos;
+			m_mouseOperationStartPos = pos;
 			event->accept();
 			return;
 		}
@@ -273,7 +273,7 @@ void GraphWidget::mousePressEvent(QMouseEvent *event)
 				logMouseSelection() << "GraphAreaPress";
 				m_mouseOperation = MouseOperation::GraphDataAreaLeftPress;
 			}
-			m_recentMousePos = pos;
+			m_mouseOperationStartPos = pos;
 			event->accept();
 			return;
 		}
@@ -281,7 +281,7 @@ void GraphWidget::mousePressEvent(QMouseEvent *event)
 			if (event->modifiers() == Qt::NoModifier) {
 				m_mouseOperation = MouseOperation::ChannelHeaderMove;
 			}
-			m_recentMousePos = pos;
+			m_mouseOperationStartPos = pos;
 			event->accept();
 			return;
 		}
@@ -291,7 +291,7 @@ void GraphWidget::mousePressEvent(QMouseEvent *event)
 			if(event->modifiers() == Qt::NoModifier) {
 				logMouseSelection() << "GraphAreaRightPress";
 				m_mouseOperation = MouseOperation::GraphDataAreaRightPress;
-				m_recentMousePos = pos;
+				m_mouseOperationStartPos = pos;
 				event->accept();
 				return;
 			}
@@ -334,12 +334,7 @@ void GraphWidget::mouseReleaseEvent(QMouseEvent *event)
 			}
 		}
 		else if(old_mouse_op == MouseOperation::GraphAreaSelection) {
-			if(event->modifiers() == Qt::NoModifier) {
-				showGraphSelectionContextMenu(event->pos());
-			}
-			else if(event->modifiers() == Qt::ShiftModifier) {
-				m_graph->zoomToSelection(false);
-			}
+			m_graph->zoomToSelection(m_zoomType);
 			event->accept();
 			graph()->setSelectionRect(QRect());
 			update();
@@ -418,8 +413,8 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 	}
 	case MouseOperation::MiniMapScrollZoom: {
 		timemsec_t t2 = gr->miniMapPosToTime(pos.x());
-		timemsec_t t1 = gr->miniMapPosToTime(m_recentMousePos.x());
-		m_recentMousePos = pos;
+		timemsec_t t1 = gr->miniMapPosToTime(m_mouseOperationStartPos.x());
+		m_mouseOperationStartPos = pos;
 		XRange r = gr->xRangeZoom();
 		shvDebug() << "r.min:" << r.min << "r.max:" << r.max;
 		timemsec_t dt = t2 - t1;
@@ -435,34 +430,45 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 		return;
 	}
 	case MouseOperation::GraphDataAreaLeftPress: {
-		QPoint point = pos - m_recentMousePos;
+		QPoint point = pos - m_mouseOperationStartPos;
 		if (point.manhattanLength() > 3) {
 			m_mouseOperation = MouseOperation::GraphAreaSelection;
 		}
 		break;
 	}
 	case MouseOperation::GraphAreaSelection: {
-		auto ch1_ix = m_graph->posToChannel(m_recentMousePos);
-
-		if (ch1_ix) {
-			auto *ch1 = m_graph->channelAt(ch1_ix.value());
-
-			if (pos.x() < ch1->graphAreaRect().left()) {
-				pos.setX(ch1->graphAreaRect().left());
-			}
-			else if (pos.x() > ch1->graphAreaRect().right()) {
-				pos.setX(ch1->graphAreaRect().right());
-			}
-
-			if (pos.y() < ch1->graphAreaRect().top()) {
-				pos.setY(ch1->graphAreaRect().top());
-			}
-			else if (pos.y() > ch1->graphAreaRect().bottom()) {
-				pos.setY(ch1->graphAreaRect().bottom());
-			}
+		auto ch1_ix = m_graph->posToChannel(m_mouseOperationStartPos);
+		if (!ch1_ix) {
+			break;
 		}
 
-		gr->setSelectionRect(QRect(m_recentMousePos, pos));
+		auto *ch1 = m_graph->channelAt(ch1_ix.value());
+		Q_ASSERT(ch1);
+
+		auto ga = ch1->graphAreaRect();
+		if (pos.x() < ga.left()) {
+			pos.setX(ga.left());
+		}
+		else if (pos.x() > ga.right()) {
+			pos.setX(ga.right());
+		}
+
+		if (pos.y() < ga.top()) {
+			pos.setY(ga.top());
+		}
+		else if (pos.y() > ga.bottom()) {
+			pos.setY(ga.bottom());
+		}
+
+		QRect sr(m_mouseOperationStartPos, pos);
+		m_zoomType = zoomTypeFromRect(sr);
+		switch (m_zoomType) {
+		case Graph::ZoomType::Horizontal: sr = QRect(QPoint(sr.left(), ga.top()), QSize(sr.width(), ga.height())); break;
+		case Graph::ZoomType::Vertical: sr = QRect(QPoint(ga.left(), sr.top()), QSize(ga.width(), sr.height())); break;
+		case Graph::ZoomType::ZoomToRect: break;
+		}
+
+		gr->setSelectionRect(sr);
 		update();
 
 		break;
@@ -470,14 +476,14 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 	case MouseOperation::GraphAreaMove:
 	case MouseOperation::GraphDataAreaLeftCtrlPress: {
 		m_mouseOperation = MouseOperation::GraphAreaMove;
-		timemsec_t t0 = gr->posToTime(m_recentMousePos.x());
+		timemsec_t t0 = gr->posToTime(m_mouseOperationStartPos.x());
 		timemsec_t t1 = gr->posToTime(pos.x());
 		timemsec_t dt = t0 - t1;
 		XRange r = gr->xRangeZoom();
 		r.min += dt;
 		r.max += dt;
 		gr->setXRangeZoom(r);
-		m_recentMousePos = pos;
+		m_mouseOperationStartPos = pos;
 		update();
 		return;
 	}
@@ -486,14 +492,14 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 		return;
 	case MouseOperation::ChannelHeaderResizeHeight: {
 		if (m_resizeChannelIx) {
-			gr->resizeChannelHeight(m_resizeChannelIx.value(), pos.y() - m_recentMousePos.y());
-			m_recentMousePos = pos;
+			gr->resizeChannelHeight(m_resizeChannelIx.value(), pos.y() - m_mouseOperationStartPos.y());
+			m_mouseOperationStartPos = pos;
 		}
 		return;
 	}
 	case MouseOperation::GraphVerticalHeaderResizeWidth: {
-		gr->resizeVerticalHeaderWidth(pos.x() - m_recentMousePos.x());
-		m_recentMousePos = pos;
+		gr->resizeVerticalHeaderWidth(pos.x() - m_mouseOperationStartPos.x());
+		m_mouseOperationStartPos = pos;
 		return;
 	}
 	case MouseOperation::ChannelHeaderMove:
@@ -595,6 +601,33 @@ int GraphWidget::moveChannelTargetIndex(const QPoint &mouse_pos) const
 		return static_cast<int>(visible_channels.last() + 1);
 	}
 	return 0;
+}
+
+Graph::ZoomType GraphWidget::zoomTypeFromRect(const QRect &rect)
+{
+	auto r = rect.normalized();
+	auto w = r.width();
+	auto h = r.height();
+	if (h == 0) {
+		return Graph::ZoomType::Horizontal;
+	}
+	if (w == 0) {
+		return Graph::ZoomType::Vertical;
+	}
+	static constexpr auto R = 0.3;
+	if (h > w) {
+		auto ratio = static_cast<double>(w) / h;
+		if (ratio < R) {
+			return Graph::ZoomType::Vertical;
+		}
+	}
+	if (w > h) {
+		auto ratio = static_cast<double>(h) / w;
+		if (ratio < R) {
+			return Graph::ZoomType::Horizontal;
+		}
+	}
+	return Graph::ZoomType::ZoomToRect;
 }
 
 void GraphWidget::scrollToCurrentMousePosOnDrag()
@@ -753,62 +786,6 @@ void GraphWidget::dropEvent(QDropEvent *event)
 		graph()->moveChannel(m_channelHeaderMoveContext->draggedChannel, target_channel);
 	}
 	event->accept();
-}
-
-void GraphWidget::showGraphSelectionContextMenu(const QPoint &mouse_pos)
-{
-	QMenu menu(this);
-	menu.addAction(tr("Zoom X axis to selection"), this, [this]() {
-		m_graph->zoomToSelection(false);
-		update();
-	});
-
-	auto *act_zoom_channel = menu.addAction(tr("Zoom channel to selection"), this, [this]() {
-		m_graph->zoomToSelection(true);
-		update();
-	});
-
-	auto *act_show_selection_info = menu.addAction(tr("Show selection info"), this, [this]() {
-		auto sel_rect = m_graph->selectionRect();
-		auto ch1_ix = m_graph->posToChannel(sel_rect.topLeft());
-		auto ch2_ix = m_graph->posToChannel(sel_rect.bottomRight());
-
-		if (!ch1_ix || !ch2_ix || ch1_ix.value() != ch2_ix.value()) {
-			return;
-		}
-
-		auto *ch1 = m_graph->channelAt(ch1_ix.value());
-		auto *ch2 = m_graph->channelAt(ch2_ix.value());
-		auto t1 = m_graph->posToTime(sel_rect.left());
-		auto t2 = m_graph->posToTime(sel_rect.right());
-		auto y1 = ch1->posToValue(sel_rect.bottom());
-		auto y2 = ch2->posToValue(sel_rect.top());
-		QString s;
-
-		if (m_graph->model()->xAxisType() == GraphModel::XAxisType::Timeline) {
-			s = tr("t1: %1").arg(m_graph->timeToStringTZ(t1));
-			s += '\n' + tr("t2: %1").arg(m_graph->timeToStringTZ(t2));
-			s += '\n' + tr("duration: %1").arg(m_graph->durationToString(t2 - t1));
-		}
-		else {
-			s = tr("x1: %1").arg(m_graph->timeToStringTZ(t1));
-			s += '\n' + tr("x2: %1").arg(m_graph->timeToStringTZ(t2));
-			s += '\n' + tr("width: %1").arg(m_graph->durationToString(t2 - t1));
-		}
-
-		s += '\n' + tr("y1: %1").arg(y1);
-		s += '\n' + tr("y2: %1").arg(y2);
-		s += '\n' + tr("diff: %1").arg(y2 - y1);
-
-		QMessageBox::information(this, tr("Selection info"), s);
-	});
-
-	auto sel_ch1 = m_graph->posToChannel(m_graph->selectionRect().topLeft());
-
-	act_zoom_channel->setEnabled(sel_ch1.has_value());
-	act_show_selection_info->setEnabled(sel_ch1.has_value());
-
-	menu.exec(mapToGlobal(mouse_pos));
 }
 
 void GraphWidget::showGraphContextMenu(const QPoint &mouse_pos)
