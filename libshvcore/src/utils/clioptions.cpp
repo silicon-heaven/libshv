@@ -299,6 +299,9 @@ void CLIOptions::parse(int argc, char* argv[])
 
 void CLIOptions::parse(const StringList& cmd_line_args)
 {
+	if (cmd_line_args.empty()) {
+		throw std::runtime_error("CLI args must contain at least an application name.");
+	}
 	m_isAppBreak = false;
 	m_parsedArgIndex = 0;
 	m_arguments = StringList(cmd_line_args.begin()+1, cmd_line_args.end());
