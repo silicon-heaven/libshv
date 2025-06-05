@@ -623,10 +623,16 @@ void Graph::zoomToSelection(shv::visu::timeline::Graph::ZoomType zoom_type)
 	auto r = selectionRect().normalized();
 
 	auto set_x_zoom = [r, this]() {
+		if (r.width() == 0) {
+			return;
+		}
 		XRange xrange(posToTime(r.left()), posToTime(r.right()));
 		setXRangeZoom(xrange.normalized());
 	};
 	auto set_y_zoom = [r, this]() {
+		if (r.height() == 0) {
+			return;
+		}
 		auto chix = posToChannel(r.topLeft());
 		Q_ASSERT(chix);
 		if (chix.has_value()) {
