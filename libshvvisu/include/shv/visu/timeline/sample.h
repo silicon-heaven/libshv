@@ -32,6 +32,8 @@ struct Range
 	Range() : min(1), max(0) {} // invalid range
 	Range(T mn, T mx) : min(mn), max(mx) {}
 
+	auto operator<=>(const Range&) const = default;
+
 	Range& normalize() {if (min > max)  std::swap(min, max); return *this; }
 	Range normalized() const {auto r = *this; r.normalize(); return r;}
 	bool isValid() const { return interval() >= 0; }

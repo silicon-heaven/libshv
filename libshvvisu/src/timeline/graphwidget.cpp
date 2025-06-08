@@ -286,6 +286,17 @@ void GraphWidget::mousePressEvent(QMouseEvent *event)
 			return;
 		}
 	}
+	else if(event->button() == Qt::MiddleButton) {
+		if(posToChannel(pos).has_value()) {
+			if(event->modifiers() == Qt::NoModifier) {
+				logMouseSelection() << "GraphAreaMiddlePress";
+				m_mouseOperation = MouseOperation::GraphDataAreaMiddlePress;
+				m_mouseOperationStartPos = pos;
+				event->accept();
+				return;
+			}
+		}
+	}
 	else if(event->button() == Qt::RightButton) {
 		if(posToChannel(pos) >= 0) {
 			if(event->modifiers() == Qt::NoModifier) {
@@ -345,6 +356,16 @@ void GraphWidget::mouseReleaseEvent(QMouseEvent *event)
 			event->accept();
 			update();
 			return;
+		}
+	}
+	else if(event->button() == Qt::MiddleButton) {
+		if(old_mouse_op == MouseOperation::GraphDataAreaMiddlePress) {
+			if(event->modifiers() == Qt::NoModifier) {
+				m_graph->zoomToPreviousZoom();
+				event->accept();
+				update();
+				return;
+			}
 		}
 	}
 	else if(event->button() == Qt::RightButton) {
@@ -487,6 +508,7 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 		update();
 		return;
 	}
+	case MouseOperation::GraphDataAreaMiddlePress:
 	case MouseOperation::GraphDataAreaRightPress:
 	case MouseOperation::GraphDataAreaLeftCtrlShiftPress:
 		return;
@@ -823,6 +845,10 @@ void GraphWidget::showChannelContextMenu(qsizetype channel_ix, const QPoint &mou
 			createProbe(channel_ix, time);
 		});
 
+	menu.addAction(tr("Previous zoom (Middle mouse)"), this, [this]() {
+		m_graph->zoomToPreviousZoom();
+		this->update();
+	});
 	menu.addAction(tr("Reset zoom"), this, [this, channel_ix]() {
 		m_graph->resetXZoom();
 		m_graph->resetYZoom(channel_ix);

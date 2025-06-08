@@ -563,12 +563,17 @@ void Graph::setXRange(const XRange &r, bool keep_zoom)
 
 void Graph::setXRangeZoom(const XRange &r)
 {
+	if (r == m_state.xRangeZoom) {
+		return;
+	}
 	XRange prev_r = m_state.xRangeZoom;
 	XRange new_r = r;
-	if(!m_state.xRange.contains(new_r.min))
+	if(!m_state.xRange.contains(new_r.min)) {
 		new_r.min = m_state.xRange.min;
-	if(!m_state.xRange.contains(new_r.max))
+	}
+	if(!m_state.xRange.contains(new_r.max)) {
 		new_r.max = m_state.xRange.max;
+	}
 	if(prev_r.max < new_r.max && prev_r.interval() == new_r.interval()) {
 		/// if zoom is just moved right (not scaled), snap to xrange max
 		const auto diff = m_state.xRange.max - new_r.max;
@@ -602,9 +607,20 @@ void Graph::enlargeYRange(qsizetype channel_ix, double step)
 	setYRange(channel_ix, r);
 }
 
+YRange Graph::yRangeZoom(qsizetype channel_ix) const
+{
+	auto *ch = channelAt(channel_ix);
+	Q_ASSERT(ch);
+	return ch->m_state.yRangeZoom;
+}
+
 void Graph::setYRangeZoom(qsizetype channel_ix, const YRange &r)
 {
 	GraphChannel *ch = channelAt(channel_ix);
+	Q_ASSERT(ch);
+	if (r == ch->m_state.yRangeZoom) {
+		return;
+	}
 	ch->m_state.yRangeZoom = r;
 	ch->m_state.yRangeZoom.min = std::max(ch->m_state.yRangeZoom.min, ch->m_state.yRange.min);
 	ch->m_state.yRangeZoom.max = std::min(ch->m_state.yRangeZoom.max, ch->m_state.yRange.max);
@@ -621,26 +637,33 @@ void Graph::zoomToSelection(shv::visu::timeline::Graph::ZoomType zoom_type)
 {
 	shvLogFuncFrame();
 	auto r = selectionRect().normalized();
+	auto chix = posToChannel(r.topLeft());
+	if (!chix) {
+		return;
+	}
+	const GraphChannel *ch = channelAt(chix.value());
+	Q_ASSERT(ch);
 
-	auto set_x_zoom = [r, this]() {
+	auto new_zoom = ZoomRange {
+		.xRange = xRangeZoom(),
+		.yRange = yRangeZoom(chix.value()),
+		.channelIx = chix.value()
+	};
+
+
+	auto set_x_zoom = [r, &new_zoom, this]() {
 		if (r.width() == 0) {
 			return;
 		}
 		XRange xrange(posToTime(r.left()), posToTime(r.right()));
-		setXRangeZoom(xrange.normalized());
+		new_zoom.xRange = xrange.normalized();
 	};
-	auto set_y_zoom = [r, this]() {
+	auto set_y_zoom = [r, ch, &new_zoom]() {
 		if (r.height() == 0) {
 			return;
 		}
-		auto chix = posToChannel(r.topLeft());
-		Q_ASSERT(chix);
-		if (chix.has_value()) {
-			const GraphChannel *ch = channelAt(chix.value());
-			Q_ASSERT(ch);
-			YRange yrange(ch->posToValue(r.top()), ch->posToValue(r.bottom()));
-			setYRangeZoom(chix.value(), yrange.normalized());
-		}
+		YRange yrange(ch->posToValue(r.top()), ch->posToValue(r.bottom()));
+		new_zoom.yRange = yrange.normalized();
 	};
 
 	switch (zoom_type) {
@@ -655,6 +678,8 @@ void Graph::zoomToSelection(shv::visu::timeline::Graph::ZoomType zoom_type)
 		set_x_zoom();
 		break;
 	}
+
+	pushZoomRange(new_zoom);
 }
 
 void Graph::sanityXRangeZoom()
@@ -2743,11 +2768,54 @@ Graph::VisualSettings Graph::VisualSettings::fromJson(const QString &json)
 	return settings;
 }
 
+void Graph::applyZoomRange(const ZoomRange &r)
+{
+	if (!r.xRange.isEmpty()) {
+		setXRangeZoom(r.xRange.normalized());
+	}
+	if (!r.yRange.isEmpty()) {
+		const GraphChannel *ch = channelAt(r.channelIx);
+		Q_ASSERT(ch);
+		setYRangeZoom(r.channelIx, r.yRange.normalized());
+	};
+}
+
+void Graph::pushZoomRange(const ZoomRange &r)
+{
+	m_zoomStack.append(r);
+	applyZoomRange(r);
+}
+
+void Graph::popZoomRange()
+{
+	if (m_zoomStack.isEmpty()) {
+		return;
+	}
+	auto current_zoom = m_zoomStack.takeLast();
+	if (m_zoomStack.isEmpty()) {
+		resetYZoom(current_zoom.channelIx);
+		resetXZoom();
+		return;
+	}
+	if (auto it = std::find_if(m_zoomStack.rbegin(), m_zoomStack.rend(),
+							[chix = current_zoom.channelIx](const auto &zoom) {
+								return zoom.channelIx == chix;
+							});
+			it != m_zoomStack.rend())
+	{
+		// restore current channel zoom to previous one
+		setYRangeZoom(it->channelIx, it->yRange);
+	} else {
+		resetYZoom(current_zoom.channelIx);
+	}
+	applyZoomRange(m_zoomStack.last());
+}
+
 Graph::XAxis::XAxis() = default;
 Graph::XAxis::XAxis(timemsec_t t, int se, LabelScale f)
 	: tickInterval(t)
 	, subtickEvery(se)
-	  , labelScale(f)
+	, labelScale(f)
 {
 }
 
@@ -2755,4 +2823,5 @@ bool Graph::XAxis::isValid() const
 {
 	return tickInterval > 0;
 }
+
 }
