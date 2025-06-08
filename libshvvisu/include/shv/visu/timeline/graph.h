@@ -194,11 +194,13 @@ public:
 
 	void setYRange(qsizetype channel_ix, const YRange &r);
 	void enlargeYRange(qsizetype channel_ix, double step);
+	YRange yRangeZoom(qsizetype channel_ix) const;
 	void setYRangeZoom(qsizetype channel_ix, const YRange &r);
 	void resetYZoom(qsizetype channel_ix);
 
 	enum class ZoomType { Horizontal, Vertical, ZoomToRect };
 	void zoomToSelection(ZoomType zoom_type);
+	void zoomToPreviousZoom() { popZoomRange(); }
 
 	const Style& style() const;
 	void setStyle(const Style &st);
@@ -342,6 +344,17 @@ protected:
 
 	QPixmap m_miniMapCache;
 	QString m_settingsUserName = DEFAULT_USER_PROFILE;
+private:
+	struct ZoomRange {
+		XRange xRange;
+		YRange yRange;
+		qsizetype channelIx = -1;
+	};
+	QList<ZoomRange> m_zoomStack;
+private:
+	void applyZoomRange(const ZoomRange &r);
+	void pushZoomRange(const ZoomRange &r);
+	void popZoomRange();
 };
 
 }

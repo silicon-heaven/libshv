@@ -88,6 +88,7 @@ protected:
 		GraphDataAreaLeftCtrlShiftPress,
 		GraphAreaMove,
 		GraphAreaSelection,
+		GraphDataAreaMiddlePress,
 		GraphDataAreaRightPress,
 	};
 	MouseOperation m_mouseOperation = MouseOperation::None;
