@@ -33,7 +33,7 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   ubuntu-qt6-9:
-    name: Qt 6.9.0 / Ubuntu 22.04
+    name: Qt 6.9.1 / Ubuntu 22.04
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -43,7 +43,7 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.9.0
+          qt_version: 6.9.1
           qt_target: desktop
           qt_arch: linux_gcc_64
           use_qt6: ON
@@ -54,8 +54,8 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   windows-mingw:
-    name: Qt 6.9.0 / Windows MinGW
-    runs-on: windows-2022
+    name: Qt 6.9.1 / Windows MinGW
+    runs-on: windows-2025
     steps:
       - uses: actions/checkout@v4
         with:
@@ -64,7 +64,7 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.9.0
+          qt_version: 6.9.1
           qt_target: desktop
           qt_arch: win64_mingw
           use_qt6: ON
@@ -79,8 +79,8 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   windows-msvc:
-    name: Qt 6.9.0 / Windows MSVC
-    runs-on: windows-2022
+    name: Qt 6.9.1 / Windows MSVC
+    runs-on: windows-2025
     steps:
       - uses: actions/checkout@v4
         with:
@@ -89,7 +89,7 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.9.0
+          qt_version: 6.9.1
           qt_target: desktop
           qt_arch: win64_msvc2022_64
           use_qt6: ON
@@ -104,8 +104,8 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   android:
-    name: Qt 6.9.0 / Android
-    runs-on: ubuntu-22.04
+    name: Qt 6.9.1 / Android
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -119,7 +119,7 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.9.0
+          qt_version: 6.9.1
           qt_target: android
           qt_arch: android_arm64_v8a
           use_qt6: ON
@@ -130,8 +130,8 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   wasm:
-    name: WebAssembly / Qt 6.9.0
-    runs-on: ubuntu-22.04
+    name: Qt 6.9.1 / WebAssembly
+    runs-on: ubuntu-24.04
     env:
       emsdk_cache_dir: "emsdk-cache"
       emscripten_version: 3.1.56
@@ -155,7 +155,7 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.9.0
+          qt_version: 6.9.1
           qt_target: wasm
           qt_arch: wasm_singlethread
           use_qt6: ON
@@ -166,7 +166,7 @@ jobs:
 
   nix:
     name: Qt 6.6.2 / NixOS
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
