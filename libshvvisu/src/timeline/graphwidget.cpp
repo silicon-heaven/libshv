@@ -62,7 +62,6 @@ void GraphWidget::setGraph(Graph *g)
 		update();
 	});
 
-	connect(m_graph, &Graph::graphContextMenuRequest, this, &GraphWidget::showGraphContextMenu);
 	connect(m_graph, &Graph::channelContextMenuRequest, this, &GraphWidget::showChannelContextMenu);
 }
 
@@ -380,6 +379,14 @@ void GraphWidget::mouseReleaseEvent(QMouseEvent *event)
 				}
 			}
 		}
+		else if(old_mouse_op == MouseOperation::GraphAreaSelection) {
+			if(event->modifiers() == Qt::NoModifier) {
+				// keep selection visible for context menu
+				event->accept();
+				update();
+				return;
+			}
+		}
 	}
 	Super::mouseReleaseEvent(event);
 }
@@ -457,6 +464,13 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 		}
 		break;
 	}
+	case MouseOperation::GraphDataAreaRightPress: {
+		QPoint point = pos - m_mouseOperationStartPos;
+		if (point.manhattanLength() > 3) {
+			m_mouseOperation = MouseOperation::GraphAreaSelection;
+		}
+		break;
+	}
 	case MouseOperation::GraphAreaSelection: {
 		auto ch1_ix = m_graph->posToChannel(m_mouseOperationStartPos);
 		if (!ch1_ix) {
@@ -509,7 +523,6 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 		return;
 	}
 	case MouseOperation::GraphDataAreaMiddlePress:
-	case MouseOperation::GraphDataAreaRightPress:
 	case MouseOperation::GraphDataAreaLeftCtrlShiftPress:
 		return;
 	case MouseOperation::ChannelHeaderResizeHeight: {
@@ -756,7 +769,7 @@ void GraphWidget::contextMenuEvent(QContextMenuEvent *event)
 		return;
 	const QPoint pos = event->pos();
 	if(m_graph->cornerCellRect().contains(pos)) {
-		showGraphContextMenu(pos);
+		// showGraphContextMenu(pos);
 		return;
 	}
 	for (int i = 0; i < m_graph->channelCount(); ++i) {
@@ -810,11 +823,6 @@ void GraphWidget::dropEvent(QDropEvent *event)
 	event->accept();
 }
 
-void GraphWidget::showGraphContextMenu(const QPoint &mouse_pos)
-{
-	Q_UNUSED(mouse_pos);
-}
-
 void GraphWidget::showChannelContextMenu(qsizetype channel_ix, const QPoint &mouse_pos)
 {
 	shvLogFuncFrame();
@@ -861,6 +869,35 @@ void GraphWidget::showChannelContextMenu(qsizetype channel_ix, const QPoint &mou
 	menu.addAction(tr("Reset Y-zoom"), this, [this, channel_ix]() {
 		m_graph->resetYZoom(channel_ix);
 		this->update();
+	});
+	menu.addAction(tr("Show selection info"), this, [this, channel_ix]() {
+		auto sel_rect = m_graph->selectionRect();
+
+		auto *ch = m_graph->channelAt(channel_ix);
+		auto t1 = m_graph->posToTime(sel_rect.left());
+		auto t2 = m_graph->posToTime(sel_rect.right());
+		auto y1 = ch->posToValue(sel_rect.bottom());
+		auto y2 = ch->posToValue(sel_rect.top());
+		QString s;
+
+		if (m_graph->model()->xAxisType() == GraphModel::XAxisType::Timeline) {
+			s = tr("t1: %1").arg(m_graph->timeToStringTZ(t1));
+			s += '\n' + tr("t2: %1").arg(m_graph->timeToStringTZ(t2));
+			s += '\n' + tr("duration: %1").arg(m_graph->durationToString(t2 - t1));
+		}
+		else {
+			s = tr("x1: %1").arg(m_graph->timeToStringTZ(t1));
+			s += '\n' + tr("x2: %1").arg(m_graph->timeToStringTZ(t2));
+			s += '\n' + tr("width: %1").arg(m_graph->durationToString(t2 - t1));
+		}
+
+		s += '\n';
+
+		s += '\n' + tr("y1: %1").arg(y1);
+		s += '\n' + tr("y2: %1").arg(y2);
+		s += '\n' + tr("diff: %1").arg(y2 - y1);
+
+		QMessageBox::information(this, tr("Selection info"), s);
 	});
 
 	if (m_graph->isYAxisVisible()) {
