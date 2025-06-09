@@ -36,23 +36,33 @@ struct Range
 
 	Range& normalize() {if (min > max)  std::swap(min, max); return *this; }
 	Range normalized() const {auto r = *this; r.normalize(); return r;}
-	bool isValid() const { return interval() >= 0; }
+	T interval() const { return max - min; }
 	bool isEmpty() const { return interval() == 0; }
-	bool contains(T t) const { return ((t >= min) && (t <= max)); }
-	T interval() const {return max - min;}
+	bool isValid() const { return max >= min; }
+	bool contains(T t) const { return isValid() && (t >= min) && (t <= max); }
 	Range<T> united(const Range<T> &o) const {
-		if(isValid() && o.isValid()) {
-			Range<T> ret = *this;
-			ret.min = std::min(ret.min, o.min);
-			ret.max = std::max(ret.max, o.max);
-			return ret;
-		}
-
-		if(isValid()) {
+		if (isValid()) {
+			if (o.isValid()) {
+				auto ret = *this;
+				ret.min = std::min(ret.min, o.min);
+				ret.max = std::max(ret.max, o.max);
+				return ret;
+			}
 			return *this;
 		}
-
 		return o;
+	}
+	Range<T> intersected(const Range<T> &o) const {
+		if (isValid()) {
+			if (o.isValid()) {
+				auto ret = *this;
+				ret.min = std::max(ret.min, o.min);
+				ret.max = std::min(ret.max, o.max);
+				return ret;
+			}
+			return o;
+		}
+		return *this;
 	}
 };
 

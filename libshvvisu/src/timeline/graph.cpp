@@ -2770,12 +2770,10 @@ Graph::VisualSettings Graph::VisualSettings::fromJson(const QString &json)
 
 void Graph::applyZoomRange(const ZoomRange &r)
 {
-	if (!r.xRange.isEmpty()) {
+	if (r.xRange.isValid()) {
 		setXRangeZoom(r.xRange.normalized());
 	}
-	if (!r.yRange.isEmpty()) {
-		const GraphChannel *ch = channelAt(r.channelIx);
-		Q_ASSERT(ch);
+	if (r.yRange.isValid()) {
 		setYRangeZoom(r.channelIx, r.yRange.normalized());
 	};
 }
