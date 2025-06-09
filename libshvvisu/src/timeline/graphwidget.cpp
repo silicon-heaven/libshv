@@ -509,20 +509,28 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 		break;
 	}
 	case MouseOperation::GraphAreaMove:
+	case MouseOperation::GraphDataAreaMiddlePress:
 	case MouseOperation::GraphDataAreaLeftCtrlPress: {
 		m_mouseOperation = MouseOperation::GraphAreaMove;
 		timemsec_t t0 = gr->posToTime(m_mouseOperationStartPos.x());
 		timemsec_t t1 = gr->posToTime(pos.x());
 		timemsec_t dt = t0 - t1;
-		XRange r = gr->xRangeZoom();
-		r.min += dt;
-		r.max += dt;
-		gr->setXRangeZoom(r);
+		auto xr = gr->xRange();
+		auto xrz = gr->xRangeZoom();
+		// dt = std::min(dt, xr.max - xrz.max);
+		if (dt > 0) {
+			dt = std::min(dt, xr.max - xrz.max);
+		} else {
+			dt = std::max(dt, xr.min - xrz.min);
+		}
+		xrz.min += dt;
+		xrz.max += dt;
+		xr = xrz.intersected(xr);
+		gr->setXRangeZoom(xr);
 		m_mouseOperationStartPos = pos;
 		update();
 		return;
 	}
-	case MouseOperation::GraphDataAreaMiddlePress:
 	case MouseOperation::GraphDataAreaLeftCtrlShiftPress:
 		return;
 	case MouseOperation::ChannelHeaderResizeHeight: {

@@ -39,7 +39,7 @@ public:
 		XRange xRange;
 		YRange yRange;
 
-		DataRect();
+		DataRect(); // create invalid DataRect
 		DataRect(const XRange &xr, const YRange &yr);
 
 		bool isValid() const;

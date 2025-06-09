@@ -82,13 +82,15 @@ protected:
 		GraphVerticalHeaderResizeWidth,
 		MiniMapScrollZoom,
 		ChannelHeaderMove,
+
 		GraphDataAreaLeftPress,
 		GraphDataAreaLeftCtrlPress,
 		GraphDataAreaLeftCtrlShiftPress,
-		GraphAreaMove,
-		GraphAreaSelection,
 		GraphDataAreaMiddlePress,
 		GraphDataAreaRightPress,
+
+		GraphAreaMove,
+		GraphAreaSelection,
 	};
 	MouseOperation m_mouseOperation = MouseOperation::None;
 	QPoint m_mouseOperationStartPos;
