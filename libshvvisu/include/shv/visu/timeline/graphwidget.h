@@ -53,7 +53,6 @@ protected:
 
 	void hideCrossHair();
 
-	virtual void showGraphContextMenu(const QPoint &mouse_pos);
 	virtual void showChannelContextMenu(qsizetype channel_ix, const QPoint &mouse_pos);
 protected:
 	void createProbe(qsizetype channel_ix, timemsec_t time);
