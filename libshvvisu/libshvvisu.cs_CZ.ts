@@ -465,11 +465,11 @@
     </message>
     <message>
         <source>Zoom X axis to selection</source>
-        <translation>Zvětšení osy X na výběr</translation>
+        <translation type="vanished">Zvětšení osy X na výběr</translation>
     </message>
     <message>
         <source>Zoom channel to selection</source>
-        <translation>Přiblížení kanálu k výběru</translation>
+        <translation type="vanished">Přiblížení kanálu k výběru</translation>
     </message>
     <message>
         <source>Show selection info</source>
@@ -557,6 +557,10 @@
     </message>
     <message>
         <source>Reset zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous zoom (Middle mouse)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

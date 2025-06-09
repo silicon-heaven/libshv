@@ -457,11 +457,11 @@
     </message>
     <message>
         <source>Zoom X axis to selection</source>
-        <translation>Powiększ oś X do zaznaczenia</translation>
+        <translation type="vanished">Powiększ oś X do zaznaczenia</translation>
     </message>
     <message>
         <source>Zoom channel to selection</source>
-        <translation>Powiększ kanał do zaznaczenia</translation>
+        <translation type="vanished">Powiększ kanał do zaznaczenia</translation>
     </message>
     <message>
         <source>Show selection info</source>
@@ -549,6 +549,10 @@
     </message>
     <message>
         <source>Reset zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous zoom (Middle mouse)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

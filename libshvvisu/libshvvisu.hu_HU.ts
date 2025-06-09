@@ -437,14 +437,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Zoom X axis to selection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Zoom channel to selection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Show selection info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -522,6 +514,10 @@
     </message>
     <message>
         <source>Reset zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous zoom (Middle mouse)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
