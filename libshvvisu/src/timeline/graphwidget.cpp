@@ -878,36 +878,37 @@ void GraphWidget::showChannelContextMenu(qsizetype channel_ix, const QPoint &mou
 		m_graph->resetYZoom(channel_ix);
 		this->update();
 	});
-	menu.addAction(tr("Show selection info"), this, [this, channel_ix]() {
+	{
 		auto sel_rect = m_graph->selectionRect();
+		auto *a = menu.addAction(tr("Show selection info"), this, [this, sel_rect, channel_ix]() {
+			auto *ch1 = m_graph->channelAt(channel_ix);
+			auto t1 = m_graph->posToTime(sel_rect.left());
+			auto t2 = m_graph->posToTime(sel_rect.right());
+			auto y1 = ch1->posToValue(sel_rect.bottom());
+			auto y2 = ch1->posToValue(sel_rect.top());
+			QString s;
 
-		auto *ch = m_graph->channelAt(channel_ix);
-		auto t1 = m_graph->posToTime(sel_rect.left());
-		auto t2 = m_graph->posToTime(sel_rect.right());
-		auto y1 = ch->posToValue(sel_rect.bottom());
-		auto y2 = ch->posToValue(sel_rect.top());
-		QString s;
+			if (m_graph->model()->xAxisType() == GraphModel::XAxisType::Timeline) {
+				s = tr("t1: %1").arg(m_graph->timeToStringTZ(t1));
+				s += '\n' + tr("t2: %1").arg(m_graph->timeToStringTZ(t2));
+				s += '\n' + tr("duration: %1").arg(m_graph->durationToString(t2 - t1));
+			}
+			else {
+				s = tr("x1: %1").arg(m_graph->timeToStringTZ(t1));
+				s += '\n' + tr("x2: %1").arg(m_graph->timeToStringTZ(t2));
+				s += '\n' + tr("width: %1").arg(m_graph->durationToString(t2 - t1));
+			}
 
-		if (m_graph->model()->xAxisType() == GraphModel::XAxisType::Timeline) {
-			s = tr("t1: %1").arg(m_graph->timeToStringTZ(t1));
-			s += '\n' + tr("t2: %1").arg(m_graph->timeToStringTZ(t2));
-			s += '\n' + tr("duration: %1").arg(m_graph->durationToString(t2 - t1));
-		}
-		else {
-			s = tr("x1: %1").arg(m_graph->timeToStringTZ(t1));
-			s += '\n' + tr("x2: %1").arg(m_graph->timeToStringTZ(t2));
-			s += '\n' + tr("width: %1").arg(m_graph->durationToString(t2 - t1));
-		}
+			s += '\n';
 
-		s += '\n';
+			s += '\n' + tr("y1: %1").arg(y1);
+			s += '\n' + tr("y2: %1").arg(y2);
+			s += '\n' + tr("diff: %1").arg(y2 - y1);
 
-		s += '\n' + tr("y1: %1").arg(y1);
-		s += '\n' + tr("y2: %1").arg(y2);
-		s += '\n' + tr("diff: %1").arg(y2 - y1);
-
-		QMessageBox::information(this, tr("Selection info"), s);
-	});
-
+			QMessageBox::information(this, tr("Selection info"), s);
+		});
+		a->setEnabled(sel_rect.isValid());
+	}
 	if (m_graph->isYAxisVisible()) {
 		menu.addAction(tr("Hide Y axis"), this, [this]() {
 			m_graph->setYAxisVisible(false);
