@@ -74,7 +74,7 @@
 #define logSubscriptionsD() nCDebug("Subscr").color(NecroLog::Color::Yellow)
 #define logSigResolveD() nCDebug("SigRes").color(NecroLog::Color::LightGreen)
 
-#define ACCESS_EXCEPTION(msg) SHV_EXCEPTION_V(msg, "Access")
+#define logAccessI() nCInfo("Access")
 
 namespace cp = shv::chainpack;
 
@@ -1030,7 +1030,9 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 							cp::RpcMessage::setShvPath(frame.meta, std::string{path});
 						}
 						else {
-							ACCESS_EXCEPTION("Insufficient access rights to make call on node: " + shv::iotqt::node::ShvNode::LOCAL_NODE_HACK);
+							auto msg = "Insufficient access rights to make call on node: " + shv::iotqt::node::ShvNode::LOCAL_NODE_HACK;
+							logAccessI() << msg;
+							throw std::runtime_error(msg);
 						}
 					}
 					else {
@@ -1052,9 +1054,12 @@ void BrokerApp::onRpcFrameReceived(int connection_id, shv::chainpack::RpcFrame &
 					}
 				}
 				else {
-					if(master_broker_connection)
-						shvWarning() << "Acces to shv path '" + shv_path + "' not granted for master broker";
-					ACCESS_EXCEPTION("Acces to shv path '" + shv_path + "' not granted for user '" + connection_handle->loggedUserName() + "'");
+					if(master_broker_connection) {
+						logAccessI() << "Acces to shv path '" + shv_path + "' not granted for master broker";
+					}
+					auto msg = "Acces to shv path '" + shv_path + "' not granted for user '" + connection_handle->loggedUserName() + "'";
+					logAccessI() << msg;
+					throw std::runtime_error(msg);
 				}
 				cp::RpcMessage::setAccessGrant(frame.meta, acg);
 				cp::RpcMessage::pushCallerId(frame.meta, connection_id);
