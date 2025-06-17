@@ -183,7 +183,7 @@ int test_unpack_datetime(const char *str, int add_msecs, int expected_utc_offset
 		}
 	}
 	const char *dt_format = has_T? "%Y-%m-%dT%H:%M:%S": "%Y-%m-%d %H:%M:%S";
-	/*char *rest = */strptime(str+2, dt_format, &tm);
+	/*char *rest = */strftime(str+2, 100, dt_format, &tm);
 	//printf("\tstr: '%s' year: %d month: %d day: %d rest: '%s'\n", str , tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday , rest);
 	int64_t expected_epoch_msec = timegm(&tm);
 	expected_epoch_msec *= 1000;
