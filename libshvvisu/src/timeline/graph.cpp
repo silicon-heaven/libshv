@@ -2038,7 +2038,7 @@ QString Graph::rectToString(const QRect &r)
 	return s.arg(r.x()).arg(r.y()).arg(r.width()).arg(r.height());
 }
 
-void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, const QVariant &pretty_value, bool shadowed_sample)
+void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, const QVariant &pretty_value, bool shadowed_sample, bool is_repeated)
 {
 	QString info_text;
 	if (auto map = pretty_value.toMap(); !map.isEmpty()) {
@@ -2113,6 +2113,14 @@ void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, co
 			painter->drawRect(r2);
 			painter->drawRect(r3);
 		}
+
+		if (is_repeated) {
+			auto pen = painter->pen();
+			pen.setColor(Qt::blue);
+			painter->setPen(pen);
+			painter->drawText(text_rect, Qt::AlignTop | Qt::AlignRight, "R");
+		}
+
 		painter->restore();
 	}
 }
@@ -2205,6 +2213,16 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 			if (last_x && last_x.value() == current_point.x()) {
 				continue;
 			}
+
+			if (sample.isRepeated) {
+				QPen p = line_pen;
+				p.setStyle(Qt::PenStyle::DashLine);
+				painter->setPen(p);
+			}
+			else {
+				painter->setPen(line_pen);
+			}
+
 			// draw arrow for discrete value
 			int arrow_width = u2px(1);
 			QRect arrow_box{QPoint(0, 0), QSize(arrow_width, arrow_width / 2)};
@@ -2219,6 +2237,7 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 			path.lineTo(arrow_box.center().x(), arrow_box.bottom());
 			path.lineTo(arrow_box.topLeft());
 			path.closeSubpath();
+
 			painter->drawPath(path);
 			if (!ch_style.isHideDiscreteValuesInfo()) {
 				auto v = sampleValues(channel_ix, sample).value(KEY_SAMPLE_PRETTY_VALUE);
@@ -2226,7 +2245,7 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 				if (last_x) {
 					shadowed_sample = (current_point.x() - last_x.value()) < 5;
 				}
-				drawDiscreteValueInfo(painter, arrow_line, v, shadowed_sample);
+				drawDiscreteValueInfo(painter, arrow_line, v, shadowed_sample, sample.isRepeated);
 			}
 			last_x = current_point.x();
 		}

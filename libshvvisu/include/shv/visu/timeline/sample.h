@@ -15,10 +15,11 @@ struct SHVVISU_DECL_EXPORT Sample
 
 	timemsec_t time = 0;
 	QVariant value;
+	bool isRepeated;
 
 	Sample();
-	Sample(timemsec_t t, const QVariant &v);
-	Sample(timemsec_t t, QVariant &&v);
+	Sample(timemsec_t t, const QVariant &v, bool is_repeated = false);
+	Sample(timemsec_t t, QVariant &&v, bool is_repeated = false);
 
 	bool isValid() const;
 };
