@@ -67,6 +67,9 @@ public:
 	SampleType sampleType() const; // = SampleType::Continuous;
 	ShvTypeDescr &setSampleType(SampleType st);
 
+	//List
+	const std::string &listTypeName() const;
+
 	int decimalPlaces() const;
 	void setDecimalPlaces(int n);
 	std::string unit() const;
