@@ -15,6 +15,7 @@ namespace {
 constexpr auto KEY_DEVICE_TYPE = "deviceType";
 constexpr auto KEY_TYPE_NAME = "typeName";
 constexpr auto KEY_LABEL = "label";
+constexpr auto KEY_LIST_TYPE_NAME = "listTypeName";
 constexpr auto KEY_DESCRIPTION = "description";
 constexpr auto KEY_UNIT = "unit";
 constexpr auto KEY_NAME = "name";
@@ -330,6 +331,11 @@ ShvTypeDescr &ShvTypeDescr::setSampleType(ShvTypeDescr::SampleType st)
 	return *this;
 }
 
+const std::string &ShvTypeDescr::listTypeName() const
+{
+	return dataValue(KEY_LIST_TYPE_NAME).asString();
+}
+
 std::string ShvTypeDescr::restrictionOfType() const
 {
 	return dataValue(KEY_RESTRICTION_OF_TYPE).asString();
@@ -598,6 +604,7 @@ ShvPropertyDescr ShvPropertyDescr::fromRpcValue(const RpcValue &v, RpcValue::Map
 		KEY_SAMPLE_TYPE,
 		KEY_ALARM,
 		KEY_ALARM_LEVEL,
+		KEY_LIST_TYPE_NAME,
 	};
 	RpcValue::Map m = v.asMap();
 	RpcValue::Map node_map;
