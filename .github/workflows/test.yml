@@ -13,8 +13,8 @@ on:
 
 jobs:
   ubuntu-qt5:
-    name: Qt 5.15.2 / Ubuntu 22.04
-    runs-on: ubuntu-22.04
+    name: Qt 5.15.2 / Ubuntu 24.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,8 +33,8 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   ubuntu-qt6-9:
-    name: Qt 6.9.1 / Ubuntu 22.04
-    runs-on: ubuntu-22.04
+    name: Qt 6.9.1 / Ubuntu 24.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
