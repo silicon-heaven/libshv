@@ -2056,6 +2056,7 @@ void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, co
 	else {
 		info_text = pretty_value.toString();
 	}
+
 	if(!info_text.isEmpty()) {
 		QFontMetrics fm(m_style.font());
 		QRect text_rect = fm.boundingRect(QRect(), Qt::AlignLeft, info_text);
@@ -2115,10 +2116,17 @@ void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, co
 		}
 
 		if (is_repeated) {
-			auto pen = painter->pen();
-			pen.setColor(Qt::blue);
-			painter->setPen(pen);
-			painter->drawText(text_rect, Qt::AlignTop | Qt::AlignRight, "R");
+			auto sz = text_rect.height() / 4;
+			QRect rect(0, 0, sz, sz);
+			rect.moveTopRight(text_rect.topRight());
+			rect.moveTop(rect.top() + offset);
+
+			painter->setPen(Qt::NoPen);
+			painter->setBrush(Qt::magenta);
+			painter->drawEllipse(rect);
+
+			painter->setPen(Qt::white);
+			painter->drawText(rect, Qt::AlignCenter, "R");
 		}
 
 		painter->restore();
