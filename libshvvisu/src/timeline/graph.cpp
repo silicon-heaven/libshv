@@ -2056,81 +2056,81 @@ void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, co
 	else {
 		info_text = pretty_value.toString();
 	}
-
-	if(!info_text.isEmpty()) {
-		QFontMetrics fm(m_style.font());
-		QRect text_rect = fm.boundingRect(QRect(), Qt::AlignLeft, info_text);
-		auto line_len = arrow_line.y2() - arrow_line.y1();
-		Q_ASSERT(line_len > 0);
-		text_rect.moveCenter(arrow_line.center());
-		if (text_rect.height() < line_len / 2) {
-			text_rect.moveBottom(arrow_line.center().y());
-		}
-		else if (text_rect.height() < line_len) {
-			text_rect.moveTop(arrow_line.y1());
-		}
-		else {
-			text_rect.moveBottom(arrow_line.y2());
-		}
-		int offset = 5;
-		auto info_rect = text_rect.adjusted(-offset, 0, offset, 0);
-		{
-			auto pen = painter->pen();
-			auto channel_color = pen.color();
-			painter->save();
-			pen.setColor(Qt::black);
-			painter->setPen(pen);
-			QColor bgc(effectiveStyle().colorForeground());
-			painter->fillRect(info_rect, bgc);
-			painter->drawText(text_rect, info_text);
-			pen.setColor(channel_color.darker(150));
-			painter->setPen(pen);
-			painter->drawRect(info_rect);
-		}
-		if (shadowed_sample) {
-			auto sz = text_rect.height() / 4;
-			QRect rect(0, 0, sz, sz);
-			rect.moveTopLeft(text_rect.topLeft());
-			rect.moveTop(rect.top() + offset);
-			{
-				painter->save();
-				painter->setPen(Qt::NoPen);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
-				painter->setBrush(QColor::fromString("goldenrod"));
-#else
-				painter->setBrush(QColor("goldenrod"));
-#endif
-				painter->drawEllipse(rect);
-				painter->restore();
-			}
-			QRect r2(0, 0, 2 * rect.width() / 5, rect.height() / 3);
-			r2.moveCenter(rect.center());
-			r2.translate(-r2.width() / 4, -r2.height() / 3);
-			QRect r3 = r2;
-			r3.moveCenter(r2.bottomRight());
-			auto pen = painter->pen();
-			pen.setColor(Qt::black);
-			painter->setPen(pen);
-			painter->drawRect(r2);
-			painter->drawRect(r3);
-		}
-
-		if (is_repeated) {
-			auto sz = text_rect.height() / 4;
-			QRect rect(0, 0, sz, sz);
-			rect.moveTopRight(text_rect.topRight());
-			rect.moveTop(rect.top() + offset);
-
-			painter->setPen(Qt::NoPen);
-			painter->setBrush(Qt::magenta);
-			painter->drawEllipse(rect);
-
-			painter->setPen(Qt::white);
-			painter->drawText(rect, Qt::AlignCenter, "R");
-		}
-
-		painter->restore();
+	if(info_text.isEmpty()) {
+		info_text = tr("empty message\n(data error)");
 	}
+	QFontMetrics fm(m_style.font());
+	QRect text_rect = fm.boundingRect(QRect(), Qt::AlignLeft, info_text);
+	auto line_len = arrow_line.y2() - arrow_line.y1();
+	Q_ASSERT(line_len > 0);
+	text_rect.moveCenter(arrow_line.center());
+	if (text_rect.height() < line_len / 2) {
+		text_rect.moveBottom(arrow_line.center().y());
+	}
+	else if (text_rect.height() < line_len) {
+		text_rect.moveTop(arrow_line.y1());
+	}
+	else {
+		text_rect.moveBottom(arrow_line.y2());
+	}
+	int offset = 5;
+	auto info_rect = text_rect.adjusted(-offset, 0, offset, 0);
+	{
+		auto pen = painter->pen();
+		auto channel_color = pen.color();
+		painter->save();
+		pen.setColor(Qt::black);
+		painter->setPen(pen);
+		QColor bgc(effectiveStyle().colorForeground());
+		painter->fillRect(info_rect, bgc);
+		painter->drawText(text_rect, info_text);
+		pen.setColor(channel_color.darker(150));
+		painter->setPen(pen);
+		painter->drawRect(info_rect);
+	}
+	if (shadowed_sample) {
+		auto sz = text_rect.height() / 4;
+		QRect rect(0, 0, sz, sz);
+		rect.moveTopLeft(text_rect.topLeft());
+		rect.moveTop(rect.top() + offset);
+		{
+			painter->save();
+			painter->setPen(Qt::NoPen);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
+			painter->setBrush(QColor::fromString("goldenrod"));
+#else
+			painter->setBrush(QColor("goldenrod"));
+#endif
+			painter->drawEllipse(rect);
+			painter->restore();
+		}
+		QRect r2(0, 0, 2 * rect.width() / 5, rect.height() / 3);
+		r2.moveCenter(rect.center());
+		r2.translate(-r2.width() / 4, -r2.height() / 3);
+		QRect r3 = r2;
+		r3.moveCenter(r2.bottomRight());
+		auto pen = painter->pen();
+		pen.setColor(Qt::black);
+		painter->setPen(pen);
+		painter->drawRect(r2);
+		painter->drawRect(r3);
+	}
+
+	if (is_repeated) {
+		auto sz = text_rect.height() / 4;
+		QRect rect(0, 0, sz, sz);
+		rect.moveTopRight(text_rect.topRight());
+		rect.moveTop(rect.top() + offset);
+
+		painter->setPen(Qt::NoPen);
+		painter->setBrush(Qt::magenta);
+		painter->drawEllipse(rect);
+
+		painter->setPen(Qt::white);
+		painter->drawText(rect, Qt::AlignCenter, "R");
+	}
+
+	painter->restore();
 }
 
 void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_rect, const QRect &dest_rect, const GraphChannel::Style &channel_style)
