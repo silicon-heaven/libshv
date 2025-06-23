@@ -448,6 +448,11 @@
         <source>width: %1</source>
         <translation>Breite: %1</translation>
     </message>
+    <message>
+        <source>empty message
+(data error)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>shv::visu::timeline::GraphWidget</name>
