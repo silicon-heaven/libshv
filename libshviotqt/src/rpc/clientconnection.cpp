@@ -641,7 +641,7 @@ bool ClientConnection::isLoginPhase() const
 #define azureError() shvCError("azure")
 
 #ifdef WITH_SHV_OAUTH2_AZURE
-QFuture<std::variant<QFuture<QString>, QFuture<QString>>> ClientConnection::doAzureAuth(const QString& client_id, const QString& authorize_url, const QString& token_url, const QString& scopes)
+QFuture<std::variant<QFuture<QString>, QFuture<QString>>> ClientConnection::doAzureAuth(const QString& client_id, const QString& authorize_url, const QString& token_url, const QSet<QString>& scopes)
 {
 	auto oauth2 = new QOAuth2AuthorizationCodeFlow(this);
 	auto replyHandler = new QOAuthHttpServerReplyHandler(oauth2);
@@ -656,9 +656,11 @@ QFuture<std::variant<QFuture<QString>, QFuture<QString>>> ClientConnection::doAz
 	oauth2->setAuthorizationUrl(authorize_url);
 #if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
 	oauth2->setTokenUrl(token_url);
-	// We encode our scopes in a string, which Qt just joins, so it should be alright to just pass our scopes as one
-	// element to setRequestedScopeTokens.
-	oauth2->setRequestedScopeTokens({scopes.toLatin1()});
+	QSet<QByteArray> latin1_scopes;
+	for (const auto& scope : scopes) {
+		latin1_scopes.insert(scope.toLatin1());
+	}
+	oauth2->setRequestedScopeTokens(latin1_scopes);
 #else
 	oauth2->setAccessTokenUrl(token_url);
 	oauth2->setScope(scopes);
@@ -781,7 +783,22 @@ void ClientConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 				CHECK_FIELD("clientId", client_id)
 				CHECK_FIELD("authorizeUrl", authorize_url)
 				CHECK_FIELD("tokenUrl", token_url);
-				CHECK_FIELD("scopes", scopes);
+				if (!oauth2_azure_workflow_map.contains("scopes")) {
+					azure_unsupported("no scopes");
+					return;
+				}
+				auto scopes_field = oauth2_azure_workflow_map.at("scopes");
+				QSet<QString> scopes;
+				if (scopes_field.isList()) {
+					for (const auto& scope : scopes_field.asList()) {
+						scopes.insert(scope.to<QString>());
+					}
+				} else if (scopes_field.isString()) {
+					scopes.insert(scopes_field.to<QString>());
+				} else {
+					azure_unsupported("scopes wrong type");
+				}
+
 				m_tokenPasswordCallback = [this, client_id, authorize_url, token_url, scopes] (const auto& token_callback) {
 					doAzureAuth(client_id, authorize_url, token_url, scopes).then([this, token_callback] (const std::variant<QFuture<QString>, QFuture<QString>>& result_or_error) {
 						if (result_or_error.index() == 0) {

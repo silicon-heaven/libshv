@@ -124,7 +124,7 @@ private:
 
 	static void tst_connectionUrlFromString();
 #ifdef WITH_SHV_OAUTH2_AZURE
-	QFuture<std::variant<QFuture<QString>, QFuture<QString>>> doAzureAuth(const QString& client_id, const QString& authorize_url, const QString& token_url, const QString& scopes);
+	QFuture<std::variant<QFuture<QString>, QFuture<QString>>> doAzureAuth(const QString& client_id, const QString& authorize_url, const QString& token_url, const QSet<QString>& scopes);
 #endif
 private:
 	QUrl m_connectionUrl;
