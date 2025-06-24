@@ -20,8 +20,8 @@ Application::Application(int &argc, char **argv, AppCliOptions *cli_opts)
 		m_rpcConnection->close();
 	});
 
-	connect(m_rpcConnection, &si::rpc::ClientConnection::authorizeWithBrowser, this, [] (const auto& url) {
-		std::cerr << "Open this URL to authorize via Azure:\n" << qPrintable(url.toString()) << '\n';
+	connect(m_rpcConnection, &si::rpc::ClientConnection::authorizeWithBrowser, this, [] (const QUrl& url) {
+		std::cerr << "Open this URL to authorize via Azure:\n" << qPrintable(url.toDisplayString(QUrl::EncodeSpaces)) << '\n';
 	});
 
 	m_rpcConnection->setCliOptions(cli_opts);
