@@ -35,14 +35,14 @@ static const std::vector<cp::MetaMethod> meta_methods_dir_ls {
 static const std::vector<cp::MetaMethod> meta_methods_property {
 	shv::chainpack::methods::DIR,
 	shv::chainpack::methods::LS,
-	{shv::chainpack::Rpc::METH_GET, shv::chainpack::MetaMethod::Flag::IsGetter, {}, "RpcValue", shv::chainpack::AccessLevel::Read},
+	{shv::chainpack::Rpc::METH_GET, shv::chainpack::MetaMethod::Flag::IsGetter, {}, "RpcValue", shv::chainpack::AccessLevel::Admin},
 };
 
 static const std::vector<cp::MetaMethod> meta_methods_property_rw {
 	shv::chainpack::methods::DIR,
 	shv::chainpack::methods::LS,
-	{shv::chainpack::Rpc::METH_GET, shv::chainpack::MetaMethod::Flag::IsGetter, {}, "RpcValue", shv::chainpack::AccessLevel::Read},
-	{shv::chainpack::Rpc::METH_SET, shv::chainpack::MetaMethod::Flag::IsSetter, "RpcValue", "Bool", shv::chainpack::AccessLevel::Config},
+	{shv::chainpack::Rpc::METH_GET, shv::chainpack::MetaMethod::Flag::IsGetter, {}, "RpcValue", shv::chainpack::AccessLevel::Admin},
+	{shv::chainpack::Rpc::METH_SET, shv::chainpack::MetaMethod::Flag::IsSetter, "RpcValue", "Bool", shv::chainpack::AccessLevel::Admin},
 };
 
 static const std::string M_VALUE = "value";
@@ -52,14 +52,14 @@ static const std::string M_SAVE_TO_CONFIG_FILE = "saveToConfigFile";
 static const std::vector<cp::MetaMethod> meta_methods_acl_node {
 	shv::chainpack::methods::DIR,
 	shv::chainpack::methods::LS,
-	{M_SET_VALUE, cp::MetaMethod::Flag::None, "RpcValue", {}, shv::chainpack::AccessLevel::Config},
-	{M_SAVE_TO_CONFIG_FILE, cp::MetaMethod::Flag::None, {}, "RpcValue", shv::chainpack::AccessLevel::Config},
+	{M_SET_VALUE, cp::MetaMethod::Flag::None, "RpcValue", {}, shv::chainpack::AccessLevel::Admin},
+	{M_SAVE_TO_CONFIG_FILE, cp::MetaMethod::Flag::None, {}, "RpcValue", shv::chainpack::AccessLevel::Admin},
 };
 
 static const std::vector<cp::MetaMethod> meta_methods_acl_subnode {
 	shv::chainpack::methods::DIR,
 	shv::chainpack::methods::LS,
-	{M_VALUE, cp::MetaMethod::Flag::None, {}, "RpcValue", shv::chainpack::AccessLevel::Read},
+	{M_VALUE, cp::MetaMethod::Flag::None, {}, "RpcValue", shv::chainpack::AccessLevel::Admin},
 };
 
 //========================================================
@@ -69,7 +69,7 @@ static const std::string M_SAVE_TO_CONFIG_FILES = "saveToConfigFiles";
 static const std::vector<cp::MetaMethod> meta_methods_acl_root {
 	shv::chainpack::methods::DIR,
 	shv::chainpack::methods::LS,
-	{M_SAVE_TO_CONFIG_FILES, cp::MetaMethod::Flag::None, {}, "RpcValue", shv::chainpack::AccessLevel::Config},
+	{M_SAVE_TO_CONFIG_FILES, cp::MetaMethod::Flag::None, {}, "RpcValue", shv::chainpack::AccessLevel::Admin},
 };
 
 EtcAclRootNode::EtcAclRootNode(shv::iotqt::node::ShvNode *parent)
@@ -445,12 +445,12 @@ static const std::vector<cp::MetaMethod> meta_methods_role_access {
 	shv::chainpack::methods::DIR,
 	shv::chainpack::methods::LS,
 
-	{M_GET_PATH_PATTERN, cp::MetaMethod::Flag::IsGetter, {}, "RpcValue", cp::AccessLevel::Read},
-	{M_SET_PATH_PATTERN, cp::MetaMethod::Flag::IsSetter, "RpcValue", "Bool", cp::AccessLevel::Config},
-	{M_GET_METHOD, cp::MetaMethod::Flag::IsGetter, {}, "RpcValue", cp::AccessLevel::Read},
-	{M_SET_METHOD, cp::MetaMethod::Flag::IsSetter, "RpcValue", "Bool", cp::AccessLevel::Config},
-	{M_GET_GRANT, cp::MetaMethod::Flag::IsGetter, {}, "RpcValue", cp::AccessLevel::Read},
-	{M_SET_GRANT, cp::MetaMethod::Flag::IsSetter, "RpcValue", "Bool", cp::AccessLevel::Config},
+	{M_GET_PATH_PATTERN, cp::MetaMethod::Flag::IsGetter, {}, "RpcValue", cp::AccessLevel::Admin},
+	{M_SET_PATH_PATTERN, cp::MetaMethod::Flag::IsSetter, "RpcValue", "Bool", cp::AccessLevel::Admin},
+	{M_GET_METHOD, cp::MetaMethod::Flag::IsGetter, {}, "RpcValue", cp::AccessLevel::Admin},
+	{M_SET_METHOD, cp::MetaMethod::Flag::IsSetter, "RpcValue", "Bool", cp::AccessLevel::Admin},
+	{M_GET_GRANT, cp::MetaMethod::Flag::IsGetter, {}, "RpcValue", cp::AccessLevel::Admin},
+	{M_SET_GRANT, cp::MetaMethod::Flag::IsSetter, "RpcValue", "Bool", cp::AccessLevel::Admin},
 };
 
 AccessAclNode::AccessAclNode(shv::iotqt::node::ShvNode *parent)
