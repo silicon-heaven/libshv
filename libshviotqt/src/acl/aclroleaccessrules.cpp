@@ -27,7 +27,6 @@ RpcValue AclAccessRule::toRpcValue() const
 {
 	RpcValue::Map m;
 	m["role"] = access;
-	m["role"] = access;
 	m["method"] = method;
 	m["pathPattern"] = path;
 	return m;
@@ -105,6 +104,20 @@ RpcValue AclRoleAccessRules::toRpcValue_legacy() const
 
 AclRoleAccessRules AclRoleAccessRules::fromRpcValue(const shv::chainpack::RpcValue &v)
 {
+	// SHV2
+	// [
+	//   {"method":"subscribe", "pathPattern":".broker/app", "role":"rd"},
+	//   {"method":"unsubscribe", "pathPattern":".broker/app", "role":"rd"}
+	// ]
+
+	// SHV3
+	// {
+	//   "access":[
+	// 	{"grant":"wr", "shvRI":".broker/currentClient:subscribe"},
+	// 	{"grant":"wr", "shvRI":".broker/currentClient:unsubscribe"}
+	//   ],
+	//   "roles":[]
+	// }
 	AclRoleAccessRules ret;
 	if(v.isMap()) {
 		const auto &m = v.asMap();
@@ -118,16 +131,18 @@ AclRoleAccessRules AclRoleAccessRules::fromRpcValue(const shv::chainpack::RpcVal
 				g.path = kv.first.substr(0, i);
 				g.method = kv.first.substr(i + 1);
 			}
-			if(g.isValid())
+			if(g.isValid()) {
 				ret.push_back(std::move(g));
+			}
 		}
 	}
 	else if(v.isList()) {
 		const auto &l = v.asList();
 		for(const auto &kv : l) {
 			auto g = AclAccessRule::fromRpcValue(kv);
-			if(g.isValid())
+			if(g.isValid()) {
 				ret.push_back(std::move(g));
+			}
 		}
 	}
 	return ret;
