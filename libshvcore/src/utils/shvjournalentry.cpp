@@ -168,6 +168,16 @@ bool ShvJournalEntry::isValid() const
 	return !path.empty() && epochMsec > 0;
 }
 
+bool ShvJournalEntry::isProvisional() const
+{
+	return shv::chainpack::DataChange::testBit(valueFlags, ValueFlag::Provisional);
+}
+
+void ShvJournalEntry::setProvisional(bool b)
+{
+	shv::chainpack::DataChange::setBit(valueFlags, ValueFlag::Provisional, b);
+}
+
 bool ShvJournalEntry::isSpontaneous() const
 {
 	return shv::chainpack::DataChange::testBit(valueFlags, ValueFlag::Spontaneous);
