@@ -57,6 +57,8 @@ public:
 	ShvJournalEntry(const std::string& path_, const shv::chainpack::RpcValue& value_, const std::string& domain_);
 
 	bool isValid() const;
+	bool isProvisional() const;
+	void setProvisional(bool b);
 	bool isSpontaneous() const;
 	void setSpontaneous(bool b);
 	bool isSnapshotValue() const;
