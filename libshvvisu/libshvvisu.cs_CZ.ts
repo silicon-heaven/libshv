@@ -566,7 +566,7 @@
     </message>
     <message>
         <source>Previous zoom (Middle mouse)</source>
-        <translation type="unfinished"></translation>
+        <translation>Předchozí zoom</translation>
     </message>
 </context>
 </TS>
