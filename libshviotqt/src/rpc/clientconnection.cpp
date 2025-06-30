@@ -663,7 +663,16 @@ QFuture<std::variant<QFuture<QString>, QFuture<QString>>> ClientConnection::doAz
 	oauth2->setRequestedScopeTokens(latin1_scopes);
 #else
 	oauth2->setAccessTokenUrl(token_url);
-	oauth2->setScope(scopes);
+	QString res_scopes;
+	bool first = true;
+	for (const auto& scope : scopes) {
+		if (!first) {
+			res_scopes += ' ';
+			first = false;
+		}
+		res_scopes += scope;
+	}
+	oauth2->setScope(res_scopes);
 #endif
 	QObject::connect(oauth2, &QOAuth2AuthorizationCodeFlow::authorizeWithBrowser, this, [this] (const auto& url) {
 		emit authorizeWithBrowser(url);
