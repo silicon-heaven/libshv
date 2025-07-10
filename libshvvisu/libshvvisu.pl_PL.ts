@@ -75,7 +75,7 @@
     <name>shv::visu::logview::DataViewFilterSelector</name>
     <message>
         <source>Show/hide raw data</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pokaż/ukryj nieprzetworzone dane</translation>
     </message>
     <message>
         <source>...</source>
@@ -197,15 +197,15 @@
     </message>
     <message>
         <source>paths dict</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ścieżki dict</translation>
     </message>
     <message>
         <source>Path pattern is regex</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Wzorzec ścieżki to wyrażenie regularne</translation>
     </message>
     <message>
         <source>&amp;regex</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;regex</translation>
     </message>
     <message>
         <source>Timeout</source>
@@ -217,7 +217,7 @@
     </message>
     <message>
         <source>use &amp;history provider</source>
-        <translation type="unfinished"></translation>
+        <translation>użycie &amp;history provider</translation>
     </message>
     <message>
         <source>with snapshot</source>
@@ -268,7 +268,7 @@
     </message>
     <message>
         <source>ShortTime</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">KrótkiCzas</translation>
     </message>
     <message>
         <source>Domain</source>
@@ -276,7 +276,7 @@
     </message>
     <message>
         <source>ValueFlags</source>
-        <translation type="unfinished"></translation>
+        <translation>FlagiWartości</translation>
     </message>
     <message>
         <source>UserId</source>
@@ -339,7 +339,7 @@
     </message>
     <message>
         <source>Collapse</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zwiń</translation>
     </message>
     <message>
         <source>Expand all nodes</source>
@@ -390,7 +390,7 @@
     </message>
     <message>
         <source>Property</source>
-        <translation type="unfinished"></translation>
+        <translation>Właściwość</translation>
     </message>
     <message>
         <source>Value</source>
@@ -434,20 +434,21 @@
     </message>
     <message>
         <source>%1 day %2:%3:%4</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 dzień %2:%3:%4</translation>
     </message>
     <message>
         <source>x1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>x1: %1</translation>
     </message>
     <message>
         <source>width: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>szerokość: %1</translation>
     </message>
     <message>
         <source>empty message
 (data error)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">pusty komunikat
+(błąd danych)</translation>
     </message>
 </context>
 <context>
@@ -534,31 +535,31 @@
     </message>
     <message>
         <source>t2: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>t2: %1</translation>
     </message>
     <message>
         <source>x1: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>x1: %1</translation>
     </message>
     <message>
         <source>x2: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>x2: %1</translation>
     </message>
     <message>
         <source>width: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>szerokość: %1</translation>
     </message>
     <message>
         <source>y2: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>y2: %1</translation>
     </message>
     <message>
         <source>Reset zoom</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zresetuj powiększenie</translation>
     </message>
     <message>
         <source>Previous zoom (Middle mouse)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Poprzednie powiększenie (środkowy przycisk myszy)</translation>
     </message>
 </context>
 </TS>
