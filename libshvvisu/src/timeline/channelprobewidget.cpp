@@ -32,9 +32,6 @@ ChannelProbeWidget::ChannelProbeWidget(ChannelProbe *probe, QWidget *parent) :
 	setAttribute(Qt::WA_DeleteOnClose, true);
 	setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
 
-	ui->twData->setColumnCount(DataTableColumn::ColCount);
-	ui->twData->setHorizontalHeaderItem(DataTableColumn::ColProperty, new QTableWidgetItem(tr("Property")));
-	ui->twData->setHorizontalHeaderItem(DataTableColumn::ColValue, new QTableWidgetItem(tr("Value")));
 	ui->twData->verticalHeader()->setDefaultSectionSize(static_cast<int>(fontMetrics().lineSpacing() * 1.3));
 
 	installEventFilter(this);
@@ -151,6 +148,8 @@ void ChannelProbeWidget::loadValues()
 #else
 	if(pv.type() == QVariant::Map) {
 #endif
+		ui->twData->setColumnCount(MapColCount);
+		ui->twData->setHorizontalHeaderLabels(QStringList{ tr("Property"), tr("Value") });
 		auto m = pv.toMap();
 		QMapIterator<QString, QVariant> i(m);
 		while (i.hasNext()) {
@@ -160,29 +159,50 @@ void ChannelProbeWidget::loadValues()
 
 			auto *item = new QTableWidgetItem(i.key());
 			item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-			ui->twData->setItem(ix, DataTableColumn::ColProperty, item);
+			ui->twData->setItem(ix, MapColProperty, item);
 
 			item = new QTableWidgetItem(i.value().toString());
 			item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-			ui->twData->setItem(ix, DataTableColumn::ColValue, item);
+			ui->twData->setItem(ix, MapColValue, item);
+		}
+	}
+#if QT_VERSION_MAJOR >= 6
+	else if(pv.typeId() == QMetaType::QVariantList) {
+#else
+	else if(pv.type() == QVariant::List) {
+#endif
+		auto l = pv.toList();
+		if (l.count()) {
+			auto header = l[0].toList();
+			ui->twData->setColumnCount(static_cast<int>(header.count()));
+			QStringList labels;
+			std::ranges::for_each(header, [&labels](const auto &label) { labels << label.toString(); });
+			ui->twData->setHorizontalHeaderLabels(labels);
+
+			ui->twData->setRowCount(static_cast<int>(l.count() - 1));
+			for (int i = 1; i < l.count(); ++i) {
+				auto row = l[i].toList();
+				for (int j = 0; j < row.count(); ++j) {
+					auto *item = new QTableWidgetItem(row[j].toString());
+					item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+					ui->twData->setItem(i - 1, j, item);
+				}
+			}
 		}
 	}
 	else {
+		ui->twData->setColumnCount(DataColCount);
+		ui->twData->setHorizontalHeaderLabels(QStringList{ tr("Value") });
 		int ix = ui->twData->rowCount();
 		ui->twData->insertRow(ix);
-
-		auto *item = new QTableWidgetItem();
-		item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-		ui->twData->setItem(ix, DataTableColumn::ColProperty, item);
-		ui->twData->hideColumn(DataTableColumn::ColProperty);
 
 		QString s = pv.toString();
 		if (s.endsWith('\n')) {
 			s.chop(1);
 		}
-		item = new QTableWidgetItem(s);
+		auto *item = new QTableWidgetItem(s);
 		item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-		ui->twData->setItem(ix, DataTableColumn::ColValue, item);
+		ui->twData->setItem(ix, DataColValue, item);
 	}
 	ui->twData->verticalHeader()->resizeSections(QHeaderView::ResizeMode::ResizeToContents);
 }

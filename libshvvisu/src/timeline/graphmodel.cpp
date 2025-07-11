@@ -119,6 +119,8 @@ double GraphModel::valueToDouble(const QVariant& v, shv::core::utils::ShvTypeDes
 	case Type::Invalid:
 	case Type::Map:
 		return 0;
+	case Type::List:
+		return static_cast<double>(v.toList().count() >= 0 ? v.toList().count() : 0);
 	case Type::Double:
 		return v.toDouble();
 	case Type::Int:
