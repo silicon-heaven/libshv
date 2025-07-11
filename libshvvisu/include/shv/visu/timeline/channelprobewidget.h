@@ -29,7 +29,8 @@ protected:
 	enum class MouseOperation { None = 0, LeftMouseClick, ResizeWidget, MoveWidget };
 	enum class FrameSection { NoSection, Left, TopLeft, Top, TopRight, Right, BottomRight, Bottom, BottomLeft };
 
-	enum DataTableColumn { ColProperty = 0, ColValue, ColCount };
+	enum MapTableColumn { MapColProperty = 0, MapColValue, MapColCount };
+	enum DataTableColumn { DataColValue, DataColCount };
 
 	bool eventFilter(QObject *o, QEvent *e) override;
 
