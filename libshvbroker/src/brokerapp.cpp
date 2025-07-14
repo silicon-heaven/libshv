@@ -293,12 +293,33 @@ BrokerApp::BrokerApp(int &argc, char **argv, AppCliOptions *cli_opts)
 		cli_opts->azureTokenUrl_isset() &&
 		cli_opts->azureScopes_isset()) {
 		shvInfo() << "Enabling Azure authentication";
+		const auto& cli_scopes = cli_opts->azureScopes();
+		auto invalid_azure_scopes = [&cli_scopes] {
+			shvError() << "Invalid Azure scopes, expected a list of strings, got:" << cli_scopes.toCpon();
+		};
+
+		std::vector<std::string> scopes;
+		if (cli_scopes.isList()) {
+			for (const auto& scope : cli_opts->azureScopes().asList()) {
+				if (!scope.isString()) {
+					invalid_azure_scopes();
+					break;
+				}
+
+				scopes.emplace_back(scope.asString());
+			}
+		} else if (cli_scopes.isString()) {
+			scopes.emplace_back(cli_scopes.asString());
+		} else {
+			invalid_azure_scopes();
+			shvError() << "Invalid Azure scopes, expected a list of strings, got:" << cli_scopes.toCpon();
+		}
 
 		m_azureConfig = AzureConfig {
 			.clientId = cli_opts->azureClientId(),
 			.authorizeUrl = cli_opts->azureAuthorizeUrl(),
 			.tokenUrl = cli_opts->azureTokenUrl(),
-			.scopes = cli_opts->azureScopes(),
+			.scopes = scopes,
 			.groupMapping = transform_cli_group_mapping(cli_opts->azureGroupMapping())
 		};
 	}

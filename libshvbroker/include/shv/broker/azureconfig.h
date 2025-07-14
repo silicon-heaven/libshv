@@ -9,6 +9,6 @@ struct AzureConfig {
 	std::string clientId;
 	std::string authorizeUrl;
 	std::string tokenUrl;
-	std::string scopes;
+	std::vector<std::string> scopes;
 	std::vector<GroupMapping> groupMapping;
 };
