@@ -48,7 +48,7 @@ AppCliOptions::AppCliOptions()
 	addOption("azure.clientId").setType(cp::RpcValue::Type::String).setComment("Set the ClientID of the registered Azure app");
 	addOption("azure.authorizeUrl").setType(cp::RpcValue::Type::String).setComment("Set the authorize URL of the registered Azure app");
 	addOption("azure.tokenUrl").setType(cp::RpcValue::Type::String).setComment("Set the token URL of the registered Azure app");
-	addOption("azure.scopes").setType(cp::RpcValue::Type::String).setComment("Set the scopes of the registered Azure app");
+	addOption("azure.scopes").setType(cp::RpcValue::Type::List).setComment("Set the scopes of the registered Azure app");
 	addOption("azure.groupMapping").setType(cp::RpcValue::Type::List).setComment("Set the mapping of Azure groups to shv groups as an ordered list of pairs");
 }
 }
