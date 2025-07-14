@@ -548,7 +548,7 @@ std::vector<std::string> AclManagerConfigFiles::aclRoles()
 
 shv::iotqt::acl::AclRole AclManagerConfigFiles::aclRole(const std::string &role_name)
 {
-	chainpack::RpcValue v = aclConfig(FILE_ACL_ROLES).asMap().value(role_name);
+	chainpack::RpcValue v = aclConfig(FILE_ACL_ROLES).asMap().value(role_name, chainpack::RpcValue(nullptr));
 	return shv::iotqt::acl::AclRole::fromRpcValue(v).value_or(shv::iotqt::acl::AclRole());
 }
 
