@@ -222,38 +222,38 @@ void ClientConnection::setProtocolType(chainpack::Rpc::ProtocolType protocol_typ
 
 void ClientConnection::open()
 {
-	if(!hasSocket()) {
-		QUrl url = connectionUrl();
-		auto scheme = Socket::schemeFromString(url.scheme().toStdString());
-		Socket *socket;
-		if(scheme == Socket::Scheme::WebSocket || scheme == Socket::Scheme::WebSocketSecure) {
+	QUrl url = connectionUrl();
+	auto scheme = Socket::schemeFromString(url.scheme().toStdString());
+
+	Socket *socket = nullptr;
+	if(scheme == Socket::Scheme::WebSocket || scheme == Socket::Scheme::WebSocketSecure) {
 #ifdef WITH_SHV_WEBSOCKETS
-			socket = new WebSocket(new QWebSocket());
+		socket = new WebSocket(new QWebSocket());
 #else
-			SHV_EXCEPTION("Web socket support is not part of this build.");
+		SHV_EXCEPTION("Web socket support is not part of this build.");
 #endif
-		}
-		else if(scheme == Socket::Scheme::LocalSocket) {
-			socket = new LocalSocket(new QLocalSocket(), LocalSocket::Protocol::Stream);
-		}
-		else if(scheme == Socket::Scheme::LocalSocketSerial) {
-			socket = new LocalSocket(new QLocalSocket(), LocalSocket::Protocol::Serial);
-		}
-#ifdef QT_SERIALPORT_LIB
-		else if(scheme == Socket::Scheme::SerialPort) {
-			socket = new SerialPortSocket(new QSerialPort());
-		}
-#endif
-		else {
-	#ifndef QT_NO_SSL
-			QSslSocket::PeerVerifyMode peer_verify_mode = isPeerVerify() ? QSslSocket::AutoVerifyPeer : QSslSocket::VerifyNone;
-			socket = scheme == Socket::Scheme::Ssl ? new SslSocket(new QSslSocket(), peer_verify_mode): new TcpSocket(new QTcpSocket());
-	#else
-			socket = new TcpSocket(new QTcpSocket());
-	#endif
-		}
-		setSocket(socket);
 	}
+	else if(scheme == Socket::Scheme::LocalSocket) {
+		socket = new LocalSocket(new QLocalSocket(), LocalSocket::Protocol::Stream);
+	}
+	else if(scheme == Socket::Scheme::LocalSocketSerial) {
+		socket = new LocalSocket(new QLocalSocket(), LocalSocket::Protocol::Serial);
+	}
+#ifdef QT_SERIALPORT_LIB
+	else if(scheme == Socket::Scheme::SerialPort) {
+		socket = new SerialPortSocket(new QSerialPort());
+	}
+#endif
+	else {
+#ifndef QT_NO_SSL
+		QSslSocket::PeerVerifyMode peer_verify_mode = isPeerVerify() ? QSslSocket::AutoVerifyPeer : QSslSocket::VerifyNone;
+		socket = scheme == Socket::Scheme::Ssl ? new SslSocket(new QSslSocket(), peer_verify_mode): new TcpSocket(new QTcpSocket());
+#else
+		socket = new TcpSocket(new QTcpSocket());
+#endif
+	}
+	setSocket(socket);
+
 	checkBrokerConnected();
 	if(m_checkBrokerConnectedInterval > 0) {
 		shvInfo() << "Starting check-connected timer, interval:" << m_checkBrokerConnectedInterval/1000 << "sec.";

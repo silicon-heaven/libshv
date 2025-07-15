@@ -31,7 +31,10 @@ SocketRpcConnection::~SocketRpcConnection()
 
 void SocketRpcConnection::setSocket(Socket *socket)
 {
+	Q_ASSERT(socket);
 	socket->setParent(nullptr);
+	abortSocket();
+	delete m_socket;
 	m_socket = socket;
 	connect(socket, &Socket::responseMetaReceived, this, &SocketRpcConnection::responseMetaReceived);
 	connect(socket, &Socket::dataChunkReceived, this, &SocketRpcConnection::dataChunkReceived);
