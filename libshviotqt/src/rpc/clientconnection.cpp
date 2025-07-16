@@ -668,8 +668,10 @@ QFuture<std::variant<QFuture<QString>, QFuture<QString>>> ClientConnection::doAz
 	for (const auto& scope : scopes) {
 		if (!first) {
 			res_scopes += ' ';
-			first = false;
 		}
+
+		first = false;
+
 		res_scopes += scope;
 	}
 	oauth2->setScope(res_scopes);
