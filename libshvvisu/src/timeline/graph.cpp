@@ -1614,51 +1614,52 @@ void Graph::drawGrid(QPainter *painter, int channel)
 		// drawRectText(painter, ch->m_layout.graphAreaRect, "grid", m_style.font(), ch->m_effectiveStyle.colorGrid());
 		return;
 	}
-	QColor gc = ch->m_effectiveStyle.colorGrid();
-	if(!gc.isValid())
-		return;
+	auto style = ch->effectiveStyle();
+	QColor grid_color = style.colorGrid();
 	painter->save();
 	QPen pen_solid;
 	pen_solid.setWidth(1);
-	pen_solid.setColor(gc);
+	pen_solid.setColor(grid_color);
 	painter->setPen(pen_solid);
 	painter->drawRect(ch->m_layout.graphAreaRect);
 	QPen pen_dot = pen_solid;
 	pen_dot.setStyle(Qt::DotLine);
 	painter->setPen(pen_dot);
-	{
-		// draw X-axis grid
-		const XRange range = xRangeZoom();
-		timemsec_t t1 = range.min / x_axis.tickInterval;
-		t1 *= x_axis.tickInterval;
-		if(t1 < range.min)
-			t1 += x_axis.tickInterval;
-		for (timemsec_t t = t1; t <= range.max; t += x_axis.tickInterval) {
-			int x = timeToPos(t);
-			QPoint p1{x, ch->graphDataGridRect().top()};
-			QPoint p2{x, ch->graphDataGridRect().bottom()};
-			painter->drawLine(p1, p2);
-		}
-	}
-	{
-		// draw Y-axis grid
-		const YRange range = ch->yRangeZoom();
-		const GraphChannel::YAxis &y_axis = ch->m_state.axis;
-		double d1 = std::ceil(range.min / y_axis.tickInterval);
-		d1 *= y_axis.tickInterval;
-		if(d1 < range.min)
-			d1 += y_axis.tickInterval;
-		for (double d = d1; d <= range.max; d += y_axis.tickInterval) {
-			int y = ch->valueToPos(d);
-			QPoint p1{ch->graphDataGridRect().left(), y};
-			QPoint p2{ch->graphDataGridRect().right(), y};
-			if(qFuzzyIsNull(d)) {
-				painter->setPen(pen_solid);
+	if (!style.isHideGrid()) {
+		if (!style.isHideGridHorizontal()) {
+			// draw X-axis grid
+			const XRange range = xRangeZoom();
+			timemsec_t t1 = range.min / x_axis.tickInterval;
+			t1 *= x_axis.tickInterval;
+			if(t1 < range.min)
+				t1 += x_axis.tickInterval;
+			for (timemsec_t t = t1; t <= range.max; t += x_axis.tickInterval) {
+				int x = timeToPos(t);
+				QPoint p1{x, ch->graphDataGridRect().top()};
+				QPoint p2{x, ch->graphDataGridRect().bottom()};
 				painter->drawLine(p1, p2);
-				painter->setPen(pen_dot);
 			}
-			else {
-				painter->drawLine(p1, p2);
+		}
+		if (!style.isHideGridVertical()) {
+			// draw Y-axis grid
+			const YRange range = ch->yRangeZoom();
+			const GraphChannel::YAxis &y_axis = ch->m_state.axis;
+			double d1 = std::ceil(range.min / y_axis.tickInterval);
+			d1 *= y_axis.tickInterval;
+			if(d1 < range.min)
+				d1 += y_axis.tickInterval;
+			for (double d = d1; d <= range.max; d += y_axis.tickInterval) {
+				int y = ch->valueToPos(d);
+				QPoint p1{ch->graphDataGridRect().left(), y};
+				QPoint p2{ch->graphDataGridRect().right(), y};
+				if(qFuzzyIsNull(d)) {
+					painter->setPen(pen_solid);
+					painter->drawLine(p1, p2);
+					painter->setPen(pen_dot);
+				}
+				else {
+					painter->drawLine(p1, p2);
+				}
 			}
 		}
 	}
