@@ -15,11 +15,11 @@ ChannelProbeWidget::ChannelProbeWidget(ChannelProbe *probe, QWidget *parent) :
 	ui->setupUi(this);
 	m_probe = probe;
 
-	if (m_probe->isRawDataVisible()) {
-		ui->lblTitle->setText(m_probe->shvPath());
+	if (m_probe->isLocalizeShvPath()) {
+		ui->lblTitle->setText(m_probe->localizedShvPath());
 	}
 	else {
-		ui->lblTitle->setText(m_probe->localizedShvPath());
+		ui->lblTitle->setText(m_probe->shvPath());
 	}
 
 	ui->edCurentTime->setStyleSheet("background-color: white");

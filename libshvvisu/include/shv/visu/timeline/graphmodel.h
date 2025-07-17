@@ -41,8 +41,9 @@ public:
 	XRange xRange(qsizetype channel_ix) const;
 	YRange yRange(qsizetype channel_ix) const;
 	void clear();
+	void clearSamples();
 	void appendChannel();
-	void appendChannel(const std::string &shv_path, const std::string &name, const shv::core::utils::ShvTypeDescr &type_descr);
+	void appendChannel(const QString &shv_path, const QString &name, const shv::core::utils::ShvTypeDescr &type_descr);
 public:
 	virtual qsizetype channelCount() const;
 	const ChannelInfo& channelInfo(qsizetype channel_ix) const;
@@ -70,10 +71,10 @@ public:
 	virtual void beginAppendValues();
 	virtual void endAppendValues();
 	virtual void appendValue(qsizetype channel, Sample &&sample);
-	void appendValueShvPath(const std::string &shv_path, Sample &&sample);
+	void appendValueShvPath(const QString &shv_path, Sample &&sample);
 	void forgetValuesBefore(timemsec_t time, int min_samples_count = 100);
 
-	qsizetype pathToChannelIndex(const std::string &path) const;
+	qsizetype pathToChannelIndex(const QString &path) const;
 	QString channelShvPath(qsizetype channel) const;
 
 	Q_SIGNAL void xRangeChanged(XRange range);
@@ -88,7 +89,7 @@ protected:
 	QVector<ChannelInfo> m_channelsInfo;
 	XRange m_begginAppendXRange;
 
-	mutable std::map<std::string, qsizetype> m_pathToChannelCache;
+	mutable std::map<QString, qsizetype> m_pathToChannelCache;
 	shv::core::utils::ShvTypeInfo m_typeInfo;
 };
 

@@ -7,7 +7,7 @@
 namespace shv::visu::timeline {
 
 //==========================================
-// Graph::Channel
+// Graph::Channel::Style
 //==========================================
 GraphChannel::Style::Style() = default;
 
@@ -16,6 +16,16 @@ GraphChannel::Style::Style(const QVariantMap &o)
 {
 }
 
+QColor GraphChannel::Style::lineAreaFillColor() const
+{
+	auto area_color = color();
+	area_color.setAlphaF(lineAreaAlpha());
+	return area_color;
+}
+
+//==========================================
+// Graph::Channel
+//==========================================
 GraphChannel::GraphChannel(Graph *graph)
 	: QObject(graph)
 {

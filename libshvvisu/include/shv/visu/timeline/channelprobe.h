@@ -21,7 +21,7 @@ public:
 	QString shvPath() const;
 	QString localizedShvPath() const;
 	qsizetype channelIndex() const;
-	bool isRawDataVisible() const;
+	bool isLocalizeShvPath() const;
 
 	void setCurrentTime(timemsec_t time);
 	timemsec_t currentTime() const;
