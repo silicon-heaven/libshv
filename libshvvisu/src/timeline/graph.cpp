@@ -129,8 +129,8 @@ void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sor
 		}
 	}
 	for(auto model_ix : model_ixs) {
-		GraphChannel *ch = appendChannel(model_ix);
-		applyCustomChannelStyle(ch);
+		appendChannel(model_ix);
+		// applyCustomChannelStyle(ch);
 	}
 
 	resetChannelsRanges();
@@ -173,15 +173,14 @@ void Graph::clearChannels()
 	m_channels.clear();
 }
 
-shv::visu::timeline::GraphChannel *Graph::appendChannel(qsizetype model_index)
+GraphChannel *Graph::appendChannel(qsizetype model_index, bool check_model_size)
 {
-	if(model_index >= 0) {
-		if(model_index >= m_model->channelCount())
-			SHV_EXCEPTION("Invalid model index: " + std::to_string(model_index));
+	if(check_model_size && (model_index < 0 || model_index >= m_model->channelCount())) {
+		SHV_EXCEPTION("Invalid model index: " + std::to_string(model_index));
 	}
-	m_channels.append(new GraphChannel(this));
-	GraphChannel *ch = m_channels.last();
-	ch->setModelIndex(model_index < 0? m_channels.count() - 1: model_index);
+	auto ch = new GraphChannel(this);
+	ch->setModelIndex(model_index);
+	m_channels.append(ch);
 	return ch;
 }
 
@@ -1566,9 +1565,9 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 	font.setBold(true);
 	painter->setFont(font);
 
-	QRect text_rect = ch->m_layout.verticalHeaderRect.adjusted(2*header_inset, header_inset, -header_inset, -header_inset);
+	QRect text_rect = ch->m_layout.verticalHeaderRect.adjusted(2 * header_inset, header_inset, -header_inset, -header_inset);
 
-	if (chi.name.isEmpty() || m_style.isRawDataVisible()) {
+	if (chi.name.isEmpty() || !m_style.isLocalizeShvPath()) {
 		painter->drawText(text_rect, chi.shvPath);
 	}
 	else {
@@ -1593,7 +1592,7 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 		path_row_text_option.setWrapMode(QTextOption::NoWrap);
 		QRect path_rect(text_rect.left(), text_rect.bottom() - row_height, text_rect.width(), row_height);
 
-		text = elidedText((m_style.isRawDataVisible())? chi.shvPath: chi.localizedShvPath.join("/"), font, path_rect);
+		text = elidedText((m_style.isLocalizeShvPath())? chi.localizedShvPath.join("/"): chi.shvPath, font, path_rect);
 		painter->drawText(path_rect, text, path_row_text_option);
 	}
 
@@ -2193,6 +2192,8 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 		int x_axis_y = sample2point(Sample{xrange.min, 0}, channel_meta_type_id).y();
 		std::optional<int> last_x;
 
+		painter->setPen(line_pen);
+		QBrush brush(ch_style.lineAreaFillColor());
 		for (auto i = ix1; i <= ix2; ++i) {
 			Sample sample = graph_model->sampleAt(model_ix, i);
 			auto current_point = sample2point(sample, channel_meta_type_id);
@@ -2200,10 +2201,8 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 				continue;
 			}
 
-			painter->setPen(line_pen);
 			QPoint p(current_point.x() - bar_width / 2, current_point.y());
 			QRect bar_rect = QRect(p, QPoint(p.x() + bar_width, x_axis_y));
-			QBrush brush(line_pen.color().lighter());
 			painter->fillRect(bar_rect, brush);
 			painter->drawRect(bar_rect);
 		}
@@ -2270,8 +2269,7 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 		}
 		QColor line_area_color;
 		if(ch_style.lineAreaStyle() == GraphChannel::Style::LineAreaStyle::Filled) {
-			line_area_color = line_color;
-			line_area_color.setAlphaF(0.2F);
+			line_area_color = ch_style.lineAreaFillColor();
 		}
 
 		int sample_point_size = u2px(0.3);
@@ -2691,12 +2689,12 @@ void Graph::drawCurrentTimeMarker(QPainter *painter, time_t time)
 	drawCenterTopText(painter, p1, text, m_style.font(), color.darker(400), color);
 }
 
-void Graph::applyCustomChannelStyle(GraphChannel *channel)
-{
-	GraphChannel::Style style = channel->style();
-	style.setColor(Qt::cyan);
-	channel->setStyle(style);
-}
+// void Graph::applyCustomChannelStyle(GraphChannel *channel)
+// {
+// 	GraphChannel::Style style = channel->style();
+// 	style.setColor(Qt::cyan);
+// 	channel->setStyle(style);
+// }
 
 QString Graph::timeToStringTZ(timemsec_t time) const
 {

@@ -43,6 +43,7 @@ public:
 		SHV_VARIANTMAP_FIELD2(bool, is, set, HideDiscreteValuesInfo, false)
 		SHV_VARIANTMAP_FIELD2(int, i, setI, nterpolation, Interpolation::Stepped)
 		SHV_VARIANTMAP_FIELD2(int, l, setL, ineAreaStyle, LineAreaStyle::Blank)
+		SHV_VARIANTMAP_FIELD2(float, l, setL, ineAreaAlpha, 0.3)
 		SHV_VARIANTMAP_FIELD2(double, l, setL, ineWidth, 0.1)
 
 	public:
@@ -58,6 +59,7 @@ public:
 			double ret = heightMax() - heightMin();
 			return ret < 0? 0: ret;
 		}
+		QColor lineAreaFillColor() const;
 	};
 public:
 	GraphChannel(Graph *graph);

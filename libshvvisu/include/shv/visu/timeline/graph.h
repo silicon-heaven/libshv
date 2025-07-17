@@ -70,7 +70,7 @@ public:
 		SHV_VARIANTMAP_FIELD2(double, v, setV, erticalHeaderWidth, 15) // units
 		SHV_VARIANTMAP_FIELD2(bool, is, set, SeparateChannels, true)
 		SHV_VARIANTMAP_FIELD2(bool, is, set, YAxisVisible, true)
-		SHV_VARIANTMAP_FIELD2(bool, is, set, RawDataVisible, true)
+		SHV_VARIANTMAP_FIELD2(bool, is, set, LocalizeShvPath, false)
 
 		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorForeground, QColor(0xc8, 0xc8, 0xc8))
 		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorPanel, QColor(0x41, 0x43, 0x43))
@@ -125,7 +125,7 @@ public:
 	qsizetype channelCount() const;
 	QVector<int> visibleChannels() const;
 	void clearChannels();
-	GraphChannel* appendChannel(qsizetype model_index = -1);
+	GraphChannel* appendChannel(qsizetype model_index, bool check_model_size = true);
 	GraphChannel* channelAt(qsizetype ix, bool throw_exc = shv::core::Exception::Throw);
 	const GraphChannel* channelAt(qsizetype ix, bool throw_exc = shv::core::Exception::Throw) const;
 	core::utils::ShvTypeDescr::Type channelTypeId(qsizetype ix) const;
@@ -288,7 +288,7 @@ protected:
 	virtual void drawCurrentTime(QPainter *painter, int channel_ix);
 	void drawCurrentTimeMarker(QPainter *painter, time_t time);
 
-	virtual void applyCustomChannelStyle(GraphChannel *channel);
+	// virtual void applyCustomChannelStyle(GraphChannel *channel);
 
 	QVariantMap mergeMaps(const QVariantMap &base, const QVariantMap &overlay) const;
 	void makeXAxis();

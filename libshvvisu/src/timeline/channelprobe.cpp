@@ -92,9 +92,9 @@ qsizetype ChannelProbe::channelIndex() const
 	return m_channelIndex;
 }
 
-bool ChannelProbe::isRawDataVisible() const
+bool ChannelProbe::isLocalizeShvPath() const
 {
-	return m_graph->style().isRawDataVisible();
+	return m_graph->style().isLocalizeShvPath();
 }
 
 }
