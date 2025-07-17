@@ -133,11 +133,11 @@ void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sor
 		// applyCustomChannelStyle(ch);
 	}
 
-	resetChannelsRanges();
+	resetRanges(ResetRanges::All);
 	setChannelFilter(std::nullopt);
 }
 
-void Graph::resetChannelsRanges()
+void Graph::resetRanges(Graph::ResetRanges ranges)
 {
 	if(!m_model)
 		return;
@@ -157,9 +157,13 @@ void Graph::resetChannelsRanges()
 				yrange = YRange{0, 1};
 		}
 		x_range = x_range.united(m_model->xRange(model_ix));
-		setYRange(channel_ix, yrange);
+		if (ranges == ResetRanges::All || ranges == ResetRanges::YRanges) {
+			setYRange(channel_ix, yrange);
+		}
 	}
-	setXRange(x_range);
+	if (ranges == ResetRanges::All || ranges == ResetRanges::XRange) {
+		setXRange(x_range);
+	}
 }
 
 qsizetype Graph::channelCount() const

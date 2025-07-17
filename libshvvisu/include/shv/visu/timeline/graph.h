@@ -120,7 +120,9 @@ public:
 	
 	enum class SortChannels { No = 0, Yes };
 	void createChannelsFromModel(SortChannels sorted = SortChannels::Yes);
-	void resetChannelsRanges();
+
+	enum class ResetRanges {All,YRanges, XRange};
+	void resetRanges(ResetRanges ranges = ResetRanges::All);
 
 	qsizetype channelCount() const;
 	QVector<int> visibleChannels() const;

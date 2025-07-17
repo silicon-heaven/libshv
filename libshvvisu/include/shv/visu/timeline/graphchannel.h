@@ -35,7 +35,7 @@ public:
 		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olor, QColor(Qt::magenta))
 		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorGrid, QColor(Qt::darkGreen))
 		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorAxis, QColor(Qt::gray))
-		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorBackground, QColor(0x23, 0x23, 0x23))
+		SHV_VARIANTMAP_FIELD2(QColor, c, setC, olorBackground, QColor(0x232323))
 
 		SHV_VARIANTMAP_FIELD2(bool, is, set, HideGrid, false)
 		SHV_VARIANTMAP_FIELD2(bool, is, set, HideGridVertical, false)
