@@ -300,7 +300,7 @@ BrokerApp::BrokerApp(int &argc, char **argv, AppCliOptions *cli_opts)
 
 		std::vector<std::string> scopes;
 		if (cli_scopes.isList()) {
-			for (const auto& scope : cli_opts->azureScopes().asList()) {
+			for (const auto& scope : cli_scopes.asList()) {
 				if (!scope.isString()) {
 					invalid_azure_scopes();
 					break;
