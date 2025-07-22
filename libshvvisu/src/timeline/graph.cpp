@@ -2518,9 +2518,8 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 		{
 			/// draw info
 			QString info_text;
-			{
+			if (auto sel_rect = selectionRect(); sel_rect.isValid()) {
 				/// show selection info
-				auto sel_rect = selectionRect();
 				auto ch1_ix = posToChannel(sel_rect.bottomLeft());
 				auto ch2_ix = posToChannel(sel_rect.topLeft());
 
@@ -2547,7 +2546,6 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 					}
 				}
 			}
-			/*
 			else {
 				/// show sample value
 				QVariant qv = toolTipValues(crossbar_pos).value(KEY_SAMPLE_PRETTY_VALUE);
@@ -2567,7 +2565,6 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 				}
 				info_text = lines.join('\n');
 			}
-			*/
 			if(!info_text.isEmpty()) {
 				QFontMetrics fm(m_style.font());
 				QRect info_rect = fm.boundingRect(QRect(), Qt::AlignLeft, info_text);
