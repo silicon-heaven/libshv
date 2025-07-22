@@ -130,7 +130,6 @@ void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sor
 	}
 	for(auto model_ix : model_ixs) {
 		appendChannel(model_ix);
-		// applyCustomChannelStyle(ch);
 	}
 
 	resetRanges(ResetRanges::All);
@@ -182,7 +181,7 @@ GraphChannel *Graph::appendChannel(qsizetype model_index, bool check_model_size)
 	if(check_model_size && (model_index < 0 || model_index >= m_model->channelCount())) {
 		SHV_EXCEPTION("Invalid model index: " + std::to_string(model_index));
 	}
-	auto ch = new GraphChannel(this);
+	auto *ch = new GraphChannel(this);
 	ch->setModelIndex(model_index);
 	m_channels.append(ch);
 	return ch;
@@ -1611,12 +1610,14 @@ void Graph::drawBackground(QPainter *painter, int channel)
 
 void Graph::drawGrid(QPainter *painter, int channel)
 {
-	const GraphChannel *ch = channelAt(channel);
 	const XAxis &x_axis = m_state.xAxis;
 	if(!x_axis.isValid()) {
 		// drawRectText(painter, ch->m_layout.graphAreaRect, "grid", m_style.font(), ch->m_effectiveStyle.colorGrid());
 		return;
 	}
+	const auto *ch = channelAt(channel);
+	const auto &y_axis = ch->m_state.axis;
+
 	auto style = ch->effectiveStyle();
 	QColor grid_color = style.colorGrid();
 	painter->save();
@@ -1629,7 +1630,7 @@ void Graph::drawGrid(QPainter *painter, int channel)
 	pen_dot.setStyle(Qt::DotLine);
 	painter->setPen(pen_dot);
 	if (!style.isHideGrid()) {
-		if (!style.isHideGridHorizontal()) {
+		if (!style.isHideGridHorizontal() && x_axis.tickInterval > 0) {
 			// draw X-axis grid
 			const XRange range = xRangeZoom();
 			timemsec_t t1 = range.min / x_axis.tickInterval;
@@ -1643,10 +1644,9 @@ void Graph::drawGrid(QPainter *painter, int channel)
 				painter->drawLine(p1, p2);
 			}
 		}
-		if (!style.isHideGridVertical()) {
+		if (!style.isHideGridVertical() && y_axis.tickInterval > 0) {
 			// draw Y-axis grid
 			const YRange range = ch->yRangeZoom();
-			const GraphChannel::YAxis &y_axis = ch->m_state.axis;
 			double d1 = std::ceil(range.min / y_axis.tickInterval);
 			d1 *= y_axis.tickInterval;
 			if(d1 < range.min)
@@ -2692,13 +2692,6 @@ void Graph::drawCurrentTimeMarker(QPainter *painter, time_t time)
 	p1.setY(p1.y() + tick_len);
 	drawCenterTopText(painter, p1, text, m_style.font(), color.darker(400), color);
 }
-
-// void Graph::applyCustomChannelStyle(GraphChannel *channel)
-// {
-// 	GraphChannel::Style style = channel->style();
-// 	style.setColor(Qt::cyan);
-// 	channel->setStyle(style);
-// }
 
 QString Graph::timeToStringTZ(timemsec_t time) const
 {

@@ -290,8 +290,6 @@ protected:
 	virtual void drawCurrentTime(QPainter *painter, int channel_ix);
 	void drawCurrentTimeMarker(QPainter *painter, time_t time);
 
-	// virtual void applyCustomChannelStyle(GraphChannel *channel);
-
 	QVariantMap mergeMaps(const QVariantMap &base, const QVariantMap &overlay) const;
 	void makeXAxis();
 	void makeYAxis(qsizetype channel);
