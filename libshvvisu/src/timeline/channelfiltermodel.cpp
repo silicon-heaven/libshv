@@ -28,7 +28,7 @@ void ChannelFilterModel::createNodes()
 
 	QMap<QString, QStringList> localized_channel_paths;
 
-	if (!m_graph->style().isRawDataVisible())
+	if (m_graph->style().isLocalizeShvPath())
 		localized_channel_paths = m_graph->localizedChannelPaths();
 
 	for (const auto &p: sorted_channels) {
@@ -45,7 +45,7 @@ QVariant ChannelFilterModel::data(const QModelIndex &index, int role) const
 		if (index.isValid()) {
 			QStandardItem *it = itemFromIndex(index);
 
-			if (m_graph->style().isRawDataVisible()) {
+			if (!m_graph->style().isLocalizeShvPath()) {
 				return it->data(UserData::DirName);
 			}
 

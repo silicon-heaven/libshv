@@ -129,15 +129,14 @@ void Graph::createChannelsFromModel(shv::visu::timeline::Graph::SortChannels sor
 		}
 	}
 	for(auto model_ix : model_ixs) {
-		GraphChannel *ch = appendChannel(model_ix);
-		applyCustomChannelStyle(ch);
+		appendChannel(model_ix);
 	}
 
-	resetChannelsRanges();
+	resetRanges(ResetRanges::All);
 	setChannelFilter(std::nullopt);
 }
 
-void Graph::resetChannelsRanges()
+void Graph::resetRanges(Graph::ResetRanges ranges)
 {
 	if(!m_model)
 		return;
@@ -157,9 +156,13 @@ void Graph::resetChannelsRanges()
 				yrange = YRange{0, 1};
 		}
 		x_range = x_range.united(m_model->xRange(model_ix));
-		setYRange(channel_ix, yrange);
+		if (ranges == ResetRanges::All || ranges == ResetRanges::YRanges) {
+			setYRange(channel_ix, yrange);
+		}
 	}
-	setXRange(x_range);
+	if (ranges == ResetRanges::All || ranges == ResetRanges::XRange) {
+		setXRange(x_range);
+	}
 }
 
 qsizetype Graph::channelCount() const
@@ -173,15 +176,14 @@ void Graph::clearChannels()
 	m_channels.clear();
 }
 
-shv::visu::timeline::GraphChannel *Graph::appendChannel(qsizetype model_index)
+GraphChannel *Graph::appendChannel(qsizetype model_index, bool check_model_size)
 {
-	if(model_index >= 0) {
-		if(model_index >= m_model->channelCount())
-			SHV_EXCEPTION("Invalid model index: " + std::to_string(model_index));
+	if(check_model_size && (model_index < 0 || model_index >= m_model->channelCount())) {
+		SHV_EXCEPTION("Invalid model index: " + std::to_string(model_index));
 	}
-	m_channels.append(new GraphChannel(this));
-	GraphChannel *ch = m_channels.last();
-	ch->setModelIndex(model_index < 0? m_channels.count() - 1: model_index);
+	auto *ch = new GraphChannel(this);
+	ch->setModelIndex(model_index);
+	m_channels.append(ch);
 	return ch;
 }
 
@@ -1566,9 +1568,9 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 	font.setBold(true);
 	painter->setFont(font);
 
-	QRect text_rect = ch->m_layout.verticalHeaderRect.adjusted(2*header_inset, header_inset, -header_inset, -header_inset);
+	QRect text_rect = ch->m_layout.verticalHeaderRect.adjusted(2 * header_inset, header_inset, -header_inset, -header_inset);
 
-	if (chi.name.isEmpty() || m_style.isRawDataVisible()) {
+	if (chi.name.isEmpty() || !m_style.isLocalizeShvPath()) {
 		painter->drawText(text_rect, chi.shvPath);
 	}
 	else {
@@ -1593,7 +1595,7 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 		path_row_text_option.setWrapMode(QTextOption::NoWrap);
 		QRect path_rect(text_rect.left(), text_rect.bottom() - row_height, text_rect.width(), row_height);
 
-		text = elidedText((m_style.isRawDataVisible())? chi.shvPath: chi.localizedShvPath.join("/"), font, path_rect);
+		text = elidedText((m_style.isLocalizeShvPath())? chi.localizedShvPath.join("/"): chi.shvPath, font, path_rect);
 		painter->drawText(path_rect, text, path_row_text_option);
 	}
 
@@ -1608,57 +1610,59 @@ void Graph::drawBackground(QPainter *painter, int channel)
 
 void Graph::drawGrid(QPainter *painter, int channel)
 {
-	const GraphChannel *ch = channelAt(channel);
 	const XAxis &x_axis = m_state.xAxis;
 	if(!x_axis.isValid()) {
 		// drawRectText(painter, ch->m_layout.graphAreaRect, "grid", m_style.font(), ch->m_effectiveStyle.colorGrid());
 		return;
 	}
-	QColor gc = ch->m_effectiveStyle.colorGrid();
-	if(!gc.isValid())
-		return;
+	const auto *ch = channelAt(channel);
+	const auto &y_axis = ch->m_state.axis;
+
+	auto style = ch->effectiveStyle();
+	QColor grid_color = style.colorGrid();
 	painter->save();
 	QPen pen_solid;
 	pen_solid.setWidth(1);
-	pen_solid.setColor(gc);
+	pen_solid.setColor(grid_color);
 	painter->setPen(pen_solid);
 	painter->drawRect(ch->m_layout.graphAreaRect);
 	QPen pen_dot = pen_solid;
 	pen_dot.setStyle(Qt::DotLine);
 	painter->setPen(pen_dot);
-	{
-		// draw X-axis grid
-		const XRange range = xRangeZoom();
-		timemsec_t t1 = range.min / x_axis.tickInterval;
-		t1 *= x_axis.tickInterval;
-		if(t1 < range.min)
-			t1 += x_axis.tickInterval;
-		for (timemsec_t t = t1; t <= range.max; t += x_axis.tickInterval) {
-			int x = timeToPos(t);
-			QPoint p1{x, ch->graphDataGridRect().top()};
-			QPoint p2{x, ch->graphDataGridRect().bottom()};
-			painter->drawLine(p1, p2);
-		}
-	}
-	{
-		// draw Y-axis grid
-		const YRange range = ch->yRangeZoom();
-		const GraphChannel::YAxis &y_axis = ch->m_state.axis;
-		double d1 = std::ceil(range.min / y_axis.tickInterval);
-		d1 *= y_axis.tickInterval;
-		if(d1 < range.min)
-			d1 += y_axis.tickInterval;
-		for (double d = d1; d <= range.max; d += y_axis.tickInterval) {
-			int y = ch->valueToPos(d);
-			QPoint p1{ch->graphDataGridRect().left(), y};
-			QPoint p2{ch->graphDataGridRect().right(), y};
-			if(qFuzzyIsNull(d)) {
-				painter->setPen(pen_solid);
+	if (!style.isHideGrid()) {
+		if (!style.isHideGridHorizontal() && x_axis.tickInterval > 0) {
+			// draw X-axis grid
+			const XRange range = xRangeZoom();
+			timemsec_t t1 = range.min / x_axis.tickInterval;
+			t1 *= x_axis.tickInterval;
+			if(t1 < range.min)
+				t1 += x_axis.tickInterval;
+			for (timemsec_t t = t1; t <= range.max; t += x_axis.tickInterval) {
+				int x = timeToPos(t);
+				QPoint p1{x, ch->graphDataGridRect().top()};
+				QPoint p2{x, ch->graphDataGridRect().bottom()};
 				painter->drawLine(p1, p2);
-				painter->setPen(pen_dot);
 			}
-			else {
-				painter->drawLine(p1, p2);
+		}
+		if (!style.isHideGridVertical() && y_axis.tickInterval > 0) {
+			// draw Y-axis grid
+			const YRange range = ch->yRangeZoom();
+			double d1 = std::ceil(range.min / y_axis.tickInterval);
+			d1 *= y_axis.tickInterval;
+			if(d1 < range.min)
+				d1 += y_axis.tickInterval;
+			for (double d = d1; d <= range.max; d += y_axis.tickInterval) {
+				int y = ch->valueToPos(d);
+				QPoint p1{ch->graphDataGridRect().left(), y};
+				QPoint p2{ch->graphDataGridRect().right(), y};
+				if(qFuzzyIsNull(d)) {
+					painter->setPen(pen_solid);
+					painter->drawLine(p1, p2);
+					painter->setPen(pen_dot);
+				}
+				else {
+					painter->drawLine(p1, p2);
+				}
 			}
 		}
 	}
@@ -2192,6 +2196,8 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 		int x_axis_y = sample2point(Sample{xrange.min, 0}, channel_meta_type_id).y();
 		std::optional<int> last_x;
 
+		painter->setPen(line_pen);
+		QBrush brush(ch_style.lineAreaFillColor());
 		for (auto i = ix1; i <= ix2; ++i) {
 			Sample sample = graph_model->sampleAt(model_ix, i);
 			auto current_point = sample2point(sample, channel_meta_type_id);
@@ -2199,10 +2205,8 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 				continue;
 			}
 
-			painter->setPen(line_pen);
 			QPoint p(current_point.x() - bar_width / 2, current_point.y());
 			QRect bar_rect = QRect(p, QPoint(p.x() + bar_width, x_axis_y));
-			QBrush brush(line_pen.color().lighter());
 			painter->fillRect(bar_rect, brush);
 			painter->drawRect(bar_rect);
 		}
@@ -2269,8 +2273,7 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 		}
 		QColor line_area_color;
 		if(ch_style.lineAreaStyle() == GraphChannel::Style::LineAreaStyle::Filled) {
-			line_area_color = line_color;
-			line_area_color.setAlphaF(0.2F);
+			line_area_color = ch_style.lineAreaFillColor();
 		}
 
 		int sample_point_size = u2px(0.3);
@@ -2685,13 +2688,6 @@ void Graph::drawCurrentTimeMarker(QPainter *painter, time_t time)
 	QString text = timeToStringTZ(time);
 	p1.setY(p1.y() + tick_len);
 	drawCenterTopText(painter, p1, text, m_style.font(), color.darker(400), color);
-}
-
-void Graph::applyCustomChannelStyle(GraphChannel *channel)
-{
-	GraphChannel::Style style = channel->style();
-	style.setColor(Qt::cyan);
-	channel->setStyle(style);
 }
 
 QString Graph::timeToStringTZ(timemsec_t time) const

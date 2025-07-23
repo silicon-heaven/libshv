@@ -420,7 +420,7 @@ void DlgLogInspector::parseLog(const shv::chainpack::RpcValue& log)
 					m_graphModel->appendValueShvPath("P", tl::Sample{msec, vl.value(3)});
 				}
 				else {
-					m_graphModel->appendValueShvPath(entry.path, tl::Sample{msec, v, !entry.isSpontaneous()});
+					m_graphModel->appendValueShvPath(QString::fromStdString(entry.path), tl::Sample{msec, v, !entry.isSpontaneous()});
 				}
 			}
 		}

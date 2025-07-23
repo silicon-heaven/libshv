@@ -3,8 +3,6 @@
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/coreqt/log.h>
 
-#include <cmath>
-
 namespace shv::visu::timeline {
 
 GraphModel::GraphModel(QObject *parent)
@@ -18,6 +16,14 @@ void GraphModel::clear()
 	m_pathToChannelCache.clear();
 	m_samples.clear();
 	m_channelsInfo.clear();
+}
+
+void GraphModel::clearSamples()
+{
+	m_samples.clear();
+	for (auto i = 0; i < m_channelsInfo.size(); ++i) {
+		m_samples << ChannelSamples{};
+	}
 }
 
 qsizetype GraphModel::count(qsizetype channel) const
@@ -36,10 +42,12 @@ Sample GraphModel::sampleAt(qsizetype channel, qsizetype ix) const
 
 Sample GraphModel::sampleValue(qsizetype channel, qsizetype ix) const
 {
-	if(channel < 0 || channel >= channelCount())
+	if(channel < 0 || channel >= channelCount()) {
 		return Sample();
-	if(ix < 0 || ix >= m_samples[channel].count())
+	}
+	if(ix < 0 || ix >= m_samples[channel].count()) {
 		return Sample();
+	}
 	return sampleAt(channel, ix);
 }
 
@@ -293,14 +301,14 @@ void GraphModel::appendValue(qsizetype channel, Sample &&sample)
 	}
 }
 
-void GraphModel::appendValueShvPath(const std::string &shv_path, Sample &&sample)
+void GraphModel::appendValueShvPath(const QString &shv_path, Sample &&sample)
 {
 	auto ch_ix = pathToChannelIndex(shv_path);
 	if(ch_ix < 0) {
 		if(isAutoCreateChannels()) {
-			auto type_descr = m_typeInfo.typeDescriptionForPath(shv_path);
+			auto type_descr = m_typeInfo.typeDescriptionForPath(shv_path.toStdString());
 			shvMessage() << "Auto append channel:" << shv_path << "type:" << type_descr.toRpcValue().toCpon();
-			appendChannel(shv_path, std::string(), type_descr);
+			appendChannel(shv_path, {}, type_descr);
 			ch_ix = channelCount() - 1;
 		}
 		else {
@@ -326,13 +334,13 @@ void GraphModel::forgetValuesBefore(timemsec_t time, int min_samples_count)
 	}
 }
 
-qsizetype GraphModel::pathToChannelIndex(const std::string &path) const
+qsizetype GraphModel::pathToChannelIndex(const QString &path) const
 {
 	auto it = m_pathToChannelCache.find(path);
 	if(it == m_pathToChannelCache.end()) {
 		for (qsizetype i = 0; i < channelCount(); ++i) {
 			const ChannelInfo &chi = channelInfo(i);
-			if(chi.shvPath == QLatin1String(path.data(), static_cast<int>(path.size()))) {
+			if(chi.shvPath == path) {
 				m_pathToChannelCache[path] = i;
 				return i;
 			}
@@ -352,16 +360,18 @@ void GraphModel::appendChannel()
 	appendChannel({}, {}, {});
 }
 
-void GraphModel::appendChannel(const std::string &shv_path, const std::string &name, const core::utils::ShvTypeDescr &type_descr)
+void GraphModel::appendChannel(const QString &shv_path, const QString &name, const core::utils::ShvTypeDescr &type_descr)
 {
 	m_pathToChannelCache.clear();
 	m_channelsInfo.append(ChannelInfo());
 	m_samples.append(ChannelSamples());
 	auto &chi = m_channelsInfo.last();
-	if(!shv_path.empty())
-		chi.shvPath = QString::fromStdString(shv_path);
-	if(!name.empty())
-		chi.name = QString::fromStdString(name);
+	if(!shv_path.isEmpty()) {
+		chi.shvPath = shv_path;
+	}
+	if(!name.isEmpty()) {
+		chi.name = name;
+	}
 	chi.typeDescr = type_descr;
 	emit channelCountChanged(channelCount());
 }
