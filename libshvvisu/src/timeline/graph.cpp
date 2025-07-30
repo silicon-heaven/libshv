@@ -6,6 +6,7 @@
 #include <shv/coreqt/log.h>
 #include <shv/chainpack/rpcvalue.h>
 
+#include <QAbstractTextDocumentLayout>
 #include <QPainter>
 #include <QFontMetrics>
 #include <QJsonArray>
@@ -2521,6 +2522,7 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 		{
 			/// draw info
 			QString info_text;
+			bool html = false;
 			if (auto sel_rect = selectionRect(); sel_rect.isValid()) {
 				/// show selection info
 				auto ch1_ix = posToChannel(sel_rect.bottomLeft());
@@ -2552,25 +2554,71 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 			else {
 				/// show sample value
 				QVariant qv = toolTipValues(crossbar_pos).value(KEY_SAMPLE_PRETTY_VALUE);
-				QStringList lines;
 #if QT_VERSION_MAJOR >= 6
-				if(qv.typeId() == QMetaType::QVariantMap) {
+				if (qv.typeId() == QMetaType::QVariantList) {
 #else
-				if(qv.type() == QVariant::Map) {
+				if (qv.type() == QVariant::List) {
 #endif
-					auto m = qv.toMap();
-					for(auto it = m.begin(); it != m.end(); ++it) {
-						lines << it.key() + ": " + it.value().toString();
+					auto l = qv.toList();
+					if (l.count()) {
+						info_text = R"(
+							<head>
+								<style>
+									body { color: )" + c50.name() + R"(; }
+									th { border-bottom: 1px solid )" + c50.name() + R"(; padding-left 5px; padding-right: 5px; }
+									td { text-align: center; }
+								</style>
+							</head>
+						)";
+						info_text += "<body><table><tr>";
+						for (int j = 0; j < l[0].toList().count(); ++j) {
+							info_text += "<th>" + l[0].toList()[j].toString() + "</th>";
+						}
+						info_text += "</tr>";
+						for (int i = 1; i < l.count(); ++i) {
+							info_text += "<tr>";
+							for (int j = 0; j < l[i].toList().count(); ++j) {
+								info_text += "<td>" + l[i].toList()[j].toString() + "</td>";
+							}
+							info_text += "</tr>";
+						}
+						info_text += "</table></body>";
+						html = true;
 					}
 				}
 				else {
-					lines << qv.toString();
+					QStringList lines;
+	#if QT_VERSION_MAJOR >= 6
+					if(qv.typeId() == QMetaType::QVariantMap) {
+	#else
+					if(qv.type() == QVariant::Map) {
+	#endif
+						auto m = qv.toMap();
+						for(auto it = m.begin(); it != m.end(); ++it) {
+							lines << it.key() + ": " + it.value().toString();
+						}
+					}
+					else {
+						lines << qv.toString();
+					}
+					info_text = lines.join('\n');
 				}
-				info_text = lines.join('\n');
 			}
 			if(!info_text.isEmpty()) {
-				QFontMetrics fm(m_style.font());
-				QRect info_rect = fm.boundingRect(QRect(), Qt::AlignLeft, info_text);
+				QRect info_rect;
+				QTextDocument *doc = nullptr;
+				if (html) {
+					doc = new QTextDocument(this);
+					doc->setDefaultFont(m_style.font());
+					doc->setUndoRedoEnabled(false);
+					doc->setHtml(info_text);
+					doc->setDefaultTextOption(QTextOption(Qt::AlignLeft));
+					info_rect = QRect(QPoint(0, 0), doc->documentLayout()->documentSize().toSize());
+				}
+				else {
+					info_rect = QFontMetrics(m_style.font()).boundingRect(QRect(), Qt::AlignLeft, info_text);
+				}
+
 				info_rect.moveTopLeft(bulls_eye_rect.topLeft() + QPoint{20, 20});
 				int offset = 5;
 				auto r2 = info_rect.adjusted(-offset, 0, offset, 0);
@@ -2589,7 +2637,16 @@ void Graph::drawCrossHair(QPainter *painter, int channel_ix)
 				}
 
 				painter->fillRect(r2, c);
-				painter->drawText(info_rect, info_text);
+				if (html) {
+					painter->save();
+					painter->translate(info_rect.topLeft());
+					doc->drawContents(painter);
+					painter->restore();
+					delete doc;
+				}
+				else {
+					painter->drawText(info_rect, info_text);
+				}
 				painter->drawRect(r2);
 			}
 		}
