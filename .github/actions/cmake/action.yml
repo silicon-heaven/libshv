@@ -67,7 +67,7 @@ runs:
 
     # Qt
     - name: Install Qt
-      uses: Kidev/install-qt-action@v4.4.2 # Needed for WASM
+      uses: Kidev/install-qt-action@v4.6.0 # Fork is needed for WASM
       with:
         cache: true
         aqtversion: ">=3.2.0"
