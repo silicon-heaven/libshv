@@ -12,139 +12,78 @@ on:
     branches: [ "master" ]
 
 jobs:
-  ubuntu-qt5:
-    name: Qt 5.15.2 / Ubuntu 22.04
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Setup CMake
-        uses: ./.github/actions/cmake
-        with:
-          qt_version: 5.15.2
-          qt_target: desktop
-          use_qt6: OFF
-          modules: ""
-          asan: true
-
-      - name: Build and test
-        uses: ./.github/actions/build-and-test
-
-  ubuntu-qt6-9:
-    name: Qt 6.9.1 / Ubuntu 22.04
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Setup CMake
-        uses: ./.github/actions/cmake
-        with:
-          qt_version: 6.9.1
-          qt_target: desktop
-          qt_arch: linux_gcc_64
-          use_qt6: ON
-          modules: &qt_modules "qtserialport qtwebsockets qtnetworkauth"
-          asan: true
-
-      - name: Build and test
-        uses: ./.github/actions/build-and-test
-
-  windows-mingw:
-    name: Qt 6.9.1 / Windows MinGW
-    runs-on: windows-2025
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Setup CMake
-        uses: ./.github/actions/cmake
-        with:
-          qt_version: 6.9.1
-          qt_target: desktop
-          qt_arch: win64_mingw
-          use_qt6: ON
-          modules: *qt_modules
-          # Need to get all binaries in the same directory, otherwise the tests can't find the dlls.
-          additional_cmake_args: &windows_cmake_args >-
-            -DLIBSHV_WITH_LDAP=OFF
-            -DCMAKE_RUNTIME_OUTPUT_DIRECTORY='${{github.workspace}}/build/bin'
-            -DCMAKE_LIBRARY_OUTPUT_DIRECTORY='${{github.workspace}}/build/bin'
-
-      - name: Build and test
-        uses: ./.github/actions/build-and-test
-
-  windows-msvc:
-    name: Qt 6.9.1 / Windows MSVC
-    runs-on: windows-2025
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Setup CMake
-        uses: ./.github/actions/cmake
-        with:
-          qt_version: 6.9.1
-          qt_target: desktop
-          qt_arch: win64_msvc2022_64
-          use_qt6: ON
-          modules: *qt_modules
-          # Need to get all binaries in the same directory, otherwise the tests can't find the dlls.
-          additional_cmake_args: *windows_cmake_args
-
-      - name: Build and test
-        uses: ./.github/actions/build-and-test
-
-  android:
-    name: Qt 6.9.1 / Android
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-
-      - name: Setup CMake
-        uses: ./.github/actions/cmake
-        with:
-          qt_version: 6.9.1
-          qt_target: android
-          qt_arch: android_arm64_v8a
-          use_qt6: ON
-          modules: *qt_modules
-          additional_cmake_args: -DLIBSHV_WITH_LDAP=OFF
-
-      - name: Build and test
-        uses: ./.github/actions/build-and-test
-
-  wasm:
-    name: Qt 6.9.1 / WebAssembly
-    runs-on: ubuntu-24.04
+  build-and-test:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
     env:
       emsdk_cache_dir: "emsdk-cache"
       emscripten_version: 3.1.56
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Qt 5.15.2 / Ubuntu 22.04
+            os: ubuntu-22.04
+            qt_version: 5.15.2
+            qt_arch: gcc_64
+            use_qt6: OFF
+            # Don't actually need these, but GH actions' variable interpolation assumes empty string is falsy, so I can't set the default down below.
+            modules: qtcharts
+            asan: true
+
+          - name: Qt 6.9.1 / Ubuntu 22.04
+            os: ubuntu-22.04
+            qt_arch: linux_gcc_64
+            asan: true
+
+          - name: Qt 6.9.1 / Android
+            os: &ubuntu ubuntu-24.04
+            qt_target: android
+            qt_arch: android_arm64_v8a
+            additional_cmake_args: -DLIBSHV_WITH_LDAP=OFF
+
+          - name: Qt 6.9.1 / WebAssembly
+            os: *ubuntu
+            qt_target: wasm
+            qt_arch: wasm_singlethread
+            modules: qtwebsockets
+
+          - name: Qt 6.9.1 / Windows MinGW
+            os: &windows windows-2025
+            qt_arch: win64_mingw
+            additional_cmake_args: &windows_args >-
+              -DLIBSHV_WITH_LDAP=OFF
+              -DCMAKE_RUNTIME_OUTPUT_DIRECTORY='${{github.workspace}}/build/bin'
+              -DCMAKE_LIBRARY_OUTPUT_DIRECTORY='${{github.workspace}}/build/bin'
+
+          - name: Qt 6.9.1 / Windows MSVC
+            os: *windows
+            qt_arch: win64_msvc2022_64
+            additional_cmake_args: *windows_args
+
     steps:
-      - name: Clone the repository
+      - &checkout_step
         uses: actions/checkout@v4
         with:
           submodules: true
 
+      - name: Setup Java for Android
+        if: matrix.qt_target == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
       - name: Setup emsdk cache
+        if: matrix.qt_target == 'wasm'
         uses: actions/cache@v4
         with:
           key: emsdk-cache-${{ env.emscripten_version }}
           path: ${{ env.emsdk_cache_dir }}
 
-      - uses: mymindstorm/setup-emsdk@v14
+      - name: Setup emsdk
+        if: matrix.qt_target == 'wasm'
+        uses: mymindstorm/setup-emsdk@v14
         with:
           version: ${{ env.emscripten_version }}
           actions-cache-folder: ${{ env.emsdk_cache_dir }}
@@ -152,22 +91,22 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.9.1
-          qt_target: wasm
-          qt_arch: wasm_singlethread
-          use_qt6: ON
-          modules: qtwebsockets
+          qt_version: ${{ matrix.qt_version || '6.9.1' }}
+          qt_target: ${{ matrix.qt_target || 'desktop' }}
+          qt_arch: ${{ matrix.qt_arch }}
+          use_qt6: ${{ matrix.use_qt6 || 'ON' }}
+          modules: ${{ matrix.modules || 'qtserialport qtwebsockets qtnetworkauth' }}
+          asan: ${{ matrix.asan || 'false' }}
+          additional_cmake_args: ${{ matrix.additional_cmake_args || '' }}
 
       - name: Build and test
         uses: ./.github/actions/build-and-test
 
   nix:
     name: Qt 6.6.2 / NixOS
-    runs-on: ubuntu-24.04
+    runs-on: *ubuntu
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
+      - *checkout_step
       - name: Install Nix
         uses: cachix/install-nix-action@v20
         with:
