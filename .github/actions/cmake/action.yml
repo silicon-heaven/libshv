@@ -85,7 +85,7 @@ runs:
       with:
         key: ${{ github.workflow }}-${{ github.job }}
         max-size: 50M
-        
+
     - name: Android-specific stuff
       if: inputs.qt_arch == 'android_arm64_v8a'
       run: |
