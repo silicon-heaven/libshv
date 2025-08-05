@@ -67,7 +67,7 @@ runs:
 
     # Qt
     - name: Install Qt
-      uses: Kidev/install-qt-action@v4.4.2 # Needed for WASM
+      uses: Kidev/install-qt-action@v4.6.0 # Fork is needed for WASM
       with:
         cache: true
         aqtversion: ">=3.2.0"
@@ -85,7 +85,7 @@ runs:
       with:
         key: ${{ github.workflow }}-${{ github.job }}
         max-size: 50M
-        
+
     - name: Android-specific stuff
       if: inputs.qt_arch == 'android_arm64_v8a'
       run: |
