@@ -601,6 +601,7 @@ ShvPropertyDescr ShvPropertyDescr::fromRpcValue(const RpcValue &v, RpcValue::Map
 		"autorefresh",
 		"monitored",
 		"monitorOptions",
+		"nocache",
 		KEY_SAMPLE_TYPE,
 		KEY_ALARM,
 		KEY_ALARM_LEVEL,
