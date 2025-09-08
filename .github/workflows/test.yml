@@ -88,6 +88,13 @@ jobs:
           version: ${{ env.emscripten_version }}
           actions-cache-folder: ${{ env.emsdk_cache_dir }}
 
+      - name: Select the Linux compiler
+        if: matrix.qt_arch == 'linux_gcc_64' || matrix.qt_arch == 'gcc_64'
+        run: |
+          echo CC="gcc-14" >> "$GITHUB_ENV"
+          echo CXX="g++-14" >> "$GITHUB_ENV"
+        shell: bash
+
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
