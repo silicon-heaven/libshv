@@ -22,8 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Qt 5.15.2 / Ubuntu 22.04
-            os: ubuntu-22.04
+          - name: Qt 5.15.2 / Ubuntu 24.04
+            os: ubuntu-24.04
             qt_version: 5.15.2
             qt_arch: gcc_64
             use_qt6: OFF
@@ -31,8 +31,8 @@ jobs:
             modules: qtcharts
             asan: true
 
-          - name: Qt 6.9.1 / Ubuntu 22.04
-            os: ubuntu-22.04
+          - name: Qt 6.9.1 / Ubuntu 24.04
+            os: ubuntu-24.04
             qt_arch: linux_gcc_64
             asan: true
 
