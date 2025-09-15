@@ -670,7 +670,8 @@ public:
 				azure::throw_with_msg("Couldn't fetch user e-mail");
 			}
 
-			m_username = "azure:" + json.object()["mail"].toString().toStdString();
+			const auto& json_object = json.object();
+			m_username = "azure:" + json_object["mail"].toString().toStdString();
 			return do_request(QUrl{"https://graph.microsoft.com/v1.0/me/transitiveMemberOf"});
 		}).unwrap().then(this, [this] (const QJsonDocument& json) {
 			std::vector<std::string> res_shv_groups{m_username};
@@ -678,9 +679,11 @@ public:
 				azure::throw_with_msg("Couldn't fetch user groups");
 			}
 
+			const auto& json_object = json.object();
 			std::unordered_set<std::string> user_azure_groups;
-			for (const auto& group : json.object()["value"].toArray()) {
-				if (group.toObject()["@odata.type"].toString() == "#microsoft.graph.group") {
+			for (const auto& group : json_object["value"].toArray()) {
+				const auto& group_object = group.toObject();
+				if (group_object["@odata.type"].toString() == "#microsoft.graph.group") {
 					user_azure_groups.insert(group.toObject()["id"].toString().toStdString());
 				}
 			}
