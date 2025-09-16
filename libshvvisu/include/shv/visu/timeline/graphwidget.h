@@ -10,15 +10,25 @@
 #include <QTimer>
 #include <QWidget>
 
+#ifdef SHVVISU_WITH_OPENGL_WIDGETS
+#include <QOpenGLWidget>
+#endif
+
 namespace shv::visu::timeline {
 
 class Graph;
 
-class SHVVISU_DECL_EXPORT GraphWidget : public QWidget
+#ifdef SHVVISU_WITH_OPENGL_WIDGETS
+using GraphWidgetBase = QOpenGLWidget;
+#else
+using GraphWidgetBase = QWidget;
+#endif
+
+class SHVVISU_DECL_EXPORT GraphWidget : public GraphWidgetBase
 {
 	Q_OBJECT
 
-	using Super = QWidget;
+	using Super = GraphWidgetBase;
 public:
 	GraphWidget(QWidget *parent = nullptr);
 

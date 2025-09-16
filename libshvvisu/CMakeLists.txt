@@ -74,6 +74,12 @@ libshv_set_translations(libshvvisu "${LIBSHV_PROJECT_TRANSLATIONS}")
 add_library(libshv::libshvvisu ALIAS libshvvisu)
 
 target_link_libraries(libshvvisu PUBLIC Qt::Widgets libshviotqt)
+
+if (LIBSHV_WITH_OPENGL)
+	target_link_libraries(libshvvisu PUBLIC Qt::OpenGLWidgets)
+	target_compile_definitions(libshvvisu PUBLIC SHVVISU_WITH_OPENGL_WIDGETS)
+endif()
+
 target_include_directories(libshvvisu PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(libshvvisu PUBLIC
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
