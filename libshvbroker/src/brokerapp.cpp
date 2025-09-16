@@ -56,6 +56,7 @@
 #include <QFuture>
 
 #include <ctime>
+#include <unordered_set>
 //#include <fstream>
 
 #ifdef Q_OS_UNIX
@@ -669,21 +670,28 @@ public:
 				azure::throw_with_msg("Couldn't fetch user e-mail");
 			}
 
-			m_username = "azure:" + json.object()["mail"].toString().toStdString();
+			const auto& json_object = json.object();
+			m_username = "azure:" + json_object["mail"].toString().toStdString();
 			return do_request(QUrl{"https://graph.microsoft.com/v1.0/me/transitiveMemberOf"});
 		}).unwrap().then(this, [this] (const QJsonDocument& json) {
 			std::vector<std::string> res_shv_groups{m_username};
 			if (!json.object().contains("value")) {
 				azure::throw_with_msg("Couldn't fetch user groups");
 			}
-			for (const auto& group : json.object()["value"].toArray()) {
-				if (group.toObject()["@odata.type"].toString() == "#microsoft.graph.group") {
-					auto group_id = group.toObject()["id"].toString().toStdString();
-					if (auto it = std::find_if(m_azureConfig.groupMapping.begin(), m_azureConfig.groupMapping.end(), [group_id] (const auto& mapping) {
-						return mapping.nativeGroup == group_id;
-					}); it != m_azureConfig.groupMapping.end()) {
-						res_shv_groups.emplace_back(it->shvGroup);
-					}
+
+			const auto& json_object = json.object();
+			std::unordered_set<std::string> user_azure_groups;
+			for (const auto& group : json_object["value"].toArray()) {
+				const auto& group_object = group.toObject();
+				if (group_object["@odata.type"].toString() == "#microsoft.graph.group") {
+					user_azure_groups.insert(group.toObject()["id"].toString().toStdString());
+				}
+			}
+
+			for (const auto& groupMapping : m_azureConfig.groupMapping) {
+				if (user_azure_groups.contains(groupMapping.nativeGroup)) {
+					qDebug().noquote() << groupMapping.nativeGroup << "=>" << groupMapping.shvGroup;
+					res_shv_groups.emplace_back(groupMapping.shvGroup);
 				}
 			}
 
