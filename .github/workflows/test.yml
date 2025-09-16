@@ -31,24 +31,24 @@ jobs:
             modules: qtcharts
             asan: true
 
-          - name: Qt 6.9.1 / Ubuntu 22.04
+          - name: Qt 6.9.2 / Ubuntu 22.04
             os: ubuntu-22.04
             qt_arch: linux_gcc_64
             asan: true
 
-          - name: Qt 6.9.1 / Android
+          - name: Qt 6.9.2 / Android
             os: &ubuntu ubuntu-24.04
             qt_target: android
             qt_arch: android_arm64_v8a
             additional_cmake_args: -DLIBSHV_WITH_LDAP=OFF
 
-          - name: Qt 6.9.1 / WebAssembly
+          - name: Qt 6.9.2 / WebAssembly
             os: *ubuntu
             qt_target: wasm
             qt_arch: wasm_singlethread
             modules: qtwebsockets
 
-          - name: Qt 6.9.1 / Windows MinGW
+          - name: Qt 6.9.2 / Windows MinGW
             os: &windows windows-2025
             qt_arch: win64_mingw
             additional_cmake_args: &windows_args >-
@@ -56,7 +56,7 @@ jobs:
               -DCMAKE_RUNTIME_OUTPUT_DIRECTORY='${{github.workspace}}/build/bin'
               -DCMAKE_LIBRARY_OUTPUT_DIRECTORY='${{github.workspace}}/build/bin'
 
-          - name: Qt 6.9.1 / Windows MSVC
+          - name: Qt 6.9.2 / Windows MSVC
             os: *windows
             qt_arch: win64_msvc2022_64
             additional_cmake_args: *windows_args
@@ -91,7 +91,7 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: ${{ matrix.qt_version || '6.9.1' }}
+          qt_version: ${{ matrix.qt_version || '6.9.2' }}
           qt_target: ${{ matrix.qt_target || 'desktop' }}
           qt_arch: ${{ matrix.qt_arch }}
           use_qt6: ${{ matrix.use_qt6 || 'ON' }}
