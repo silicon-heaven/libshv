@@ -63,6 +63,16 @@ function(libshv_set_translations target langs)
 
 		qt_add_lupdate("${target}" TS_FILES ${TS_FILES} OPTIONS  "-locations" "none")
 		qt_add_lrelease("${target}" TS_FILES ${TS_FILES} QM_FILES_OUTPUT_VARIABLE QM_FILES)
+
+		foreach(ABS_PATH IN LISTS QM_FILES)
+			cmake_path(GET ABS_PATH FILENAME REL_PATH)
+			set_source_files_properties("${ABS_PATH}" PROPERTIES QT_RESOURCE_ALIAS "${REL_PATH}")
+		endforeach()
+
+		qt_add_resources("${target}" "translations-${target}"
+			PREFIX "/translations"
+			FILES "${QM_FILES}"
+		)
 	else()
 		if(DEFINED ENV{LIBSHV_RUN_LUPDATE})
 			qt5_create_translation(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR} ${TS_FILES})
@@ -169,6 +179,7 @@ if(LIBSHV_WITH_COREQT)
 		set(Qt_FOUND ${Qt6_FOUND})
 		set(QtWidgets_FOUND ${Qt6Widgets_FOUND})
 	else()
+		message(STATUS "Enabling Qt5 support")
 		find_package(Qt5 COMPONENTS Core LinguistTools Network Sql SerialPort OPTIONAL_COMPONENTS Svg WebSockets Widgets)
 		set(QtWebSockets_FOUND ${Qt5WebSockets_FOUND})
 		set(QtSvg_FOUND ${Qt6Svg_FOUND})
@@ -312,7 +323,9 @@ if(NOT DEFINED BUILT_COMPONENTS)
 	message(FATAL_ERROR "All components have been disabled, nothing to build.")
 endif()
 
-install(EXPORT libshvConfig DESTINATION share/libshv/cmake NAMESPACE libshv::)
+if(NOT EMSCRIPTEN)
+	install(EXPORT libshvConfig DESTINATION share/libshv/cmake NAMESPACE libshv::)
+endif()
 list(JOIN BUILT_COMPONENTS ", " BUILT_COMPONENTS_STR)
 
 message(STATUS "Enabled SHV components: ${BUILT_COMPONENTS_STR}")
