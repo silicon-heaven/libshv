@@ -348,7 +348,7 @@ void Graph::setYAxisVisible(bool is_visible)
 	emit layoutChanged();
 }
 
-bool Graph::isYAxisVisible()
+bool Graph::isYAxisVisible() const
 {
 	return 	m_style.isYAxisVisible();
 }
@@ -526,8 +526,7 @@ std::optional<qsizetype> Graph::posToChannelHeader(const QPoint &pos) const
 	auto channels = visibleChannels();
 	for (qsizetype i = 0; i < channels.count(); ++i) {
 		const GraphChannel *ch = channelAt(channels[i]);
-
-		if(ch->verticalHeaderRect().contains(pos)) {
+		if (ch->verticalHeaderRect().contains(pos) || (isYAxisVisible() && ch->yAxisRect().contains(pos))) {
 			return channels[i];
 		}
 	}
@@ -1389,10 +1388,18 @@ void Graph::resizeVerticalHeaderWidth(int delta_px)
 {
 	double w = m_style.verticalHeaderWidth() + px2u(delta_px);
 
-	if (w > MIN_VERTICAL_HEADER_WIDTH && w < MAX_VERTICAL_HEADER_WIDTH) {
-		m_style.setVerticalHeaderWidth(w);
-		emit layoutChanged();
+	int min_w = m_style.minVerticalHeaderWidth();
+	int max_w = m_style.maxVerticalHeaderWidth();
+
+	if (w < min_w) {
+		w = min_w;
 	}
+	else if (w > max_w) {
+		w = max_w;
+	}
+
+	m_style.setVerticalHeaderWidth(w);
+	emit layoutChanged();
 }
 
 Graph::VisualSettings Graph::visualSettings() const
