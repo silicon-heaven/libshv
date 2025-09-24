@@ -612,12 +612,11 @@ public:
 			ldap->bindSasl(login_details.user, login_details.password);
 			auto ldap_groups = ldap::getGroupsForUser(ldap, m_ldapConfig.searchBaseDN, m_ldapConfig.searchAttrs, login_details.user);
 			std::vector<std::string> res_shv_groups{user_name};
-			if (auto it = std::find_if(m_ldapConfig.groupMapping.begin(), m_ldapConfig.groupMapping.end(), [&ldap_groups] (const auto& mapping) {
-				return std::find_if(ldap_groups.begin(), ldap_groups.end(), [&mapping] (const auto& ldap_group) {
-					return mapping.nativeGroup == ldap_group;
-				}) != ldap_groups.end();
-			}); it != m_ldapConfig.groupMapping.end()) {
-				res_shv_groups.push_back(it->shvGroup);
+			std::unordered_set<std::string> user_ldap_groups(ldap_groups.begin(), ldap_groups.end());
+			for (const auto& group_mapping : m_ldapConfig.groupMapping) {
+				if (user_ldap_groups.contains(group_mapping.nativeGroup)) {
+					res_shv_groups.push_back(group_mapping.shvGroup);
+				}
 			}
 
 			auto result = chainpack::UserLoginResult{};
