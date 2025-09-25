@@ -34,5 +34,6 @@ public:
 	static ShvAlarm fromRpcValue(const shv::chainpack::RpcValue &rv);
 	static std::vector<ShvAlarm> checkAlarms(const ShvTypeInfo &type_info, const std::string &shv_path, const shv::chainpack::RpcValue &value);
 	static std::vector<ShvAlarm> checkAlarms(const ShvTypeInfo &type_info, const std::string &shv_path, const std::string &type_name, const shv::chainpack::RpcValue &value);
+	static std::vector<ShvAlarm> checkStateAlarms(const ShvTypeInfo &type_info, const std::string &shv_path, const shv::chainpack::RpcValue &value);
 };
 } // namespace shv::core::utils

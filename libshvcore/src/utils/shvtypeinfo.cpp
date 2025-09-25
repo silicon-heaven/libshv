@@ -32,6 +32,7 @@ constexpr auto KEY_BLACKLIST = "blacklist";
 constexpr auto KEY_DEC_PLACES = "decPlaces";
 constexpr auto KEY_VISUAL_STYLE = "visualStyle";
 constexpr auto KEY_ALARM = "alarm";
+constexpr auto KEY_STATE_ALARM = "stateAlarm";
 constexpr auto KEY_ALARM_LEVEL = "alarmLevel";
 }
 
@@ -115,6 +116,11 @@ std::string ShvFieldDescr::alarm() const
 	return dataValue(KEY_ALARM).asString();
 }
 
+std::string ShvFieldDescr::stateAlarm() const
+{
+	return dataValue(KEY_STATE_ALARM).asString();
+}
+
 int ShvFieldDescr::alarmLevel() const
 {
 	return dataValue(KEY_ALARM_LEVEL).toInt();
@@ -123,6 +129,11 @@ int ShvFieldDescr::alarmLevel() const
 void ShvFieldDescr::setAlarm(const std::string &alarm)
 {
 	setDataValue(KEY_ALARM, alarm);
+}
+
+void ShvFieldDescr::setStateAlarm(const std::string &state_alarm)
+{
+	setDataValue(KEY_STATE_ALARM, state_alarm);
 }
 
 RpcValue ShvFieldDescr::toRpcValue() const
@@ -603,6 +614,7 @@ ShvPropertyDescr ShvPropertyDescr::fromRpcValue(const RpcValue &v, RpcValue::Map
 		"monitorOptions",
 		KEY_SAMPLE_TYPE,
 		KEY_ALARM,
+		KEY_STATE_ALARM,
 		KEY_ALARM_LEVEL,
 		KEY_LIST_TYPE_NAME,
 	};

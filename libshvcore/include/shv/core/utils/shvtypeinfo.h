@@ -126,6 +126,8 @@ public:
 
 	std::string alarm() const;
 	void setAlarm(const std::string &alarm);
+	std::string stateAlarm() const;
+	void setStateAlarm(const std::string &state_alarm);
 	int alarmLevel() const;
 
 	chainpack::RpcValue toRpcValue() const;
