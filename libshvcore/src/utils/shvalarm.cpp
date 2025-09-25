@@ -8,7 +8,7 @@ using namespace std;
 
 namespace shv::core::utils {
 
-ShvAlarm::Severity ShvAlarm::severityFromString(const std::string &lvl)
+ShvAlarm::Severity ShvAlarm::severityFromString(const std::string& lvl)
 {
 	return NecroLog::stringToLevel(lvl.c_str());
 }
@@ -18,16 +18,18 @@ const char* ShvAlarm::severityName() const
 	return NecroLog::levelToString(severity);
 }
 
-bool ShvAlarm::isLessSevere(const ShvAlarm &a) const
+bool ShvAlarm::isLessSevere(const ShvAlarm& a) const
 {
-	if (severity == a.severity)
+	if (severity == a.severity) {
 		return level < a.level;
-	if(severity == Severity::Invalid)
+	}
+	if (severity == Severity::Invalid) {
 		return true;
+	}
 	return (severity > a.severity);
 }
 
-bool ShvAlarm::operator==(const ShvAlarm &a) const
+bool ShvAlarm::operator==(const ShvAlarm& a) const
 {
 	return severity == a.severity
 			&& isActive == a.isActive
@@ -46,24 +48,30 @@ shv::chainpack::RpcValue ShvAlarm::toRpcValue(bool all_fields_if_not_active) con
 	shv::chainpack::RpcValue::Map ret;
 	ret["path"] = path;
 	ret["isActive"] = isActive;
-	if(all_fields_if_not_active || isActive) {
-		if(severity != Severity::Invalid) {
+	if (all_fields_if_not_active || isActive) {
+		if (severity != Severity::Invalid) {
 			ret["severity"] = static_cast<int>(severity);
 			ret["severityName"] = severityName();
 		}
-		if(level > 0)
+
+		if (level > 0) {
 			ret["alarmLevel"] = level;
-		if(!description.empty())
+		}
+
+		if (!description.empty()) {
 			ret["description"] = description;
-		if(!label.empty())
+		}
+
+		if (!label.empty()) {
 			ret["label"] = label;
+		}
 	}
 	return ret;
 }
 
-ShvAlarm ShvAlarm::fromRpcValue(const chainpack::RpcValue &rv)
+ShvAlarm ShvAlarm::fromRpcValue(const chainpack::RpcValue& rv)
 {
-	const chainpack::RpcValue::Map &m = rv.asMap();
+	const chainpack::RpcValue::Map& m = rv.asMap();
 	ShvAlarm a {
 		.path = m.value("path").asString(),
 		.isActive = m.value("isActive").toBool(),
@@ -76,9 +84,9 @@ ShvAlarm ShvAlarm::fromRpcValue(const chainpack::RpcValue &rv)
 }
 namespace {
 template <typename AlarmGetter>
-std::vector<ShvAlarm> checkAlarmsImpl(const ShvTypeInfo &type_info, const std::string &shv_path, const std::string &type_name, const chainpack::RpcValue &value, AlarmGetter getAlarm)
+std::vector<ShvAlarm> checkAlarmsImpl(const ShvTypeInfo& type_info, const std::string& shv_path, const std::string& type_name, const chainpack::RpcValue& value, AlarmGetter getAlarm)
 {
-	if(ShvTypeDescr type_descr = type_info.findTypeDescription(type_name); type_descr.isValid()) {
+	if (ShvTypeDescr type_descr = type_info.findTypeDescription(type_name); type_descr.isValid()) {
 		if (type_descr.type() == ShvTypeDescr::Type::BitField) {
 			vector<ShvAlarm> alarms;
 			auto flds = type_descr.fields();
@@ -109,13 +117,14 @@ std::vector<ShvAlarm> checkAlarmsImpl(const ShvTypeInfo &type_info, const std::s
 				const ShvFieldDescr& fld_descr = flds[i];
 				if (string alarm = getAlarm(fld_descr); !alarm.empty()) {
 					has_alarm_definition = true;
-					if(value == fld_descr.bitRange())
+					if (value == fld_descr.bitRange()) {
 						active_alarm_ix = i;
+					}
 				}
 			}
-			if(has_alarm_definition) {
-				if(active_alarm_ix < flds.size()) {
-					const ShvFieldDescr &fld_descr = flds[active_alarm_ix];
+			if (has_alarm_definition) {
+				if (active_alarm_ix < flds.size()) {
+					const ShvFieldDescr& fld_descr = flds[active_alarm_ix];
 					return {ShvAlarm{
 						.path = shv_path,
 						.isActive = true,
@@ -141,13 +150,13 @@ std::vector<ShvAlarm> checkAlarmsImpl(const ShvTypeInfo &type_info, const std::s
 }
 
 template <typename AlarmGetter>
-std::vector<ShvAlarm> checkAlarmsImpl(const ShvTypeInfo &type_info, const std::string &shv_path, const chainpack::RpcValue &value, AlarmGetter getAlarm)
+std::vector<ShvAlarm> checkAlarmsImpl(const ShvTypeInfo& type_info, const std::string& shv_path, const chainpack::RpcValue& value, AlarmGetter getAlarm)
 {
-	if(value.isNull()) {
+	if (value.isNull()) {
 		return {};
 	}
-	if(auto path_info = type_info.pathInfo(shv_path); path_info.propertyDescription.isValid()) {
-		if(std::string alarm = getAlarm(path_info.propertyDescription); !alarm.empty()) {
+	if (auto path_info = type_info.pathInfo(shv_path); path_info.propertyDescription.isValid()) {
+		if (std::string alarm = getAlarm(path_info.propertyDescription); !alarm.empty()) {
 			return {ShvAlarm{
 				.path = shv_path,
 				.isActive = value.toBool(),
@@ -165,19 +174,25 @@ std::vector<ShvAlarm> checkAlarmsImpl(const ShvTypeInfo &type_info, const std::s
 } // namespace
 
 
-std::vector<ShvAlarm> ShvAlarm::checkAlarms(const ShvTypeInfo &type_info, const std::string &shv_path, const chainpack::RpcValue &value)
+std::vector<ShvAlarm> ShvAlarm::checkAlarms(const ShvTypeInfo& type_info, const std::string& shv_path, const chainpack::RpcValue& value)
 {
-    return checkAlarmsImpl(type_info, shv_path, value, [](auto &descr) { return descr.alarm(); });
+    return checkAlarmsImpl(type_info, shv_path, value, [] (const auto& descr) {
+		return descr.alarm();
+	});
 }
 
-std::vector<ShvAlarm> ShvAlarm::checkAlarms(const ShvTypeInfo &type_info, const std::string &shv_path, const std::string &type_name, const chainpack::RpcValue &value)
+std::vector<ShvAlarm> ShvAlarm::checkAlarms(const ShvTypeInfo& type_info, const std::string& shv_path, const std::string& type_name, const chainpack::RpcValue& value)
 {
-    return checkAlarmsImpl(type_info, shv_path, type_name, value, [](auto &descr) { return descr.alarm(); });
+    return checkAlarmsImpl(type_info, shv_path, type_name, value, [] (const auto& descr) {
+		return descr.alarm();
+	});
 }
 
-std::vector<ShvAlarm> ShvAlarm::checkStateAlarms(const ShvTypeInfo &type_info, const std::string &shv_path, const chainpack::RpcValue &value)
+std::vector<ShvAlarm> ShvAlarm::checkStateAlarms(const ShvTypeInfo& type_info, const std::string& shv_path, const chainpack::RpcValue& value)
 {
-    return checkAlarmsImpl(type_info, shv_path, value, [](auto &descr) { return descr.stateAlarm(); });
+    return checkAlarmsImpl(type_info, shv_path, value, [] (const auto& descr) {
+		return descr.stateAlarm();
+	});
 }
 
 
