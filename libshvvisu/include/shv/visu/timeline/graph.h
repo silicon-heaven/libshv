@@ -47,9 +47,7 @@ public:
 
 	using WidgetRange = Range<int>;
 
-	static constexpr double MIN_VERTICAL_HEADER_WIDTH = 10;
-	static constexpr double MAX_VERTICAL_HEADER_WIDTH = 25;
-
+	static constexpr double MIN_VERTICAL_HEADER_WIDTH = 2;
 	static constexpr auto KEY_SAMPLE_TIME = "sampleTime";
 	static constexpr auto KEY_SAMPLE_VALUE = "sampleValue";
 	static constexpr auto KEY_SAMPLE_PRETTY_VALUE = "samplePrettyValue";
@@ -192,7 +190,7 @@ public:
 	void resetXZoom();
 
 	void setYAxisVisible(bool is_visible);
-	bool isYAxisVisible();
+	bool isYAxisVisible() const;
 
 	void setYRange(qsizetype channel_ix, const YRange &r);
 	void enlargeYRange(qsizetype channel_ix, double step);

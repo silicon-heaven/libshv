@@ -995,9 +995,13 @@ bool GraphWidget::isMouseAboveChannelResizeHandle(const QPoint &mouse_pos, Qt::E
 	case Qt::Edge::BottomEdge:
 		return (header_rect.bottom() - mouse_pos.y() < MARGIN);
 		break;
-	case Qt::Edge::RightEdge:
-		return (header_rect.right() - mouse_pos.x() < MARGIN);
-		break;
+	case Qt::Edge::RightEdge: {
+		int right_edge_x = header_rect.right();
+		if (gr->isYAxisVisible()) {
+			right_edge_x += ch->yAxisRect().width();
+		}
+		return (right_edge_x - mouse_pos.x() < MARGIN);
+	}
 	default:
 		shvWarning() << "Unsupported resize header edge option";
 		break;
