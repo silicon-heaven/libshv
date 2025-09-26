@@ -47,6 +47,7 @@ public:
 
 	using WidgetRange = Range<int>;
 
+	static constexpr double MIN_VERTICAL_HEADER_WIDTH = 2;
 	static constexpr auto KEY_SAMPLE_TIME = "sampleTime";
 	static constexpr auto KEY_SAMPLE_VALUE = "sampleValue";
 	static constexpr auto KEY_SAMPLE_PRETTY_VALUE = "samplePrettyValue";
@@ -65,9 +66,6 @@ public:
 		SHV_VARIANTMAP_FIELD2(double, y, setY, AxisWidth, 2.5) // units
 		SHV_VARIANTMAP_FIELD2(double, m, setM, iniMapHeight, 2) // units
 		SHV_VARIANTMAP_FIELD2(double, v, setV, erticalHeaderWidth, 15) // units
-		SHV_VARIANTMAP_FIELD2(int, m, setM, inVerticalHeaderWidth, 10) // units
-		SHV_VARIANTMAP_FIELD2(int, m, setM, axVerticalHeaderWidth, 25) // units
-
 		SHV_VARIANTMAP_FIELD2(bool, is, set, SeparateChannels, true)
 		SHV_VARIANTMAP_FIELD2(bool, is, set, YAxisVisible, true)
 		SHV_VARIANTMAP_FIELD2(bool, is, set, LocalizeShvPath, false)

@@ -1388,14 +1388,8 @@ void Graph::resizeVerticalHeaderWidth(int delta_px)
 {
 	double w = m_style.verticalHeaderWidth() + px2u(delta_px);
 
-	int min_w = m_style.minVerticalHeaderWidth();
-	int max_w = m_style.maxVerticalHeaderWidth();
-
-	if (w < min_w) {
-		w = min_w;
-	}
-	else if (w > max_w) {
-		w = max_w;
+	if (w < MIN_VERTICAL_HEADER_WIDTH) {
+		w = MIN_VERTICAL_HEADER_WIDTH;
 	}
 
 	m_style.setVerticalHeaderWidth(w);
