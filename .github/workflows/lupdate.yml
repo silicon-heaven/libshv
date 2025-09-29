@@ -13,7 +13,7 @@ on:
 
 jobs:
   ubuntu-qt6:
-    name: Qt 6.9.2 / Ubuntu 24.04
+    name: Qt 6.10.0 / Ubuntu 24.04
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -23,7 +23,7 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.9.2
+          qt_version: 6.10.0
           qt_arch: linux_gcc_64
           qt_target: desktop
           use_qt6: ON
