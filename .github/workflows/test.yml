@@ -28,7 +28,7 @@ jobs:
             qt_arch: gcc_64
             use_qt6: OFF
             # Don't actually need these, but GH actions' variable interpolation assumes empty string is falsy, so I can't set the default down below.
-            modules: qtcharts
+            modules: NONE
             asan: true
 
           - name: Qt 6.10.0 / Ubuntu 22.04
@@ -88,6 +88,23 @@ jobs:
           version: ${{ env.emscripten_version }}
           actions-cache-folder: ${{ env.emsdk_cache_dir }}
 
+      - name: Set Qt modules
+        shell: bash
+        run: |
+          case '${{ matrix.modules }}' in
+              NONE)
+                  CI_QT_MODULES=''
+                  ;;
+              '')
+                  CI_QT_MODULES='qtserialport qtwebsockets qtnetworkauth'
+                  ;;
+              *)
+                  CI_QT_MODULES='${{ matrix.modules }}'
+                  ;;
+          esac
+
+          echo "CI_QT_MODULES=$CI_QT_MODULES" >> "$GITHUB_ENV"
+
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
@@ -95,7 +112,7 @@ jobs:
           qt_target: ${{ matrix.qt_target || 'desktop' }}
           qt_arch: ${{ matrix.qt_arch }}
           use_qt6: ${{ matrix.use_qt6 || 'ON' }}
-          modules: ${{ matrix.modules || 'qtserialport qtwebsockets qtnetworkauth' }}
+          modules: ${{ env.CI_QT_MODULES }}
           asan: ${{ matrix.asan || 'false' }}
           additional_cmake_args: ${{ matrix.additional_cmake_args || '' }}
 
