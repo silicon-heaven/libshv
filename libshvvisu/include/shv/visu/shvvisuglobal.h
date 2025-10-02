@@ -9,5 +9,3 @@
 #else
 #  define SHVVISU_DECL_EXPORT Q_DECL_IMPORT
 #endif
-
-#define SHVVISU_HAS_TIMEZONE QT_FEATURE_timezone == 1

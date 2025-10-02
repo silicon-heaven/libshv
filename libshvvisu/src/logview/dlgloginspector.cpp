@@ -28,7 +28,7 @@
 #include <QSettings>
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 #include <QTimeZone>
 #endif
 
@@ -230,7 +230,7 @@ DlgLogInspector::DlgLogInspector(const QString &shv_path, QWidget *parent) :
 
 	ui->wDataViewFilterSelector->init(ui->edShvPath->text(), m_graph);
 
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 	connect(ui->cbxTimeZone, &QComboBox::currentTextChanged, this, [this](const QString &) {
 		auto tz = ui->cbxTimeZone->currentTimeZone();
 		setTimeZone(tz);
@@ -296,7 +296,7 @@ void DlgLogInspector::setShvPath(const QString &s)
 shv::chainpack::RpcValue DlgLogInspector::getLogParams()
 {
 	shv::core::utils::ShvGetLogParams params;
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 	auto get_dt = [this](QDateTimeEdit *ed) {
 #else
 	auto get_dt = [](QDateTimeEdit *ed) {
@@ -304,7 +304,7 @@ shv::chainpack::RpcValue DlgLogInspector::getLogParams()
 		QDateTime dt = ed->dateTime();
 		if(dt == ed->minimumDateTime())
 			return  cp::RpcValue();
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 		dt = QDateTime(dt.date(), dt.time(), m_timeZone);
 #else
 		dt = QDateTime(dt.date(), dt.time());
@@ -479,7 +479,7 @@ void DlgLogInspector::saveData(const std::string &data_to_be_saved, const QStrin
 	}
 }
 
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 void DlgLogInspector::setTimeZone(const QTimeZone &tz)
 {
 	shvDebug() << "Setting timezone to:" << tz.id();
