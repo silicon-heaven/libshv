@@ -530,7 +530,7 @@
     <name>shv::visu::widgets::DlgGetSinceUntil</name>
     <message>
         <source>Load history data</source>
-        <translation type="unfinished"></translation>
+        <translation>Carica dati storici</translation>
     </message>
     <message>
         <source>Recent values  </source>
@@ -538,7 +538,7 @@
     </message>
     <message>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Durata</translation>
     </message>
     <message>
         <source>Time interval</source>
@@ -546,11 +546,11 @@
     </message>
     <message>
         <source>Until</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fino a quando</translation>
     </message>
     <message>
         <source>Since</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Da quando</translation>
     </message>
     <message>
         <source>Timezone</source>

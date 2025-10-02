@@ -530,7 +530,7 @@
     <name>shv::visu::widgets::DlgGetSinceUntil</name>
     <message>
         <source>Load history data</source>
-        <translation type="unfinished"></translation>
+        <translation>Eseménynapló adatok betöltése</translation>
     </message>
     <message>
         <source>Recent values  </source>

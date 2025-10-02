@@ -561,158 +561,158 @@
     <name>shv::visu::widgets::DlgGetSinceUntil</name>
     <message>
         <source>Load history data</source>
-        <translation type="unfinished"></translation>
+        <translation>Verlaufsdaten laden</translation>
     </message>
     <message>
         <source>Recent values  </source>
-        <translation type="unfinished"></translation>
+        <translation>Unlängste Werte  </translation>
     </message>
     <message>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Dauer</translation>
     </message>
     <message>
         <source>Time interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitintervall</translation>
     </message>
     <message>
         <source>Until</source>
-        <translation type="unfinished"></translation>
+        <translation>Bis</translation>
     </message>
     <message>
         <source>Since</source>
-        <translation type="unfinished"></translation>
+        <translation>Seit</translation>
     </message>
     <message>
         <source>Timezone</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitzone</translation>
     </message>
     <message>
         <source>last 10 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>letzte 10 Minuten</translation>
     </message>
     <message>
         <source>last 30 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>letzte 30 Minuten</translation>
     </message>
     <message>
         <source>last 1 hour</source>
-        <translation type="unfinished"></translation>
+        <translation>letzte 1 Stunde</translation>
     </message>
     <message>
         <source>last 1 day</source>
-        <translation type="unfinished"></translation>
+        <translation>letzter 1 Tag</translation>
     </message>
     <message>
         <source>last 2 days</source>
-        <translation type="unfinished"></translation>
+        <translation>letzte 2 Tage</translation>
     </message>
     <message>
         <source>last 7 days</source>
-        <translation type="unfinished"></translation>
+        <translation>letzte 7 Tage</translation>
     </message>
     <message>
         <source>since now</source>
-        <translation type="unfinished"></translation>
+        <translation>seit jetzt</translation>
     </message>
     <message>
         <source>10 minutes before until</source>
-        <translation type="unfinished"></translation>
+        <translation>10 Minuten vor bis</translation>
     </message>
     <message>
         <source>30 minutes before until</source>
-        <translation type="unfinished"></translation>
+        <translation>30 Minuten vor bis</translation>
     </message>
     <message>
         <source>1 hour before until</source>
-        <translation type="unfinished"></translation>
+        <translation>1 Stunde vor bis</translation>
     </message>
     <message>
         <source>2 hours before until</source>
-        <translation type="unfinished"></translation>
+        <translation>2 Stunden vor bis</translation>
     </message>
     <message>
         <source>4 hours before until</source>
-        <translation type="unfinished"></translation>
+        <translation>4 Stunden vor bis</translation>
     </message>
     <message>
         <source>8 hour before until</source>
-        <translation type="unfinished"></translation>
+        <translation>8 Stunden vor bis</translation>
     </message>
     <message>
         <source>12 hours before until</source>
-        <translation type="unfinished"></translation>
+        <translation>12 Stunden vor bis</translation>
     </message>
     <message>
         <source>1 day before until</source>
-        <translation type="unfinished"></translation>
+        <translation>1 Tag vor bis</translation>
     </message>
     <message>
         <source>2 days before until</source>
-        <translation type="unfinished"></translation>
+        <translation>2 Tage vor bis</translation>
     </message>
     <message>
         <source>7 days before until</source>
-        <translation type="unfinished"></translation>
+        <translation>7 Tage vor bis</translation>
     </message>
     <message>
         <source>30 days before until</source>
-        <translation type="unfinished"></translation>
+        <translation>30 Tage vor bis</translation>
     </message>
     <message>
         <source>until now</source>
-        <translation type="unfinished"></translation>
+        <translation>bis jetzt</translation>
     </message>
     <message>
         <source>10 minutes after since</source>
-        <translation type="unfinished"></translation>
+        <translation>10 Minuten nach seit</translation>
     </message>
     <message>
         <source>30 minutes after since</source>
-        <translation type="unfinished"></translation>
+        <translation>30 Minuten nach seit</translation>
     </message>
     <message>
         <source>1 hour after since</source>
-        <translation type="unfinished"></translation>
+        <translation>1 Stunde nach seit</translation>
     </message>
     <message>
         <source>2 hours after since</source>
-        <translation type="unfinished"></translation>
+        <translation>2 Stunden nach seit</translation>
     </message>
     <message>
         <source>4 hours after since</source>
-        <translation type="unfinished"></translation>
+        <translation>4 Stunden nach seit</translation>
     </message>
     <message>
         <source>8 hours after since</source>
-        <translation type="unfinished"></translation>
+        <translation>8 Stunden nach seit</translation>
     </message>
     <message>
         <source>12 hours after since</source>
-        <translation type="unfinished"></translation>
+        <translation>12 Stunden nach seit</translation>
     </message>
     <message>
         <source>1 day after since</source>
-        <translation type="unfinished"></translation>
+        <translation>1 Tag nach seit</translation>
     </message>
     <message>
         <source>2 days after since</source>
-        <translation type="unfinished"></translation>
+        <translation>2 Tage nach seit</translation>
     </message>
     <message>
         <source>7 days after since</source>
-        <translation type="unfinished"></translation>
+        <translation>7 Tage nach seit</translation>
     </message>
     <message>
         <source>30 days after since</source>
-        <translation type="unfinished"></translation>
+        <translation>30 Tage nach seit</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::widgets::SinceUntilDateTimeEdit</name>
     <message>
         <source>Select a date</source>
-        <translation type="unfinished"></translation>
+        <translation>Datum auswählen</translation>
     </message>
 </context>
 </TS>

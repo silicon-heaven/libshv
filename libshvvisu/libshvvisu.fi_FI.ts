@@ -530,7 +530,7 @@
     <name>shv::visu::widgets::DlgGetSinceUntil</name>
     <message>
         <source>Load history data</source>
-        <translation type="unfinished"></translation>
+        <translation>Lataa historiatietoja</translation>
     </message>
     <message>
         <source>Recent values  </source>
@@ -546,11 +546,11 @@
     </message>
     <message>
         <source>Until</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Asti</translation>
     </message>
     <message>
         <source>Since</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alkaen</translation>
     </message>
     <message>
         <source>Timezone</source>
