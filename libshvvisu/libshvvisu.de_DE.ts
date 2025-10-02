@@ -557,4 +557,162 @@
         <translation>Vorheriger Zoom</translation>
     </message>
 </context>
+<context>
+    <name>shv::visu::widgets::DlgGetSinceUntil</name>
+    <message>
+        <source>Load history data</source>
+        <translation>Verlaufsdaten laden</translation>
+    </message>
+    <message>
+        <source>Recent values  </source>
+        <translation>Unlängste Werte  </translation>
+    </message>
+    <message>
+        <source>Duration</source>
+        <translation>Dauer</translation>
+    </message>
+    <message>
+        <source>Time interval</source>
+        <translation>Zeitintervall</translation>
+    </message>
+    <message>
+        <source>Until</source>
+        <translation>Bis</translation>
+    </message>
+    <message>
+        <source>Since</source>
+        <translation>Seit</translation>
+    </message>
+    <message>
+        <source>Timezone</source>
+        <translation>Zeitzone</translation>
+    </message>
+    <message>
+        <source>last 10 minutes</source>
+        <translation>letzte 10 Minuten</translation>
+    </message>
+    <message>
+        <source>last 30 minutes</source>
+        <translation>letzte 30 Minuten</translation>
+    </message>
+    <message>
+        <source>last 1 hour</source>
+        <translation>letzte 1 Stunde</translation>
+    </message>
+    <message>
+        <source>last 1 day</source>
+        <translation>letzter 1 Tag</translation>
+    </message>
+    <message>
+        <source>last 2 days</source>
+        <translation>letzte 2 Tage</translation>
+    </message>
+    <message>
+        <source>last 7 days</source>
+        <translation>letzte 7 Tage</translation>
+    </message>
+    <message>
+        <source>since now</source>
+        <translation>seit jetzt</translation>
+    </message>
+    <message>
+        <source>10 minutes before until</source>
+        <translation>10 Minuten vor bis</translation>
+    </message>
+    <message>
+        <source>30 minutes before until</source>
+        <translation>30 Minuten vor bis</translation>
+    </message>
+    <message>
+        <source>1 hour before until</source>
+        <translation>1 Stunde vor bis</translation>
+    </message>
+    <message>
+        <source>2 hours before until</source>
+        <translation>2 Stunden vor bis</translation>
+    </message>
+    <message>
+        <source>4 hours before until</source>
+        <translation>4 Stunden vor bis</translation>
+    </message>
+    <message>
+        <source>8 hour before until</source>
+        <translation>8 Stunden vor bis</translation>
+    </message>
+    <message>
+        <source>12 hours before until</source>
+        <translation>12 Stunden vor bis</translation>
+    </message>
+    <message>
+        <source>1 day before until</source>
+        <translation>1 Tag vor bis</translation>
+    </message>
+    <message>
+        <source>2 days before until</source>
+        <translation>2 Tage vor bis</translation>
+    </message>
+    <message>
+        <source>7 days before until</source>
+        <translation>7 Tage vor bis</translation>
+    </message>
+    <message>
+        <source>30 days before until</source>
+        <translation>30 Tage vor bis</translation>
+    </message>
+    <message>
+        <source>until now</source>
+        <translation>bis jetzt</translation>
+    </message>
+    <message>
+        <source>10 minutes after since</source>
+        <translation>10 Minuten nach seit</translation>
+    </message>
+    <message>
+        <source>30 minutes after since</source>
+        <translation>30 Minuten nach seit</translation>
+    </message>
+    <message>
+        <source>1 hour after since</source>
+        <translation>1 Stunde nach seit</translation>
+    </message>
+    <message>
+        <source>2 hours after since</source>
+        <translation>2 Stunden nach seit</translation>
+    </message>
+    <message>
+        <source>4 hours after since</source>
+        <translation>4 Stunden nach seit</translation>
+    </message>
+    <message>
+        <source>8 hours after since</source>
+        <translation>8 Stunden nach seit</translation>
+    </message>
+    <message>
+        <source>12 hours after since</source>
+        <translation>12 Stunden nach seit</translation>
+    </message>
+    <message>
+        <source>1 day after since</source>
+        <translation>1 Tag nach seit</translation>
+    </message>
+    <message>
+        <source>2 days after since</source>
+        <translation>2 Tage nach seit</translation>
+    </message>
+    <message>
+        <source>7 days after since</source>
+        <translation>7 Tage nach seit</translation>
+    </message>
+    <message>
+        <source>30 days after since</source>
+        <translation>30 Tage nach seit</translation>
+    </message>
+</context>
+<context>
+    <name>shv::visu::widgets::SinceUntilDateTimeEdit</name>
+    <message>
+        <source>Select a date</source>
+        <translation>Datum auswählen</translation>
+    </message>
+</context>
 </TS>

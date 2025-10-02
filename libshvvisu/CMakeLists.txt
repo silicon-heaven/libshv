@@ -36,6 +36,9 @@ qt_add_library(libshvvisu
 	src/timeline/sample.cpp
 
 	src/widgets/timezonecombobox.cpp
+	src/widgets/dlggetsinceuntil.cpp
+	src/widgets/dlggetsinceuntil.ui
+	src/widgets/sinceuntildatetimeedit.cpp
 
 	include/shv/visu/logview/dataviewfilterselector.h
 	include/shv/visu/logview/dlgloginspector.h
@@ -57,7 +60,6 @@ qt_add_library(libshvvisu
 	include/shv/visu/shvvisuglobal.h
 	include/shv/visu/logtablemodelbase.h
 	include/shv/visu/logwidget.h
-	include/shv/visu/timezonecombobox.h
 	include/shv/visu/svgscene/visucontroller.h
 	include/shv/visu/svgscene/graphicsview.h
 	include/shv/visu/svgscene/types.h
@@ -65,6 +67,10 @@ qt_add_library(libshvvisu
 	include/shv/visu/svgscene/simpletextitem.h
 	include/shv/visu/svgscene/groupitem.h
 	include/shv/visu/svgscene/rectitem.h
+
+	include/shv/visu/widgets/timezonecombobox.h
+	include/shv/visu/widgets/dlggetsinceuntil.h
+	include/shv/visu/widgets/sinceuntildatetimeedit.h
 
 	include/shv/visu/errorlogmodel.h
 	)

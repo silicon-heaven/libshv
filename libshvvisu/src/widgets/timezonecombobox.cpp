@@ -1,4 +1,4 @@
-#include <shv/visu/timezonecombobox.h>
+#include <shv/visu/widgets/timezonecombobox.h>
 
 #include <QKeyEvent>
 #include <QLineEdit>
@@ -6,7 +6,7 @@
 #include <QTimeZone>
 #endif
 
-namespace shv::visu {
+namespace shv::visu::widgets {
 
 TimeZoneComboBox::TimeZoneComboBox(QWidget *parent)
 	: Super(parent)

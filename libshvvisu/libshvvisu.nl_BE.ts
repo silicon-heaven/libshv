@@ -526,4 +526,162 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>shv::visu::widgets::DlgGetSinceUntil</name>
+    <message>
+        <source>Load history data</source>
+        <translation type="unfinished">Historische gegevens laden</translation>
+    </message>
+    <message>
+        <source>Recent values  </source>
+        <translation>Recente waarden  </translation>
+    </message>
+    <message>
+        <source>Duration</source>
+        <translation type="unfinished">Duurtijd</translation>
+    </message>
+    <message>
+        <source>Time interval</source>
+        <translation>Tijdsinterval</translation>
+    </message>
+    <message>
+        <source>Until</source>
+        <translation type="unfinished">Tot</translation>
+    </message>
+    <message>
+        <source>Since</source>
+        <translation type="unfinished">Sinds</translation>
+    </message>
+    <message>
+        <source>Timezone</source>
+        <translation>Tijdzone</translation>
+    </message>
+    <message>
+        <source>last 10 minutes</source>
+        <translation>laatste 10 minuten</translation>
+    </message>
+    <message>
+        <source>last 30 minutes</source>
+        <translation>laatste 30 minuten</translation>
+    </message>
+    <message>
+        <source>last 1 hour</source>
+        <translation>laatste 1 uur</translation>
+    </message>
+    <message>
+        <source>last 1 day</source>
+        <translation>laatste 1 dag</translation>
+    </message>
+    <message>
+        <source>last 2 days</source>
+        <translation>laatste 2 dagen</translation>
+    </message>
+    <message>
+        <source>last 7 days</source>
+        <translation>laatste 7 dagen</translation>
+    </message>
+    <message>
+        <source>since now</source>
+        <translation>vanaf nu</translation>
+    </message>
+    <message>
+        <source>10 minutes before until</source>
+        <translation>10 minuten vóór eindtijd</translation>
+    </message>
+    <message>
+        <source>30 minutes before until</source>
+        <translation>30 minuten vóór eindtijd</translation>
+    </message>
+    <message>
+        <source>1 hour before until</source>
+        <translation>1 uur vóór eindtijd</translation>
+    </message>
+    <message>
+        <source>2 hours before until</source>
+        <translation>2 uur vóór eindtijd</translation>
+    </message>
+    <message>
+        <source>4 hours before until</source>
+        <translation>4 uur vóór eindtijd</translation>
+    </message>
+    <message>
+        <source>8 hour before until</source>
+        <translation>8 uur vóór eindtijd</translation>
+    </message>
+    <message>
+        <source>12 hours before until</source>
+        <translation>12 uur vóór eindtijd</translation>
+    </message>
+    <message>
+        <source>1 day before until</source>
+        <translation>1 dag vóór eindtijd</translation>
+    </message>
+    <message>
+        <source>2 days before until</source>
+        <translation>2 dagen vóór eindtijd</translation>
+    </message>
+    <message>
+        <source>7 days before until</source>
+        <translation>7 dagen vóór eindtijd</translation>
+    </message>
+    <message>
+        <source>30 days before until</source>
+        <translation>30 dagen vóór eindtijd</translation>
+    </message>
+    <message>
+        <source>until now</source>
+        <translation>Tot nu</translation>
+    </message>
+    <message>
+        <source>10 minutes after since</source>
+        <translation>10 minuten na starttijd</translation>
+    </message>
+    <message>
+        <source>30 minutes after since</source>
+        <translation>30 minuten na starttijd</translation>
+    </message>
+    <message>
+        <source>1 hour after since</source>
+        <translation>1 uur na starttijd</translation>
+    </message>
+    <message>
+        <source>2 hours after since</source>
+        <translation>2 uur na starttijd</translation>
+    </message>
+    <message>
+        <source>4 hours after since</source>
+        <translation>4 uur na starttijd</translation>
+    </message>
+    <message>
+        <source>8 hours after since</source>
+        <translation>8 uur na starttijd</translation>
+    </message>
+    <message>
+        <source>12 hours after since</source>
+        <translation>12 uur na starttijd</translation>
+    </message>
+    <message>
+        <source>1 day after since</source>
+        <translation>1 dag na starttijd</translation>
+    </message>
+    <message>
+        <source>2 days after since</source>
+        <translation>2 dagen na starttijd</translation>
+    </message>
+    <message>
+        <source>7 days after since</source>
+        <translation>7 dagen na starttijd</translation>
+    </message>
+    <message>
+        <source>30 days after since</source>
+        <translation>30 dagen na starttijd</translation>
+    </message>
+</context>
+<context>
+    <name>shv::visu::widgets::SinceUntilDateTimeEdit</name>
+    <message>
+        <source>Select a date</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

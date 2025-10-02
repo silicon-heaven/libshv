@@ -569,4 +569,162 @@
         <translation>Predchádzajúci zoom</translation>
     </message>
 </context>
+<context>
+    <name>shv::visu::widgets::DlgGetSinceUntil</name>
+    <message>
+        <source>Load history data</source>
+        <translation>Načítať dáta histórie</translation>
+    </message>
+    <message>
+        <source>Recent values  </source>
+        <translation>Nedávne hodnoty  </translation>
+    </message>
+    <message>
+        <source>Duration</source>
+        <translation>Trvanie</translation>
+    </message>
+    <message>
+        <source>Time interval</source>
+        <translation>Časový interval</translation>
+    </message>
+    <message>
+        <source>Until</source>
+        <translation>Do</translation>
+    </message>
+    <message>
+        <source>Since</source>
+        <translation>Od</translation>
+    </message>
+    <message>
+        <source>Timezone</source>
+        <translation>Časové pásmo</translation>
+    </message>
+    <message>
+        <source>last 10 minutes</source>
+        <translation>posledných 10 minút</translation>
+    </message>
+    <message>
+        <source>last 30 minutes</source>
+        <translation>posledných 30 minút</translation>
+    </message>
+    <message>
+        <source>last 1 hour</source>
+        <translation>posledná 1 hodina</translation>
+    </message>
+    <message>
+        <source>last 1 day</source>
+        <translation>posledný 1 deň</translation>
+    </message>
+    <message>
+        <source>last 2 days</source>
+        <translation>posledné 2 dni</translation>
+    </message>
+    <message>
+        <source>last 7 days</source>
+        <translation>posledných 7 dní</translation>
+    </message>
+    <message>
+        <source>since now</source>
+        <translation>odteraz</translation>
+    </message>
+    <message>
+        <source>10 minutes before until</source>
+        <translation>10 minút pred časom do</translation>
+    </message>
+    <message>
+        <source>30 minutes before until</source>
+        <translation>30 minút pred časom do</translation>
+    </message>
+    <message>
+        <source>1 hour before until</source>
+        <translation>1 hodinu pred časom do</translation>
+    </message>
+    <message>
+        <source>2 hours before until</source>
+        <translation>2 hodiny pred časom do</translation>
+    </message>
+    <message>
+        <source>4 hours before until</source>
+        <translation>4 hodiny pred časom do</translation>
+    </message>
+    <message>
+        <source>8 hour before until</source>
+        <translation>8 hodín pred časom do</translation>
+    </message>
+    <message>
+        <source>12 hours before until</source>
+        <translation>12 hodín pred časom do</translation>
+    </message>
+    <message>
+        <source>1 day before until</source>
+        <translation>1 deň pred časom do</translation>
+    </message>
+    <message>
+        <source>2 days before until</source>
+        <translation>2 dni pred časom do</translation>
+    </message>
+    <message>
+        <source>7 days before until</source>
+        <translation>7 dní pred časom do</translation>
+    </message>
+    <message>
+        <source>30 days before until</source>
+        <translation>30 dní pred časom do</translation>
+    </message>
+    <message>
+        <source>until now</source>
+        <translation>do teraz</translation>
+    </message>
+    <message>
+        <source>10 minutes after since</source>
+        <translation>10 minút po čase od</translation>
+    </message>
+    <message>
+        <source>30 minutes after since</source>
+        <translation>30 minút po čase od</translation>
+    </message>
+    <message>
+        <source>1 hour after since</source>
+        <translation>1 hodinu po čase od</translation>
+    </message>
+    <message>
+        <source>2 hours after since</source>
+        <translation>2 hodiny po čase od</translation>
+    </message>
+    <message>
+        <source>4 hours after since</source>
+        <translation>4 hodiny po čase od</translation>
+    </message>
+    <message>
+        <source>8 hours after since</source>
+        <translation>8 hodín po čase od</translation>
+    </message>
+    <message>
+        <source>12 hours after since</source>
+        <translation>12 hodín po čase od</translation>
+    </message>
+    <message>
+        <source>1 day after since</source>
+        <translation>1 deň po čase od</translation>
+    </message>
+    <message>
+        <source>2 days after since</source>
+        <translation>2 dni po čase od</translation>
+    </message>
+    <message>
+        <source>7 days after since</source>
+        <translation>7 dní po čase od</translation>
+    </message>
+    <message>
+        <source>30 days after since</source>
+        <translation>30 dní po čase od</translation>
+    </message>
+</context>
+<context>
+    <name>shv::visu::widgets::SinceUntilDateTimeEdit</name>
+    <message>
+        <source>Select a date</source>
+        <translation>Vyberte dátum</translation>
+    </message>
+</context>
 </TS>

@@ -24,11 +24,10 @@
 	<file>zoom-fitall.svg</file>
 	<file>zoom-fitheight.svg</file>
 	<file>zoom-fitwidth.svg</file>	
-
 	<file>hamburger-menu.svg</file>	
 	<file>find.svg</file>
-
 	<file>file-open.svg</file>	
 	<file>file-save.svg</file>	
+	<file>calendar-clock.svg</file>
     </qresource>
 </RCC>
