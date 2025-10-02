@@ -62,7 +62,7 @@ bool Graph::DataRect::isValid() const
 Graph::Graph(QObject *parent)
 	: QObject(parent)
 {
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 	m_timeZone = QTimeZone::utc();
 #endif
 }
@@ -94,7 +94,7 @@ void Graph::setSettingsUserName(const QString &user)
 	m_settingsUserName = user;
 }
 
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 void Graph::setTimeZone(const QTimeZone &tz)
 {
 	shvDebug() << "set timezone:" << tz.id();
@@ -1000,7 +1000,7 @@ QVariantMap Graph::sampleValues(qsizetype channel_ix, const shv::visu::timeline:
 	shvDebug() << channel_info.shvPath << channel_info.typeDescr.toRpcValue().toCpon();
 
 	QDateTime dt = QDateTime::fromMSecsSinceEpoch(s.time);
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 	dt = dt.toTimeZone(timeZone());
 #endif
 	ret[KEY_SAMPLE_TIME] = dt;
@@ -1713,13 +1713,13 @@ void Graph::drawXAxis(QPainter *painter)
 		QPoint p1{x, m_layout.xAxisRect.top()};
 		QPoint p2{p1.x(), p1.y() + 2*tick_len};
 		painter->drawLine(p1, p2);
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 		auto date_time_tz = [this](timemsec_t epoch_msec) {
 #else
 		auto date_time_tz = [](timemsec_t epoch_msec) {
 #endif
 			QDateTime dt = QDateTime::fromMSecsSinceEpoch(epoch_msec);
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 			dt = dt.toTimeZone(m_timeZone);
 #endif
 			return dt;
@@ -2752,7 +2752,7 @@ QString Graph::timeToStringTZ(timemsec_t time) const
 {
 	if (m_model->xAxisType() == GraphModel::XAxisType::Timeline) {
 		QDateTime dt = QDateTime::fromMSecsSinceEpoch(time);
-	#if SHVVISU_HAS_TIMEZONE
+	#if QT_CONFIG(timezone)
 		if(m_timeZone.isValid())
 			dt = dt.toTimeZone(m_timeZone);
 	#endif

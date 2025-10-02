@@ -6,7 +6,7 @@
 
 #include <QDialog>
 
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 #include <QTimeZone>
 #endif
 
@@ -48,7 +48,7 @@ private:
 	void saveData(const std::string &data, const QString& ext);
 	std::string loadData(const QString &ext);
 
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 	void setTimeZone(const QTimeZone &tz);
 #endif
 
@@ -57,7 +57,7 @@ private:
 private:
 	Ui::DlgLogInspector *ui;
 
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 	QTimeZone m_timeZone;
 #endif
 

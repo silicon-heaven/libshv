@@ -75,7 +75,7 @@ const Graph *GraphWidget::graph() const
 	return m_graph;
 }
 
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 void GraphWidget::setTimeZone(const QTimeZone &tz)
 {
 	graph()->setTimeZone(tz);

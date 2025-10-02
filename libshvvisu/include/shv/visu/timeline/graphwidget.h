@@ -26,7 +26,7 @@ public:
 	Graph *graph();
 	const Graph *graph() const;
 
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 	void setTimeZone(const QTimeZone &tz);
 #endif
 
