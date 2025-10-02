@@ -6,7 +6,7 @@
 
 class QTimeZone;
 
-namespace shv::visu {
+namespace shv::visu::widgets {
 
 class SHVVISU_DECL_EXPORT TimeZoneComboBox : public QComboBox
 {

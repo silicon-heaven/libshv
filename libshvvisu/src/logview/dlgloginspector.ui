@@ -142,7 +142,7 @@
       </widget>
      </item>
      <item>
-      <widget class="shv::visu::TimeZoneComboBox" name="cbxTimeZone"/>
+      <widget class="shv::visu::widgets::TimeZoneComboBox" name="cbxTimeZone"/>
      </item>
      <item>
       <widget class="QPushButton" name="btMoreOptions">
@@ -553,9 +553,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>shv::visu::TimeZoneComboBox</class>
+   <class>shv::visu::widgets::TimeZoneComboBox</class>
    <extends>QComboBox</extends>
-   <header>shv/visu/timezonecombobox.h</header>
+   <header>shv/visu/widgets/timezonecombobox.h</header>
   </customwidget>
   <customwidget>
    <class>shv::visu::timeline::GraphView</class>
