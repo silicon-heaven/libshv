@@ -29,11 +29,17 @@ jobs:
             use_qt6: OFF
             modules: NONE
             asan: true
+            env: |
+              CC=gcc-14
+              CXX=g++-14
 
           - name: Qt 6.10.0 / Ubuntu 24.04
             os: ubuntu-24.04
             qt_arch: linux_gcc_64
             asan: true
+            env: |
+              CC=gcc-14
+              CXX=g++-14
 
           - name: Qt 6.10.0 / Android
             os: &ubuntu ubuntu-24.04
@@ -103,6 +109,13 @@ jobs:
           esac
 
           echo "CI_QT_MODULES=$CI_QT_MODULES" >> "$GITHUB_ENV"
+
+      - name: Set env from matrix
+        shell: bash
+        run: |
+          if [[ '${{matrix.env}}' != '' ]]; then
+              echo '${{matrix.env}}' >> "$GITHUB_ENV"
+          fi
 
       - name: Setup CMake
         uses: ./.github/actions/cmake
