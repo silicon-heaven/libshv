@@ -19,7 +19,7 @@
 #include <QFont>
 #include <QPixmap>
 #include <QRect>
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 #include <QTimeZone>
 #endif
 
@@ -109,7 +109,7 @@ public:
 	void setModel(GraphModel *model);
 	GraphModel *model() const;
 
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 	void setTimeZone(const QTimeZone &tz);
 	QTimeZone timeZone() const;
 #endif
@@ -299,7 +299,7 @@ protected:
 protected:
 	GraphModel *m_model = nullptr;
 
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 	QTimeZone m_timeZone;
 #endif
 

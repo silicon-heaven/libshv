@@ -2,7 +2,7 @@
 
 #include <QKeyEvent>
 #include <QLineEdit>
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 #include <QTimeZone>
 #endif
 
@@ -11,7 +11,7 @@ namespace shv::visu::widgets {
 TimeZoneComboBox::TimeZoneComboBox(QWidget *parent)
 	: Super(parent)
 {
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 	setEditable(true);
 	for(const auto &tzn : QTimeZone::availableTimeZoneIds())
 		addItem(tzn);
@@ -19,7 +19,7 @@ TimeZoneComboBox::TimeZoneComboBox(QWidget *parent)
 #endif
 }
 
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 QTimeZone TimeZoneComboBox::currentTimeZone() const
 {
 	if(currentIndex() < 0)

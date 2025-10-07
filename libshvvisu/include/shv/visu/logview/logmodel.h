@@ -6,7 +6,7 @@
 #include <shv/core/utils/shvmemoryjournal.h>
 
 #include <QAbstractTableModel>
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 #include <QTimeZone>
 #endif
 
@@ -21,7 +21,7 @@ public:
 	enum {ColDateTime = 0, ColPath, ColValue, ColShortTime, ColDomain, ColValueFlags, ColUserId,  ColCnt};
 public:
 	LogModel(QObject *parent = nullptr);
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 	void setTimeZone(const QTimeZone &tz);
 #endif
 
@@ -34,7 +34,7 @@ public:
 	QVariant data(const QModelIndex &index, int role) const override;
 protected:
 	shv::chainpack::RpcValue m_log;
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 	QTimeZone m_timeZone;
 #endif
 };
