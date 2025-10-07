@@ -6,7 +6,6 @@
 #include <shv/chainpack/utils.h>
 #include <algorithm>
 #include <cstring>
-#include <regex>
 #include <sstream>
 
 #ifndef _MSC_VER
