@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Qt 5.15.2 / Ubuntu 22.04
+          - name: Qt 5.15.2 / Ubuntu
             os: ubuntu-22.04
             qt_version: 5.15.2
             qt_arch: gcc_64
@@ -31,7 +31,7 @@ jobs:
             modules: NONE
             asan: true
 
-          - name: Qt 6.10.0 / Ubuntu 22.04
+          - name: Qt 6.10.0 / Ubuntu
             os: ubuntu-22.04
             qt_arch: linux_gcc_64
             asan: true
