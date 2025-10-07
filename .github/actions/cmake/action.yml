@@ -97,8 +97,16 @@ runs:
     - name: Add Werror
       if: runner.os != 'Windows'
       run: |
-        echo CFLAGS="-Werror ${CFLAGS}" >> "$GITHUB_ENV"
-        echo CXXFLAGS="-Werror ${CXXFLAGS}" >> "$GITHUB_ENV"
+        CFLAGS="-Werror ${CFLAGS}"
+        CXXFLAGS="-Werror ${CXXFLAGS}"
+
+        # GitHub Actions' runner's GCC installation gives this warning from multiple headers.
+        # FIXME: Retry with GCC 15 once it's available
+        CFLAGS="-Wno-error=maybe-uninitialized ${CFLAGS}"
+        CXXFLAGS="-Wno-error=maybe-uninitialized ${CXXFLAGS}"
+
+        echo CFLAGS="${CFLAGS}" >> "$GITHUB_ENV"
+        echo CXXFLAGS="${CXXFLAGS}" >> "$GITHUB_ENV"
       shell: bash
 
     - name: Setup MSVC toolchain
