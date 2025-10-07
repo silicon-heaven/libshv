@@ -43,8 +43,6 @@ std::string intToHex(I n)
 class SHVCHAINPACK_DECL_EXPORT Utils
 {
 public:
-	static std::string removeJsonComments(const std::string &json_str);
-
 	std::string binaryDump(const std::string &bytes);
 	static std::string toHexElided(const std::string &bytes, size_t start_pos, size_t max_len = 0);
 	static std::string toHex(const std::string &bytes, size_t start_pos = 0, size_t length = std::numeric_limits<size_t>::max());
