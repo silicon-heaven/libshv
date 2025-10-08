@@ -1,8 +1,6 @@
 #include <shv/chainpack/utils.h>
 #include <shv/chainpack/rpcvalue.h>
 
-#include <regex>
-
 using namespace std;
 
 namespace shv::chainpack {
@@ -77,15 +75,6 @@ string hexDump(const std::string_view &bytes)
 	return utils::hexDump(bytes.data(), bytes.size());
 }
 
-}
-std::string Utils::removeJsonComments(const std::string &json_str)
-{
-	// http://blog.ostermiller.org/find-comment
-	const std::regex re_block_comment(R"(/\*(?:.|[\n])*?\*/)");
-	const std::regex re_line_comment("//.*[\\n]");
-	std::string result1 = std::regex_replace(json_str, re_block_comment, std::string());
-	std::string ret = std::regex_replace(result1, re_line_comment, std::string());
-	return ret;
 }
 
 std::string Utils::binaryDump(const std::string &bytes)
