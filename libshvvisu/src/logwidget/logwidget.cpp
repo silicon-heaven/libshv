@@ -94,8 +94,14 @@ public:
 
 	}
 	void setFilterString(const QString &filter_string) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 10, 0)
 		m_filterString = filter_string;
 		invalidateFilter();
+#else
+		beginFilterChange();
+		m_filterString = filter_string;
+		endFilterChange(QSortFilterProxyModel::Direction::Rows);
+#endif
 	}
 	bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const Q_DECL_OVERRIDE;
 private:

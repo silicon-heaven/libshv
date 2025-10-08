@@ -13,8 +13,14 @@ LogSortFilterProxyModel::LogSortFilterProxyModel(QObject *parent) :
 
 void LogSortFilterProxyModel::setChannelFilter(const std::optional<shv::visu::timeline::ChannelFilter> &filter)
 {
-	m_channelFilter = filter;
-	invalidateFilter();
+#if QT_VERSION < QT_VERSION_CHECK(6, 10, 0)
+		m_channelFilter = filter;
+		invalidateFilter();
+#else
+		beginFilterChange();
+		m_channelFilter = filter;
+		endFilterChange(QSortFilterProxyModel::Direction::Rows);
+#endif
 }
 
 void LogSortFilterProxyModel::setChannelFilterPathColumn(int column)
@@ -29,8 +35,14 @@ void LogSortFilterProxyModel::setValueColumn(int column)
 
 void LogSortFilterProxyModel::setFulltextFilter(const timeline::FullTextFilter &filter)
 {
-	m_fulltextFilter = filter;
-	invalidateFilter();
+#if QT_VERSION < QT_VERSION_CHECK(6, 10, 0)
+		m_fulltextFilter = filter;
+		invalidateFilter();
+#else
+		beginFilterChange();
+		m_fulltextFilter = filter;
+		endFilterChange(QSortFilterProxyModel::Direction::Rows);
+#endif
 }
 
 void LogSortFilterProxyModel::setFulltextFilterPathColumn(int column)

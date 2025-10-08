@@ -10,8 +10,14 @@ ChannelFilterSortFilterProxyModel::ChannelFilterSortFilterProxyModel(QObject *pa
 
 void ChannelFilterSortFilterProxyModel::setFilterString(const QString &text)
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 10, 0)
 	m_filterString = text;
 	invalidateFilter();
+#else
+	beginFilterChange();
+	m_filterString = text;
+	endFilterChange(QSortFilterProxyModel::Direction::Rows);
+#endif
 }
 
 bool ChannelFilterSortFilterProxyModel::isFilterAcceptedByParent(const QModelIndex &ix) const
