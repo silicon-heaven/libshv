@@ -1,30 +1,51 @@
 #include <shv/visu/widgets/timezonecombobox.h>
 
+#include <shv/core/log.h>
+
 #include <QKeyEvent>
 #include <QLineEdit>
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 #include <QTimeZone>
 #endif
+
+static constexpr int INVALID_COMBOBOX_INDEX = -1;
 
 namespace shv::visu::widgets {
 
 TimeZoneComboBox::TimeZoneComboBox(QWidget *parent)
 	: Super(parent)
 {
-#if SHVVISU_HAS_TIMEZONE
 	setEditable(true);
-	for(const auto &tzn : QTimeZone::availableTimeZoneIds())
-		addItem(tzn);
-	setCurrentIndex(findText(QTimeZone::systemTimeZoneId()));
-#endif
 }
 
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
+void TimeZoneComboBox::createTimeZones(const QSet<QByteArray> &available_timezone_ids)
+{
+	clear();
+
+	for(const auto &tzn : QTimeZone::availableTimeZoneIds()) {
+		if (available_timezone_ids.empty() || available_timezone_ids.contains(tzn)) {
+			addItem(tzn);
+		}
+	}
+	setCurrentIndex(findText(QTimeZone::systemTimeZoneId()));
+}
+
 QTimeZone TimeZoneComboBox::currentTimeZone() const
 {
-	if(currentIndex() < 0)
+	if(currentIndex() <= INVALID_COMBOBOX_INDEX) {
 		return QTimeZone();
+	}
 	return QTimeZone(currentText().toUtf8());
+}
+
+void TimeZoneComboBox::setCurrentTimeZone(const QTimeZone &time_zone)
+{
+	auto idx = findText(QString::fromUtf8(time_zone.id()));
+	if (idx <= INVALID_COMBOBOX_INDEX) {
+		shvWarning() << "Failed to selecet timezone:" << time_zone.id().toStdString() << "in combobox";
+	}
+	setCurrentIndex(idx);
 }
 
 void TimeZoneComboBox::keyPressEvent(QKeyEvent *event)

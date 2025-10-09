@@ -14,8 +14,10 @@ class SHVVISU_DECL_EXPORT TimeZoneComboBox : public QComboBox
 public:
 	TimeZoneComboBox(QWidget *parent = nullptr);
 
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
+	void createTimeZones(const QSet<QByteArray> &available_timezones_id);
 	QTimeZone currentTimeZone() const;
+	void setCurrentTimeZone(const QTimeZone &time_zone);
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
 private:

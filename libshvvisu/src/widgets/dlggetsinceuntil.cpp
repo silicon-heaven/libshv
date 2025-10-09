@@ -14,11 +14,12 @@ static constexpr int64_t HOUR = 60 * MIN;
 static constexpr int64_t DAY = 24 * HOUR;
 static constexpr int64_t WEEK = 7 * DAY;
 
-DlgGetSinceUntil::DlgGetSinceUntil(QWidget *parent)
+DlgGetSinceUntil::DlgGetSinceUntil(QWidget *parent, const QSet<QByteArray> &available_timezone_ids)
 	: Super(parent)
 	, ui(new Ui::DlgGetSinceUntil)
 {
 	ui->setupUi(this);
+	ui->cbxTimeZone->createTimeZones(available_timezone_ids);
 
 	ui->cbxRecentValuesDuration->addItem(tr("last 10 minutes"), QVariant::fromValue(-10 * MIN));
 	ui->cbxRecentValuesDuration->addItem(tr("last 30 minutes"), QVariant::fromValue(-30 * MIN));
@@ -46,6 +47,10 @@ DlgGetSinceUntil::~DlgGetSinceUntil()
 QTimeZone DlgGetSinceUntil::timeZone() const
 {
 	return ui->cbxTimeZone->currentTimeZone();
+}
+
+void DlgGetSinceUntil::setTimeZone(const QTimeZone &time_zone) {
+	ui->cbxTimeZone->setCurrentTimeZone(time_zone);
 }
 #endif
 
@@ -78,12 +83,7 @@ std::tuple<QDateTime, QDateTime> DlgGetSinceUntil::getSinceUntil() const
 	QDateTime until;
 
 	if (ui->tabWidget->currentWidget() == ui->tRecentValues) {
-		auto current_dt = QDateTime::currentDateTime();
-#if QT_CONFIG(timezone)
-		until = QDateTime(current_dt.date(), current_dt.time(), timeZone());
-#else
-		until = QDateTime(current_dt.date(), current_dt.time());
-#endif
+		until = QDateTime::currentDateTimeUtc();
 		since = until.addMSecs(recentValuesDuration());
 	}
 

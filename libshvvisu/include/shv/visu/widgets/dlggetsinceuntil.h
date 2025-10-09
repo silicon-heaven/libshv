@@ -19,12 +19,13 @@ class SHVVISU_DECL_EXPORT DlgGetSinceUntil : public QDialog
 	using Super = QDialog;
 
 public:
-	explicit DlgGetSinceUntil(QWidget *parent = nullptr);
+	explicit DlgGetSinceUntil(QWidget *parent, const QSet<QByteArray> &available_timezone_ids = {});
 	~DlgGetSinceUntil() override;
 
-	std::tuple<QDateTime, QDateTime> getSinceUntil() const;
 #if QT_CONFIG(timezone)
+	std::tuple<QDateTime, QDateTime> getSinceUntil() const;
 	QTimeZone timeZone() const;
+	void setTimeZone(const QTimeZone &time_zone);
 #endif
 
 private:
