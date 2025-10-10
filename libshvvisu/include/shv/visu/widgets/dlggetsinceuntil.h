@@ -2,6 +2,8 @@
 
 #include <shv/visu/shvvisuglobal.h>
 
+#include <QByteArray>
+#include <QSet>
 #include <QDialog>
 #include <QTimeZone>
 
@@ -22,8 +24,9 @@ public:
 	explicit DlgGetSinceUntil(QWidget *parent, const QSet<QByteArray> &available_timezone_ids = {});
 	~DlgGetSinceUntil() override;
 
-#if QT_CONFIG(timezone)
 	std::tuple<QDateTime, QDateTime> getSinceUntil() const;
+
+#if QT_CONFIG(timezone)
 	QTimeZone timeZone() const;
 	void setTimeZone(const QTimeZone &time_zone);
 #endif

@@ -8,8 +8,6 @@
 #include <QTimeZone>
 #endif
 
-static constexpr int INVALID_COMBOBOX_INDEX = -1;
-
 namespace shv::visu::widgets {
 
 TimeZoneComboBox::TimeZoneComboBox(QWidget *parent)
@@ -19,6 +17,8 @@ TimeZoneComboBox::TimeZoneComboBox(QWidget *parent)
 }
 
 #if QT_CONFIG(timezone)
+static constexpr int INVALID_COMBOBOX_INDEX = -1;
+
 void TimeZoneComboBox::createTimeZones(const QSet<QByteArray> &available_timezone_ids)
 {
 	clear();
