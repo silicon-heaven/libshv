@@ -261,6 +261,10 @@ void GraphWidget::mousePressEvent(QMouseEvent *event)
 			return;
 		}
 
+		if (event->pointingDevice()->type() == QInputDevice::DeviceType::TouchScreen) {
+			return;
+		}
+
 		if(posToChannel(pos) >= 0) {
 			if(event->modifiers() == Qt::ControlModifier) {
 				m_mouseOperation = MouseOperation::GraphDataAreaLeftCtrlPress;
