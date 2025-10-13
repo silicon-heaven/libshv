@@ -262,6 +262,7 @@ void GraphWidget::mousePressEvent(QMouseEvent *event)
 		}
 
 		if (event->pointingDevice()->type() == QInputDevice::DeviceType::TouchScreen) {
+			event->accept();
 			return;
 		}
 
