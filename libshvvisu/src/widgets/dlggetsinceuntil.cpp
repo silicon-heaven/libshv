@@ -22,6 +22,8 @@ DlgGetSinceUntil::DlgGetSinceUntil(QWidget *parent, const QSet<QByteArray> &avai
 
 	#if QT_CONFIG(timezone)
 	ui->cbxTimeZone->createTimeZones(available_timezone_ids);
+	#else
+	Q_UNUSED(available_timezone_ids);
 	#endif
 
 	ui->cbxRecentValuesDuration->addItem(tr("last 10 minutes"), QVariant::fromValue(-10 * MIN));

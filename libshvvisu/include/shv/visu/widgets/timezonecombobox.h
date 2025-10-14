@@ -15,7 +15,7 @@ public:
 	TimeZoneComboBox(QWidget *parent = nullptr);
 
 #if QT_CONFIG(timezone)
-	void createTimeZones(const QSet<QByteArray> &available_timezones_id);
+	void createTimeZones(const std::optional<QSet<QByteArray>> &available_timezone_ids = std::nullopt);
 	QTimeZone currentTimeZone() const;
 	void setCurrentTimeZone(const QTimeZone &time_zone);
 protected:
