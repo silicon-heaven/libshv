@@ -3,6 +3,7 @@
 #include <shv/visu/shvvisuglobal.h>
 
 #include <QComboBox>
+#include <optional>
 
 class QTimeZone;
 
