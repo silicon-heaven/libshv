@@ -45,6 +45,7 @@ set(LIBSHV_PROJECT_TRANSLATIONS
 	hu_HU
 	it_IT
 	nl_BE
+	nl_NL
 	pl_PL
 	sr_RS
 	de_DE
