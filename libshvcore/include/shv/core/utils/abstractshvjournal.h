@@ -4,8 +4,6 @@
 
 #include <string>
 #include <map>
-#include <set>
-#include <regex>
 
 namespace shv {
 namespace chainpack { class RpcValue; }
