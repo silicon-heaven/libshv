@@ -3,6 +3,8 @@
 #include <shv/visu/shvvisuglobal.h>
 
 #include <QComboBox>
+#include <QSet>
+#include <QByteArray>
 #include <optional>
 
 class QTimeZone;
