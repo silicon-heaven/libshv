@@ -3,7 +3,7 @@
 #include <shv/visu/shvvisuglobal.h>
 
 #include <QDialog>
-#include <QSet>
+#include <QList>
 #include <QByteArray>
 
 #if QT_CONFIG(timezone)
