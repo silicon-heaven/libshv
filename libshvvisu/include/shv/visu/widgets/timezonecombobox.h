@@ -5,10 +5,10 @@
 #include <QComboBox>
 #include <QSet>
 #include <QByteArray>
-#include <optional>
 
-class QTimeZone;
-
+#if QT_CONFIG(timezone)
+#include <QTimeZone>
+#endif
 namespace shv::visu::widgets {
 
 class SHVVISU_DECL_EXPORT TimeZoneComboBox : public QComboBox
@@ -18,7 +18,7 @@ public:
 	TimeZoneComboBox(QWidget *parent = nullptr);
 
 #if QT_CONFIG(timezone)
-	void createTimeZones(const std::optional<QSet<QByteArray>> &available_timezone_ids = std::nullopt);
+	void setTimeZones(const QList<QByteArray> &available_timezone_ids = QTimeZone::availableTimeZoneIds());
 	QTimeZone currentTimeZone() const;
 	void setCurrentTimeZone(const QTimeZone &time_zone);
 protected:

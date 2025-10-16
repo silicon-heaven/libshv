@@ -14,16 +14,18 @@ static constexpr int64_t HOUR = 60 * MIN;
 static constexpr int64_t DAY = 24 * HOUR;
 static constexpr int64_t WEEK = 7 * DAY;
 
-DlgGetSinceUntil::DlgGetSinceUntil(QWidget *parent, const std::optional<QSet<QByteArray>> &available_timezone_ids)
+#if QT_CONFIG(timezone)
+	DlgGetSinceUntil::DlgGetSinceUntil(QWidget *parent, const QList<QByteArray> &available_timezone_ids)
+#else
+	DlgGetSinceUntil::DlgGetSinceUntil(QWidget *parent)
+#endif
 	: Super(parent)
 	, ui(new Ui::DlgGetSinceUntil)
 {
 	ui->setupUi(this);
 
 	#if QT_CONFIG(timezone)
-	ui->cbxTimeZone->createTimeZones(available_timezone_ids);
-	#else
-	Q_UNUSED(available_timezone_ids);
+	ui->cbxTimeZone->setTimeZones(available_timezone_ids);
 	#endif
 
 	ui->cbxRecentValuesDuration->addItem(tr("last 10 minutes"), QVariant::fromValue(-10 * MIN));

@@ -15,22 +15,23 @@ TimeZoneComboBox::TimeZoneComboBox(QWidget *parent)
 {
 #if QT_CONFIG(timezone)
 	setEditable(true);
-	createTimeZones();
 #endif
 }
 
 #if QT_CONFIG(timezone)
 static constexpr int INVALID_COMBOBOX_INDEX = -1;
 
-void TimeZoneComboBox::createTimeZones(const std::optional<QSet<QByteArray>> &available_timezone_ids)
+void TimeZoneComboBox::setTimeZones(const QList<QByteArray> &available_timezone_ids)
 {
 	clear();
-
 	const QList<QByteArray> all_tz_ids = QTimeZone::availableTimeZoneIds();
 
-	for (const QByteArray &tzn : all_tz_ids) {
-		if (!available_timezone_ids.has_value() || available_timezone_ids->contains(tzn)) {
+	for (const QByteArray &tzn : available_timezone_ids) {
+		if (all_tz_ids.contains(tzn)) {
 			addItem(QString::fromUtf8(tzn));
+		}
+		else {
+			shvWarning() << "Cannot add timezone id to combobox:" << QString::fromUtf8(tzn).toStdString();
 		}
 	}
 
@@ -42,6 +43,7 @@ QTimeZone TimeZoneComboBox::currentTimeZone() const
 	if(currentIndex() <= INVALID_COMBOBOX_INDEX) {
 		return QTimeZone();
 	}
+
 	return QTimeZone(currentText().toUtf8());
 }
 
