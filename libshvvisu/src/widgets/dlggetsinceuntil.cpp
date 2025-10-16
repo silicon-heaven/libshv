@@ -14,7 +14,7 @@ static constexpr int64_t HOUR = 60 * MIN;
 static constexpr int64_t DAY = 24 * HOUR;
 static constexpr int64_t WEEK = 7 * DAY;
 
-DlgGetSinceUntil::DlgGetSinceUntil(QWidget *parent, const QSet<QByteArray> &available_timezone_ids)
+DlgGetSinceUntil::DlgGetSinceUntil(QWidget *parent, const std::optional<QSet<QByteArray>> &available_timezone_ids)
 	: Super(parent)
 	, ui(new Ui::DlgGetSinceUntil)
 {

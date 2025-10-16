@@ -2,10 +2,12 @@
 
 #include <shv/visu/shvvisuglobal.h>
 
-#include <QByteArray>
-#include <QSet>
 #include <QDialog>
 #include <QTimeZone>
+#include <QComboBox>
+#include <QSet>
+#include <QByteArray>
+#include <optional>
 
 class QDateTimeEdit;
 
@@ -21,7 +23,7 @@ class SHVVISU_DECL_EXPORT DlgGetSinceUntil : public QDialog
 	using Super = QDialog;
 
 public:
-	explicit DlgGetSinceUntil(QWidget *parent, const QSet<QByteArray> &available_timezone_ids = {});
+	explicit DlgGetSinceUntil(QWidget *parent, const std::optional<QSet<QByteArray>> &available_timezone_ids = std::nullopt);
 	~DlgGetSinceUntil() override;
 
 	std::tuple<QDateTime, QDateTime> getSinceUntil() const;
