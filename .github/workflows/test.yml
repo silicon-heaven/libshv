@@ -22,16 +22,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Qt 5.15.2 / Ubuntu 22.04
+          - name: Qt 5.15.2 / Ubuntu
             os: ubuntu-22.04
             qt_version: 5.15.2
             qt_arch: gcc_64
             use_qt6: OFF
-            # Don't actually need these, but GH actions' variable interpolation assumes empty string is falsy, so I can't set the default down below.
             modules: NONE
             asan: true
 
-          - name: Qt 6.10.0 / Ubuntu 22.04
+          - name: Qt 6.10.0 / Ubuntu
             os: ubuntu-22.04
             qt_arch: linux_gcc_64
             asan: true

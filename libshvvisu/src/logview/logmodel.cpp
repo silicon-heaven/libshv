@@ -18,7 +18,7 @@ LogModel::LogModel(QObject *parent)
 
 }
 
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 void LogModel::setTimeZone(const QTimeZone &tz)
 {
 	m_timeZone = tz;
@@ -82,7 +82,7 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
 				if(msec == 0)
 					return QVariant();
 				QDateTime dt = QDateTime::fromMSecsSinceEpoch(msec);
-#if SHVVISU_HAS_TIMEZONE
+#if QT_CONFIG(timezone)
 				dt = dt.toTimeZone(m_timeZone);
 #endif
 				return dt.toString(Qt::ISODateWithMs);
