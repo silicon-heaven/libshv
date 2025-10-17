@@ -24,7 +24,8 @@ static constexpr int INVALID_COMBOBOX_INDEX = -1;
 void TimeZoneComboBox::setTimeZones(const QList<QByteArray> &available_timezone_ids)
 {
 	clear();
-	const QList<QByteArray> all_tz_ids = QTimeZone::availableTimeZoneIds();
+	auto all_tz = QTimeZone::availableTimeZoneIds();
+	auto all_tz_ids = QSet<QByteArray>(all_tz.begin(), all_tz.end());
 
 	for (const QByteArray &tzn : available_timezone_ids) {
 		if (all_tz_ids.contains(tzn)) {
