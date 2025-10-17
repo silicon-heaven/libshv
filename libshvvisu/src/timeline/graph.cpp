@@ -994,10 +994,15 @@ std::optional<std::pair<Sample, int>> Graph::posToSample(const QPoint &pos) cons
 
 QVariantMap Graph::sampleValues(qsizetype channel_ix, const shv::visu::timeline::Sample &s) const
 {
-	QVariantMap ret;
 	const GraphChannel *ch = channelAt(channel_ix);
 	const GraphModel::ChannelInfo channel_info = model()->channelInfo(ch->modelIndex());
-	shvDebug() << channel_info.shvPath << channel_info.typeDescr.toRpcValue().toCpon();
+
+	return sampleValues(channel_info, s);
+}
+
+QVariantMap Graph::sampleValues(const GraphModel::ChannelInfo &channel_info, const shv::visu::timeline::Sample &s) const
+{
+	QVariantMap ret;
 
 	QDateTime dt = QDateTime::fromMSecsSinceEpoch(s.time);
 #if QT_CONFIG(timezone)
@@ -2142,13 +2147,25 @@ void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, co
 void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_rect, const QRect &dest_rect, const GraphChannel::Style &channel_style)
 {
 	const GraphChannel *ch = channelAt(channel_ix);
-	shvLogFuncFrame() << "channel:" << channel_ix << ch->shvPath();
 	auto model_ix = ch->modelIndex();
-	QRect effective_dest_rect = dest_rect.isEmpty()? ch->graphDataGridRect(): dest_rect;
-	GraphChannel::Style ch_style = channel_style.isEmpty()? ch->m_effectiveStyle: channel_style;
-	const auto &channel_info = model()->channelInfo(ch->modelIndex());
+	if (model_ix < 0 || model_ix >= model()->channelCount() || model()->count(model_ix) == 0) {
+		return;
+	}
+	const auto &channel_info = model()->channelInfo(model_ix);
+	const auto &samples = model()->samples(model_ix);
+
+	drawSamples(painter, ch, channel_info, samples, src_rect, dest_rect, channel_style);
+}
+
+void Graph::drawSamples(QPainter *painter, const shv::visu::timeline::GraphChannel *ch, const GraphModel::ChannelInfo &channel_info, const GraphModel::ChannelSamples &samples, const DataRect &src_rect, const QRect &dest_rect, const GraphChannel::Style &channel_style)
+{
+	if (samples.count() == 0) {
+		return;
+	}
+	shvLogFuncFrame() << "channel:" << ch->shvPath();
+	QRect effective_dest_rect = dest_rect.isEmpty() ? ch->graphDataGridRect() : dest_rect;
+	GraphChannel::Style ch_style = channel_style.isEmpty() ? ch->m_effectiveStyle : channel_style;
 	Graph::TypeId channel_meta_type_id = channel_info.typeDescr.type();
-	GraphModel *graph_model = model();
 
 	XRange xrange;
 	YRange yrange;
@@ -2189,11 +2206,11 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 	if(m_model->xAxisType() == GraphModel::XAxisType::Histogram) {
 		int bar_width = sample2point(Sample{1, 0}, channel_meta_type_id).x() - sample2point(Sample{0, 0}, channel_meta_type_id).x();
 
-		auto ix1_opt = graph_model->greaterOrEqualTimeIndex(model_ix, xrange.min);
+		auto ix1_opt = samples.greaterOrEqualTimeIndex(xrange.min);
 		auto ix1 = ix1_opt.value_or(0);
 
-		auto ix2_opt = graph_model->lessOrEqualTimeIndex(model_ix, xrange.max);
-		auto ix2 = ix2_opt.value_or(graph_model->count(model_ix) -1);
+		auto ix2_opt = samples.lessOrEqualTimeIndex(xrange.max);
+		auto ix2 = ix2_opt.value_or(samples.count() - 1);
 
 		int x_axis_y = sample2point(Sample{xrange.min, 0}, channel_meta_type_id).y();
 		std::optional<int> last_x;
@@ -2201,7 +2218,7 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 		painter->setPen(line_pen);
 		QBrush brush(ch_style.lineAreaFillColor());
 		for (auto i = ix1; i <= ix2; ++i) {
-			Sample sample = graph_model->sampleAt(model_ix, i);
+			const Sample &sample = samples.at(i);
 			auto current_point = sample2point(sample, channel_meta_type_id);
 			if (last_x && last_x.value() == current_point.x()) {
 				continue;
@@ -2214,15 +2231,15 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 		}
 	}
 	else if (channel_info.typeDescr.sampleType() == shv::core::utils::ShvTypeDescr::SampleType::Discrete) {
-		auto ix1_opt = graph_model->greaterOrEqualTimeIndex(model_ix, xrange.min);
+		auto ix1_opt = samples.greaterOrEqualTimeIndex(xrange.min);
 		auto ix1 = ix1_opt.value_or(0);
 
-		auto ix2_opt = graph_model->lessOrEqualTimeIndex(model_ix, xrange.max);
-		auto ix2 = ix2_opt.value_or(graph_model->count(model_ix) -1);
+		auto ix2_opt = samples.lessOrEqualTimeIndex(xrange.max);
+		auto ix2 = ix2_opt.value_or(samples.count() - 1);
 
 		std::optional<int> last_x;
 		for (auto i = ix1; i <= ix2; ++i) {
-			Sample sample = graph_model->sampleAt(model_ix, i);
+			Sample sample = samples.at(i);
 			auto current_point = sample2point(sample, channel_meta_type_id);
 			if (last_x && last_x.value() == current_point.x()) {
 				continue;
@@ -2254,7 +2271,7 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 
 			painter->drawPath(path);
 			if (!ch_style.isHideDiscreteValuesInfo()) {
-				auto v = sampleValues(channel_ix, sample).value(KEY_SAMPLE_PRETTY_VALUE);
+				auto v = sampleValues(channel_info, sample).value(KEY_SAMPLE_PRETTY_VALUE);
 				bool shadowed_sample = false;
 				if (last_x) {
 					shadowed_sample = (current_point.x() - last_x.value()) < 5;
@@ -2283,7 +2300,7 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 			sample_point_size++; // make sample point size odd to have it center-able
 		}
 
-		auto samples_cnt = graph_model->count(model_ix);
+		auto samples_cnt = samples.count();
 
 		static constexpr int NO_X = std::numeric_limits<int>::min();
 		struct SamePixelValue {
@@ -2302,14 +2319,14 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 		SamePixelValue prev_point;
 
 		qsizetype ix1 = 0;
-		auto ix1_opt = graph_model->lessTimeIndex(model_ix, xrange.min);
+		auto ix1_opt = samples.lessTimeIndex(xrange.min);
 		if (ix1_opt) {
-			prev_point = sample2point(graph_model->sampleAt(model_ix, ix1_opt.value()), channel_meta_type_id);
+			prev_point = sample2point(samples.at(ix1_opt.value()), channel_meta_type_id);
 			ix1 = ix1_opt.value() + 1;
 		}
 
-		auto ix2_opt = graph_model->greaterTimeIndex(model_ix, xrange.max);
-		auto ix2 = ix2_opt.value_or(graph_model->count(model_ix) -1);
+		auto ix2_opt = samples.greaterTimeIndex(xrange.max);
+		auto ix2 = ix2_opt.value_or(samples.count() - 1);
 		Q_ASSERT(ix2 < samples_cnt);
 
 		shvDebug() << "iterating samples from:" << ix1 << "to:" << ix2 << "cnt:" << (ix2 - ix1 + 1);
@@ -2329,7 +2346,7 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 				current_point = QPoint{effective_dest_rect.right() + 1, prev_point.y2};
 			}
 			else {
-				Sample s = graph_model->sampleAt(model_ix, i);
+				const Sample &s = samples.at(i);
 				current_point = sample2point(s, channel_meta_type_id);
 			}
 			if(current_point.x() == prev_point.x) {

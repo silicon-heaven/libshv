@@ -159,6 +159,7 @@ public:
 	QPoint dataToPos(qsizetype ch_ix, const Sample &s) const;
 
 	QString timeToStringTZ(timemsec_t time) const;
+	QVariantMap sampleValues(const GraphModel::ChannelInfo &channel_info, const shv::visu::timeline::Sample &s) const;
 	virtual QVariantMap sampleValues(qsizetype channel_ix, const Sample &s) const;
 	const QRect& rect() const;
 	const QRect& miniMapRect() const;
@@ -276,6 +277,11 @@ protected:
 			, const DataRect &src_rect = DataRect()
 			, const QRect &dest_rect = QRect()
 			, const GraphChannel::Style &channel_style = GraphChannel::Style());
+	void drawSamples(QPainter *painter, const GraphChannel *ch, const GraphModel::ChannelInfo &channel_info,
+					 const GraphModel::ChannelSamples &samples,
+					 const DataRect &src_rect = {},
+					 const QRect &dest_rect = {},
+					 const GraphChannel::Style &channel_style = {});
 	virtual void drawSamplesMinimap(QPainter *painter, int channel_ix
 			, const DataRect &src_rect = DataRect()
 			, const QRect &dest_rect = QRect()
