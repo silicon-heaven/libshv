@@ -96,6 +96,8 @@ protected:
 	MouseOperation m_mouseOperation = MouseOperation::None;
 	QPoint m_mouseOperationStartPos;
 	std::optional<qsizetype> m_resizeChannelIx;
+	std::pair<QPoint, QPoint> m_pinchOperationPos;
+	int m_pinchChannelIx = -1;
 
 	struct ChannelHeaderMoveContext
 	{

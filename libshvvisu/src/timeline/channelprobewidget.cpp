@@ -176,7 +176,7 @@ void ChannelProbeWidget::loadValues()
 			auto header = l[0].toList();
 			ui->twData->setColumnCount(static_cast<int>(header.count()));
 			QStringList labels;
-			std::ranges::for_each(header, [&labels](const auto &label) { labels << label.toString(); });
+			std::for_each(header.begin(), header.end(), [&labels](const auto &label) { labels << label.toString(); });
 			ui->twData->setHorizontalHeaderLabels(labels);
 
 			ui->twData->setRowCount(static_cast<int>(l.count() - 1));

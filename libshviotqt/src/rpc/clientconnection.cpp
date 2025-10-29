@@ -764,7 +764,7 @@ void ClientConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 			const auto& lst = workflows_result.asList();
 
 			if (m_oauth2Azure) {
-				auto oauth2_azure_workflow = std::ranges::find_if(lst, [] (const chainpack::RpcValue& workflow) {
+				auto oauth2_azure_workflow = std::find_if(lst.begin(), lst.end(), [] (const chainpack::RpcValue& workflow) {
 					return workflow.asMap().value("type").asString() == "oauth2-azure";
 				});
 

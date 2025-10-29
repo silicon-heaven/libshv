@@ -23,6 +23,7 @@
 #include <QMessageBox>
 #include <QToolTip>
 #include <algorithm>
+#include <QGestureEvent>
 
 #if QT_VERSION_MAJOR < 6
 #include <QDesktopWidget>
@@ -37,6 +38,7 @@ GraphWidget::GraphWidget(QWidget *parent)
 {
 	setMouseTracking(true);
 	setContextMenuPolicy(Qt::DefaultContextMenu);
+	grabGesture(Qt::PinchGesture);
 }
 
 void GraphWidget::setGraph(Graph *g)
@@ -137,6 +139,74 @@ bool GraphWidget::event(QEvent *ev)
 			}
 			QToolTip::hideText();
 			help_event->ignore();
+		}
+	}
+	if (ev->type() == QEvent::TouchBegin || ev->type() == QEvent::TouchUpdate) {
+		auto *touch_event = static_cast<QTouchEvent*>(ev);
+		if (touch_event->pointCount() == 2) {
+			m_pinchOperationPos = { touch_event->point(0).position().toPoint(), touch_event->point(1).position().toPoint() };
+		}
+	}
+	if (ev->type() == QEvent::Gesture) {
+		auto *gesture_event = static_cast<QGestureEvent*>(ev);
+		if (QGesture *gesture = gesture_event->gesture(Qt::PinchGesture)) {
+			auto *pinch_gesture = static_cast<QPinchGesture *>(gesture);
+			if (pinch_gesture->state() == Qt::GestureStarted) {
+				auto ch1_ix =graph()->posToChannel(m_pinchOperationPos.first);
+				auto ch2_ix = graph()->posToChannel(m_pinchOperationPos.second);
+				if (!ch1_ix || !ch2_ix || ch1_ix.value() != ch2_ix.value()) {
+					return true;
+				}
+				m_pinchChannelIx = static_cast<int>(ch1_ix.value());
+			}
+			if (m_pinchChannelIx != -1) {
+				if (pinch_gesture->state() == Qt::GestureFinished || pinch_gesture->state() == Qt::GestureCanceled) {
+					if (pinch_gesture->state() == Qt::GestureFinished) {
+						graph()->zoomToSelection(m_zoomType);
+					}
+					ev->accept();
+					graph()->setSelectionRect(QRect());
+					update();
+					m_pinchChannelIx = -1;
+				}
+				if (pinch_gesture->state() == Qt::GestureUpdated) {
+					auto pos1 = m_pinchOperationPos.first;
+					auto pos2 = m_pinchOperationPos.second;
+					auto *ch = graph()->channelAt(m_pinchChannelIx);
+					Q_ASSERT(ch);
+
+					auto ga = ch->graphAreaRect();
+
+					auto check_boundary = [&ga](QPoint &pos) {
+						if (pos.x() < ga.left()) {
+							pos.setX(ga.left());
+						}
+						else if (pos.x() > ga.right()) {
+							pos.setX(ga.right());
+						}
+
+						if (pos.y() < ga.top()) {
+							pos.setY(ga.top());
+						}
+						else if (pos.y() > ga.bottom()) {
+							pos.setY(ga.bottom());
+						}
+					};
+					check_boundary(pos1);
+					check_boundary(pos2);
+
+					QRect sr(pos1, pos2);
+					m_zoomType = zoomTypeFromRect(sr);
+					switch (m_zoomType) {
+					case Graph::ZoomType::Horizontal: sr = QRect(QPoint(sr.left(), ga.top()), QSize(sr.width(), ga.height())); break;
+					case Graph::ZoomType::Vertical: sr = QRect(QPoint(ga.left(), sr.top()), QSize(ga.width(), sr.height())); break;
+					case Graph::ZoomType::ZoomToRect: break;
+					}
+
+					graph()->setSelectionRect(sr);
+					update();
+				}
+			}
 		}
 	}
 	return Super::event(ev);
@@ -280,7 +350,12 @@ void GraphWidget::mousePressEvent(QMouseEvent *event)
 			}
 			else {
 				logMouseSelection() << "GraphAreaPress";
-				m_mouseOperation = MouseOperation::GraphDataAreaLeftPress;
+				if (event->pointingDevice()->type() == QInputDevice::DeviceType::TouchScreen) {
+					m_mouseOperation = MouseOperation::GraphDataAreaLeftCtrlPress;
+				}
+				else {
+					m_mouseOperation = MouseOperation::GraphDataAreaLeftPress;
+				}
 			}
 			m_mouseOperationStartPos = pos;
 			event->accept();
