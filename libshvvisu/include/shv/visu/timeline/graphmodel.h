@@ -35,22 +35,6 @@ public:
 	SHV_FIELD_IMPL(QString, x, X, AxisUnits)
 
 public:
-	class SHVVISU_DECL_EXPORT ChannelSamples : public QVector<Sample>
-	{
-		using Super = QVector<Sample>;
-
-	public:
-		ChannelSamples &operator=(const QVector<Sample> &s) { Super::operator=(s); return *this; }
-
-		Sample sampleValue(qsizetype ix) const;
-
-		std::optional<qsizetype> greaterOrEqualTimeIndex(timemsec_t time) const;
-		std::optional<qsizetype> greaterTimeIndex(timemsec_t time) const;
-		std::optional<qsizetype> lessOrEqualTimeIndex(timemsec_t time) const;
-		std::optional<qsizetype> lessTimeIndex(timemsec_t time) const;
-	};
-
-
 	explicit GraphModel(QObject *parent = nullptr);
 
 	XRange xRange() const;

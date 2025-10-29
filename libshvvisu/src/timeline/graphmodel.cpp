@@ -26,7 +26,7 @@ void GraphModel::clearSamples()
 	}
 }
 
-const GraphModel::ChannelSamples &GraphModel::samples(qsizetype channel) const
+const ChannelSamples &GraphModel::samples(qsizetype channel) const
 {
 	if (channel < 0 || channel >= channelCount()) {
 		SHV_EXCEPTION("Invalid channel");
@@ -402,90 +402,4 @@ QString GraphModel::guessTypeName(qsizetype channel_ix) const
 	}
 	return {};
 }
-
-Sample GraphModel::ChannelSamples::sampleValue(qsizetype ix) const
-{
-	if (ix < 0 || ix >= count()) {
-		return {};
-	}
-	return at(ix);
-}
-
-std::optional<qsizetype> GraphModel::ChannelSamples::greaterOrEqualTimeIndex(timemsec_t time) const
-{
-	auto it = std::upper_bound(cbegin(), cend(), time, [](const timemsec_t value, const Sample &s) {
-		return s.time > value;
-	});
-
-	if (it == cend()) {
-		if (last().time == time) {
-			return size() - 1;
-		}
-		return {};
-	}
-
-	if ((it != cbegin())) {
-		if (auto prev = std::prev(it); (prev->time == time) ) {
-			--it;
-		}
-	}
-
-	return std::distance(cbegin(), it);
-}
-
-std::optional<qsizetype> GraphModel::ChannelSamples::greaterTimeIndex(timemsec_t time) const
-{
-	auto it = std::upper_bound(cbegin(), cend(), time, [](const timemsec_t value, const Sample &s) {
-		return s.time > value;
-	});
-
-	if (it == cend()) {
-		return {};
-	}
-
-	return std::distance(cbegin(), it);
-}
-
-std::optional<qsizetype> GraphModel::ChannelSamples::lessOrEqualTimeIndex(timemsec_t time) const
-{
-	auto it = std::lower_bound(cbegin(), cend(), time, [](const Sample &s, const timemsec_t value) {
-		return s.time < value;
-	});
-
-	if (it == cend()) {
-		if (!isEmpty()) {
-			return size() - 1;
-		}
-	}
-	else {
-		if (it->time != time) {
-			if (it == cbegin()) {
-				return {};
-			}
-
-			it--;
-		}
-	}
-
-	return std::distance(cbegin(), it);
-}
-
-std::optional<qsizetype> GraphModel::ChannelSamples::lessTimeIndex(timemsec_t time) const
-{
-	auto ix = lessOrEqualTimeIndex(time);
-	if (!ix) {
-		return {};
-	}
-
-	Sample s = sampleValue(ix.value());
-	if (s.time == time) {
-		if (auto ret = ix.value() - 1;  ret >= 0) {
-			return ret;
-		}
-
-		return {};
-	}
-	return ix;
-}
-
 }
