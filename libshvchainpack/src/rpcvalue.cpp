@@ -833,11 +833,11 @@ std::string RpcValue::toChainPack() const
 	return out.str();
 }
 
-RpcValue RpcValue::fromChainPack(const std::string &str, std::string *err)
+RpcValue RpcValue::fromChainPack(const std::string &str, std::string *err, const std::function<void(std::streamoff)>& progress_callback)
 {
 	RpcValue ret;
 	std::istringstream in(str);
-	ChainPackReader rd(in);
+	ChainPackReader rd(in, progress_callback);
 	if(err) {
 		err->clear();
 		try {
