@@ -833,10 +833,9 @@ std::string RpcValue::toChainPack() const
 	return out.str();
 }
 
-RpcValue RpcValue::fromChainPack(const std::string &str, std::string *err, const std::function<void(std::streamoff)>& progress_callback)
+RpcValue RpcValue::fromChainPack(std::istream &in, std::string *err, const std::function<void(std::streamoff)>& progress_callback)
 {
 	RpcValue ret;
-	std::istringstream in(str);
 	ChainPackReader rd(in, progress_callback);
 	if(err) {
 		err->clear();
@@ -854,6 +853,12 @@ RpcValue RpcValue::fromChainPack(const std::string &str, std::string *err, const
 		rd >> ret;
 	}
 	return ret;
+}
+
+RpcValue RpcValue::fromChainPack(const std::string &str, std::string *err, const std::function<void(std::streamoff)>& progress_callback)
+{
+	auto in = std::istringstream(str);
+	return fromChainPack(in, err, progress_callback);
 }
 
 const char *RpcValue::typeToName(RpcValue::Type t)
