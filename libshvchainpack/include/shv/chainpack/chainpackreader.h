@@ -2,13 +2,15 @@
 
 #include <shv/chainpack/abstractstreamreader.h>
 
+#include <functional>
+
 namespace shv::chainpack {
 
 class SHVCHAINPACK_DECL_EXPORT ChainPackReader : public AbstractStreamReader
 {
 	using Super = AbstractStreamReader;
 public:
-	ChainPackReader(std::istream &in);
+	ChainPackReader(std::istream &in, const std::function<void(int)>& progress_callback = nullptr);
 
 	ChainPackReader& operator >>(RpcValue &value);
 	ChainPackReader& operator >>(RpcValue::MetaData &meta_data);
@@ -32,5 +34,7 @@ private:
 	void parseIMap(RpcValue &val);
 
 	void throwParseException(const std::string &msg = {});
+
+	std::function<void(std::streamoff)> m_progressCallback;
 };
 } // namespace shv::chainpack

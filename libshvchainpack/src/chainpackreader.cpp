@@ -7,8 +7,9 @@
 
 namespace shv::chainpack {
 
-ChainPackReader::ChainPackReader(std::istream &in)
+ChainPackReader::ChainPackReader(std::istream &in, const std::function<void(int)>& progress_callback)
 	: Super(in)
+	, m_progressCallback(progress_callback)
 {
 }
 
@@ -98,6 +99,9 @@ void ChainPackReader::read(RpcValue &val)
 	read(md);
 
 	unpackNext();
+	if (m_progressCallback) {
+		m_progressCallback(m_in.tellg());
+	}
 
 	switch(m_inCtx.item.type) {
 	case CCPCP_ITEM_INVALID: {

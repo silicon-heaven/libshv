@@ -3,6 +3,8 @@
 #include <shv/chainpack/shvchainpackglobal.h>
 #include <shv/chainpack/metatypes.h>
 
+#include <functional>
+#include <ios>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -370,7 +372,7 @@ public:
 	static RpcValue fromCpon(const std::string & str, std::string *err = nullptr);
 
 	std::string toChainPack() const;
-	static RpcValue fromChainPack(const std::string & str, std::string *err = nullptr);
+	static RpcValue fromChainPack(const std::string & str, std::string *err = nullptr, const std::function<void(std::streamoff)>& progress_callback = nullptr);
 
 	bool operator== (const RpcValue &rhs) const;
 #ifdef RPCVALUE_COPY_AND_SWAP
