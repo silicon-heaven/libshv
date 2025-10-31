@@ -54,6 +54,7 @@ public:
 	const shv::core::utils::ShvTypeInfo &typeInfo() const;
 	void setTypeInfo(const shv::core::utils::ShvTypeInfo &type_info);
 
+	const ChannelSamples &samples(qsizetype channel) const;
 	virtual qsizetype count(qsizetype channel) const;
 	/// without bounds check
 	virtual Sample sampleAt(qsizetype channel, qsizetype ix) const;
@@ -84,7 +85,6 @@ public:
 protected:
 	QString guessTypeName(qsizetype channel_ix) const;
 protected:
-	using ChannelSamples = QVector<Sample>;
 	QVector<ChannelSamples> m_samples;
 	QVector<ChannelInfo> m_channelsInfo;
 	XRange m_begginAppendXRange;

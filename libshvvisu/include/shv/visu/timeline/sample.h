@@ -2,9 +2,11 @@
 
 #include <shv/visu/shvvisuglobal.h>
 
+#include <QList>
 #include <QVariant>
 
 #include <limits>
+#include <optional>
 
 namespace shv::visu::timeline {
 
@@ -12,16 +14,31 @@ using timemsec_t = int64_t;
 
 struct SHVVISU_DECL_EXPORT Sample
 {
-
 	timemsec_t time = 0;
 	QVariant value;
-	bool isRepeated;
+	bool isRepeated = false;
 
 	Sample();
 	Sample(timemsec_t t, const QVariant &v, bool is_repeated = false);
 	Sample(timemsec_t t, QVariant &&v, bool is_repeated = false);
 
+	bool operator==(const Sample &other) const;
 	bool isValid() const;
+};
+
+class SHVVISU_DECL_EXPORT ChannelSamples : public QList<Sample>
+{
+	using Super = QList<Sample>;
+
+public:
+	ChannelSamples &operator=(const QList<Sample> &s) { Super::operator=(s); return *this; }
+
+	Sample sampleValue(qsizetype ix) const;
+
+	std::optional<qsizetype> greaterOrEqualTimeIndex(timemsec_t time) const;
+	std::optional<qsizetype> greaterTimeIndex(timemsec_t time) const;
+	std::optional<qsizetype> lessOrEqualTimeIndex(timemsec_t time) const;
+	std::optional<qsizetype> lessTimeIndex(timemsec_t time) const;
 };
 
 template<typename T>
