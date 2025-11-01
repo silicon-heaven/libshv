@@ -71,6 +71,8 @@ protected:
 	int moveChannelTargetIndex(const QPoint &mouse_pos) const;
 
 	static Graph::ZoomType zoomTypeFromRect(const QRect &rect);
+	void updateOnPinch(std::pair<int, int> new_pos);
+
 protected:
 	Graph *m_graph = nullptr;
 	QSize m_graphPreferredSize;
@@ -95,6 +97,9 @@ protected:
 	MouseOperation m_mouseOperation = MouseOperation::None;
 	QPoint m_mouseOperationStartPos;
 	std::optional<qsizetype> m_resizeChannelIx;
+
+	XRange m_pinchZoom;
+	std::pair<int, int> m_pinchOperationStart;
 
 	struct ChannelHeaderMoveContext
 	{
