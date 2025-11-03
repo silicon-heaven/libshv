@@ -1406,26 +1406,6 @@ RpcDecimal::RpcDecimal(int dec_places)
 {
 }
 
-RpcDecimal::RpcDecimal(double d)
-{
-	if (d == 0.0) {
-		m_num.mantissa = 0;
-		m_num.exponent = 0;
-		return;
-	}
-
-	int exp = 0;
-	// convert fractional part to integer mantissa
-	while (std::floor(d) != d && exp > -18) {
-		d *= 10.0;
-		--exp;
-	}
-
-	m_num.mantissa = static_cast<int64_t>(std::round(d));
-	m_num.exponent = exp;
-	*this = normalize(*this);
-}
-
 int64_t RpcDecimal::mantissa() const
 {
 	return m_num.mantissa;
