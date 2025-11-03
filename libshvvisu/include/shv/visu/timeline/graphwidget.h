@@ -32,6 +32,7 @@ public:
 
 	void makeLayout(const QSize &preferred_size);
 	void makeLayout();
+	void setProbesEnabled(bool b);
 
 	Q_SIGNAL void graphChannelDoubleClicked(const QPoint &mouse_pos);
 protected:
@@ -105,6 +106,7 @@ protected:
 		int draggedChannel;
 	};
 	ChannelHeaderMoveContext *m_channelHeaderMoveContext = nullptr;
+	bool m_probesEnabled = true;
 private:
 	Graph::ZoomType m_zoomType = Graph::ZoomType::ZoomToRect;
 };
