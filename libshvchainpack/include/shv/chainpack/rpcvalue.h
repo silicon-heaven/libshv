@@ -155,7 +155,6 @@ public:
 	RpcDecimal();
 	RpcDecimal(int64_t mantissa, int exponent);
 	RpcDecimal(int dec_places);
-	explicit RpcDecimal(double d);
 
 	[[deprecated]] int64_t mantisa() const { return mantissa(); }
 	int64_t mantissa() const;
