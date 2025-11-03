@@ -72,7 +72,7 @@ protected:
 	int moveChannelTargetIndex(const QPoint &mouse_pos) const;
 
 	static Graph::ZoomType zoomTypeFromRect(const QRect &rect);
-	void updateOnPinch(std::pair<int, int> new_pos);
+	void updateXZoomOnPinch(std::pair<int, int> new_pos);
 
 protected:
 	Graph *m_graph = nullptr;

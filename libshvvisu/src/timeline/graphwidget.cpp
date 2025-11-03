@@ -146,7 +146,7 @@ bool GraphWidget::event(QEvent *ev)
 			if (touch_event->pointCount() == 2) {
 				std::pair<int, int> new_pos{ touch_event->point(0).position().x(), touch_event->point(1).position().x() };
 				if (m_pinchOperationStart.first && m_pinchOperationStart.second) {
-					updateOnPinch(new_pos);
+					updateXZoomOnPinch(new_pos);
 				}
 				else { // pinch start
 					auto ch1_ix =graph()->posToChannel(touch_event->point(0).position().toPoint());
@@ -180,7 +180,7 @@ bool GraphWidget::event(QEvent *ev)
 	return Super::event(ev);
 }
 
-void GraphWidget::updateOnPinch(std::pair<int, int> new_pos)
+void GraphWidget::updateXZoomOnPinch(std::pair<int, int> new_pos)
 {
 	auto pos1 = new_pos.first;
 	auto pos2 = new_pos.second;
