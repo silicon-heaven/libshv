@@ -17,6 +17,7 @@
 #include <ctime>
 #include <chrono>
 #include <utility>
+#include <optional>
 
 #ifdef DEBUG_RPCVAL
 #define logDebugRpcVal nWarning
@@ -1405,6 +1406,26 @@ RpcDecimal::RpcDecimal(int dec_places)
 {
 }
 
+RpcDecimal::RpcDecimal(double d)
+{
+	if (d == 0.0) {
+		m_num.mantissa = 0;
+		m_num.exponent = 0;
+		return;
+	}
+
+	int exp = 0;
+	// convert fractional part to integer mantissa
+	while (std::floor(d) != d && exp > -18) {
+		d *= 10.0;
+		--exp;
+	}
+
+	m_num.mantissa = static_cast<int64_t>(std::round(d));
+	m_num.exponent = exp;
+	*this = normalize(*this);
+}
+
 int64_t RpcDecimal::mantissa() const
 {
 	return m_num.mantissa;
@@ -1448,6 +1469,106 @@ std::string RpcDecimal::toString() const
 {
 	std::string ret = RpcValue(*this).toCpon();
 	return ret;
+}
+
+RpcDecimal RpcDecimal::normalize(const RpcDecimal &d)
+{
+	int64_t m = d.mantissa();
+	int e = d.exponent();
+
+	while (m != 0 && (m % 10 == 0)) {
+		m /= 10;
+		++e;
+	}
+	return RpcDecimal(m, e);
+}
+
+std::optional<int64_t> pow10(int n)
+{
+	int64_t r = 1;
+	for (int i = 0; i < n; ++i) {
+		if (r > std::numeric_limits<int64_t>::max() / 10) {
+			return -1; // overflow
+		}
+		r *= 10;
+	}
+	return r;
+}
+
+bool RpcDecimal::operator==(const RpcDecimal &other) const
+{
+	RpcDecimal a = RpcDecimal::normalize(*this);
+	RpcDecimal b = RpcDecimal::normalize(other);
+
+	if (a.exponent() == b.exponent()) {
+		return a.mantissa() == b.mantissa();
+	}
+
+	if (a.exponent() > b.exponent()) {
+		int diff = a.exponent() - b.exponent();
+		std::optional<int64_t> p = pow10(diff);
+
+		if (!p.has_value()) { // fallback on overflow
+			return a.toDouble() == b.toDouble();
+		}
+		return a.mantissa() == b.mantissa() * p.value();
+	}
+
+	int diff = b.exponent() - a.exponent();
+	std::optional<int64_t> p = pow10(diff);
+
+	if (!p.has_value()) {
+		return a.toDouble() == b.toDouble();
+	}
+
+	return a.mantissa() * p.value() == b.mantissa();
+}
+
+bool RpcDecimal::operator!=(const RpcDecimal &other) const
+{
+	return !(*this == other);
+}
+
+bool RpcDecimal::operator<(const RpcDecimal &other) const
+{
+	RpcDecimal a = RpcDecimal::normalize(*this);
+	RpcDecimal b = RpcDecimal::normalize(other);
+
+	if (a.exponent() == b.exponent())
+		return a.mantissa() < b.mantissa();
+
+	if (a.exponent() > b.exponent()) {
+		int diff = a.exponent() - b.exponent();
+		std::optional<int64_t> p = pow10(diff);
+		if (!p.has_value()) {
+			return a.toDouble() < b.toDouble();
+		}
+		return a.mantissa() < b.mantissa() * p.value();
+	}
+
+	int diff = b.exponent() - a.exponent();
+	std::optional<int64_t> p = pow10(diff);
+
+	if (!p.has_value()) {
+		return a.toDouble() < b.toDouble();
+	}
+
+	return a.mantissa() * p.value() < b.mantissa();
+}
+
+bool RpcDecimal::operator>(const RpcDecimal &other) const
+{
+	return other < *this;
+}
+
+bool RpcDecimal::operator<=(const RpcDecimal &other) const
+{
+	return !(*this > other);
+}
+
+bool RpcDecimal::operator>=(const RpcDecimal &other) const
+{
+	return !(*this < other);
 }
 
 RpcValue::String RpcValue::blobToString(const RpcValue::Blob &s, bool *check_utf8)

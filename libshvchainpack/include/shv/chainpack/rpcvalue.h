@@ -155,6 +155,7 @@ public:
 	RpcDecimal();
 	RpcDecimal(int64_t mantissa, int exponent);
 	RpcDecimal(int dec_places);
+	explicit RpcDecimal(double d);
 
 	[[deprecated]] int64_t mantisa() const { return mantissa(); }
 	int64_t mantissa() const;
@@ -164,7 +165,15 @@ public:
 	void setDouble(double d);
 	double toDouble() const;
 	std::string toString() const;
-	bool operator==(const RpcDecimal&) const = default;
+
+	static RpcDecimal normalize(const RpcDecimal &d);
+
+	bool operator==(const RpcDecimal &other) const;
+	bool operator!=(const RpcDecimal &other) const;
+	bool operator<(const RpcDecimal &other) const;
+	bool operator>(const RpcDecimal &other) const;
+	bool operator<=(const RpcDecimal &other) const;
+	bool operator>=(const RpcDecimal &other) const;
 };
 
 class RpcMap;
