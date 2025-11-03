@@ -102,6 +102,16 @@ void GraphWidget::makeLayout()
 	makeLayout(m_graphPreferredSize);
 }
 
+void GraphWidget::setProbesEnabled(bool b)
+{
+	m_probesEnabled = b;
+	if (!m_probesEnabled) {
+		for (ChannelProbeWidget *pw : findChildren<ChannelProbeWidget*>(QString{}, Qt::FindDirectChildrenOnly)) {
+			pw->close();
+		}
+	}
+}
+
 bool GraphWidget::event(QEvent *ev)
 {
 	if(Graph *gr = graph()) {
@@ -326,9 +336,11 @@ void GraphWidget::mouseReleaseEvent(QMouseEvent *event)
 			if(event->modifiers() == Qt::ControlModifier) {
 				auto channel_ix = posToChannel(event->pos());
 				if(channel_ix) {
-					removeProbes(channel_ix.value());
-					timemsec_t time = m_graph->posToTime(event->pos().x());
-					createProbe(channel_ix.value(), time);
+					if (m_probesEnabled) {
+						removeProbes(channel_ix.value());
+						timemsec_t time = m_graph->posToTime(event->pos().x());
+						createProbe(channel_ix.value(), time);
+					}
 					event->accept();
 					return;
 				}
@@ -337,8 +349,10 @@ void GraphWidget::mouseReleaseEvent(QMouseEvent *event)
 		else if(old_mouse_op == MouseOperation::GraphDataAreaLeftCtrlShiftPress) {
 			auto channel_ix = posToChannel(event->pos());
 			if(channel_ix) {
-				timemsec_t time = m_graph->posToTime(event->pos().x());
-				createProbe(channel_ix.value(), time);
+				if (m_probesEnabled) {
+					timemsec_t time = m_graph->posToTime(event->pos().x());
+					createProbe(channel_ix.value(), time);
+				}
 				event->accept();
 				return;
 			}
@@ -851,15 +865,17 @@ void GraphWidget::showChannelContextMenu(qsizetype channel_ix, const QPoint &mou
 		});
 	}
 
-	menu.addAction(tr("Set probe (Ctrl + Left mouse)"), this, [this, channel_ix, mouse_pos]() {
-		removeProbes(channel_ix);
-		timemsec_t time = m_graph->posToTime(mouse_pos.x());
-		createProbe(channel_ix, time);
-	});
-	menu.addAction(tr("Add probe (Ctrl + Shift + Left mouse)"), this, [this, channel_ix, mouse_pos]() {
+	if (m_probesEnabled) {
+		menu.addAction(tr("Set probe (Ctrl + Left mouse)"), this, [this, channel_ix, mouse_pos]() {
+			removeProbes(channel_ix);
 			timemsec_t time = m_graph->posToTime(mouse_pos.x());
 			createProbe(channel_ix, time);
 		});
+		menu.addAction(tr("Add probe (Ctrl + Shift + Left mouse)"), this, [this, channel_ix, mouse_pos]() {
+			timemsec_t time = m_graph->posToTime(mouse_pos.x());
+			createProbe(channel_ix, time);
+		});
+	}
 
 	menu.addAction(tr("Previous zoom (Middle mouse)"), this, [this]() {
 		m_graph->zoomToPreviousZoom();
