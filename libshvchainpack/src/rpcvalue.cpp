@@ -1497,13 +1497,13 @@ RpcDecimal RpcDecimal::normalize(const RpcDecimal &d)
 	return RpcDecimal(m, e);
 }
 
-bool RpcDecimal::operator==(const RpcDecimal& other) const
+std::strong_ordering RpcDecimal::operator<=>(const RpcDecimal& other) const
 {
 	RpcDecimal a = normalize(*this);
 	RpcDecimal b = normalize(other);
 
 	if (a.exponent() == b.exponent()) {
-		return a.mantissa() == b.mantissa();
+		return a.mantissa() <=> b.mantissa();
 	}
 
 	int diff = a.exponent() - b.exponent();
@@ -1513,69 +1513,31 @@ bool RpcDecimal::operator==(const RpcDecimal& other) const
 		if (p) {
 			auto scaled = safeMul(b.mantissa(), p.value());
 			if (scaled) {
-				return a.mantissa() == scaled.value();
+				return a.mantissa() <=> scaled.value();
 			}
 		}
-	}
-	else {
+	} else {
 		auto p = pow10(-diff);
 		if (p) {
 			auto scaled = safeMul(a.mantissa(), p.value());
 			if (scaled) {
-				return scaled.value() == b.mantissa();
+				return scaled.value() <=> b.mantissa();
 			}
 		}
 	}
 
-	return a.toDouble() == b.toDouble();
-}
+	auto da = a.toDouble();
+	auto db = b.toDouble();
 
-bool RpcDecimal::operator<(const RpcDecimal& other) const {
-	RpcDecimal a = normalize(*this);
-	RpcDecimal b = normalize(other);
-
-	if (a.exponent() == b.exponent()) {
-		return a.mantissa() < b.mantissa();
+	if (da < db) {
+		return std::strong_ordering::less;
+	}
+	if (da > db) {
+		return std::strong_ordering::greater;
 	}
 
-	int diff = a.exponent() - b.exponent();
-
-	if (diff > 0) {
-		auto p = pow10(diff);
-		if (p) {
-			auto scaled = safeMul(b.mantissa(), p.value());
-			if (scaled) {
-				return a.mantissa() < scaled.value();
-			}
-		}
-	}
-	else {
-		auto p = pow10(-diff);
-		if (p) {
-			auto scaled = safeMul(a.mantissa(), p.value());
-			if (scaled) {
-				return scaled.value() < b.mantissa();
-			}
-		}
-	}
-
-	// Fallback to double comparison if safe multiplication failed
-	return a.toDouble() < b.toDouble();
-}
-
-bool RpcDecimal::operator>(const RpcDecimal &other) const
-{
-	return other < *this;
-}
-
-bool RpcDecimal::operator<=(const RpcDecimal &other) const
-{
-	return !(*this > other);
-}
-
-bool RpcDecimal::operator>=(const RpcDecimal &other) const
-{
-	return !(*this < other);
+	// We can't actually be sure if the RpcDecimals are equal here, because double does not have strong ordering.
+	return std::strong_ordering::equal;
 }
 
 RpcValue::String RpcValue::blobToString(const RpcValue::Blob &s, bool *check_utf8)
