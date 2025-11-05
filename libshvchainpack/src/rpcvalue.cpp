@@ -1516,9 +1516,11 @@ std::strong_ordering RpcDecimal::operator<=>(const RpcDecimal& other) const
 	auto& to_scale = a.exponent() > b.exponent() ? a : b;
 
 	auto exponent_diff = std::abs(a.exponent() - b.exponent());
-	if (auto scaled = pow10(exponent_diff).and_then([&to_scale] (const auto p) {return safeMul(to_scale.mantissa(), p);})) {
-		to_scale.m_num.mantissa = scaled.value();
-		return a.mantissa() <=> b.mantissa();
+	if (auto multiply_by = pow10(exponent_diff)) {
+		if (auto scaled = safeMul(to_scale.mantissa(), multiply_by.value())) {
+			to_scale.m_num.mantissa = scaled.value();
+			return a.mantissa() <=> b.mantissa();
+		}
 	}
 
 	auto da = a.toDouble();
