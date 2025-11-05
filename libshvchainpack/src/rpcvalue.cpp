@@ -78,17 +78,19 @@ std::optional<int64_t> safeMul(int64_t a, int64_t b) {
 #endif
 }
 
-std::optional<int64_t> pow10(int n) {
-	int64_t result = 1;
-	for (int i = 0; i < n; i++) {
-		if (auto r = safeMul(result, 10)) {
-			result = r.value();
-		}
-		else {
-			return std::nullopt;
-		}
+std::optional<int64_t> pow10(unsigned n) {
+	switch (n) {
+	case 0: return 1;
+	case 1: return 10;
+	case 2: return 100;
+	case 3: return 1000;
+	case 4: return 10000;
+	case 5: return 100000;
+	case 6: return 1000000;
+	case 7: return 10000000;
+	case 8: return 100000000;
+	default: return std::nullopt;
 	}
-	return result;
 }
 }
 
@@ -1510,22 +1512,13 @@ std::strong_ordering RpcDecimal::operator<=>(const RpcDecimal& other) const
 		return a.mantissa() <=> b.mantissa();
 	}
 
-	int diff = a.exponent() - b.exponent();
+	// We will scale the mantissa of the Decimal with the higher exponent.
+	auto& to_scale = a.exponent() > b.exponent() ? a : b;
 
-	if (diff > 0) { // a.exponent > b.exponent
-		auto p = pow10(diff);
-		if (p) {
-			if (auto scaled = safeMul(a.mantissa(), p.value())) {
-				return scaled.value() <=> b.mantissa();
-			}
-		}
-	} else { // a.exponent < b.exponent
-		auto p = pow10(-diff);
-		if (p) {
-			if (auto scaled = safeMul(b.mantissa(), p.value())) {
-				return a.mantissa() <=> scaled.value();
-			}
-		}
+	auto exponent_diff = std::abs(a.exponent() - b.exponent());
+	if (auto scaled = pow10(exponent_diff).and_then([&to_scale] (const auto p) {return safeMul(to_scale.mantissa(), p);})) {
+		to_scale.m_num.mantissa = scaled.value();
+		return a.mantissa() <=> b.mantissa();
 	}
 
 	auto da = a.toDouble();
