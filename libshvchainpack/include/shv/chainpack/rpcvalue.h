@@ -168,7 +168,7 @@ public:
 	static RpcDecimal normalize(const RpcDecimal &d);
 
 	std::strong_ordering operator<=>(const RpcDecimal& other) const;
-	bool operator==(const RpcDecimal& other) const = default;
+	bool operator==(const RpcDecimal& other) const;
 };
 
 class RpcMap;
