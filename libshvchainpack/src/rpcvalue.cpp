@@ -1487,6 +1487,10 @@ std::string RpcDecimal::toString() const
 
 RpcDecimal RpcDecimal::normalize(const RpcDecimal &d)
 {
+	if (d.mantissa() == 0) {
+		return RpcDecimal(0, 0);	// canonical zero
+	}
+
 	int64_t m = d.mantissa();
 	int e = d.exponent();
 
@@ -1508,20 +1512,18 @@ std::strong_ordering RpcDecimal::operator<=>(const RpcDecimal& other) const
 
 	int diff = a.exponent() - b.exponent();
 
-	if (diff > 0) {
+	if (diff > 0) { // a.exponent > b.exponent
 		auto p = pow10(diff);
 		if (p) {
-			auto scaled = safeMul(b.mantissa(), p.value());
-			if (scaled) {
-				return a.mantissa() <=> scaled.value();
+			if (auto scaled = safeMul(a.mantissa(), p.value())) {
+				return scaled.value() <=> b.mantissa();
 			}
 		}
-	} else {
+	} else { // a.exponent < b.exponent
 		auto p = pow10(-diff);
 		if (p) {
-			auto scaled = safeMul(a.mantissa(), p.value());
-			if (scaled) {
-				return scaled.value() <=> b.mantissa();
+			if (auto scaled = safeMul(b.mantissa(), p.value())) {
+				return a.mantissa() <=> scaled.value();
 			}
 		}
 	}
