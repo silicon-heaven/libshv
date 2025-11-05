@@ -1050,6 +1050,11 @@ void GraphWidget::createProbe(qsizetype channel_ix, timemsec_t time)
 	w->show();
 	QPoint pos(m_graph->timeToPos(time) - (w->width() / 2), -geometry().top() - w->height() - m_graph->u2px(0.2));
 	w->move(mapToGlobal(pos));
+        if (w->pos().y() < 0) {
+            auto p = w->pos();
+            p.setY(0);
+            w->move(p);
+        }
 	update();
 }
 
