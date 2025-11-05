@@ -78,17 +78,19 @@ std::optional<int64_t> safeMul(int64_t a, int64_t b) {
 #endif
 }
 
-std::optional<int64_t> pow10(int n) {
-	int64_t result = 1;
-	for (int i = 0; i < n; i++) {
-		if (auto r = safeMul(result, 10)) {
-			result = r.value();
-		}
-		else {
-			return std::nullopt;
-		}
+std::optional<int64_t> pow10(unsigned n) {
+	switch (n) {
+	case 0: return 1;
+	case 1: return 10;
+	case 2: return 100;
+	case 3: return 1000;
+	case 4: return 10000;
+	case 5: return 100000;
+	case 6: return 1000000;
+	case 7: return 10000000;
+	case 8: return 100000000;
+	default: return std::nullopt;
 	}
-	return result;
 }
 }
 
