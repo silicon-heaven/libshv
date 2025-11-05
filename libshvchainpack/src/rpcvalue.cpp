@@ -56,6 +56,40 @@ auto convert_to_int(const double d)
 
 	return static_cast<RpcValue::Int>(d);
 }
+
+std::optional<int64_t> safeMul(int64_t a, int64_t b) {
+#if defined(__GNUC__) || defined(__clang__)
+	int64_t result;
+	if (__builtin_mul_overflow(a, b, &result)) {
+		return std::nullopt;
+	}
+	return result;
+
+#elif defined(_MSC_VER)
+	__int64 high;
+	__int64 low = _mul128(a, b, &high);
+	if (high != 0 && high != -1) {
+		return std::nullopt;
+	}
+	return low;
+
+#else
+#error "compiler intrinsic for safeMul missing"
+#endif
+}
+
+std::optional<int64_t> pow10(int n) {
+	int64_t result = 1;
+	for (int i = 0; i < n; i++) {
+		if (auto r = safeMul(result, 10)) {
+			result = r.value();
+		}
+		else {
+			return std::nullopt;
+		}
+	}
+	return result;
+}
 }
 
 namespace {
@@ -1463,77 +1497,70 @@ RpcDecimal RpcDecimal::normalize(const RpcDecimal &d)
 	return RpcDecimal(m, e);
 }
 
-std::optional<int64_t> pow10(int n)
+bool RpcDecimal::operator==(const RpcDecimal& other) const
 {
-	int64_t r = 1;
-	for (int i = 0; i < n; ++i) {
-		if (r > std::numeric_limits<int64_t>::max() / 10) {
-			return -1; // overflow
-		}
-		r *= 10;
-	}
-	return r;
-}
-
-bool RpcDecimal::operator==(const RpcDecimal &other) const
-{
-	RpcDecimal a = RpcDecimal::normalize(*this);
-	RpcDecimal b = RpcDecimal::normalize(other);
+	RpcDecimal a = normalize(*this);
+	RpcDecimal b = normalize(other);
 
 	if (a.exponent() == b.exponent()) {
 		return a.mantissa() == b.mantissa();
 	}
 
-	if (a.exponent() > b.exponent()) {
-		int diff = a.exponent() - b.exponent();
-		std::optional<int64_t> p = pow10(diff);
+	int diff = a.exponent() - b.exponent();
 
-		if (!p.has_value()) { // fallback on overflow
-			return a.toDouble() == b.toDouble();
+	if (diff > 0) {
+		auto p = pow10(diff);
+		if (p) {
+			auto scaled = safeMul(b.mantissa(), p.value());
+			if (scaled) {
+				return a.mantissa() == scaled.value();
+			}
 		}
-		return a.mantissa() == b.mantissa() * p.value();
+	}
+	else {
+		auto p = pow10(-diff);
+		if (p) {
+			auto scaled = safeMul(a.mantissa(), p.value());
+			if (scaled) {
+				return scaled.value() == b.mantissa();
+			}
+		}
 	}
 
-	int diff = b.exponent() - a.exponent();
-	std::optional<int64_t> p = pow10(diff);
-
-	if (!p.has_value()) {
-		return a.toDouble() == b.toDouble();
-	}
-
-	return a.mantissa() * p.value() == b.mantissa();
+	return a.toDouble() == b.toDouble();
 }
 
-bool RpcDecimal::operator!=(const RpcDecimal &other) const
-{
-	return !(*this == other);
-}
+bool RpcDecimal::operator<(const RpcDecimal& other) const {
+	RpcDecimal a = normalize(*this);
+	RpcDecimal b = normalize(other);
 
-bool RpcDecimal::operator<(const RpcDecimal &other) const
-{
-	RpcDecimal a = RpcDecimal::normalize(*this);
-	RpcDecimal b = RpcDecimal::normalize(other);
-
-	if (a.exponent() == b.exponent())
+	if (a.exponent() == b.exponent()) {
 		return a.mantissa() < b.mantissa();
+	}
 
-	if (a.exponent() > b.exponent()) {
-		int diff = a.exponent() - b.exponent();
-		std::optional<int64_t> p = pow10(diff);
-		if (!p.has_value()) {
-			return a.toDouble() < b.toDouble();
+	int diff = a.exponent() - b.exponent();
+
+	if (diff > 0) {
+		auto p = pow10(diff);
+		if (p) {
+			auto scaled = safeMul(b.mantissa(), p.value());
+			if (scaled) {
+				return a.mantissa() < scaled.value();
+			}
 		}
-		return a.mantissa() < b.mantissa() * p.value();
+	}
+	else {
+		auto p = pow10(-diff);
+		if (p) {
+			auto scaled = safeMul(a.mantissa(), p.value());
+			if (scaled) {
+				return scaled.value() < b.mantissa();
+			}
+		}
 	}
 
-	int diff = b.exponent() - a.exponent();
-	std::optional<int64_t> p = pow10(diff);
-
-	if (!p.has_value()) {
-		return a.toDouble() < b.toDouble();
-	}
-
-	return a.mantissa() * p.value() < b.mantissa();
+	// Fallback to double comparison if safe multiplication failed
+	return a.toDouble() < b.toDouble();
 }
 
 bool RpcDecimal::operator>(const RpcDecimal &other) const

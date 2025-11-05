@@ -168,7 +168,6 @@ public:
 	static RpcDecimal normalize(const RpcDecimal &d);
 
 	bool operator==(const RpcDecimal &other) const;
-	bool operator!=(const RpcDecimal &other) const;
 	bool operator<(const RpcDecimal &other) const;
 	bool operator>(const RpcDecimal &other) const;
 	bool operator<=(const RpcDecimal &other) const;
