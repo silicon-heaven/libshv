@@ -1540,6 +1540,11 @@ std::strong_ordering RpcDecimal::operator<=>(const RpcDecimal& other) const
 	return std::strong_ordering::equal;
 }
 
+bool RpcDecimal::operator==(const RpcDecimal& other) const
+{
+	return operator<=>(other) == std::strong_ordering::equal;
+}
+
 RpcValue::String RpcValue::blobToString(const RpcValue::Blob &s, bool *check_utf8)
 {
 	(void)check_utf8;
