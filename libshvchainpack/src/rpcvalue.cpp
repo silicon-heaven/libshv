@@ -1512,22 +1512,13 @@ std::strong_ordering RpcDecimal::operator<=>(const RpcDecimal& other) const
 		return a.mantissa() <=> b.mantissa();
 	}
 
-	int diff = a.exponent() - b.exponent();
+	// We will scale the mantissa of the Decimal with the higher exponent.
+	auto& to_scale = a.exponent() > b.exponent() ? a : b;
 
-	if (diff > 0) { // a.exponent > b.exponent
-		auto p = pow10(diff);
-		if (p) {
-			if (auto scaled = safeMul(a.mantissa(), p.value())) {
-				return scaled.value() <=> b.mantissa();
-			}
-		}
-	} else { // a.exponent < b.exponent
-		auto p = pow10(-diff);
-		if (p) {
-			if (auto scaled = safeMul(b.mantissa(), p.value())) {
-				return a.mantissa() <=> scaled.value();
-			}
-		}
+	auto exponent_diff = std::abs(a.exponent() - b.exponent());
+	if (auto scaled = pow10(exponent_diff).and_then([&to_scale] (const auto p) {return safeMul(to_scale.mantissa(), p);})) {
+		to_scale.m_num.mantissa = scaled.value();
+		return a.mantissa() <=> b.mantissa();
 	}
 
 	auto da = a.toDouble();

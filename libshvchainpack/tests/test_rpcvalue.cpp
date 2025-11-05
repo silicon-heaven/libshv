@@ -42,6 +42,9 @@ doctest::String toString(const RpcValue& value) {
 doctest::String toString(const RpcValue::DateTime& value) {
 	return value.toIsoString().c_str();
 }
+doctest::String toString(const RpcDecimal& value) {
+	return value.toString().c_str();
+}
 // NOLINTEND(misc-use-internal-linkage)
 }
 
