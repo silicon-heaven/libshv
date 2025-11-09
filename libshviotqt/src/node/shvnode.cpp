@@ -266,14 +266,14 @@ chainpack::RpcValue ShvNode::processRpcRequest(const chainpack::RpcRequest &rq)
 	const chainpack::MetaMethod *mm = metaMethod(shv_path, method);
 	if (!mm) {
 		throw chainpack::RpcException(RpcResponse::Error::MethodNotFound,
-									  "Method: '" + method + "' on path '" + shvPath().asString() + '/' + rq.shvPath().toString() + "' doesn't exist",
+									  "Method: '" + method + "' on path '" + shv::core::utils::joinPath(shvPath().asString(), rq.shvPath().toString()) + "' doesn't exist",
 									  std::string(__FILE__) + ":" + std::to_string(__LINE__));
 	}
 	auto rq_grant = rq.accessGrant();
 	auto rq_access_level = rq_grant.accessLevel;
 	auto mm_access_level = mm->accessLevel();
 	if(mm_access_level > rq_access_level)
-		SHV_EXCEPTION(std::string("Call method: '") + method + "' on path '" + shvPath().asString() + '/' + rq.shvPath().toString()
+		SHV_EXCEPTION(std::string("Call method: '") + method + "' on path '" + shv::core::utils::joinPath(shvPath().asString(), rq.shvPath().toString())
 					  + "' permission denied, grant: " + rq_grant.toPrettyString()
 					  + " required: " + accessLevelToAccessString(mm_access_level));
 
