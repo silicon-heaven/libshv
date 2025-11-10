@@ -124,18 +124,18 @@ jobs:
     steps:
       - *checkout_step
       - name: Install Nix
-        uses: cachix/install-nix-action@v20
+        uses: cachix/install-nix-action@v31.8.3
         with:
           nix_path: nixpkgs=channel:nixos-unstable
       - name: Build
-        run: nix --experimental-features 'nix-command flakes' build -L .
+        run: nix --experimental-features 'nix-command flakes' build -L .?submodules=1#
       - name: Build Full
-        run: nix --experimental-features 'nix-command flakes' build -L .#full
+        run: nix --experimental-features 'nix-command flakes' build -L .?submodules=1#full
       - name: Build CLI
-        run: nix --experimental-features 'nix-command flakes' build -L .#cli
+        run: nix --experimental-features 'nix-command flakes' build -L .?submodules=1#cli
       - name: Build for clients
-        run: nix --experimental-features 'nix-command flakes' build -L .#forClients
+        run: nix --experimental-features 'nix-command flakes' build -L .?submodules=1#forClients
       - name: Flake check
-        run: nix --experimental-features 'nix-command flakes' flake check .
+        run: nix --experimental-features 'nix-command flakes' flake check .?submodules=1#
       - name: Format
         run: nix --experimental-features 'nix-command flakes' fmt . && git diff --exit-code
