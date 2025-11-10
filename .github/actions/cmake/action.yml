@@ -143,6 +143,7 @@ runs:
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
         -DLIBSHV_USE_QT6=${{ inputs.use_qt6 }} \
         -DLIBSHV_WITH_ALL=ON \
+        --debug-find-pkg=WrapRt \
         ${{ env.cmake_extra_args }} \
         ${{ inputs.additional_cmake_args }}
       shell: bash
