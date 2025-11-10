@@ -1006,16 +1006,20 @@ QVariantMap Graph::sampleValues(qsizetype channel_ix, const shv::visu::timeline:
 	ret[KEY_SAMPLE_TIME] = dt;
 	ret[KEY_SAMPLE_VALUE] = s.value;
 	auto rv = shv::coreqt::Utils::qVariantToRpcValue(s.value);
-	const auto &type_info = model()->typeInfo();
-	if (type_info.isValid()) {
-		shvDebug() << "1:" << rv.toCpon();
-		rv = type_info.applyTypeDescription(rv, channel_info.typeDescr);
-		shvDebug() << "2:" << rv.toCpon();
-		auto qv = shv::coreqt::Utils::rpcValueToQVariant(rv);
-		ret[KEY_SAMPLE_PRETTY_VALUE] = qv;
+	if (channel_info.typeDescr.type() == shv::core::utils::ShvTypeDescr::Type::Decimal) {
+		ret[KEY_SAMPLE_PRETTY_VALUE] = QLocale::system().toString(s.value.toDouble(), 'f', channel_info.typeDescr.decimalPlaces());
 	}
 	else {
-		ret[KEY_SAMPLE_PRETTY_VALUE] = s.value;
+		const auto &type_info = model()->typeInfo();
+		if (type_info.isValid()) {
+			shvDebug() << "1:" << rv.toCpon();
+			rv = type_info.applyTypeDescription(rv, channel_info.typeDescr);
+			shvDebug() << "2:" << rv.toCpon();
+			ret[KEY_SAMPLE_PRETTY_VALUE] = shv::coreqt::Utils::rpcValueToQVariant(rv);
+		}
+		else {
+			ret[KEY_SAMPLE_PRETTY_VALUE] = s.value;
+		}
 	}
 	return ret;
 }
