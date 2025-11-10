@@ -14,7 +14,7 @@ on:
 jobs:
   build-and-test:
     name: ${{ matrix.name }}
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
     container: ${{ matrix.container || null }}
     env:
       emsdk_cache_dir: "emsdk-cache"
@@ -24,7 +24,6 @@ jobs:
       matrix:
         include:
           - name: Qt 5.15.2 / Ubuntu
-            os: ubuntu-24.04
             container: gcc:15
             qt_version: 5.15.2
             qt_arch: gcc_64
@@ -33,19 +32,16 @@ jobs:
             asan: true
 
           - name: Qt 6.10.0 / Ubuntu
-            os: ubuntu-24.04
             container: gcc:15
             qt_arch: linux_gcc_64
             asan: true
 
           - name: Qt 6.10.0 / Android
-            os: &ubuntu ubuntu-24.04
             qt_target: android
             qt_arch: android_arm64_v8a
             additional_cmake_args: -DLIBSHV_WITH_LDAP=OFF
 
           - name: Qt 6.10.0 / WebAssembly
-            os: *ubuntu
             qt_target: wasm
             qt_arch: wasm_singlethread
             modules: qtwebsockets
@@ -123,7 +119,7 @@ jobs:
 
   nix:
     name: Qt 6.6.2 / NixOS
-    runs-on: *ubuntu
+    runs-on: ubuntu-latest
     steps:
       - *checkout_step
       - name: Install Nix
