@@ -8,12 +8,12 @@ runs:
       env:
         CC: gcc-12
         CXX: g++-12
-      run: cmake --build '${{github.workspace}}/build' --parallel "$(nproc)"
+      run: cmake --build "$GITHUB_WORKSPACE/build" --parallel "$(nproc)"
       shell: bash
 
     - name: Test
-      working-directory: '${{github.workspace}}/build'
       run: |
+        cd "$GITHUB_WORKSPACE/build"
         # https://github.com/DiligentGraphics/github-action/commit/d2f7990b16def1efa337e5cc2fc8fa22b6fae55d
         PATH="/c/mingw64/bin:$PATH"
         EXTRA_CTEST_ARGS=()

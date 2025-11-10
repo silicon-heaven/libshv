@@ -31,7 +31,7 @@ jobs:
           modules: qtserialport qtwebsockets
 
       - name: Refresh translation files
-        run: cmake --build '${{github.workspace}}/build' --target update_translations
+        run: cmake --build "$GITHUB_WORKSPACE/build" --target update_translations
 
       - name: Check changes
         run: git diff --exit-code

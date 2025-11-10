@@ -52,8 +52,8 @@ jobs:
             qt_arch: win64_mingw
             additional_cmake_args: &windows_args >-
               -DLIBSHV_WITH_LDAP=OFF
-              -DCMAKE_RUNTIME_OUTPUT_DIRECTORY='${{github.workspace}}/build/bin'
-              -DCMAKE_LIBRARY_OUTPUT_DIRECTORY='${{github.workspace}}/build/bin'
+              -DCMAKE_RUNTIME_OUTPUT_DIRECTORY="$GITHUB_WORKSPACE/build/bin"
+              -DCMAKE_LIBRARY_OUTPUT_DIRECTORY="$GITHUB_WORKSPACE/build/bin"
 
           - name: Qt 6.10.0 / Windows MSVC
             os: *windows
