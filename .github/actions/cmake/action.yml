@@ -29,17 +29,39 @@ inputs:
 runs:
   using: "composite"
   steps:
-    # Linux deps
-    - name: Install/cache clazy, ninja, openldap, doctest, and Qt's dependencies
+    - name: Install dependencies
       if: runner.os != 'Windows'
-      uses: awalsh128/cache-apt-pkgs-action@v1.6.0
-      with:
-        packages: ninja-build doctest-dev libgl1-mesa-dev libpulse-dev libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-util1 libxcb-xinerama0 libxkbcommon-x11-0 libldap-dev clazy
-        version: 1.0
+      run: |
+        PACKAGES=(
+          ccache
+          clazy
+          cmake
+          doctest-dev
+          libgl1-mesa-dev
+          libldap-dev
+          libpulse-dev
+          libxcb-icccm4
+          libxcb-image0
+          libxcb-keysyms1
+          libxcb-randr0
+          libxcb-render-util0
+          libxcb-shape0
+          libxcb-util1
+          libxcb-xinerama0
+          libxkbcommon-x11-0
+          ninja-build
+        )
+        # GCC Docker image does not have sudo, the ubuntu ones on the other hand need it.
+        RUN_AS_ROOT="$(which sudo || echo env)"
+        "$RUN_AS_ROOT" DEBIAN_FRONTEND=noninteractive apt update
+        "$RUN_AS_ROOT" DEBIAN_FRONTEND=noninteractive apt install --yes "${PACKAGES[@]}"
+      shell: bash
 
     - name: Install trompeloeil
       if: runner.os != 'Windows'
-      run: curl -o trompeloeil.deb http://de.archive.ubuntu.com/ubuntu/pool/universe/t/trompeloeil-cpp/libtrompeloeil-cpp-dev_47-1build1_amd64.deb && sudo dpkg -i trompeloeil.deb
+      run: |
+        curl -o trompeloeil.deb http://de.archive.ubuntu.com/ubuntu/pool/universe/t/trompeloeil-cpp/libtrompeloeil-cpp-dev_47-1build1_amd64.deb
+        "$(which sudo || echo env)" dpkg -i trompeloeil.deb
       shell: bash
 
     # Windows deps
