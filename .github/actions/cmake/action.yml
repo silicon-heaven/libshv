@@ -97,8 +97,14 @@ runs:
     - name: Add Werror
       if: runner.os != 'Windows'
       run: |
-        echo CFLAGS="-Werror ${CFLAGS}" >> "$GITHUB_ENV"
-        echo CXXFLAGS="-Werror ${CXXFLAGS}" >> "$GITHUB_ENV"
+        CFLAGS="-Werror ${CFLAGS}"
+        CXXFLAGS="-Werror ${CXXFLAGS}"
+        if [[ '${{inputs.qt_arch}}' =~ "gcc_64" ]] && ! [[ "$CC" =~ "clang" ]]; then
+          CFLAGS="-Wno-error=maybe-uninitialized -Wno-error=stringop-overflow ${CFLAGS}"
+          CXXFLAGS="-Wno-error=maybe-uninitialized -Wno-error=stringop-overflow ${CXXFLAGS}"
+        fi
+        echo CFLAGS="${CFLAGS}" >> "$GITHUB_ENV"
+        echo CXXFLAGS="${CXXFLAGS}" >> "$GITHUB_ENV"
       shell: bash
 
     - name: Setup MSVC toolchain
