@@ -14,7 +14,8 @@ on:
 jobs:
   build-and-test:
     name: ${{ matrix.name }}
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
+    container: ${{ matrix.container || null }}
     env:
       emsdk_cache_dir: "emsdk-cache"
       emscripten_version: 3.1.56
@@ -23,7 +24,7 @@ jobs:
       matrix:
         include:
           - name: Qt 5.15.2 / Ubuntu
-            os: ubuntu-22.04
+            container: gcc:15
             qt_version: 5.15.2
             qt_arch: gcc_64
             use_qt6: OFF
@@ -31,18 +32,16 @@ jobs:
             asan: true
 
           - name: Qt 6.10.0 / Ubuntu
-            os: ubuntu-22.04
+            container: gcc:15
             qt_arch: linux_gcc_64
             asan: true
 
           - name: Qt 6.10.0 / Android
-            os: &ubuntu ubuntu-24.04
             qt_target: android
             qt_arch: android_arm64_v8a
             additional_cmake_args: -DLIBSHV_WITH_LDAP=OFF
 
           - name: Qt 6.10.0 / WebAssembly
-            os: *ubuntu
             qt_target: wasm
             qt_arch: wasm_singlethread
             modules: qtwebsockets
@@ -52,8 +51,8 @@ jobs:
             qt_arch: win64_mingw
             additional_cmake_args: &windows_args >-
               -DLIBSHV_WITH_LDAP=OFF
-              -DCMAKE_RUNTIME_OUTPUT_DIRECTORY='${{github.workspace}}/build/bin'
-              -DCMAKE_LIBRARY_OUTPUT_DIRECTORY='${{github.workspace}}/build/bin'
+              -DCMAKE_RUNTIME_OUTPUT_DIRECTORY="$GITHUB_WORKSPACE/build/bin"
+              -DCMAKE_LIBRARY_OUTPUT_DIRECTORY="$GITHUB_WORKSPACE/build/bin"
 
           - name: Qt 6.10.0 / Windows MSVC
             os: *windows
@@ -120,7 +119,7 @@ jobs:
 
   nix:
     name: Qt 6.6.2 / NixOS
-    runs-on: *ubuntu
+    runs-on: ubuntu-latest
     steps:
       - *checkout_step
       - name: Install Nix

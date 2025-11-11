@@ -29,17 +29,39 @@ inputs:
 runs:
   using: "composite"
   steps:
-    # Linux deps
-    - name: Install/cache clazy, ninja, openldap, doctest, and Qt's dependencies
+    - name: Install dependencies
       if: runner.os != 'Windows'
-      uses: awalsh128/cache-apt-pkgs-action@v1.4.3
-      with:
-        packages: ninja-build doctest-dev libgl1-mesa-dev libpulse-dev libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-util1 libxcb-xinerama0 libxkbcommon-x11-0 libldap-dev clazy
-        version: 1.0
+      run: |
+        PACKAGES=(
+          ccache
+          clazy
+          cmake
+          doctest-dev
+          libgl1-mesa-dev
+          libldap-dev
+          libpulse-dev
+          libxcb-icccm4
+          libxcb-image0
+          libxcb-keysyms1
+          libxcb-randr0
+          libxcb-render-util0
+          libxcb-shape0
+          libxcb-util1
+          libxcb-xinerama0
+          libxkbcommon-x11-0
+          ninja-build
+        )
+        # GCC Docker image does not have sudo, the ubuntu ones on the other hand need it.
+        RUN_AS_ROOT="$(which sudo || echo env)"
+        "$RUN_AS_ROOT" DEBIAN_FRONTEND=noninteractive apt update
+        "$RUN_AS_ROOT" DEBIAN_FRONTEND=noninteractive apt install --yes "${PACKAGES[@]}"
+      shell: bash
 
     - name: Install trompeloeil
       if: runner.os != 'Windows'
-      run: curl -o trompeloeil.deb http://de.archive.ubuntu.com/ubuntu/pool/universe/t/trompeloeil-cpp/libtrompeloeil-cpp-dev_47-1build1_amd64.deb && sudo dpkg -i trompeloeil.deb
+      run: |
+        curl -o trompeloeil.deb http://de.archive.ubuntu.com/ubuntu/pool/universe/t/trompeloeil-cpp/libtrompeloeil-cpp-dev_47-1build1_amd64.deb
+        "$(which sudo || echo env)" dpkg -i trompeloeil.deb
       shell: bash
 
     # Windows deps
@@ -97,8 +119,14 @@ runs:
     - name: Add Werror
       if: runner.os != 'Windows'
       run: |
-        echo CFLAGS="-Werror ${CFLAGS}" >> "$GITHUB_ENV"
-        echo CXXFLAGS="-Werror ${CXXFLAGS}" >> "$GITHUB_ENV"
+        CFLAGS="-Werror ${CFLAGS}"
+        CXXFLAGS="-Werror ${CXXFLAGS}"
+        if [[ '${{inputs.qt_arch}}' =~ "gcc_64" ]] && ! [[ "$CC" =~ "clang" ]]; then
+          CFLAGS="-Wno-error=maybe-uninitialized -Wno-error=stringop-overflow ${CFLAGS}"
+          CXXFLAGS="-Wno-error=maybe-uninitialized -Wno-error=stringop-overflow ${CXXFLAGS}"
+        fi
+        echo CFLAGS="${CFLAGS}" >> "$GITHUB_ENV"
+        echo CXXFLAGS="${CXXFLAGS}" >> "$GITHUB_ENV"
       shell: bash
 
     - name: Setup MSVC toolchain
@@ -135,8 +163,8 @@ runs:
         CFLAGS="${CFLAGS}" \
         CXXFLAGS="${CXXFLAGS}" \
         "${CMAKE_BIN:-cmake}" \
-        -S '${{github.workspace}}' \
-        -B '${{github.workspace}}/build' \
+        -S "$GITHUB_WORKSPACE" \
+        -B "$GITHUB_WORKSPACE/build" \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_C_COMPILER_LAUNCHER=ccache \
         -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
