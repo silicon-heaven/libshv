@@ -342,7 +342,9 @@ void SerialPortSocket::close()
 	setState(QAbstractSocket::ClosingState);
 	Super::close();
 	shvInfo() << "Closing serial port:" << m_port->portName();
-	m_port->close();
+	if (m_port->isOpen()) {
+		m_port->close();
+	}
 	setState(QAbstractSocket::UnconnectedState);
 }
 
@@ -421,7 +423,9 @@ void SerialPortSocket::onParseDataException(const chainpack::ParseException &)
 void SerialPortSocket::clearWriteBuffer()
 {
 	Super::clearWriteBuffer();
-	m_port->clear();
+	if (m_port->isOpen()) {
+		m_port->clear();
+	}
 }
 
 }
