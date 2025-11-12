@@ -61,13 +61,13 @@ jobs:
 
     steps:
       - &checkout_step
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: true
 
       - name: Setup Java for Android
         if: matrix.qt_target == 'android'
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: '17'
