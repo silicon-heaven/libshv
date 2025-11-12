@@ -560,6 +560,7 @@ void Graph::setXRange(const XRange &r, bool keep_zoom)
 	sanityXRangeZoom();
 	makeXAxis();
 	clearMiniMapCache();
+	clearGraphCache();
 	emit presentationDirty(rect());
 }
 
@@ -585,6 +586,7 @@ void Graph::setXRangeZoom(const XRange &r)
 		}
 	}
 	m_state.xRangeZoom = new_r;
+	clearGraphCache();
 	makeXAxis();
 }
 
@@ -688,6 +690,11 @@ void Graph::sanityXRangeZoom()
 {
 	m_state.xRangeZoom.min = std::max(m_state.xRangeZoom.min, m_state.xRange.min);
 	m_state.xRangeZoom.max = std::min(m_state.xRangeZoom.max, m_state.xRange.max);
+}
+
+void Graph::clearGraphCache()
+{
+	m_graphCache.clear();
 }
 
 void Graph::clearMiniMapCache()
@@ -1135,6 +1142,7 @@ void Graph::makeLayout(const QRect &pref_rect)
 {
 	shvLogFuncFrame() << rstr(pref_rect);
 	clearMiniMapCache();
+	clearGraphCache();
 
 	QSize graph_size;
 	graph_size.setWidth(pref_rect.width());
@@ -1436,9 +1444,22 @@ void Graph::draw(QPainter *painter, const QRect &dirty_rect, const QRect &view_r
 {
 	drawBackground(painter, dirty_rect);
 	bool draw_cross_hair_time_marker = false;
+	if (m_graphCache.isEmpty()) {
+		for (int i : visibleChannels()) {
+			const GraphChannel *ch = channelAt(i);
+			QPixmap channel_pixmap(ch->m_layout.graphAreaRect.width(), ch->m_layout.graphAreaRect.height());
+			QPainter p(&channel_pixmap);
+			p.translate(-ch->m_layout.graphAreaRect.topLeft());
+			Graph::drawBackground(&p, i);
+			Graph::drawGrid(&p, i);
+			Graph::drawSamples(&p, i);
+			m_graphCache[i] = channel_pixmap;
+		}
+	}
 	for (int i : visibleChannels()) {
 		const GraphChannel *ch = channelAt(i);
 		if(dirty_rect.intersects(ch->graphAreaRect())) {
+			painter->drawPixmap(ch->m_layout.graphAreaRect.topLeft(), m_graphCache.value(i));
 			drawBackground(painter, i);
 			drawGrid(painter, i);
 			drawSamples(painter, i);
@@ -1610,12 +1631,19 @@ void Graph::drawVerticalHeader(QPainter *painter, int channel)
 
 void Graph::drawBackground(QPainter *painter, int channel)
 {
+	if (m_graphCache.contains(channel)) {
+		return;
+	}
 	const GraphChannel *ch = channelAt(channel);
 	painter->fillRect(ch->m_layout.graphAreaRect, ch->m_effectiveStyle.colorBackground());
 }
 
 void Graph::drawGrid(QPainter *painter, int channel)
 {
+	if (m_graphCache.contains(channel)) {
+		return;
+	}
+
 	const XAxis &x_axis = m_state.xAxis;
 	if(!x_axis.isValid()) {
 		// drawRectText(painter, ch->m_layout.graphAreaRect, "grid", m_style.font(), ch->m_effectiveStyle.colorGrid());
@@ -2145,6 +2173,9 @@ void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, co
 
 void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_rect, const QRect &dest_rect, const GraphChannel::Style &channel_style)
 {
+	if (m_graphCache.contains(channel_ix)) {
+		return;
+	}
 	const GraphChannel *ch = channelAt(channel_ix);
 	shvLogFuncFrame() << "channel:" << channel_ix << ch->shvPath();
 	auto model_ix = ch->modelIndex();

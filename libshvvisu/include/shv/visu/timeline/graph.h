@@ -250,6 +250,7 @@ public:
 protected:
 	void sanityXRangeZoom();
 
+	void clearGraphCache();
 	void clearMiniMapCache();
 
 	void drawRectText(QPainter *painter, const QRect &rect, const QString &text, const QFont &font, const QColor &color, const QColor &background = QColor(), int inset = 0);
@@ -340,6 +341,7 @@ protected:
 		QRect cornerCellRect;
 	} m_layout;
 
+	QMap<int, QPixmap> m_graphCache;
 	QPixmap m_miniMapCache;
 	QString m_settingsUserName = DEFAULT_USER_PROFILE;
 private:
