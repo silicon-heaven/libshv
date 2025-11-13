@@ -294,4 +294,20 @@ int RpcCall::start()
 	return rq_id;
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+QFuture<chainpack::RpcValue> RpcCall::intoFuture() &
+{
+	auto fut = QtFuture::connect(this, &RpcCall::maybeResult)
+		.then(this, [] (std::tuple<const shv::chainpack::RpcValue&, const shv::chainpack::RpcError&> resultOrError) {
+			const auto& [result, error] = resultOrError;
+			if (error.isValid()) {
+				throw shv::chainpack::RpcException{error.code(), error.message()};
+			}
+
+			return result;
+		});
+	this->start();
+	return fut;
+}
+#endif
 } // namespace shv
