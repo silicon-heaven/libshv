@@ -8,6 +8,9 @@
 #include <shv/chainpack/rpc.h>
 #include <shv/chainpack/rpcmessage.h>
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QFuture>
+#endif
 #include <QObject>
 #include <QPointer>
 
@@ -78,6 +81,10 @@ public:
 
 	std::string shvPath() const;
 	int start();
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	QFuture<chainpack::RpcValue> intoFuture() &;
+#endif
 
 	Q_SIGNAL void maybeResult(const ::shv::chainpack::RpcValue &result, const ::shv::chainpack::RpcError &error);
 	Q_SIGNAL void result(const ::shv::chainpack::RpcValue &result);
