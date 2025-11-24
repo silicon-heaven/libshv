@@ -102,15 +102,6 @@ std::string Utils::toHex(const std::string &bytes, size_t start_pos, size_t leng
 	return ret;
 }
 
-std::string Utils::toHex(const std::basic_string<uint8_t> &bytes)
-{
-	std::string ret;
-	for (unsigned char b : bytes) {
-		ret += utils::byteToHex(b);
-	}
-	return ret;
-}
-
 std::string Utils::toHexElided(const std::string &bytes, size_t start_pos, size_t max_len)
 {
 	std::string hex = toHex(bytes, start_pos, max_len + 1);

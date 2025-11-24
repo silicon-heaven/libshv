@@ -46,7 +46,6 @@ public:
 	std::string binaryDump(const std::string &bytes);
 	static std::string toHexElided(const std::string &bytes, size_t start_pos, size_t max_len = 0);
 	static std::string toHex(const std::string &bytes, size_t start_pos = 0, size_t length = std::numeric_limits<size_t>::max());
-	static std::string toHex(const std::basic_string<uint8_t> &bytes);
 	static char fromHex(char c);
 	static std::string fromHex(const std::string &bytes);
 

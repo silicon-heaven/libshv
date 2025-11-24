@@ -161,7 +161,7 @@ bool GraphWidget::event(QEvent *ev)
 			}
 			//different finger count means pinch end
 			if (m_pinchOperationStart.first && m_pinchOperationStart.second) {
-				m_pinchOperationStart = {};
+				m_pinchOperationStart = std::pair<int, int>{};
 				ev->accept();
 				m_mouseOperation = MouseOperation::None;
 				return true;
@@ -170,7 +170,7 @@ bool GraphWidget::event(QEvent *ev)
 	}
 	else if (ev->type() == QEvent::TouchCancel || ev->type() == QEvent::TouchEnd) {  // pinch end
 		if (m_pinchOperationStart.first && m_pinchOperationStart.second) {
-			m_pinchOperationStart = {};
+			m_pinchOperationStart = std::pair<int, int>{};
 			ev->accept();
 			m_mouseOperation = MouseOperation::None;
 			return true;

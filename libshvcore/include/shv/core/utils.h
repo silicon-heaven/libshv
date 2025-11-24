@@ -89,7 +89,6 @@ public:
 
 	std::string binaryDump(const std::string &bytes);
 	static std::string toHex(const std::string &bytes);
-	static std::string toHex(const std::basic_string<uint8_t> &bytes);
 	static std::string fromHex(const std::string &bytes);
 
 	static shv::chainpack::RpcValue foldMap(const shv::chainpack::RpcValue::Map &plain_map, char key_delimiter = '.');

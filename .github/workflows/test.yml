@@ -18,7 +18,7 @@ jobs:
     container: ${{ matrix.container || null }}
     env:
       emsdk_cache_dir: "emsdk-cache"
-      emscripten_version: 3.1.56
+      emscripten_version: 4.0.7
     strategy:
       fail-fast: false
       matrix:
