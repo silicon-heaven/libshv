@@ -76,18 +76,6 @@ std::string Utils::toHex(const std::string &bytes)
 	return ret;
 }
 
-std::string Utils::toHex(const std::basic_string<uint8_t> &bytes)
-{
-	std::string ret;
-	for (unsigned char b : bytes) {
-		char h = static_cast<char>(b / 16);
-		char l = b % 16;
-		ret += hexNibble(h);
-		ret += hexNibble(l);
-	}
-	return ret;
-}
-
 namespace {
 inline char unhex_char(char c)
 {
