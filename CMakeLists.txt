@@ -54,7 +54,7 @@ set(LIBSHV_PROJECT_TRANSLATIONS
 
 function(libshv_set_translations target langs)
 	foreach(lang ${langs})
-		set(TS_FILES ${TS_FILES} "${target}.${lang}.ts")
+		set(TS_FILES ${TS_FILES} "${target}_${lang}.ts")
 	endforeach()
 
 	if(LIBSHV_USE_QT6)
