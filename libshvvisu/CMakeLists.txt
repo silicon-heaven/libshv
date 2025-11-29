@@ -78,6 +78,9 @@ qt_add_library(libshvvisu
 libshv_set_translations(libshvvisu "${LIBSHV_PROJECT_TRANSLATIONS}")
 
 add_library(libshv::libshvvisu ALIAS libshvvisu)
+if(LIBSHV_USE_QT6)
+	qt_add_translations(libshvvisu SOURCE_TARGETS libshvvisu TS_FILE_BASE libshvvisu LUPDATE_OPTIONS -locations none)
+endif()
 
 target_link_libraries(libshvvisu PUBLIC Qt::Widgets libshviotqt)
 target_include_directories(libshvvisu PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
