@@ -106,7 +106,7 @@ endif()
 
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/shv" TYPE INCLUDE)
 
-install(TARGETS libshvvisu EXPORT libshvConfig)
-if(NOT EMSCRIPTEN)
-	export(TARGETS libshvvisu NAMESPACE libshv:: FILE "${CMAKE_CURRENT_BINARY_DIR}/libshvConfig.cmake")
-endif()
+# install(TARGETS libshvvisu EXPORT libshvConfig)
+# if(NOT EMSCRIPTEN)
+# 	export(TARGETS libshvvisu NAMESPACE libshv:: FILE "${CMAKE_CURRENT_BINARY_DIR}/libshvConfig.cmake")
+# endif()

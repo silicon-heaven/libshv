@@ -12,8 +12,8 @@
 /// Declaration of macros required for exporting symbols
 /// into shared libraries
 #if defined(SHVCORE_BUILD_DLL)
-	#define SHVCORE_DECL_EXPORT SHV_DECL_EXPORT
+	#define SHVCORE_DECL_EXPORT
 #else
-	#define SHVCORE_DECL_EXPORT SHV_DECL_IMPORT
+	#define SHVCORE_DECL_EXPORT
 #endif
 

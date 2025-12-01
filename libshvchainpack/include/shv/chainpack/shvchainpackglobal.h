@@ -12,8 +12,8 @@
 /// Declaration of macros required for exporting symbols
 /// into shared libraries
 #if defined(SHVCHAINPACK_BUILD_DLL)
-#define SHVCHAINPACK_DECL_EXPORT SHVCHAINPACK_DECL_EXPORT_IMPL
+#define SHVCHAINPACK_DECL_EXPORT
 #else
-#define SHVCHAINPACK_DECL_EXPORT SHVCHAINPACK_DECL_IMPORT_IMPL
+#define SHVCHAINPACK_DECL_EXPORT
 #endif
 
