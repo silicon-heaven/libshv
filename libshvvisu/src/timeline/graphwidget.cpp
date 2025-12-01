@@ -965,7 +965,7 @@ void GraphWidget::showChannelContextMenu(qsizetype channel_ix, const QPoint &mou
 		this->update();
 	});
 	{
-		auto sel_rect = m_graph->selectionRect();
+		auto sel_rect = m_graph->selectionRect().normalized();
 		auto *a = menu.addAction(tr("Show selection info"), this, [this, sel_rect, channel_ix]() {
 			auto *ch1 = m_graph->channelAt(channel_ix);
 			auto t1 = m_graph->posToTime(sel_rect.left());
