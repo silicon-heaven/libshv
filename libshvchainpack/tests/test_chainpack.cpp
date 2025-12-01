@@ -271,13 +271,13 @@ DOCTEST_TEST_CASE("ChainPack")
 	}
 	DOCTEST_SUBCASE("DateTime")
 	{
-		REQUIRE(RpcValue::DateTime::fromUtcString("") == RpcValue::DateTime::fromMSecsSinceEpoch(0));
+		REQUIRE(RpcValue::DateTime::fromIsoString("") == RpcValue::DateTime::fromMSecsSinceEpoch(0));
 		REQUIRE(RpcValue::DateTime() == RpcValue::DateTime::fromMSecsSinceEpoch(0));
 		REQUIRE(RpcValue::DateTime::fromMSecsSinceEpoch(0) == RpcValue::DateTime::fromMSecsSinceEpoch(0));
 		REQUIRE(RpcValue::DateTime::fromMSecsSinceEpoch(1) == RpcValue::DateTime::fromMSecsSinceEpoch(1, 2));
 		REQUIRE(!(RpcValue::DateTime() < RpcValue::DateTime()));
 		REQUIRE(RpcValue::DateTime::fromMSecsSinceEpoch(1) < RpcValue::DateTime::fromMSecsSinceEpoch(2));
-		REQUIRE(RpcValue::DateTime::fromMSecsSinceEpoch(0) == RpcValue::DateTime::fromUtcString("1970-01-01T00:00:00"));
+		REQUIRE(RpcValue::DateTime::fromMSecsSinceEpoch(0) == RpcValue::DateTime::fromIsoString("1970-01-01T00:00:00"));
 		for(const auto &str : {
 			"2018-02-02 0:00:00.001",
 			"2018-02-02 01:00:00.001+01",
@@ -298,7 +298,7 @@ DOCTEST_TEST_CASE("ChainPack")
 			"2017-05-03T15:52:03.000-0130",
 			"2017-05-03T15:52:03.923+00",
 		}) {
-			RpcValue::DateTime dt = RpcValue::DateTime::fromUtcString(str);
+			RpcValue::DateTime dt = RpcValue::DateTime::fromIsoString(str);
 			RpcValue cp1{dt};
 			std::stringstream out;
 			{ ChainPackWriter wr(out);  wr.write(cp1); }

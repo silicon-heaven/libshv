@@ -91,7 +91,14 @@ public:
 
 	static RpcDateTime now();
 	static RpcDateTime fromLocalString(const std::string &local_date_time_str);
-	static RpcDateTime fromUtcString(const std::string &utc_date_time_str, size_t *plen = nullptr);
+
+	[[deprecated("Wrong function name, it is implemented to convert ISO strings, use fromIsoString() instead.")]]
+	static RpcDateTime fromUtcString(const std::string &utc_date_time_str, size_t *plen = nullptr)
+	{
+		return fromIsoString(utc_date_time_str, plen);
+	}
+
+	static RpcDateTime fromIsoString(const std::string &utc_date_time_str, size_t *plen = nullptr);
 	static RpcDateTime fromMSecsSinceEpoch(int64_t msecs, int utc_offset_min = 0);
 
 #ifdef __GNUC__

@@ -77,7 +77,7 @@ bool ShvJournalFileReader::next()
 			case Column::Timestamp: {
 				std::string dtstr = std::string{fld};
 				size_t len;
-				cp::RpcValue::DateTime dt = cp::RpcValue::DateTime::fromUtcString(dtstr, &len);
+				cp::RpcValue::DateTime dt = cp::RpcValue::DateTime::fromIsoString(dtstr, &len);
 				if(len == 0) {
 					logWShvJournal().nospace() << "invalid date time string: '" << dtstr << "' line will be ignored: '" << line << "' file: '" << m_fileName << '\'';
 					goto next_line;
@@ -198,7 +198,7 @@ int64_t ShvJournalFileReader::fileNameToFileMsec(const std::string &fn, bool thr
 	utc_str[SEC_SEP_POS] = ':';
 	utc_str[MSEC_SEP_POS] = '.';
 	size_t len;
-	int64_t msec = cp::RpcValue::DateTime::fromUtcString(utc_str, &len).msecsSinceEpoch();
+	int64_t msec = cp::RpcValue::DateTime::fromIsoString(utc_str, &len).msecsSinceEpoch();
 	if(msec == 0 || len == 0) {
 		if(throw_exc)
 			SHV_EXCEPTION("fileNameToFileMsec(): Invalid file name: '" + fn + "' cannot be converted to date time");

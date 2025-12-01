@@ -395,7 +395,7 @@ void ShvFileJournal::convertLog1JournalDir()
 				auto char_count = in.gcount();
 				if(char_count > 0) {
 					std::string s(buff.data(), static_cast<unsigned>(char_count));
-					int64_t file_msec = chainpack::RpcValue::DateTime::fromUtcString(s).msecsSinceEpoch();
+					int64_t file_msec = chainpack::RpcValue::DateTime::fromIsoString(s).msecsSinceEpoch();
 					if(file_msec == 0) {
 						shvWarning() << "cannot read date time from first line of file:" << fn << "line:" << s;
 					}
@@ -549,7 +549,7 @@ int64_t ShvFileJournal::findLastEntryDateTime(const std::string &fn, int64_t jou
 				std::string s = chunk.substr(line_start_pos, tab_pos - line_start_pos);
 				logDShvJournal() << "\t checking:" << s;
 				size_t len;
-				chainpack::RpcValue::DateTime dt = chainpack::RpcValue::DateTime::fromUtcString(s, &len);
+				chainpack::RpcValue::DateTime dt = chainpack::RpcValue::DateTime::fromIsoString(s, &len);
 				if(len > 0) {
 					date_time_fpos = fpos + static_cast<decltype(fpos)>(line_start_pos);
 					dt_msec = dt.msecsSinceEpoch();

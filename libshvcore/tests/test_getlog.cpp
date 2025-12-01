@@ -85,7 +85,7 @@ auto make_entry(const std::string& timestamp, const std::string& path, const Rpc
 		shv::core::utils::ShvJournalEntry::DOMAIN_VAL_CHANGE,
 		shv::core::utils::ShvJournalEntry::NO_SHORT_TIME,
 		shv::core::utils::ShvJournalEntry::NO_VALUE_FLAGS,
-		RpcValue::DateTime::fromUtcString(timestamp).msecsSinceEpoch());
+		RpcValue::DateTime::fromIsoString(timestamp).msecsSinceEpoch());
 
 	res.setSnapshotValue(snapshot);
 	return res;
@@ -147,7 +147,7 @@ DOCTEST_TEST_CASE("getLog")
 					"2022-07-07T18:06:17.874Z",
 					"2022-07-07T18:06:17.880Z",
 				};
-				get_log_params.since = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.872Z");
+				get_log_params.since = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.872Z");
 			}
 
 			DOCTEST_SUBCASE("until")
@@ -160,7 +160,7 @@ DOCTEST_TEST_CASE("getLog")
 						"2022-07-07T18:06:17.784Z",
 						"2022-07-07T18:06:17.869Z",
 					};
-					get_log_params.until = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.872Z");
+					get_log_params.until = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.872Z");
 				}
 
 				DOCTEST_SUBCASE("until after last entry")
@@ -174,7 +174,7 @@ DOCTEST_TEST_CASE("getLog")
 						"2022-07-07T18:06:17.874Z",
 						"2022-07-07T18:06:17.880Z",
 					};
-					get_log_params.until = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.900");
+					get_log_params.until = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.900");
 				}
 
 				DOCTEST_SUBCASE("until ON the last entry")
@@ -187,12 +187,12 @@ DOCTEST_TEST_CASE("getLog")
 						"2022-07-07T18:06:17.872Z",
 						"2022-07-07T18:06:17.874Z",
 					};
-					get_log_params.until = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.880");
+					get_log_params.until = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.880");
 				}
 
 			}
 			std::vector<std::string> actual_timestamps;
-			shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromUtcString("2024-07-07T18:06:20.850")));
+			shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromIsoString("2024-07-07T18:06:20.850")));
 			for (const auto& entry : as_vector(entries)) {
 				actual_timestamps.push_back(RpcValue::DateTime::fromMSecsSinceEpoch(entry.epochMsec).toIsoString());
 			}
@@ -241,7 +241,7 @@ DOCTEST_TEST_CASE("getLog")
 			}
 
 			std::vector<std::string> actual_paths;
-			shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromUtcString("2024-07-07T18:06:20.850")));
+			shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromIsoString("2024-07-07T18:06:20.850")));
 			for (const auto& entry : as_vector(entries)) {
 				actual_paths.push_back(entry.path);
 			}
@@ -288,7 +288,7 @@ DOCTEST_TEST_CASE("getLog")
 				expected_record_count_limit_hit = true;
 			}
 
-			shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromUtcString("2024-07-07T18:06:20.850")));
+			shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromIsoString("2024-07-07T18:06:20.850")));
 
 			REQUIRE(entries.logHeader().recordCountLimitHit() == expected_record_count_limit_hit);
 			REQUIRE(as_vector(entries).size() == expected_count);
@@ -321,7 +321,7 @@ DOCTEST_TEST_CASE("getLog")
 			get_log_params.withPathsDict = true;
 		}
 
-		shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromUtcString("2024-07-07T18:06:20.850")));
+		shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromIsoString("2024-07-07T18:06:20.850")));
 		REQUIRE(entries.logHeader().withPathsDict() == get_log_params.withPathsDict);
 		REQUIRE(as_vector(entries).size() == 7); // Verify all entries were read correctly
 	}
@@ -359,7 +359,7 @@ DOCTEST_TEST_CASE("getLog")
 
 			DOCTEST_SUBCASE("with since")
 			{
-				get_log_params.since = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.800");
+				get_log_params.since = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.800");
 				expected_entries = {
 					make_entry("2022-07-07T18:06:17.950Z", "value2", 10, false),
 				};
@@ -386,7 +386,7 @@ DOCTEST_TEST_CASE("getLog")
 				expected_with_snapshot = true;
 				DOCTEST_SUBCASE("one entry between snapshot and since")
 				{
-					get_log_params.since = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.850");
+					get_log_params.since = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.850");
 					expected_entries = {
 						make_entry("2022-07-07T18:06:17.850Z", "value1", 0, true),
 						make_entry("2022-07-07T18:06:17.850Z", "value2", 1, true),
@@ -399,7 +399,7 @@ DOCTEST_TEST_CASE("getLog")
 				DOCTEST_SUBCASE("one entry exactly on since")
 				{
 					// The entry won't be a part of the snapshot.
-					get_log_params.since = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.800");
+					get_log_params.since = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.800");
 					expected_entries = {
 						make_entry("2022-07-07T18:06:17.800Z", "value1", 0, true),
 						make_entry("2022-07-07T18:06:17.800Z", "value2", 1, true),
@@ -412,7 +412,7 @@ DOCTEST_TEST_CASE("getLog")
 			DOCTEST_SUBCASE("with record cound limit smaller than the snapshot")
 			{
 				expected_with_snapshot = true;
-				get_log_params.since = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.800");
+				get_log_params.since = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.800");
 				get_log_params.recordCountLimit = 1;
 				// The whole snapshot should be sent regardless of the small recordCountLimit.
 				expected_entries = {
@@ -425,7 +425,7 @@ DOCTEST_TEST_CASE("getLog")
 			DOCTEST_SUBCASE("with since after the last entry")
 			{
 				expected_with_snapshot = true;
-				get_log_params.since = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:20.850");
+				get_log_params.since = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:20.850");
 				expected_entries = {
 					make_entry("2022-07-07T18:06:20.850Z", "value1", 0, true),
 					make_entry("2022-07-07T18:06:20.850Z", "value2", 10, true),
@@ -434,7 +434,7 @@ DOCTEST_TEST_CASE("getLog")
 			}
 		}
 
-		shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromUtcString("2024-07-07T18:06:20.850")));
+		shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromIsoString("2024-07-07T18:06:20.850")));
 		REQUIRE(entries.logHeader().withSnapShot() == expected_with_snapshot);
 		REQUIRE(as_vector(entries) == expected_entries);
 	}
@@ -457,7 +457,7 @@ DOCTEST_TEST_CASE("getLog")
 
 			DOCTEST_SUBCASE("since - set, until - not set")
 			{
-				auto since_param = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:15.557Z");
+				auto since_param = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:15.557Z");
 				get_log_params.since = since_param;
 				expected_since = since_param;
 				expected_until = since_param;
@@ -465,7 +465,7 @@ DOCTEST_TEST_CASE("getLog")
 
 			DOCTEST_SUBCASE("since - not set, until - set")
 			{
-				auto until_param = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:15.557Z");
+				auto until_param = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:15.557Z");
 				get_log_params.until = until_param;
 				expected_since = until_param;
 				expected_until = until_param;
@@ -473,8 +473,8 @@ DOCTEST_TEST_CASE("getLog")
 
 			DOCTEST_SUBCASE("since - set, until - set")
 			{
-				auto since_param = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:15.557Z");
-				auto until_param = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:20.000Z");
+				auto since_param = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:15.557Z");
+				auto until_param = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:20.000Z");
 				get_log_params.since = since_param;
 				get_log_params.until = until_param;
 				expected_since = since_param;
@@ -495,8 +495,8 @@ DOCTEST_TEST_CASE("getLog")
 
 			DOCTEST_SUBCASE("since - not set, until - not set")
 			{
-				expected_since = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:14.000Z");
-				expected_until = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.784Z");
+				expected_since = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:14.000Z");
+				expected_until = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.784Z");
 			}
 
 			DOCTEST_SUBCASE("since - set, until - not set")
@@ -504,25 +504,25 @@ DOCTEST_TEST_CASE("getLog")
 				RpcValue::DateTime since_param;
 				DOCTEST_SUBCASE("since on the first entry")
 				{
-					since_param = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:15.557Z");
+					since_param = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:15.557Z");
 					expected_since = since_param;
-					expected_until = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.784Z");
+					expected_until = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.784Z");
 				}
 
 				DOCTEST_SUBCASE("since NOT on the first entry")
 				{
 					DOCTEST_SUBCASE("before first entry")
 					{
-						since_param = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:13.000Z");
-						expected_since = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:14.000Z");
-						expected_until = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.784Z");
+						since_param = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:13.000Z");
+						expected_since = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:14.000Z");
+						expected_until = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.784Z");
 					}
 
 					DOCTEST_SUBCASE("after first entry")
 					{
-						since_param = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:15.553Z");
+						since_param = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:15.553Z");
 						expected_since = since_param;
-						expected_until = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.784Z");
+						expected_until = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.784Z");
 					}
 				}
 
@@ -531,46 +531,46 @@ DOCTEST_TEST_CASE("getLog")
 
 			DOCTEST_SUBCASE("since - not set, until - set")
 			{
-				auto until_param = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:18.700");
+				auto until_param = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:18.700");
 				get_log_params.until = until_param;
-				expected_since = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:14.000Z");
+				expected_since = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:14.000Z");
 
 				DOCTEST_SUBCASE("record count limit not hit")
 				{
-					expected_until = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.784Z");
+					expected_until = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.784Z");
 				}
 
 				DOCTEST_SUBCASE("record count limit hit")
 				{
 					get_log_params.recordCountLimit = 2;
-					expected_until = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:16.600Z");
+					expected_until = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:16.600Z");
 				}
 			}
 
 			DOCTEST_SUBCASE("since - set, until - set")
 			{
-				auto since_param = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:10.000Z");
-				auto until_param = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:20.000Z");
+				auto since_param = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:10.000Z");
+				auto until_param = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:20.000Z");
 				get_log_params.since = since_param;
 				get_log_params.until = until_param;
 				expected_since = since_param;
 
 				DOCTEST_SUBCASE("record count limit not hit")
 				{
-					expected_since = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:14.000Z");
-					expected_until = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.784Z");
+					expected_since = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:14.000Z");
+					expected_until = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.784Z");
 				}
 
 				DOCTEST_SUBCASE("record count limit hit")
 				{
 					get_log_params.recordCountLimit = 2;
-					expected_since = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:14.000Z");
-					expected_until = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:16.600Z");
+					expected_since = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:14.000Z");
+					expected_until = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:16.600Z");
 				}
 			}
 		}
 
-		auto log = shv::core::utils::ShvLogRpcValueReader(shv::core::utils::getLog(readers, get_log_params, RpcValue::DateTime::fromUtcString("2024-07-07T18:06:20.850")));
+		auto log = shv::core::utils::ShvLogRpcValueReader(shv::core::utils::getLog(readers, get_log_params, RpcValue::DateTime::fromIsoString("2024-07-07T18:06:20.850")));
 		REQUIRE(log.logHeader().sinceCRef() == expected_since);
 		REQUIRE(log.logHeader().untilCRef() == expected_until);
 	}
@@ -585,7 +585,7 @@ DOCTEST_TEST_CASE("getLog")
 			})
 		};
 		get_log_params.recordCountLimit = 10;
-		shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromUtcString("2024-07-07T18:06:20.850")));
+		shv::core::utils::ShvLogRpcValueReader entries(getLog(readers, get_log_params, RpcValue::DateTime::fromIsoString("2024-07-07T18:06:20.850")));
 		REQUIRE(entries.logHeader().dateTimeCRef().isValid());
 		REQUIRE(entries.logHeader().logParamsCRef().recordCountLimit == 10);
 		REQUIRE(entries.logHeader().recordCount() == 3);
@@ -610,20 +610,20 @@ DOCTEST_TEST_CASE("getLog")
 		DOCTEST_SUBCASE("withSnapshot == true")
 		{
 			get_log_params.withSnapshot = true;
-			expected_since = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.950Z");;
-			expected_until = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.950Z");
+			expected_since = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.950Z");;
+			expected_until = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.950Z");
 			expected_record_count = 3;
 		}
 
 		DOCTEST_SUBCASE("withSnapshot == false")
 		{
 			get_log_params.withSnapshot = false;
-			expected_since = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.950Z");;
-			expected_until = RpcValue::DateTime::fromUtcString("2022-07-07T18:06:17.950Z");
+			expected_since = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.950Z");;
+			expected_until = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.950Z");
 			expected_record_count = 1;
 		}
 
-		auto log = shv::core::utils::ShvLogRpcValueReader(shv::core::utils::getLog(readers, get_log_params, RpcValue::DateTime::fromUtcString("2024-07-07T18:06:20.850")));
+		auto log = shv::core::utils::ShvLogRpcValueReader(shv::core::utils::getLog(readers, get_log_params, RpcValue::DateTime::fromIsoString("2024-07-07T18:06:20.850")));
 		REQUIRE(log.logHeader().recordCount() == expected_record_count);
 		REQUIRE(log.logHeader().sinceCRef() == expected_since);
 		REQUIRE(log.logHeader().untilCRef() == expected_until);
