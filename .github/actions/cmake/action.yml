@@ -103,7 +103,7 @@ runs:
 
     - name: ccache
       if: inputs.ccache == 'true'
-      uses: hendrikmuhs/ccache-action@v1.2.19
+      uses: hendrikmuhs/ccache-action@v1.2.20
       with:
         key: ${{ github.workflow }}-${{ github.job }}
         max-size: 50M
