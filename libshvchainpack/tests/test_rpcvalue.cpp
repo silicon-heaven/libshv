@@ -73,7 +73,7 @@ DOCTEST_TEST_CASE("RpcValue::DateTime")
 			std::make_tuple("2023-01-23T01:02:03Z"s, Parts(2023, 1, 23, 1, 2, 3)),
 			std::make_tuple("2024-02-29T01:02:03Z"s, Parts(2024, 2, 29, 1, 2, 3)),
 		}) {
-			auto dt1 = RpcValue::DateTime::fromUtcString(dt_str);
+			auto dt1 = RpcValue::DateTime::fromIsoString(dt_str);
 			auto dt2 = RpcValue::DateTime::fromParts(dt_parts);
 			CAPTURE(dt1);
 			CAPTURE(dt2);

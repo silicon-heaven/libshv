@@ -1011,7 +1011,7 @@ RpcValue::DateTime RpcValue::DateTime::fromLocalString(const std::string &local_
 	return ret;
 }
 
-RpcDateTime RpcDateTime::fromUtcString(const std::string &utc_date_time_str, size_t *plen)
+RpcDateTime RpcDateTime::fromIsoString(const std::string &utc_date_time_str, size_t *plen)
 {
 	if(utc_date_time_str.empty()) {
 		if(plen)
