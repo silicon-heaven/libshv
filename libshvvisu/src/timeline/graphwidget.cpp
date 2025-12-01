@@ -918,55 +918,66 @@ void GraphWidget::dropEvent(QDropEvent *event)
 void GraphWidget::showChannelContextMenu(qsizetype channel_ix, const QPoint &mouse_pos)
 {
 	shvLogFuncFrame();
+
+	auto *menu = createChannelContextMenu(channel_ix, mouse_pos);
+
+	if(menu && menu->actions().count()) {
+		menu->exec(mapToGlobal(mouse_pos));
+	}
+	delete menu;
+}
+
+QMenu *GraphWidget::createChannelContextMenu(qsizetype channel_ix, const QPoint &mouse_pos)
+{
 	const GraphChannel *ch = m_graph->channelAt(channel_ix, !shv::core::Exception::Throw);
 	if(!ch)
-		return;
+		return nullptr;
 
-	QMenu menu(this);
+	auto menu = new QMenu(this);
 
 	if(ch->isMaximized()) {
-		menu.addAction(tr("Normal size"), this, [this, channel_ix]() {
+		menu->addAction(tr("Normal size"), this, [this, channel_ix]() {
 			m_graph->setChannelMaximized(channel_ix, false);
 		});
 	}
 	else {
-		menu.addAction(tr("Maximize"), this, [this, channel_ix]() {
+		menu->addAction(tr("Maximize"), this, [this, channel_ix]() {
 			m_graph->setChannelMaximized(channel_ix, true);
 		});
 	}
 
 	if (m_probesEnabled) {
-		menu.addAction(tr("Set probe (Ctrl + Left mouse)"), this, [this, channel_ix, mouse_pos]() {
+		menu->addAction(tr("Set probe (Ctrl + Left mouse)"), this, [this, channel_ix, mouse_pos]() {
 			removeProbes(channel_ix);
 			timemsec_t time = m_graph->posToTime(mouse_pos.x());
 			createProbe(channel_ix, time);
 		});
-		menu.addAction(tr("Add probe (Ctrl + Shift + Left mouse)"), this, [this, channel_ix, mouse_pos]() {
+		menu->addAction(tr("Add probe (Ctrl + Shift + Left mouse)"), this, [this, channel_ix, mouse_pos]() {
 			timemsec_t time = m_graph->posToTime(mouse_pos.x());
 			createProbe(channel_ix, time);
 		});
 	}
 
-	menu.addAction(tr("Previous zoom (Middle mouse)"), this, [this]() {
+	menu->addAction(tr("Previous zoom (Middle mouse)"), this, [this]() {
 		m_graph->zoomToPreviousZoom();
 		this->update();
 	});
-	menu.addAction(tr("Reset zoom"), this, [this, channel_ix]() {
+	menu->addAction(tr("Reset zoom"), this, [this, channel_ix]() {
 		m_graph->resetXZoom();
 		m_graph->resetYZoom(channel_ix);
 		this->update();
 	});
-	menu.addAction(tr("Reset X-zoom"), this, [this]() {
+	menu->addAction(tr("Reset X-zoom"), this, [this]() {
 		m_graph->resetXZoom();
 		this->update();
 	});
-	menu.addAction(tr("Reset Y-zoom"), this, [this, channel_ix]() {
+	menu->addAction(tr("Reset Y-zoom"), this, [this, channel_ix]() {
 		m_graph->resetYZoom(channel_ix);
 		this->update();
 	});
 	{
 		auto sel_rect = m_graph->selectionRect().normalized();
-		auto *a = menu.addAction(tr("Show selection info"), this, [this, sel_rect, channel_ix]() {
+		auto *a = menu->addAction(tr("Show selection info"), this, [this, sel_rect, channel_ix]() {
 			auto *ch1 = m_graph->channelAt(channel_ix);
 			auto t1 = m_graph->posToTime(sel_rect.left());
 			auto t2 = m_graph->posToTime(sel_rect.right());
@@ -996,18 +1007,17 @@ void GraphWidget::showChannelContextMenu(qsizetype channel_ix, const QPoint &mou
 		a->setEnabled(sel_rect.isValid());
 	}
 	if (m_graph->isYAxisVisible()) {
-		menu.addAction(tr("Hide Y axis"), this, [this]() {
+		menu->addAction(tr("Hide Y axis"), this, [this]() {
 			m_graph->setYAxisVisible(false);
 		});
 	}
 	else {
-		menu.addAction(tr("Show Y axis"), this, [this]() {
+		menu->addAction(tr("Show Y axis"), this, [this]() {
 			m_graph->setYAxisVisible(true);
 		});
 	}
 
-	if(menu.actions().count())
-		menu.exec(mapToGlobal(mouse_pos));
+	return menu;
 }
 
 void GraphWidget::createProbe(qsizetype channel_ix, timemsec_t time)
@@ -1050,11 +1060,11 @@ void GraphWidget::createProbe(qsizetype channel_ix, timemsec_t time)
 	w->show();
 	QPoint pos(m_graph->timeToPos(time) - (w->width() / 2), -geometry().top() - w->height() - m_graph->u2px(0.2));
 	w->move(mapToGlobal(pos));
-        if (w->pos().y() < 0) {
-            auto p = w->pos();
-            p.setY(0);
-            w->move(p);
-        }
+	if (w->pos().y() < 0) {
+		auto p = w->pos();
+		p.setY(0);
+		w->move(p);
+	}
 	update();
 }
 
