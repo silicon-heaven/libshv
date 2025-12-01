@@ -118,7 +118,7 @@ jobs:
         uses: ./.github/actions/build-and-test
 
   nix:
-    name: Qt 6.6.2 / NixOS
+    name: Qt 6 / NixOS
     runs-on: ubuntu-latest
     steps:
       - *checkout_step
