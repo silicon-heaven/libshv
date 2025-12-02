@@ -8,7 +8,7 @@ class SHVCHAINPACK_DECL_EXPORT ChainPackWriter : public shv::chainpack::Abstract
 {
 	using Super = AbstractStreamWriter;
 public:
-	ChainPackWriter(std::ostream &out);
+	ChainPackWriter(std::ostream &out, const std::function<void(int)>& progress_callback = nullptr);
 
 	ChainPackWriter& operator <<(const RpcValue &value);
 	ChainPackWriter& operator <<(const RpcValue::MetaData &meta_data);
@@ -42,5 +42,7 @@ private:
 	ChainPackWriter& write_p(const RpcList &values);
 	ChainPackWriter& write_p(const RpcValue::Map &values);
 	ChainPackWriter& write_p(const RpcValue::IMap &values);
+
+	std::function<void(std::streamoff)> m_progressCallback;
 };
 } // namespace shv::chainpack
