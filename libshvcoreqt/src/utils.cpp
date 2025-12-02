@@ -4,6 +4,7 @@
 #include <shv/chainpack/rpcvalue.h>
 
 #include <shv/core/log.h>
+#include <shv/coreqt/log.h>
 
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -11,6 +12,7 @@
 #include <QStringView>
 #include <QVariant>
 #include <QDateTime>
+#include <QTranslator>
 
 namespace shv::coreqt {
 
@@ -216,4 +218,26 @@ QByteArray utils::jsonValueToByteArray(const QJsonValue& json)
 	std::terminate();
 }
 
+void utils::loadTranslations(QCoreApplication* the_app, const QString& locale_string, const std::vector<QString>& modules_to_load)
+{
+	auto translations = QString(":/i18n");
+
+	{
+		QLocale loc;
+		if(locale_string.isEmpty() || locale_string == QLatin1String("system")) {
+			loc = QLocale::system();
+		} else {
+			loc = QLocale{locale_string};
+		}
+
+		for(const QString& prefix : modules_to_load) {
+			auto *qt_translator = new QTranslator(the_app);
+			bool ok = qt_translator->load(loc, prefix, "_", translations);
+			if(ok) {
+				ok = QCoreApplication::installTranslator(qt_translator);
+			}
+			shvInfo() << "Installing translator locale:" << loc.name() << "for" << prefix << " ... " << (ok? "OK": "ERROR");
+		}
+	}
+}
 } // namespace shv
