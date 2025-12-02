@@ -860,11 +860,11 @@ RpcDecimal::Num::Num(int64_t m, int e)
 {
 }
 
-std::string RpcValue::toChainPack() const
+std::string RpcValue::toChainPack(const std::function<void(std::streamoff)>& progress_callback) const
 {
 	std::ostringstream out;
 	{
-		ChainPackWriter wr(out);
+		ChainPackWriter wr(out, progress_callback);
 		wr << *this;
 	}
 	return out.str();

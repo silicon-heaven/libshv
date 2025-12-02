@@ -382,7 +382,7 @@ public:
 	std::string toCpon(const std::string &indent = std::string()) const;
 	static RpcValue fromCpon(const std::string & str, std::string *err = nullptr);
 
-	std::string toChainPack() const;
+	std::string toChainPack(const std::function<void(std::streamoff)>& progress_callback = nullptr) const;
 	static RpcValue fromChainPack(const std::string & str, std::string *err = nullptr, const std::function<void(std::streamoff)>& progress_callback = nullptr);
 	static RpcValue fromChainPack(std::istream& in, std::string* err = nullptr, const std::function<void(std::streamoff)>& progress_callback = nullptr);
 

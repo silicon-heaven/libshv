@@ -10,8 +10,9 @@
 
 namespace shv::chainpack {
 
-ChainPackWriter::ChainPackWriter(std::ostream &out)
+ChainPackWriter::ChainPackWriter(std::ostream &out, const std::function<void(int)>& progress_callback)
 	: Super(out)
+	, m_progressCallback(progress_callback)
 {
 }
 
@@ -37,6 +38,11 @@ void ChainPackWriter::write(const RpcValue &value)
 	if(!value.metaData().isEmpty()) {
 		write(value.metaData());
 	}
+
+	if (m_progressCallback) {
+		m_progressCallback(m_out.tellp());
+	}
+
 	switch (value.type()) {
 	case RpcValue::Type::Null: write_p(nullptr); break;
 	case RpcValue::Type::UInt: write_p(value.toUInt64()); break;
