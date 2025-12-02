@@ -919,12 +919,11 @@ void GraphWidget::showChannelContextMenu(qsizetype channel_ix, const QPoint &mou
 {
 	shvLogFuncFrame();
 
-	auto *menu = createChannelContextMenu(channel_ix, mouse_pos);
+	auto menu = std::unique_ptr<QMenu>(createChannelContextMenu(channel_ix, mouse_pos));
 
 	if(menu && menu->actions().count()) {
 		menu->exec(mapToGlobal(mouse_pos));
 	}
-	delete menu;
 }
 
 QMenu *GraphWidget::createChannelContextMenu(qsizetype channel_ix, const QPoint &mouse_pos)
