@@ -10,6 +10,7 @@
 #include <QTimer>
 #include <QWidget>
 
+class QMenu;
 namespace shv::visu::timeline {
 
 class Graph;
