@@ -274,9 +274,10 @@ protected:
 	virtual void drawGrid(QPainter *painter, int channel);
 	virtual void drawYAxis(QPainter *painter, int channel);
 	virtual void drawSamples(QPainter *painter, int channel_ix
-			, const DataRect &src_rect = DataRect()
-			, const QRect &dest_rect = QRect()
-			, const GraphChannel::Style &channel_style = GraphChannel::Style());
+							, const DataRect &src_rect = DataRect()
+							, const QRect &dest_rect = QRect()
+							, const GraphChannel::Style &channel_style = GraphChannel::Style()
+							, bool check_cache = true);
 	virtual void drawSamplesMinimap(QPainter *painter, int channel_ix
 			, const DataRect &src_rect = DataRect()
 			, const QRect &dest_rect = QRect()
