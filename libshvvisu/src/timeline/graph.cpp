@@ -2171,9 +2171,9 @@ void Graph::drawDiscreteValueInfo(QPainter *painter, const QLine &arrow_line, co
 	painter->restore();
 }
 
-void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_rect, const QRect &dest_rect, const GraphChannel::Style &channel_style)
+void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_rect, const QRect &dest_rect, const GraphChannel::Style &channel_style, bool check_cache)
 {
-	if (m_graphCache.contains(channel_ix)) {
+	if (check_cache && m_graphCache.contains(channel_ix)) {
 		return;
 	}
 	const GraphChannel *ch = channelAt(channel_ix);
@@ -2447,7 +2447,7 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 
 void Graph::drawSamplesMinimap(QPainter *painter, int channel_ix, const DataRect &src_rect, const QRect &dest_rect, const GraphChannel::Style &channel_style)
 {
-	drawSamples(painter, channel_ix, src_rect, dest_rect, channel_style);
+	drawSamples(painter, channel_ix, src_rect, dest_rect, channel_style, false);
 }
 
 void Graph::drawCrossHairTimeMarker(QPainter *painter)
