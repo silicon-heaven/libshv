@@ -386,6 +386,8 @@ public:
 	void toChainPack(std::ostream& out, const std::function<void(std::streamoff)>& progress_callback = nullptr) const;
 	static RpcValue fromChainPack(const std::string & str, std::string *err = nullptr, const std::function<void(std::streamoff)>& progress_callback = nullptr);
 	static RpcValue fromChainPack(std::istream& in, std::string* err = nullptr, const std::function<void(std::streamoff)>& progress_callback = nullptr);
+	static RpcValue fromChainPackWithPath(const std::string& str, const std::vector<std::string>& keys, std::string *err = nullptr, const std::function<void(std::streamoff)>& progress_callback = nullptr);
+	static RpcValue fromChainPackWithPath(std::istream& in, const std::vector<std::string>& keys, std::string* err = nullptr, const std::function<void(std::streamoff)>& progress_callback = nullptr);
 
 	bool operator== (const RpcValue &rhs) const;
 #ifdef RPCVALUE_COPY_AND_SWAP
