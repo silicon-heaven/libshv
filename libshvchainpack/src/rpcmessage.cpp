@@ -786,7 +786,7 @@ std:: string RpcError::errorCodeToString(int code)
 	case ErrorCode::MethodCallTimeout: return "SyncMethodCallTimeout";
 	case ErrorCode::MethodCallCancelled: return "SyncMethodCallCancelled";
 	case ErrorCode::MethodCallException: return "MethodCallException";
-	case ErrorCode::UserIdRequired:  return "UserIdRequired";
+	case ErrorCode::UserIdRequired: return "UserIdRequired";
 	case ErrorCode::Unknown:  return "Unknown";
 	default: return std::to_string(code);
 	};
