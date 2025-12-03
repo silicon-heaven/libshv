@@ -820,16 +820,16 @@ void Graph::makeXAxis()
 			 {500 * MSec, {0, 5, XAxis::LabelScale::MSec}},
 			 {1 * Sec, {0, 1, XAxis::LabelScale::Sec}},
 			 {2 * Sec, {0, 2, XAxis::LabelScale::Sec}},
-			 {5 * Sec, {0, 5, XAxis::LabelScale::Sec}},
-			 {10 * Sec, {0, 5, XAxis::LabelScale::Sec}},
-			 {20 * Sec, {0, 5, XAxis::LabelScale::Sec}},
-			 {30 * Sec, {0, 3, XAxis::LabelScale::Sec}},
-			 {1 * Min, {0, 1, XAxis::LabelScale::Min}},
-			 {2 * Min, {0, 2, XAxis::LabelScale::Min}},
-			 {5 * Min, {0, 5, XAxis::LabelScale::Min}},
-			 {10 * Min, {0, 5, XAxis::LabelScale::Min}},
-			 {20 * Min, {0, 5, XAxis::LabelScale::Min}},
-			 {30 * Min, {0, 3, XAxis::LabelScale::Min}},
+			 {5 * Sec, {0, 5, XAxis::LabelScale::Min}},
+			 {10 * Sec, {0, 5, XAxis::LabelScale::Min}},
+			 {20 * Sec, {0, 5, XAxis::LabelScale::Min}},
+			 {30 * Sec, {0, 3, XAxis::LabelScale::Min}},
+			 {1 * Min, {0, 1, XAxis::LabelScale::Hour}},
+			 {2 * Min, {0, 2, XAxis::LabelScale::Hour}},
+			 {5 * Min, {0, 5, XAxis::LabelScale::Hour}},
+			 {10 * Min, {0, 5, XAxis::LabelScale::Hour}},
+			 {20 * Min, {0, 5, XAxis::LabelScale::Hour}},
+			 {30 * Min, {0, 3, XAxis::LabelScale::Hour}},
 			 {1 * Hour, {0, 1, XAxis::LabelScale::Hour}},
 			 {2 * Hour, {0, 2, XAxis::LabelScale::Hour}},
 			 {3 * Hour, {0, 3, XAxis::LabelScale::Hour}},
@@ -1710,8 +1710,21 @@ void Graph::drawXAxis(QPainter *painter)
 	if(!axis.isValid()) {
 		return;
 	}
+
+#if QT_CONFIG(timezone)
+	auto date_time_tz = [this](timemsec_t epoch_msec) {
+#else
+	auto date_time_tz = [](timemsec_t epoch_msec) {
+#endif
+		QDateTime dt = QDateTime::fromMSecsSinceEpoch(epoch_msec);
+#if QT_CONFIG(timezone)
+		dt = dt.toTimeZone(m_timeZone);
+#endif
+		return dt;
+	};
+
 	painter->save();
-	painter->setClipRect(m_layout.xAxisRect);
+
 	QFont font = m_style.font();
 	QFontMetrics fm(font);
 	QPen pen;
@@ -1720,6 +1733,18 @@ void Graph::drawXAxis(QPainter *painter)
 
 	pen.setColor(m_style.colorAxis());
 	painter->setPen(pen);
+
+	if (m_model->xAxisType() == GraphModel::XAxisType::Timeline) {
+		auto s = xRangeZoom().min;
+		QDateTime tm = date_time_tz(s);
+		QString text = tm.toString(QLocale().dateFormat(QLocale::ShortFormat).replace("yy", "yyyy") + " hh:mm:ss");
+		QRect r = fm.boundingRect(text);
+		int inset = u2px(0.2);
+		painter->drawText(m_layout.cornerCellRect.right() - r.width() - inset,
+						  m_layout.cornerCellRect.top() + r.height() + 2 * tick_len - inset, text);
+	}
+
+	painter->setClipRect(m_layout.xAxisRect);
 	painter->drawLine(m_layout.xAxisRect.topLeft(), m_layout.xAxisRect.topRight());
 
 	const XRange range = xRangeZoom();
@@ -1745,26 +1770,19 @@ void Graph::drawXAxis(QPainter *painter)
 		QPoint p1{x, m_layout.xAxisRect.top()};
 		QPoint p2{p1.x(), p1.y() + 2*tick_len};
 		painter->drawLine(p1, p2);
-#if QT_CONFIG(timezone)
-		auto date_time_tz = [this](timemsec_t epoch_msec) {
-#else
-		auto date_time_tz = [](timemsec_t epoch_msec) {
-#endif
-			QDateTime dt = QDateTime::fromMSecsSinceEpoch(epoch_msec);
-#if QT_CONFIG(timezone)
-			dt = dt.toTimeZone(m_timeZone);
-#endif
-			return dt;
-		};
 		QString text;
 		switch (axis.labelScale) {
 		case XAxis::LabelScale::MSec:
-			text = QStringLiteral("%1.%2").arg((t / 1000) % 1000).arg(t % 1000, 3, 10, QChar('0'));
+			text = QStringLiteral("%1.%2").arg((t / 1000) % 60).arg(t % 1000, 3, 10, QChar('0'));
 			break;
 		case XAxis::LabelScale::Sec:
-			text = QString::number((t / 1000) % 1000);
+			text = QString::number((t / 1000) % 60);
 			break;
-		case XAxis::LabelScale::Min:
+		case XAxis::LabelScale::Min: {
+			QTime tm = date_time_tz(t).time();
+			text = QStringLiteral("%1:%2").arg(tm.minute(), 2, 10, QChar('0')).arg(tm.second(), 2, 10, QChar('0'));
+			break;
+		}
 		case XAxis::LabelScale::Hour: {
 			QTime tm = date_time_tz(t).time();
 			text = QStringLiteral("%1:%2").arg(tm.hour()).arg(tm.minute(), 2, 10, QChar('0'));
@@ -1812,10 +1830,14 @@ void Graph::drawXAxis(QPainter *painter)
 		QString text;
 		switch (axis.labelScale) {
 		case XAxis::LabelScale::MSec:
+			text = QStringLiteral("sec.msec");
+			break;
 		case XAxis::LabelScale::Sec:
 			text = QStringLiteral("sec");
 			break;
 		case XAxis::LabelScale::Min:
+			text = QStringLiteral("min:sec");
+			break;
 		case XAxis::LabelScale::Hour: {
 			text = QStringLiteral("hour:min");
 			break;
