@@ -923,6 +923,7 @@ void GraphWidget::showChannelContextMenu(qsizetype channel_ix, const QPoint &mou
 
 	if(menu && menu->actions().count()) {
 		menu->exec(mapToGlobal(mouse_pos));
+		m_graph->setSelectionRect({});
 	}
 }
 
