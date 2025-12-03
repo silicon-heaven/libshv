@@ -228,6 +228,7 @@ public:
 		MethodCallCancelled,
 		MethodCallException,
 		Unknown,
+		UserIdRequired = 11,
 		UserCode = 32
 	};
 public:
