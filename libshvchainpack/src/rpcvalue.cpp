@@ -901,6 +901,34 @@ RpcValue RpcValue::fromChainPack(const std::string &str, std::string *err, const
 	return fromChainPack(in, err, progress_callback);
 }
 
+RpcValue RpcValue::fromChainPackWithPath(const std::string& str, const std::vector<std::string>& keys, std::string *err, const std::function<void(std::streamoff)>& progress_callback)
+{
+	auto in = std::istringstream(str);
+	return fromChainPackWithPath(in, keys, err, progress_callback);
+}
+
+RpcValue RpcValue::fromChainPackWithPath(std::istream& in, const std::vector<std::string>& keys, std::string* err, const std::function<void(std::streamoff)>& progress_callback)
+{
+	RpcValue ret;
+	ChainPackReader rd(in, progress_callback);
+	if (err) {
+		err->clear();
+		try {
+			rd.readPath(ret, keys);
+			if (err) {
+				*err = std::string();
+			}
+		} catch (ParseException &e) {
+			if (err) {
+				*err = e.what();
+			}
+		}
+	} else {
+		rd.readPath(ret, keys);
+	}
+	return ret;
+}
+
 const char *RpcValue::typeToName(RpcValue::Type t)
 {
 	switch (t) {

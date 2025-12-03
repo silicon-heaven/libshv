@@ -18,6 +18,7 @@ public:
 	using Super::read;
 	void read(RpcValue::MetaData &meta_data) override;
 	void read(RpcValue &val) override;
+	void readPath(RpcValue &val, const std::vector<std::string>& keys);
 
 	uint64_t readUIntData(int *err_code);
 	static uint64_t readUIntData(std::istream &in, int *err_code);

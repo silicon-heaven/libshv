@@ -492,3 +492,76 @@ DOCTEST_TEST_CASE("ChainPack")
 		REQUIRE_THROWS_WITH_AS(shv::chainpack::RpcValue::fromChainPack({reinterpret_cast<const char*>(input2.data()), input2.size()}), "Can't convert NaN to int", std::runtime_error);
 	}
 }
+
+DOCTEST_TEST_CASE("RpcValue::fromChainPackWithPath - all values tested")
+{
+	using namespace shv::chainpack::string_literals;
+
+	auto test_val = R"(
+	{
+		"some_key": 123,
+		"second_key": [
+			"foobar",
+			i{
+				2: "string2",
+				20: "string20",
+				30: [
+					1,
+					2,
+					{ "nested": "value" }
+				]
+			},
+			[]
+		],
+		"empty_map": {},
+		"empty_array": [],
+		"null_val": null,
+		"zero_val": 0,
+		"empty_string": ""
+	})"_cpon.toChainPack();
+
+	// Top-level scalars
+	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"some_key"}) == 123);
+	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"zero_val"}) == 0);
+	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"empty_string"}) == "");
+	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"null_val"}).isNull());
+
+	// Top-level containers
+	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"empty_map"}) == R"({})"_cpon);
+	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"empty_array"}) == R"([])"_cpon);
+
+	// second_key array
+	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"second_key", "0"}) == "foobar");
+
+	// second_key[1] map (i{})
+	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"second_key", "1", "2"}) == "string2");
+	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"second_key", "1", "20"}) == "string20");
+
+	// second_key[1][30] array
+	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"second_key", "1", "30", "0"}) == 1);
+	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"second_key", "1", "30", "1"}) == 2);
+	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"second_key", "1", "30", "2", "nested"}) == "value");
+
+	// second_key[2] empty array
+	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"second_key", "2"}) == R"([])"_cpon);
+
+	// Non-existing key / out-of-range
+	REQUIRE_THROWS_WITH_AS(
+		RpcValue::fromChainPackWithPath(test_val, {"non-existing-key"}),
+		"Couldn't find key 'non-existing-key' on path '': Map does not contain this key",
+		std::logic_error
+	);
+
+	REQUIRE_THROWS_WITH_AS(
+		RpcValue::fromChainPackWithPath(test_val, {"second_key", "10"}),
+		"Couldn't find key '10' on path '.second_key': List index out of range",
+		std::logic_error
+	);
+
+	// Invalid type access
+	REQUIRE_THROWS_WITH_AS(
+		RpcValue::fromChainPackWithPath(test_val, {"some_key", "0"}),
+		"Expected Map/IMap/List for key '.some_key.0' got INT",
+		std::logic_error
+	);
+}
