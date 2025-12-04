@@ -11,7 +11,7 @@ class SHVIOTQT_DECL_EXPORT DeviceConnection : public ClientConnection
 	Q_OBJECT
 	using Super = ClientConnection;
 public:
-	DeviceConnection(QObject *parent = nullptr);
+	DeviceConnection(const std::string& user_agent, QObject *parent = nullptr);
 
 	const shv::chainpack::RpcValue::Map& deviceOptions() const;
 	shv::chainpack::RpcValue deviceId() const;

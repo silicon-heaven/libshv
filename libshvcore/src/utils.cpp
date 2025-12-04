@@ -523,5 +523,27 @@ std::pair<size_t, size_t> indexOfBrackets(const std::string &haystack, size_t be
 		}
 	}
 }
+
+#ifndef GIT_COMMIT
+#define GIT_COMMIT N/A
+#endif
+
+#ifndef SHV_VERSION
+#define SHV_VERSION N/A
+#endif
+
+#ifndef SHV_GIT_COMMIT
+#define SHV_GIT_COMMIT N/A
+#endif
+std::string makeUserAgent(const std::string& program_name)
+{
+	std::string res = program_name + " GIT_COMMIT: ";
+	res += SHV_EXPAND_AND_QUOTE(GIT_COMMIT);
+	res += " SHV_VERSION: ";
+	res += SHV_EXPAND_AND_QUOTE(SHV_VERSION);
+	res += " SHV_GIT_COMMIT: ";
+	res += SHV_EXPAND_AND_QUOTE(SHV_GIT_COMMIT);
+	return res;
+}
 }
 }

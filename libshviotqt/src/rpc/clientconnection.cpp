@@ -47,9 +47,10 @@ using namespace std;
 
 namespace shv::iotqt::rpc {
 
-ClientConnection::ClientConnection(QObject *parent)
+ClientConnection::ClientConnection(const std::string& user_agent, QObject *parent)
 	: Super(parent)
 	, m_loginType(IRpcConnection::LoginType::Sha1)
+	, m_userAgent(user_agent)
 {
 	connect(this, &SocketRpcConnection::socketConnectedChanged, this, &ClientConnection::onSocketConnectedChanged);
 	setProtocolType(cp::Rpc::ProtocolType::ChainPack);
@@ -492,16 +493,18 @@ void ClientConnection::onSocketConnectedChanged(bool is_connected)
 void ClientConnection::createLoginParams(const chainpack::RpcValue &server_hello, const std::function<void(chainpack::RpcValue)>& params_callback) const
 {
 	auto impl_ret = [this, params_callback] (const auto& user_name, const auto& pass) {
-		params_callback(cp::RpcValue::Map {
-			{
-				"login", cp::RpcValue::Map {
-					{"user", user_name},
+		auto connection_options = connectionOptions().asMap();
+		connection_options.emplace("userAgent", m_userAgent);
+
+		auto ret = cp::RpcValue::Map {
+		{"login", cp::RpcValue::Map {
+				{"user", user_name},
 					{loginType() == chainpack::IRpcConnection::LoginType::Token ? "token" : "password", pass},
 					{"type", chainpack::UserLogin::loginTypeToString(loginType())},
-				},
-			},
-			{"options", connectionOptions()},
-		});
+			}},
+		{"options", connection_options},
+		};
+		params_callback(ret);
 	};
 
 	if(loginType() == chainpack::IRpcConnection::LoginType::AzureAccessToken || loginType() == chainpack::IRpcConnection::LoginType::Token) {

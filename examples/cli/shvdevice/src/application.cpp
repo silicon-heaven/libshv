@@ -79,7 +79,7 @@ Application::Application(int &argc, char **argv, AppCliOptions* cli_opts)
 	: Super(argc, argv)
 	, m_cliOptions(cli_opts)
 {
-	m_rpcConnection = new si::rpc::ClientConnection(this);
+	m_rpcConnection = new si::rpc::ClientConnection(shv::core::utils::makeUserAgent("shvdevice"), this);
 	m_rpcConnection->setCliOptions(cli_opts);
 
 	connect(m_rpcConnection, &si::rpc::ClientConnection::brokerConnectedChanged, this, &Application::onBrokerConnectedChanged);

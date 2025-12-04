@@ -14,7 +14,7 @@ Application::Application(int &argc, char **argv, AppCliOptions *cli_opts)
 	: Super(argc, argv)
 	, m_cliOptions(cli_opts)
 {
-	m_rpcConnection = new si::rpc::DeviceConnection(this);
+	m_rpcConnection = new si::rpc::DeviceConnection(shv::core::utils::makeUserAgent("shvcall"), this);
 	connect(m_rpcConnection, &si::rpc::ClientConnection::brokerLoginError, this, [this] (const auto& err) {
 		shvError() << "Couldn't login to broker:" << err.toString();
 		m_rpcConnection->close();

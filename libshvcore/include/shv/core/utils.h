@@ -200,7 +200,8 @@ auto findLongestPrefix(const Container& cont, std::string value) -> typename std
 
 	return cont.end();
 }
-}
 
+std::string SHVCORE_DECL_EXPORT makeUserAgent(const std::string& program_name);
+}
 }
 
