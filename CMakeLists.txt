@@ -54,7 +54,7 @@ set(LIBSHV_PROJECT_TRANSLATIONS
 
 function(libshv_set_translations target langs)
 	foreach(lang ${langs})
-		set(TS_FILES ${TS_FILES} "${target}.${lang}.ts")
+		set(TS_FILES ${TS_FILES} "${target}_${lang}.ts")
 	endforeach()
 
 	if(LIBSHV_USE_QT6)
@@ -174,6 +174,7 @@ if(LIBSHV_WITH_COREQT)
 		else()
 			find_package(Qt6 COMPONENTS Core Gui LinguistTools Network Sql SerialPort OPTIONAL_COMPONENTS NetworkAuth Svg WebSockets Widgets)
 		endif()
+		qt_standard_project_setup(I18N_TRANSLATED_LANGUAGES ${LIBSHV_PROJECT_TRANSLATIONS})
 		set(QtNetworkAuth_FOUND ${Qt6NetworkAuth_FOUND})
 		set(QtWebSockets_FOUND ${Qt6WebSockets_FOUND})
 		set(QtSvg_FOUND ${Qt6Svg_FOUND})

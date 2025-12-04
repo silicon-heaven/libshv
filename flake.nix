@@ -31,6 +31,7 @@
         buildInputs = optionals coreqt [
           qt6.wrapQtAppsHook
           qt6.qtbase
+          qt6.qtnetworkauth
           qt6.qtserialport
           qt6.qtwebsockets
         ];

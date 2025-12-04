@@ -34,3 +34,5 @@ profilegc.log
 compile_commands.json
 /build*
 /.cache
+# en Translation files
+*_en.ts

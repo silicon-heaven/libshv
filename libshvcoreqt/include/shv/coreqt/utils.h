@@ -8,6 +8,7 @@
 #include <QJsonValue>
 #include <QMetaType>
 #include <QObject>
+#include <QCoreApplication>
 
 #include <string>
 
@@ -197,6 +198,7 @@ auto findLongestPrefix(const QMap<QString, Value>& map, QString value) -> typena
 	return map.end();
 }
 
+void SHVCOREQT_DECL_EXPORT loadTranslations(QCoreApplication* the_app, const QString& locale_string, const std::vector<QString>& modules_to_load);
 }
 } // namespace coreqt
 } // namespace shv
