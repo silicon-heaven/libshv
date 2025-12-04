@@ -12,8 +12,8 @@ namespace cp = shv::chainpack;
 
 namespace shv::iotqt::rpc {
 
-DeviceConnection::DeviceConnection(QObject *parent)
-	: Super(parent)
+DeviceConnection::DeviceConnection(const std::string& user_agent, QObject *parent)
+	: Super(user_agent, parent)
 {
 }
 

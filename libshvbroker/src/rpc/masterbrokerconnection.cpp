@@ -12,7 +12,7 @@ namespace cp = shv::chainpack;
 namespace shv::broker::rpc {
 
 MasterBrokerConnection::MasterBrokerConnection(QObject *parent)
-	: Super(parent)
+	: Super(core::utils::makeUserAgent("shvbroker-cpp"), parent)
 {
 
 }

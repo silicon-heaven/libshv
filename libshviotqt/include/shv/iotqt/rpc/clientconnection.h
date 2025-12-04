@@ -41,7 +41,7 @@ public:
 
 
 public:
-	explicit ClientConnection(QObject *parent = nullptr);
+	explicit ClientConnection(const std::string& user_agent, QObject *parent = nullptr);
 	~ClientConnection() Q_DECL_OVERRIDE;
 
 	QUrl connectionUrl() const;
@@ -138,6 +138,7 @@ private:
 	std::vector<MutedPath> m_mutedShvPathsInLog;
 	std::vector<std::tuple<int64_t, QElapsedTimer>> m_responseIdsMutedInLog;
 	bool m_rawRpcMessageLog = false;
+	std::string m_userAgent;
 };
 
 } // namespace shv

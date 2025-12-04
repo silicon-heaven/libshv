@@ -16,7 +16,7 @@ using namespace shv::iotqt::rpc;
 Application::Application(int &argc, char **argv, const shv::iotqt::rpc::ClientAppCliOptions &cli_opts)
 	: Super(argc, argv)
 {
-	m_rpcConnection = new ClientConnection(this);
+	m_rpcConnection = new ClientConnection(shv::core::utils::makeUserAgent("minimalshvclient"), this);
 
 	connect(m_rpcConnection, &ClientConnection::brokerConnectedChanged, this, [this](bool is_connected) {
 		if(is_connected) {
