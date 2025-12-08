@@ -42,6 +42,8 @@ public:
 
 public:
 	explicit ClientConnection(const std::string& user_agent, QObject *parent = nullptr);
+	// User agent can't be constructed from nullptr.
+	explicit ClientConnection(std::nullptr_t) = delete;
 	~ClientConnection() Q_DECL_OVERRIDE;
 
 	QUrl connectionUrl() const;
