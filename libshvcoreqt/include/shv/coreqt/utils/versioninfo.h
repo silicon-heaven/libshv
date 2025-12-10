@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/coreqt/shvcoreqtglobal.h>
+#include <shv/coreqt/shvcoreqt_export.h>
 
 #include <shv/core/utils/versioninfo.h>
 
@@ -8,7 +8,7 @@
 
 namespace shv::coreqt::utils {
 
-class SHVCOREQT_DECL_EXPORT VersionInfo : public shv::core::utils::VersionInfo
+class LIBSHVCOREQT_EXPORT VersionInfo : public shv::core::utils::VersionInfo
 {
 	using Super = shv::core::utils::VersionInfo;
 

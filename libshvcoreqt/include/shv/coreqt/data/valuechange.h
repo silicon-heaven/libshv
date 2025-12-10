@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/coreqt/shvcoreqtglobal.h>
+#include <shv/coreqt/shvcoreqt_export.h>
 
 #include <QPair>
 #include <QVector>
@@ -8,14 +8,14 @@
 #include <vector>
 
 namespace shv::coreqt::data {
-class SHVCOREQT_DECL_EXPORT CustomData
+class LIBSHVCOREQT_EXPORT CustomData
 {
 public:
 };
 
 enum class ValueType { TimeStamp, Int, Double, Bool, CustomDataPointer };
 
-struct SHVCOREQT_DECL_EXPORT ValueChange
+struct LIBSHVCOREQT_EXPORT ValueChange
 {
 	using TimeStamp = qint64;
 	union ValueX {
@@ -59,7 +59,7 @@ struct SHVCOREQT_DECL_EXPORT ValueChange
 	ValueChange();
 };
 
-struct SHVCOREQT_DECL_EXPORT ValueXInterval
+struct LIBSHVCOREQT_EXPORT ValueXInterval
 {
 	ValueXInterval();
 	ValueXInterval(ValueChange min_, ValueChange max_, ValueType type_);
@@ -76,19 +76,19 @@ struct SHVCOREQT_DECL_EXPORT ValueXInterval
 	ValueType type = ValueType::Int;
 };
 
-SHVCOREQT_DECL_EXPORT bool compareValueX(const ValueChange &value1, const ValueChange &value2, ValueType type);
-SHVCOREQT_DECL_EXPORT bool compareValueX(const ValueChange::ValueX &value1, const ValueChange::ValueX &value2, ValueType type);
+LIBSHVCOREQT_EXPORT bool compareValueX(const ValueChange &value1, const ValueChange &value2, ValueType type);
+LIBSHVCOREQT_EXPORT bool compareValueX(const ValueChange::ValueX &value1, const ValueChange::ValueX &value2, ValueType type);
 
-SHVCOREQT_DECL_EXPORT bool lessThenValueX(const ValueChange &value1, const ValueChange &value2, ValueType type);
-SHVCOREQT_DECL_EXPORT bool lessThenValueX(const ValueChange::ValueX &value1, const ValueChange::ValueX &value2, ValueType type);
+LIBSHVCOREQT_EXPORT bool lessThenValueX(const ValueChange &value1, const ValueChange &value2, ValueType type);
+LIBSHVCOREQT_EXPORT bool lessThenValueX(const ValueChange::ValueX &value1, const ValueChange::ValueX &value2, ValueType type);
 
-SHVCOREQT_DECL_EXPORT bool greaterThenValueX(const ValueChange &value1, const ValueChange &value2, ValueType type);
-SHVCOREQT_DECL_EXPORT bool greaterThenValueX(const ValueChange::ValueX &value1, const ValueChange::ValueX &value2, ValueType type);
+LIBSHVCOREQT_EXPORT bool greaterThenValueX(const ValueChange &value1, const ValueChange &value2, ValueType type);
+LIBSHVCOREQT_EXPORT bool greaterThenValueX(const ValueChange::ValueX &value1, const ValueChange::ValueX &value2, ValueType type);
 
-SHVCOREQT_DECL_EXPORT bool compareValueY(const ValueChange &value1, const ValueChange &value2, ValueType type);
-SHVCOREQT_DECL_EXPORT bool compareValueY(const ValueChange::ValueY &value1, const ValueChange::ValueY &value2, ValueType type);
+LIBSHVCOREQT_EXPORT bool compareValueY(const ValueChange &value1, const ValueChange &value2, ValueType type);
+LIBSHVCOREQT_EXPORT bool compareValueY(const ValueChange::ValueY &value1, const ValueChange::ValueY &value2, ValueType type);
 
-class SHVCOREQT_DECL_EXPORT SerieData : public std::vector<ValueChange>
+class LIBSHVCOREQT_EXPORT SerieData : public std::vector<ValueChange>
 {
 	using Super = std::vector<ValueChange>;
 

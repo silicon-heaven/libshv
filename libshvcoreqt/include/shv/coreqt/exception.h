@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/coreqt/shvcoreqtglobal.h>
+#include <shv/coreqt/shvcoreqt_export.h>
 
 #include <shv/core/exception.h>
 
@@ -8,7 +8,7 @@
 
 namespace shv::coreqt {
 
-class SHVCOREQT_DECL_EXPORT Exception : public shv::core::Exception
+class LIBSHVCOREQT_EXPORT Exception : public shv::core::Exception
 {
 public:
 	Exception(const QString &msg, const QString &where = QString());

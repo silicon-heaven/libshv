@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/coreqt/shvcoreqtglobal.h>
+#include <shv/coreqt/shvcoreqt_export.h>
 
 #include <shv/chainpack/rpcvalue.h>
 
@@ -16,7 +16,7 @@ namespace shv::chainpack { class RpcResponse; }
 
 namespace shv::coreqt::data {
 
-class SHVCOREQT_DECL_EXPORT RpcSqlField
+class LIBSHVCOREQT_EXPORT RpcSqlField
 {
 public:
 	QString name;
@@ -29,7 +29,7 @@ public:
 	static RpcSqlField fromVariant(const QVariant &v);
 };
 
-class SHVCOREQT_DECL_EXPORT RpcSqlResult
+class LIBSHVCOREQT_EXPORT RpcSqlResult
 {
 public:
 	int numRowsAffected = 0;
