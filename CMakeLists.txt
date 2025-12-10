@@ -103,11 +103,6 @@ function(libshv_set_translations target langs)
 			cmake_path(GET ABS_PATH FILENAME REL_PATH)
 			set_source_files_properties("${ABS_PATH}" PROPERTIES QT_RESOURCE_ALIAS "${REL_PATH}")
 		endforeach()
-
-		qt_add_resources("${target}" "translations-${target}"
-			PREFIX "/translations"
-			FILES "${QM_FILES}"
-		)
 	else()
 		if(DEFINED ENV{LIBSHV_RUN_LUPDATE})
 			qt5_create_translation(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR} ${TS_FILES})
