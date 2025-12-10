@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 
 #include <shv/core/utils/shvlogheader.h>
 #include <shv/core/utils/shvjournalentry.h>
@@ -16,7 +16,7 @@ namespace core::utils {
 
 class ShvJournalEntry;
 
-class SHVCORE_DECL_EXPORT ShvLogFileReader
+class LIBSHVCORE_EXPORT ShvLogFileReader
 {
 public:
 	ShvLogFileReader(shv::chainpack::ChainPackReader *reader);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 
 #include <cstdint>
 #include <string>
@@ -12,7 +12,7 @@ namespace shv::core::utils {
 
 class ShvJournalEntry;
 
-class SHVCORE_DECL_EXPORT ShvJournalFileWriter
+class LIBSHVCORE_EXPORT ShvJournalFileWriter
 {
 public:
 	ShvJournalFileWriter(const std::string &file_name);

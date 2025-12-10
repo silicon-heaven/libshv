@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 #include <shv/chainpack/compat.h>
 
 #include <string>
@@ -9,7 +9,7 @@
 namespace shv::core {
 
 using StringView = std::string_view;
-class SHVCORE_DECL_EXPORT StringViewList : public std::vector<StringView>
+class LIBSHVCORE_EXPORT StringViewList : public std::vector<StringView>
 {
 	using Super = std::vector<StringView>;
 public:

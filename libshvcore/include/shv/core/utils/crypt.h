@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 
 #include <limits>
 #include <functional>
@@ -11,7 +11,7 @@
 
 namespace shv::core::utils {
 
-class SHVCORE_DECL_EXPORT Crypt
+class LIBSHVCORE_EXPORT Crypt
 {
 public:
 	using Generator = std::function< uint32_t (uint32_t) >;

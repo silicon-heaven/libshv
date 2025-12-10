@@ -1,37 +1,60 @@
-add_library(libshvcore
-	src/exception.cpp
-	src/log.cpp
-	src/stringview.cpp
-	src/utils.cpp
-	src/utils/abstractshvjournal.cpp
-	src/utils/clioptions.cpp
-	src/utils/crypt.cpp
-	src/utils/getlog.cpp
-	src/utils/patternmatcher.cpp
-	src/utils/shvalarm.cpp
-	src/utils/shvfilejournal.cpp
-	src/utils/shvgetlogparams.cpp
-	src/utils/shvjournalcommon.cpp
-	src/utils/shvjournalentry.cpp
-	src/utils/shvjournalfilereader.cpp
-	src/utils/shvjournalfilewriter.cpp
-	src/utils/shvlogfilereader.cpp
-	src/utils/shvlogfilter.cpp
-	src/utils/shvlogheader.cpp
-	src/utils/shvlogrpcvaluereader.cpp
-	src/utils/shvmemoryjournal.cpp
-	src/utils/shvpath.cpp
-	src/utils/shvtypeinfo.cpp
-	src/utils/versioninfo.cpp
+libshv_add_library(libshvcore
+	NAMESPACE core
+	SOURCES
+		src/exception.cpp
+		src/log.cpp
+		src/stringview.cpp
+		src/utils.cpp
+		src/utils/abstractshvjournal.cpp
+		src/utils/clioptions.cpp
+		src/utils/crypt.cpp
+		src/utils/getlog.cpp
+		src/utils/patternmatcher.cpp
+		src/utils/shvalarm.cpp
+		src/utils/shvfilejournal.cpp
+		src/utils/shvgetlogparams.cpp
+		src/utils/shvjournalcommon.cpp
+		src/utils/shvjournalentry.cpp
+		src/utils/shvjournalfilereader.cpp
+		src/utils/shvjournalfilewriter.cpp
+		src/utils/shvlogfilereader.cpp
+		src/utils/shvlogfilter.cpp
+		src/utils/shvlogheader.cpp
+		src/utils/shvlogrpcvaluereader.cpp
+		src/utils/shvmemoryjournal.cpp
+		src/utils/shvpath.cpp
+		src/utils/shvtypeinfo.cpp
+		src/utils/versioninfo.cpp
+	HEADERS
+		include/shv/core/assert.h
+		include/shv/core/exception.h
+		include/shv/core/log.h
+		include/shv/core/stringview.h
+		include/shv/core/utils
+		include/shv/core/utils.h
+		include/shv/core/utils/abstractshvjournal.h
+		include/shv/core/utils/clioptions.h
+		include/shv/core/utils/crypt.h
+		include/shv/core/utils/getlog.h
+		include/shv/core/utils/patternmatcher.h
+		include/shv/core/utils/shvalarm.h
+		include/shv/core/utils/shvfilejournal.h
+		include/shv/core/utils/shvgetlogparams.h
+		include/shv/core/utils/shvjournalcommon.h
+		include/shv/core/utils/shvjournalentry.h
+		include/shv/core/utils/shvjournalfilereader.h
+		include/shv/core/utils/shvjournalfilewriter.h
+		include/shv/core/utils/shvlogfilereader.h
+		include/shv/core/utils/shvlogfilter.h
+		include/shv/core/utils/shvlogheader.h
+		include/shv/core/utils/shvlogrpcvaluereader.h
+		include/shv/core/utils/shvmemoryjournal.h
+		include/shv/core/utils/shvpath.h
+		include/shv/core/utils/shvtypeinfo.h
+		include/shv/core/utils/versioninfo.h
 	)
-add_library(libshv::libshvcore ALIAS libshvcore)
 
 target_link_libraries(libshvcore libshvchainpack-cpp)
-target_include_directories(libshvcore PUBLIC
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-	$<INSTALL_INTERFACE:include>
-	)
-target_compile_definitions(libshvcore PRIVATE SHVCORE_BUILD_DLL)
 
 function(add_shvcore_test test_name)
 	add_executable(test_core_${test_name}
@@ -57,8 +80,3 @@ if(BUILD_TESTING)
 		add_shvcore_test(clioptions)
 	endif()
 endif()
-
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/shv" TYPE INCLUDE)
-
-install(TARGETS libshvcore EXPORT libshvConfig)
-export(TARGETS libshvcore NAMESPACE libshv:: FILE "${CMAKE_CURRENT_BINARY_DIR}/libshvConfig.cmake")

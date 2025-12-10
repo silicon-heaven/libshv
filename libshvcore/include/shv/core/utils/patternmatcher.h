@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 
 #include <shv/core/utils/shvgetlogparams.h>
 #include <shv/core/utils/shvjournalentry.h>
@@ -9,7 +9,7 @@
 
 namespace shv::core::utils {
 
-class SHVCORE_DECL_EXPORT PatternMatcher
+class LIBSHVCORE_EXPORT PatternMatcher
 {
 public:
 	PatternMatcher() = default;
