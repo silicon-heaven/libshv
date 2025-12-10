@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <QList>
 #include <QVariant>
@@ -12,7 +12,7 @@ namespace shv::visu::timeline {
 
 using timemsec_t = int64_t;
 
-struct SHVVISU_DECL_EXPORT Sample
+struct LIBSHVVISU_EXPORT Sample
 {
 	timemsec_t time = 0;
 	QVariant value;
@@ -26,7 +26,7 @@ struct SHVVISU_DECL_EXPORT Sample
 	bool isValid() const;
 };
 
-class SHVVISU_DECL_EXPORT ChannelSamples : public QList<Sample>
+class LIBSHVVISU_EXPORT ChannelSamples : public QList<Sample>
 {
 	using Super = QList<Sample>;
 

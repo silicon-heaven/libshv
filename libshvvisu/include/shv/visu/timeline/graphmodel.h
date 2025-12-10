@@ -1,7 +1,7 @@
 #pragma once
 
 #include <shv/visu/timeline/sample.h>
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <optional>
 #include <QObject>
@@ -13,13 +13,13 @@
 
 namespace shv::visu::timeline {
 
-class SHVVISU_DECL_EXPORT GraphModel : public QObject
+class LIBSHVVISU_EXPORT GraphModel : public QObject
 {
 	Q_OBJECT
 
 	using Super = QObject;
 public:
-	class SHVVISU_DECL_EXPORT ChannelInfo
+	class LIBSHVVISU_EXPORT ChannelInfo
 	{
 	public:
 		QString shvPath;

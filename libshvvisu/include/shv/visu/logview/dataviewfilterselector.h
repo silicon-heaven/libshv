@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <shv/visu/timeline/graph.h>
 
@@ -12,7 +12,7 @@ namespace Ui {
 class DataViewFilterSelector;
 }
 
-class SHVVISU_DECL_EXPORT DataViewFilterSelector : public QWidget
+class LIBSHVVISU_EXPORT DataViewFilterSelector : public QWidget
 {
 	Q_OBJECT
 

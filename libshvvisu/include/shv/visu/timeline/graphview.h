@@ -1,12 +1,12 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <QScrollArea>
 
 namespace shv::visu::timeline {
 
-class SHVVISU_DECL_EXPORT GraphView : public QScrollArea
+class LIBSHVVISU_EXPORT GraphView : public QScrollArea
 {
 	Q_OBJECT
 

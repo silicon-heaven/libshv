@@ -6,7 +6,7 @@
 
 namespace shv::visu::svgscene {
 
-class SHVVISU_DECL_EXPORT SimpleTextItem : public QGraphicsSimpleTextItem
+class LIBSHVVISU_EXPORT SimpleTextItem : public QGraphicsSimpleTextItem
 {
 	using Super = QGraphicsSimpleTextItem;
 public:

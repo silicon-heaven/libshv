@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 #include <shv/visu/timeline/channelfilter.h>
 #include <shv/visu/timeline/fulltextfilter.h>
 
@@ -9,7 +9,7 @@
 
 namespace shv::visu::logview {
 
-class SHVVISU_DECL_EXPORT LogSortFilterProxyModel : public QSortFilterProxyModel
+class LIBSHVVISU_EXPORT LogSortFilterProxyModel : public QSortFilterProxyModel
 {
 	Q_OBJECT
 

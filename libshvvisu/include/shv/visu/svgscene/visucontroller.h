@@ -10,7 +10,7 @@
 
 namespace shv::visu::svgscene {
 	
-class SHVVISU_DECL_EXPORT VisuController : public QObject
+class LIBSHVVISU_EXPORT VisuController : public QObject
 {
 	Q_OBJECT
 

@@ -1,15 +1,15 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <QString>
 #include <QMap>
 
 namespace shv::visu::svgscene {
 
-struct SHVVISU_DECL_EXPORT Types
+struct LIBSHVVISU_EXPORT Types
 {
-	struct SHVVISU_DECL_EXPORT DataKey
+	struct LIBSHVVISU_EXPORT DataKey
 	{
 		enum {
 			XmlAttributes = 1,

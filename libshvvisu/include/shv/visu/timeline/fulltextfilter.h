@@ -1,13 +1,13 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <QRegularExpression>
 #include <QString>
 
 namespace shv::visu::timeline {
 
-class SHVVISU_DECL_EXPORT FullTextFilter
+class LIBSHVVISU_EXPORT FullTextFilter
 {
 public:
 	FullTextFilter();

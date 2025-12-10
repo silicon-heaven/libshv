@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <shv/coreqt/utils.h>
 
@@ -8,13 +8,13 @@
 
 namespace shv::visu {
 
-class SHVVISU_DECL_EXPORT LogTableModelRow : public QVector<QVariant>
+class LIBSHVVISU_EXPORT LogTableModelRow : public QVector<QVariant>
 {
 public:
 	explicit LogTableModelRow(int size = 0);
 };
 
-class SHVVISU_DECL_EXPORT LogTableModelBase : public QAbstractTableModel
+class LIBSHVVISU_EXPORT LogTableModelBase : public QAbstractTableModel
 {
 	Q_OBJECT
 private:

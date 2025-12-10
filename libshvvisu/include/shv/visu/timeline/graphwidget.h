@@ -15,7 +15,7 @@ namespace shv::visu::timeline {
 
 class Graph;
 
-class SHVVISU_DECL_EXPORT GraphWidget : public QWidget
+class LIBSHVVISU_EXPORT GraphWidget : public QWidget
 {
 	Q_OBJECT
 

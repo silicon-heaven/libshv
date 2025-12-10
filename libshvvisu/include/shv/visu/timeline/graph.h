@@ -5,7 +5,7 @@
 #include <shv/visu/timeline/graphchannel.h>
 #include <shv/visu/timeline/graphmodel.h>
 #include <shv/visu/timeline/sample.h>
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <shv/coreqt/utils.h>
 #include <shv/core/exception.h>
@@ -29,12 +29,12 @@ class QSvgGenerator;
 
 namespace shv::visu::timeline {
 
-class SHVVISU_DECL_EXPORT Graph : public QObject
+class LIBSHVVISU_EXPORT Graph : public QObject
 {
 	Q_OBJECT
 public:
 	using TypeId = shv::core::utils::ShvTypeDescr::Type;
-	struct SHVVISU_DECL_EXPORT DataRect
+	struct LIBSHVVISU_EXPORT DataRect
 	{
 		XRange xRange;
 		YRange yRange;
@@ -52,7 +52,7 @@ public:
 	static constexpr auto KEY_SAMPLE_VALUE = "sampleValue";
 	static constexpr auto KEY_SAMPLE_PRETTY_VALUE = "samplePrettyValue";
 
-	class SHVVISU_DECL_EXPORT Style : public QVariantMap
+	class LIBSHVVISU_EXPORT Style : public QVariantMap
 	{
 		SHV_VARIANTMAP_FIELD2(int, u, setU, nitSize, 20) // px
 		SHV_VARIANTMAP_FIELD2(double, h, setH, eaderInset, 0.2) // units
@@ -85,7 +85,7 @@ public:
 public:
 	static const QString DEFAULT_USER_PROFILE;
 
-	class SHVVISU_DECL_EXPORT VisualSettings
+	class LIBSHVVISU_EXPORT VisualSettings
 	{
 	public:
 		class Channel
@@ -164,7 +164,7 @@ public:
 	const QRect& miniMapRect() const;
 	const QRect& cornerCellRect() const;
 	QRect southFloatingBarRect() const;
-	struct SHVVISU_DECL_EXPORT CrossHairPos
+	struct LIBSHVVISU_EXPORT CrossHairPos
 	{
 		qsizetype channelIndex = -1;
 		QPoint position;
@@ -312,7 +312,7 @@ protected:
 	QVector<GraphChannel*> m_channels;
 	std::optional<ChannelFilter> m_channelFilter;
 
-	struct SHVVISU_DECL_EXPORT XAxis
+	struct LIBSHVVISU_EXPORT XAxis
 	{
 		enum class LabelScale {MSec, Sec, Min, Hour, Day, Month, Year, Value, Kilo, Mega, Giga};
 		timemsec_t tickInterval = 0;

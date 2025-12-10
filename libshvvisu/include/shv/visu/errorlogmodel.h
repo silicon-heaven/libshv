@@ -2,13 +2,13 @@
 
 #include <shv/visu/logtablemodelbase.h>
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <necrolog/necrologlevel.h>
 
 namespace shv::visu {
 
-class SHVVISU_DECL_EXPORT ErrorLogModel : public LogTableModelBase
+class LIBSHVVISU_EXPORT ErrorLogModel : public LogTableModelBase
 {
 	Q_OBJECT
 

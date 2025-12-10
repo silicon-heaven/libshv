@@ -1,12 +1,12 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <QGraphicsRectItem>
 
 namespace shv::visu::svgscene {
 
-class SHVVISU_DECL_EXPORT RectItem : public QGraphicsRectItem
+class LIBSHVVISU_EXPORT RectItem : public QGraphicsRectItem
 {
 	using Super = QGraphicsRectItem;
 public:
