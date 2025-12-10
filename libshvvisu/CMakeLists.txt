@@ -76,7 +76,9 @@ libshv_add_library(libshvvisu
 libshv_set_translations(libshvvisu "${LIBSHV_PROJECT_TRANSLATIONS}")
 
 if(LIBSHV_USE_QT6)
-	qt_add_translations(libshvvisu SOURCE_TARGETS libshvvisu TS_FILE_BASE libshvvisu LUPDATE_OPTIONS -locations none)
+	qt_add_translations(libshvvisu SOURCE_TARGETS libshvvisu TS_FILE_BASE libshvvisu LUPDATE_OPTIONS -locations none OUTPUT_TARGETS LIBSHV_LIBSHVVISU_TRANSLATION_TARGETS)
+	install(TARGETS ${LIBSHV_LIBSHVVISU_TRANSLATION_TARGETS} EXPORT libshvConfig)
+	export(TARGETS ${LIBSHV_LIBSHVVISU_TRANSLATION_TARGETS} NAMESPACE libshv:: APPEND FILE "${CMAKE_CURRENT_BINARY_DIR}/libshvConfig.cmake")
 endif()
 
 target_link_libraries(libshvvisu PUBLIC Qt::Widgets libshviotqt)
