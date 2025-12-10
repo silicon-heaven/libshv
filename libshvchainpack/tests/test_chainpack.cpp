@@ -524,7 +524,7 @@ DOCTEST_TEST_CASE("RpcValue::fromChainPackWithPath - all values tested")
 	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"some_key"}) == 123);
 	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"zero_val"}) == 0);
 	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"empty_string"}) == "");
-	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"null_val"}).isNull());
+	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"null_val"}) == RpcValue(nullptr));
 
 	// Top-level containers
 	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"empty_map"}) == R"({})"_cpon);
@@ -546,22 +546,10 @@ DOCTEST_TEST_CASE("RpcValue::fromChainPackWithPath - all values tested")
 	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"second_key", "2"}) == R"([])"_cpon);
 
 	// Non-existing key / out-of-range
-	REQUIRE_THROWS_WITH_AS(
-		RpcValue::fromChainPackWithPath(test_val, {"non-existing-key"}),
-		"Couldn't find key 'non-existing-key' on path '': Map does not contain this key",
-		std::logic_error
-	);
+	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"non-existing-key"}) == std::nullopt);
 
-	REQUIRE_THROWS_WITH_AS(
-		RpcValue::fromChainPackWithPath(test_val, {"second_key", "10"}),
-		"Couldn't find key '10' on path '.second_key': List index out of range",
-		std::logic_error
-	);
+	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"second_key", "10"}) == std::nullopt);
 
 	// Invalid type access
-	REQUIRE_THROWS_WITH_AS(
-		RpcValue::fromChainPackWithPath(test_val, {"some_key", "0"}),
-		"Expected Map/IMap/List for key '.some_key.0' got INT",
-		std::logic_error
-	);
+	REQUIRE(RpcValue::fromChainPackWithPath(test_val, {"some_key", "0"}) == std::nullopt);
 }

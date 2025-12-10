@@ -191,64 +191,56 @@ void ChainPackReader::read(RpcValue &val)
 	}
 }
 
-void ChainPackReader::readPath(RpcValue& val, const std::vector<std::string>& keys)
+bool ChainPackReader::readPath(RpcValue& val, const std::vector<std::string>& keys)
 {
-    std::string current_path;
+	std::string current_path;
 
-    auto fail = [&](const std::string& requested_key, const std::string& reason) -> void {
-        std::string msg = "Couldn't find key '" + requested_key + "' on path '" + current_path + "': " + reason;
-        throw std::out_of_range{msg};
-    };
+	for (const auto& requested_key : keys) {
+		auto md = RpcValue::MetaData{};
+		read(md);
+		unpackNext();
 
-    auto enterKey = [&](const std::string& requested_key) {
-        auto md = RpcValue::MetaData{};
-        read(md);
-        unpackNext();
+		const auto type = m_inCtx.item.type;
 
-        const auto type = m_inCtx.item.type;
+		if (type != CCPCP_ITEM_MAP && type != CCPCP_ITEM_IMAP && type != CCPCP_ITEM_LIST) {
+			return false;
+		}
 
-        if (type != CCPCP_ITEM_MAP && type != CCPCP_ITEM_IMAP && type != CCPCP_ITEM_LIST) {
-            throw std::out_of_range{"Expected Map/IMap/List for key '" + current_path + "." + requested_key + "' got " + itemTypeToString(type)};
-        }
+		const auto isList = type == CCPCP_ITEM_LIST;
+		const auto isMap = type == CCPCP_ITEM_MAP;
+		auto index = 0;
 
-        const auto isList = type == CCPCP_ITEM_LIST;
-        const auto isMap = type == CCPCP_ITEM_MAP;
-        auto index = 0;
-
-        while (true) {
+		while (true) {
 			if (peekNext() == CCPCP_ITEM_CONTAINER_END) {
-				fail(requested_key, isList ? "List index out of range" : isMap ? "Map does not contain this key" : "IMap does not contain this key");
+				return false;
 			}
 
-            if (isList) {
-                if (index == std::stoi(requested_key)) {
-                    return;
-                }
+			if (isList) {
+				if (index == std::stoi(requested_key)) {
+					break;
+				}
 
 				index++;
-            } else {
-                RpcValue map_key;
-                read(map_key);
+			} else {
+				RpcValue map_key;
+				read(map_key);
 
-                const auto& cmp = isMap ? map_key.asString() : std::to_string(map_key.toInt());
+				const auto& cmp = isMap ? map_key.asString() : std::to_string(map_key.toInt());
 
-                if (cmp == requested_key) {
-                    return;
-                }
-            }
+				if (cmp == requested_key) {
+					break;
+				}
+			}
 
 			RpcValue skip;
 			read(skip);
-        }
-    };
+		}
+		current_path.push_back('.');
+		current_path += requested_key;
+	}
 
-    for (const auto& key : keys) {
-        enterKey(key);
-        current_path.push_back('.');
-        current_path += key;
-    }
-
-    read(val);
+	read(val);
+	return true;
 }
 
 void ChainPackReader::parseList(RpcValue &val)
