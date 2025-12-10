@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/iotqt/shviotqtglobal.h>
+#include <shv/iotqt/shviotqt_export.h>
 
 #include <QString>
 
@@ -8,7 +8,7 @@ class QHostAddress;
 
 namespace shv::iotqt::utils {
 
-class SHVIOTQT_DECL_EXPORT Network
+class LIBSHVIOTQT_EXPORT Network
 {
 public:
 	static uint32_t toIntIPv4Address(const std::string &addr);

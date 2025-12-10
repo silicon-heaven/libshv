@@ -4,7 +4,7 @@
 
 namespace shv::iotqt::rpc {
 
-class SHVIOTQT_DECL_EXPORT DeviceAppCliOptions : public shv::iotqt::rpc::ClientAppCliOptions
+class LIBSHVIOTQT_EXPORT DeviceAppCliOptions : public shv::iotqt::rpc::ClientAppCliOptions
 {
 private:
 	using Super = shv::iotqt::rpc::ClientAppCliOptions;

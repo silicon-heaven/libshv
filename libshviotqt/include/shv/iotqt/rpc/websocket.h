@@ -6,7 +6,7 @@ class QWebSocket;
 
 namespace shv::iotqt::rpc {
 
-class SHVIOTQT_DECL_EXPORT WebSocket : public Socket
+class LIBSHVIOTQT_EXPORT WebSocket : public Socket
 {
 	Q_OBJECT
 

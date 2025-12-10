@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/iotqt/shviotqtglobal.h>
+#include <shv/iotqt/shviotqt_export.h>
 
 #include <string>
 
@@ -8,7 +8,7 @@ namespace shv::chainpack { class RpcValue; }
 
 namespace shv::iotqt::acl {
 
-struct SHVIOTQT_DECL_EXPORT AclMountDef
+struct LIBSHVIOTQT_EXPORT AclMountDef
 {
 	std::string mountPoint;
 	std::string description;

@@ -6,7 +6,7 @@ class QLocalSocket;
 
 namespace shv::iotqt::rpc {
 
-class SHVIOTQT_DECL_EXPORT LocalSocket : public Socket
+class LIBSHVIOTQT_EXPORT LocalSocket : public Socket
 {
 	Q_OBJECT
 

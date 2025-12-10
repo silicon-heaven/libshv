@@ -7,7 +7,7 @@
 
 namespace shv::iotqt::node {
 
-class SHVIOTQT_DECL_EXPORT FileNode : public ShvNode
+class LIBSHVIOTQT_EXPORT FileNode : public ShvNode
 {
 	Q_OBJECT
 

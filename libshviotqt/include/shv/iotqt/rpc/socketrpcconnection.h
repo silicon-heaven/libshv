@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/iotqt/shviotqtglobal.h>
+#include <shv/iotqt/shviotqt_export.h>
 
 #include <shv/chainpack/irpcconnection.h>
 #include <shv/chainpack/rpcdriver.h>
@@ -16,7 +16,7 @@ namespace shv::iotqt::rpc {
 
 class Socket;
 
-class SHVIOTQT_DECL_EXPORT SocketRpcConnection : public QObject, public shv::chainpack::IRpcConnection, public shv::chainpack::RpcDriver
+class LIBSHVIOTQT_EXPORT SocketRpcConnection : public QObject, public shv::chainpack::IRpcConnection, public shv::chainpack::RpcDriver
 {
 	Q_OBJECT
 

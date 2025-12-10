@@ -6,7 +6,7 @@ namespace shv::iotqt::rpc {
 
 class DeviceAppCliOptions;
 
-class SHVIOTQT_DECL_EXPORT DeviceConnection : public ClientConnection
+class LIBSHVIOTQT_EXPORT DeviceConnection : public ClientConnection
 {
 	Q_OBJECT
 	using Super = ClientConnection;

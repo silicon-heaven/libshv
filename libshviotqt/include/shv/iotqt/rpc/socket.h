@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/iotqt/shviotqtglobal.h>
+#include <shv/iotqt/shviotqt_export.h>
 
 #include <shv/chainpack/rpcmessage.h>
 
@@ -21,7 +21,7 @@ namespace shv::chainpack { class ParseException; }
 
 namespace shv::iotqt::rpc {
 
-class SHVIOTQT_DECL_EXPORT FrameReader {
+class LIBSHVIOTQT_EXPORT FrameReader {
 public:
 	virtual ~FrameReader() = default;
 	virtual QList<int> addData(std::string_view data) = 0;
@@ -41,7 +41,7 @@ protected:
 	std::optional<size_t> m_dataStart;
 };
 
-class SHVIOTQT_DECL_EXPORT FrameWriter
+class LIBSHVIOTQT_EXPORT FrameWriter
 {
 public:
 	virtual ~FrameWriter() = default;
@@ -58,7 +58,7 @@ protected:
 	QList<QByteArray> m_messageDataToWrite;
 };
 
-class SHVIOTQT_DECL_EXPORT StreamFrameReader : public FrameReader
+class LIBSHVIOTQT_EXPORT StreamFrameReader : public FrameReader
 {
 	using Super = FrameReader;
 public:
@@ -70,7 +70,7 @@ private:
 	std::string m_readBuffer;
 };
 
-class SHVIOTQT_DECL_EXPORT StreamFrameWriter : public FrameWriter
+class LIBSHVIOTQT_EXPORT StreamFrameWriter : public FrameWriter
 {
 public:
 	~StreamFrameWriter() override = default;
@@ -81,7 +81,7 @@ protected:
 
 /// wrapper class for QTcpSocket and QWebSocket
 
-class SHVIOTQT_DECL_EXPORT Socket : public QObject
+class LIBSHVIOTQT_EXPORT Socket : public QObject
 {
 	Q_OBJECT
 public:
@@ -133,7 +133,7 @@ private:
 	std::unique_ptr<FrameWriter> m_frameWriter;
 };
 
-class SHVIOTQT_DECL_EXPORT TcpSocket : public Socket
+class LIBSHVIOTQT_EXPORT TcpSocket : public Socket
 {
 	Q_OBJECT
 
@@ -157,7 +157,7 @@ protected:
 };
 
 #ifndef QT_NO_SSL
-class SHVIOTQT_DECL_EXPORT SslSocket : public TcpSocket
+class LIBSHVIOTQT_EXPORT SslSocket : public TcpSocket
 {
 	Q_OBJECT
 
