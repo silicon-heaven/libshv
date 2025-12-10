@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 
 #include <string>
 #include <map>
@@ -12,7 +12,7 @@ namespace core::utils {
 class ShvJournalEntry;
 struct ShvGetLogParams;
 
-struct SHVCORE_DECL_EXPORT ShvSnapshot
+struct LIBSHVCORE_EXPORT ShvSnapshot
 {
 	std::map<std::string, ShvJournalEntry> keyvals;
 };
@@ -22,7 +22,7 @@ enum class IgnoreRecordCountLimit{
 	No
 };
 
-class SHVCORE_DECL_EXPORT AbstractShvJournal
+class LIBSHVCORE_EXPORT AbstractShvJournal
 {
 public:
 	virtual ~AbstractShvJournal();

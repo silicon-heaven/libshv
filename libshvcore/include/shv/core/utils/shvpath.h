@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 
 #include <shv/core/utils.h>
 
@@ -10,11 +10,11 @@ namespace shv::core::utils {
 
 namespace shvpath {
 
-SHVCORE_DECL_EXPORT bool startsWithPath(const std::string_view &str, const std::string_view &path, size_t *pos = nullptr);
+LIBSHVCORE_EXPORT bool startsWithPath(const std::string_view &str, const std::string_view &path, size_t *pos = nullptr);
 
 }
 
-class SHVCORE_DECL_EXPORT ShvPath
+class LIBSHVCORE_EXPORT ShvPath
 {
 public:
 	static constexpr auto SHV_PATH_QUOTE = '\'';

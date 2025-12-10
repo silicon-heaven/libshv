@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 
 #include <necrolog/necrologlevel.h>
 
@@ -13,7 +13,7 @@ namespace shv::core::utils {
 
 class ShvTypeInfo;
 
-class SHVCORE_DECL_EXPORT ShvAlarm {
+class LIBSHVCORE_EXPORT ShvAlarm {
 public:
 	using Severity = NecroLogLevel;
 	std::string path;

@@ -7,7 +7,7 @@ namespace shv::core::utils {
 
 class ShvJournalEntry;
 
-class SHVCORE_DECL_EXPORT ShvLogRpcValueReader
+class LIBSHVCORE_EXPORT ShvLogRpcValueReader
 {
 public:
 	ShvLogRpcValueReader(const shv::chainpack::RpcValue &log, bool throw_exceptions = false);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 #include <shv/core/utils/shvjournalentry.h>
 #include <shv/core/exception.h>
 
@@ -9,7 +9,7 @@
 
 namespace shv::core::utils {
 
-class SHVCORE_DECL_EXPORT ShvJournalFileReader
+class LIBSHVCORE_EXPORT ShvJournalFileReader
 {
 public:
 	ShvJournalFileReader(const std::string &file_name);

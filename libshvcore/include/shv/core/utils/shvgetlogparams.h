@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 
 #include <shv/core/utils/shvjournalcommon.h>
 #include <shv/chainpack/rpcvalue.h>
@@ -9,7 +9,7 @@
 
 namespace shv::core::utils {
 
-struct SHVCORE_DECL_EXPORT ShvGetLogParams
+struct LIBSHVCORE_EXPORT ShvGetLogParams
 {
 	static constexpr auto KEY_HEADER_OPTIONS_DEPRECATED = "headerOptions";
 	static constexpr auto KEY_MAX_RECORD_COUNT_DEPRECATED = "maxRecordCount";

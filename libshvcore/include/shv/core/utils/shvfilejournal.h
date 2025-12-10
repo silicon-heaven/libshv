@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 #include <shv/core/utils/abstractshvjournal.h>
 #include <shv/core/utils/shvjournalentry.h>
 #include <shv/core/utils/shvgetlogparams.h>
@@ -10,7 +10,7 @@
 
 namespace shv::core::utils {
 
-class SHVCORE_DECL_EXPORT ShvFileJournal : public AbstractShvJournal
+class LIBSHVCORE_EXPORT ShvFileJournal : public AbstractShvJournal
 {
 public:
 	static constexpr long DEFAULT_FILE_SIZE_LIMIT = 1024 * 1024;

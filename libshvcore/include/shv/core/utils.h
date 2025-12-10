@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 #include <shv/core/stringview.h>
 
 #include <shv/chainpack/rpcvalue.h>
@@ -81,7 +81,7 @@
 
 namespace shv::core {
 
-class SHVCORE_DECL_EXPORT Utils
+class LIBSHVCORE_EXPORT Utils
 {
 public:
 	static int versionStringToInt(const std::string &version_string);
@@ -135,39 +135,39 @@ enum class CaseSensitivity {
 	CaseInsensitive
 };
 
-SHVCORE_DECL_EXPORT StringViewList split(StringView strv, char delim, char quote = '\0', SplitBehavior split_behavior = SplitBehavior::SkipEmptyParts, QuoteBehavior quotes_behavior = QuoteBehavior::KeepQuotes);
+LIBSHVCORE_EXPORT StringViewList split(StringView strv, char delim, char quote = '\0', SplitBehavior split_behavior = SplitBehavior::SkipEmptyParts, QuoteBehavior quotes_behavior = QuoteBehavior::KeepQuotes);
 StringViewList split(std::string&& strv, char delim, char quote = '\0', SplitBehavior split_behavior = SplitBehavior::SkipEmptyParts, QuoteBehavior quotes_behavior = QuoteBehavior::KeepQuotes) = delete;
-SHVCORE_DECL_EXPORT StringView getToken(StringView strv, char delim = ' ', char quote = '\0');
-SHVCORE_DECL_EXPORT StringView slice(StringView s, int start, int end);
+LIBSHVCORE_EXPORT StringView getToken(StringView strv, char delim = ' ', char quote = '\0');
+LIBSHVCORE_EXPORT StringView slice(StringView s, int start, int end);
 
-SHVCORE_DECL_EXPORT bool equal(const std::string &a, const std::string &b, CaseSensitivity case_sensitivity);
-SHVCORE_DECL_EXPORT std::string::size_type indexOf(const std::string & str_haystack, const std::string &str_needle, CaseSensitivity case_sensitivity = CaseSensitivity::CaseSensitive);
-SHVCORE_DECL_EXPORT std::string::size_type indexOf(const std::string &haystack, char needle);
+LIBSHVCORE_EXPORT bool equal(const std::string &a, const std::string &b, CaseSensitivity case_sensitivity);
+LIBSHVCORE_EXPORT std::string::size_type indexOf(const std::string & str_haystack, const std::string &str_needle, CaseSensitivity case_sensitivity = CaseSensitivity::CaseSensitive);
+LIBSHVCORE_EXPORT std::string::size_type indexOf(const std::string &haystack, char needle);
 
 constexpr auto WhiteSpaceChars = " \t\n\r\f\v";
-SHVCORE_DECL_EXPORT std::string& rtrim(std::string& s, const char* t = WhiteSpaceChars);
-SHVCORE_DECL_EXPORT std::string& ltrim(std::string& s, const char* t = WhiteSpaceChars);
-SHVCORE_DECL_EXPORT std::string& trim(std::string& s, const char* t = WhiteSpaceChars);
+LIBSHVCORE_EXPORT std::string& rtrim(std::string& s, const char* t = WhiteSpaceChars);
+LIBSHVCORE_EXPORT std::string& ltrim(std::string& s, const char* t = WhiteSpaceChars);
+LIBSHVCORE_EXPORT std::string& trim(std::string& s, const char* t = WhiteSpaceChars);
 
-SHVCORE_DECL_EXPORT std::string mid(const std::string& str, size_t pos, size_t cnt = std::string::npos);
+LIBSHVCORE_EXPORT std::string mid(const std::string& str, size_t pos, size_t cnt = std::string::npos);
 
-SHVCORE_DECL_EXPORT std::pair<size_t, size_t> indexOfBrackets(const std::string &haystack, size_t begin_pos, size_t end_pos, const std::string &open_bracket, const std::string &close_bracket);
-SHVCORE_DECL_EXPORT std::vector<std::string> split(const std::string &str, char delim, SplitBehavior split_behavior = SplitBehavior::SkipEmptyParts);
-SHVCORE_DECL_EXPORT std::string join(const std::vector<std::string> &lst, const std::string &delim);
-SHVCORE_DECL_EXPORT std::string join(const std::vector<std::string> &lst, char delim);
-SHVCORE_DECL_EXPORT std::string join(const std::vector<shv::core::StringView> &lst, char delim);
-SHVCORE_DECL_EXPORT int replace(std::string &str, const std::string &from, const std::string &to);
-SHVCORE_DECL_EXPORT int replace(std::string &str, const char from, const char to);
+LIBSHVCORE_EXPORT std::pair<size_t, size_t> indexOfBrackets(const std::string &haystack, size_t begin_pos, size_t end_pos, const std::string &open_bracket, const std::string &close_bracket);
+LIBSHVCORE_EXPORT std::vector<std::string> split(const std::string &str, char delim, SplitBehavior split_behavior = SplitBehavior::SkipEmptyParts);
+LIBSHVCORE_EXPORT std::string join(const std::vector<std::string> &lst, const std::string &delim);
+LIBSHVCORE_EXPORT std::string join(const std::vector<std::string> &lst, char delim);
+LIBSHVCORE_EXPORT std::string join(const std::vector<shv::core::StringView> &lst, char delim);
+LIBSHVCORE_EXPORT int replace(std::string &str, const std::string &from, const std::string &to);
+LIBSHVCORE_EXPORT int replace(std::string &str, const char from, const char to);
 
-SHVCORE_DECL_EXPORT std::string& upper(std::string& s);
-SHVCORE_DECL_EXPORT std::string toUpper(const std::string& s);
-SHVCORE_DECL_EXPORT std::string& lower(std::string& s);
-SHVCORE_DECL_EXPORT std::string toLower(const std::string& s);
+LIBSHVCORE_EXPORT std::string& upper(std::string& s);
+LIBSHVCORE_EXPORT std::string toUpper(const std::string& s);
+LIBSHVCORE_EXPORT std::string& lower(std::string& s);
+LIBSHVCORE_EXPORT std::string toLower(const std::string& s);
 
-SHVCORE_DECL_EXPORT int toInt(const std::string &str, bool *ok = nullptr);
-SHVCORE_DECL_EXPORT double toDouble(const std::string &str, bool *ok);
+LIBSHVCORE_EXPORT int toInt(const std::string &str, bool *ok = nullptr);
+LIBSHVCORE_EXPORT double toDouble(const std::string &str, bool *ok);
 
-SHVCORE_DECL_EXPORT std::string joinPath(const StringView &p1, const StringView &p2);
+LIBSHVCORE_EXPORT std::string joinPath(const StringView &p1, const StringView &p2);
 
 template <typename... Types>
 void joinPath(const Types& ...pack)
@@ -201,7 +201,7 @@ auto findLongestPrefix(const Container& cont, std::string value) -> typename std
 	return cont.end();
 }
 
-std::string SHVCORE_DECL_EXPORT makeUserAgent(const std::string& program_name);
+std::string LIBSHVCORE_EXPORT makeUserAgent(const std::string& program_name);
 }
 }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 
 #include <shv/chainpack/rpcvalue.h>
 
@@ -22,7 +22,7 @@ namespace shv {
 namespace chainpack { class RpcValue; }
 namespace core::utils {
 
-class SHVCORE_DECL_EXPORT CLIOptions
+class LIBSHVCORE_EXPORT CLIOptions
 {
 public:
 	CLIOptions();
@@ -30,10 +30,10 @@ public:
 
 	using StringList = std::vector<std::string>;
 public:
-	class SHVCORE_DECL_EXPORT Option
+	class LIBSHVCORE_EXPORT Option
 	{
 	private:
-		struct SHVCORE_DECL_EXPORT Data
+		struct LIBSHVCORE_EXPORT Data
 		{
 			chainpack::RpcValue::Type type = chainpack::RpcValue::Type::Invalid;
 			StringList names;
@@ -116,7 +116,7 @@ private:
 	StringList m_allArgs;
 };
 
-class SHVCORE_DECL_EXPORT ConfigCLIOptions : public CLIOptions
+class LIBSHVCORE_EXPORT ConfigCLIOptions : public CLIOptions
 {
 private:
 	typedef CLIOptions Super;

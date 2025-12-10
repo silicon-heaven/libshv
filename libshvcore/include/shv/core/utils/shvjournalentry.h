@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 
 #include <shv/core/utils/shvtypeinfo.h>
 
@@ -9,7 +9,7 @@
 
 namespace shv::core::utils {
 
-class SHVCORE_DECL_EXPORT ShvJournalEntry
+class LIBSHVCORE_EXPORT ShvJournalEntry
 {
 public:
 	class MetaType : public chainpack::meta::MetaType

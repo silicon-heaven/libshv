@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 
 #include <shv/core/utils/shvtypeinfo.h>
 #include <shv/core/utils/shvgetlogparams.h>
@@ -12,7 +12,7 @@ namespace shv::core::utils {
 
 struct ShvGetLogParams;
 
-class SHVCORE_DECL_EXPORT ShvLogHeader //: public shv::chainpack::RpcValue::MetaData
+class LIBSHVCORE_EXPORT ShvLogHeader //: public shv::chainpack::RpcValue::MetaData
 {
 	using Super = shv::chainpack::RpcValue::MetaData;
 

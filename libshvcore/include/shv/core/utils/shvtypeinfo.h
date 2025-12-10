@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 
 #include <shv/chainpack/rpcvalue.h>
 
@@ -11,7 +11,7 @@ namespace shv::chainpack { class MetaMethod; }
 
 namespace shv::core::utils {
 
-class SHVCORE_DECL_EXPORT ShvDescriptionBase
+class LIBSHVCORE_EXPORT ShvDescriptionBase
 {
 public:
 	ShvDescriptionBase();
@@ -32,7 +32,7 @@ protected:
 };
 
 class ShvFieldDescr;
-class SHVCORE_DECL_EXPORT ShvTypeDescr : public ShvDescriptionBase
+class LIBSHVCORE_EXPORT ShvTypeDescr : public ShvDescriptionBase
 {
 	using Super = ShvDescriptionBase;
 public:
@@ -111,7 +111,7 @@ private:
 	std::pair<unsigned, unsigned> bitRangePair() const;
 };
 
-class SHVCORE_DECL_EXPORT ShvFieldDescr : public ShvTypeDescr
+class LIBSHVCORE_EXPORT ShvFieldDescr : public ShvTypeDescr
 {
 	using Super = ShvDescriptionBase;
 public:
@@ -136,7 +136,7 @@ public:
 
 using ShvMethodDescr = shv::chainpack::MetaMethod;
 
-class SHVCORE_DECL_EXPORT ShvPropertyDescr : public ShvFieldDescr
+class LIBSHVCORE_EXPORT ShvPropertyDescr : public ShvFieldDescr
 {
 	using Super = ShvFieldDescr;
 public:
@@ -152,7 +152,7 @@ public:
 	static ShvPropertyDescr fromRpcValue(const chainpack::RpcValue &v, chainpack::RpcValue::Map *extra_tags = nullptr);
 };
 
-class SHVCORE_DECL_EXPORT ShvDeviceDescription
+class LIBSHVCORE_EXPORT ShvDeviceDescription
 {
 public:
 	using Properties = std::vector<ShvPropertyDescr>;
@@ -188,7 +188,7 @@ public:
 	Properties::const_iterator findLongestPropertyPrefix(const std::string &name) const;
 };
 
-class SHVCORE_DECL_EXPORT ShvTypeInfo
+class LIBSHVCORE_EXPORT ShvTypeInfo
 {
 public:
 	ShvTypeInfo() = default;
@@ -231,7 +231,7 @@ public:
 	void setBlacklist(const std::string &shv_path, const chainpack::RpcValue &blacklist);
 	void setPropertyDeviation(const std::string &shv_path, const ShvPropertyDescr &property_descr);
 
-	struct SHVCORE_DECL_EXPORT PathInfo
+	struct LIBSHVCORE_EXPORT PathInfo
 	{
 		std::string devicePath;
 		std::string deviceType;

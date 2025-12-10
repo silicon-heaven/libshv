@@ -1,13 +1,13 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 
 #include <compare>
 #include <string>
 
 namespace shv::core::utils {
 
-class SHVCORE_DECL_EXPORT VersionInfo
+class LIBSHVCORE_EXPORT VersionInfo
 {
 public:
 	VersionInfo(int major = 0, int minor = 0, int patch = 0, const std::string &branch = std::string());

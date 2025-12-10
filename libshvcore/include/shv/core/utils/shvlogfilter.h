@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 
 #include <shv/core/utils/abstractshvjournal.h>
 #include <shv/core/utils/patternmatcher.h>
@@ -8,7 +8,7 @@
 
 namespace shv::core::utils {
 
-class SHVCORE_DECL_EXPORT ShvLogFilter
+class LIBSHVCORE_EXPORT ShvLogFilter
 {
 public:
 	ShvLogFilter(const ShvGetLogParams &input_params);

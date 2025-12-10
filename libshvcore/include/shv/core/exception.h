@@ -1,13 +1,13 @@
 #pragma once
 
-#include <shv/core/shvcoreglobal.h>
+#include <shv/core/shvcore_export.h>
 #include <shv/core/utils.h>
 
 #include <shv/chainpack/exception.h>
 
 namespace shv::core {
 
-class SHVCORE_DECL_EXPORT Exception : public shv::chainpack::Exception
+class LIBSHVCORE_EXPORT Exception : public shv::chainpack::Exception
 {
 	using Super = shv::chainpack::Exception;
 public:
