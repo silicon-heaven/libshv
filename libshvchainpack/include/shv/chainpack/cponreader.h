@@ -5,11 +5,11 @@
 
 namespace shv::chainpack {
 
-class SHVCHAINPACK_DECL_EXPORT CponReaderOptions
+class LIBSHVCHAINPACK_CPP_EXPORT CponReaderOptions
 {
 };
 
-class SHVCHAINPACK_DECL_EXPORT CponReader : public AbstractStreamReader
+class LIBSHVCHAINPACK_CPP_EXPORT CponReader : public AbstractStreamReader
 {
 	using Super = AbstractStreamReader;
 public:

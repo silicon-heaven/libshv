@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/chainpack/shvchainpackglobal.h>
+#include <shv/chainpack/shvchainpack_export.h>
 #include <shv/chainpack/rpcmessage.h>
 #include <shv/chainpack/rpc.h>
 
@@ -10,7 +10,7 @@ namespace shv::chainpack {
 
 class ParseException;
 
-class SHVCHAINPACK_DECL_EXPORT RpcDriver
+class LIBSHVCHAINPACK_CPP_EXPORT RpcDriver
 {
 public:
 	explicit RpcDriver();

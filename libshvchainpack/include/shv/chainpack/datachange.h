@@ -1,13 +1,13 @@
 #pragma once
 
-#include <shv/chainpack/shvchainpackglobal.h>
+#include <shv/chainpack/shvchainpack_export.h>
 
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/chainpack/utils.h>
 
 namespace shv::chainpack {
 
-class SHVCHAINPACK_DECL_EXPORT DataChange
+class LIBSHVCHAINPACK_CPP_EXPORT DataChange
 {
 public:
 	class MetaType : public chainpack::meta::MetaType

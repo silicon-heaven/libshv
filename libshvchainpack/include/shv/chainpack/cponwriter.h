@@ -6,7 +6,7 @@
 
 namespace shv::chainpack {
 
-class SHVCHAINPACK_DECL_EXPORT CponWriterOptions
+class LIBSHVCHAINPACK_CPP_EXPORT CponWriterOptions
 {
 	bool m_translateIds = false;
 	bool m_hexBlob = false;
@@ -26,7 +26,7 @@ public:
 	CponWriterOptions& setJsonFormat(bool b);
 };
 
-class SHVCHAINPACK_DECL_EXPORT CponWriter : public AbstractStreamWriter
+class LIBSHVCHAINPACK_CPP_EXPORT CponWriter : public AbstractStreamWriter
 {
 	using Super = AbstractStreamWriter;
 

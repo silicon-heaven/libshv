@@ -25,6 +25,7 @@ endif()
 
 project(libshv LANGUAGES C CXX)
 include(CTest)
+include(GenerateExportHeader)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -51,6 +52,39 @@ set(LIBSHV_PROJECT_TRANSLATIONS
 	de_DE
 	sk_SK
 )
+
+function(libshv_add_library target_name)
+	set(options QT)
+	set(oneValueArgs NAMESPACE)
+	set(multiValueArgs HEADERS SOURCES)
+	cmake_parse_arguments(PARSE_ARGV 0 arg "${options}" "${oneValueArgs}" "${multiValueArgs}")
+	if(arg_QT)
+		qt_add_library("${target_name}")
+	else()
+		add_library("${target_name}")
+	endif()
+	generate_export_header("${target_name}" EXPORT_FILE_NAME "shv/${arg_NAMESPACE}/shv${arg_NAMESPACE}_export.h")
+	target_sources("${target_name}"
+		PRIVATE
+			${arg_SOURCES}
+		PUBLIC
+			FILE_SET HEADERS
+				BASE_DIRS include
+				FILES
+					${arg_HEADERS}
+				FILE_SET generated_headers
+					TYPE HEADERS
+					BASE_DIRS "${CMAKE_CURRENT_BINARY_DIR}"
+					FILES "${CMAKE_CURRENT_BINARY_DIR}/shv/${arg_NAMESPACE}/shv${arg_NAMESPACE}_export.h"
+	)
+
+	add_library("libshv::${target_name}" ALIAS "${target_name}")
+
+	install(TARGETS "${target_name}" EXPORT libshvConfig FILE_SET HEADERS FILE_SET generated_headers)
+	export(TARGETS "${target_name}" NAMESPACE libshv:: FILE "${CMAKE_CURRENT_BINARY_DIR}/libshvConfig.cmake")
+	install(EXPORT libshvConfig DESTINATION share/libshv/cmake NAMESPACE libshv::)
+
+endfunction()
 
 function(libshv_set_translations target langs)
 	foreach(lang ${langs})

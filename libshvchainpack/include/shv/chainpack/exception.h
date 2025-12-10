@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/chainpack/shvchainpackglobal.h>
+#include <shv/chainpack/shvchainpack_export.h>
 
 #include <shv/chainpack/rpcvalue.h>
 
@@ -9,7 +9,7 @@
 
 namespace shv::chainpack {
 
-class SHVCHAINPACK_DECL_EXPORT Exception : public std::runtime_error
+class LIBSHVCHAINPACK_CPP_EXPORT Exception : public std::runtime_error
 {
 	using Super = std::runtime_error;
 public:

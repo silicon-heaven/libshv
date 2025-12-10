@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/chainpack/shvchainpackglobal.h>
+#include <shv/chainpack/shvchainpack_export.h>
 #include <shv/chainpack/metatypes.h>
 
 #include <functional>
@@ -80,7 +80,7 @@ public:
 
 class RpcList;
 
-class SHVCHAINPACK_DECL_EXPORT RpcDateTime
+class LIBSHVCHAINPACK_CPP_EXPORT RpcDateTime
 {
 public:
 	enum class MsecPolicy {Auto = 0, Always, Never};
@@ -116,7 +116,7 @@ public:
 	std::string toIsoString() const;
 	std::string toIsoString(MsecPolicy msec_policy, bool include_tz) const;
 
-	struct SHVCHAINPACK_DECL_EXPORT Parts
+	struct LIBSHVCHAINPACK_CPP_EXPORT Parts
 	{
 		int year = 0;
 		int month = 0; // 1-12
@@ -147,7 +147,7 @@ private:
 	MsTz m_dtm = {.tz = 0, .msec = 0};
 };
 
-class SHVCHAINPACK_DECL_EXPORT RpcDecimal
+class LIBSHVCHAINPACK_CPP_EXPORT RpcDecimal
 {
 	static constexpr int Base = 10;
 	struct Num {
@@ -183,7 +183,7 @@ class RpcMap;
 class RpcIMap;
 class RpcMetaData;
 
-class SHVCHAINPACK_DECL_EXPORT RpcValue
+class LIBSHVCHAINPACK_CPP_EXPORT RpcValue
 {
 public:
 
@@ -415,7 +415,7 @@ private:
 	VariantType m_value;
 };
 
-class SHVCHAINPACK_DECL_EXPORT RpcList : public std::vector<RpcValue>
+class LIBSHVCHAINPACK_CPP_EXPORT RpcList : public std::vector<RpcValue>
 {
 	using Super = std::vector<RpcValue>;
 	using Super::Super; // expose base class constructors
@@ -425,7 +425,7 @@ public:
 	static RpcList fromStringList(const std::vector<std::string> &sl);
 };
 
-class SHVCHAINPACK_DECL_EXPORT RpcMap : public std::map<RpcValue::String, RpcValue>
+class LIBSHVCHAINPACK_CPP_EXPORT RpcMap : public std::map<RpcValue::String, RpcValue>
 {
 	using Super = std::map<std::string, RpcValue>;
 	using Super::Super; // expose base class constructors
@@ -438,7 +438,7 @@ public:
 	std::vector<RpcValue::String> keys() const;
 };
 
-class SHVCHAINPACK_DECL_EXPORT RpcIMap : public std::map<RpcValue::Int, RpcValue>
+class LIBSHVCHAINPACK_CPP_EXPORT RpcIMap : public std::map<RpcValue::Int, RpcValue>
 {
 	using Super = std::map<RpcValue::Int, RpcValue>;
 	using Super::Super; // expose base class constructors
@@ -450,7 +450,7 @@ public:
 	std::vector<RpcValue::Int> keys() const;
 };
 
-class SHVCHAINPACK_DECL_EXPORT RpcMetaData
+class LIBSHVCHAINPACK_CPP_EXPORT RpcMetaData
 {
 public:
 	RpcMetaData();
@@ -495,7 +495,7 @@ private:
 };
 
 namespace string_literals {
-SHVCHAINPACK_DECL_EXPORT RpcValue operator""_cpon(const char* data, size_t size);
+LIBSHVCHAINPACK_CPP_EXPORT RpcValue operator""_cpon(const char* data, size_t size);
 }
 
 template<typename T> RpcValue::Type RpcValue::guessType() { throw std::runtime_error("guessing of this type is not implemented"); }
@@ -509,7 +509,7 @@ template<> inline RpcValue::Type RpcValue::guessType<RpcValue::String>() { retur
 
 template<typename T> inline RpcValue RpcValue::fromValue(const T &t) { return RpcValue{t}; }
 
-class SHVCHAINPACK_DECL_EXPORT RpcValueGenList
+class LIBSHVCHAINPACK_CPP_EXPORT RpcValueGenList
 {
 public:
 	RpcValueGenList(const RpcValue &v);

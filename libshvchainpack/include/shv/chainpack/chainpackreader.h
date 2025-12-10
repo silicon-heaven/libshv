@@ -6,7 +6,7 @@
 
 namespace shv::chainpack {
 
-class SHVCHAINPACK_DECL_EXPORT ChainPackReader : public AbstractStreamReader
+class LIBSHVCHAINPACK_CPP_EXPORT ChainPackReader : public AbstractStreamReader
 {
 	using Super = AbstractStreamReader;
 public:

@@ -1,13 +1,13 @@
 #pragma once
 
-#include <shv/chainpack/shvchainpackglobal.h>
+#include <shv/chainpack/shvchainpack_export.h>
 
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/chainpack/utils.h>
 
 namespace shv::chainpack {
 
-class SHVCHAINPACK_DECL_EXPORT TunnelCtl : public shv::chainpack::RpcValue
+class LIBSHVCHAINPACK_CPP_EXPORT TunnelCtl : public shv::chainpack::RpcValue
 {
 	using Super = shv::chainpack::RpcValue;
 public:
@@ -39,7 +39,7 @@ public:
 	TunnelCtl(const RpcValue &o);
 };
 
-class SHVCHAINPACK_DECL_EXPORT FindTunnelReqCtl : public TunnelCtl
+class LIBSHVCHAINPACK_CPP_EXPORT FindTunnelReqCtl : public TunnelCtl
 {
 	using Super = TunnelCtl;
 
@@ -53,7 +53,7 @@ public:
 	FindTunnelReqCtl(const TunnelCtl &o);
 };
 
-class SHVCHAINPACK_DECL_EXPORT FindTunnelRespCtl : public TunnelCtl
+class LIBSHVCHAINPACK_CPP_EXPORT FindTunnelRespCtl : public TunnelCtl
 {
 	using Super = TunnelCtl;
 
@@ -71,7 +71,7 @@ public:
 
 };
 
-class SHVCHAINPACK_DECL_EXPORT CreateTunnelReqCtl : public TunnelCtl
+class LIBSHVCHAINPACK_CPP_EXPORT CreateTunnelReqCtl : public TunnelCtl
 {
 	using Super = TunnelCtl;
 
@@ -88,7 +88,7 @@ public:
 	static CreateTunnelReqCtl fromFindTunnelResponse(const FindTunnelRespCtl &resp);
 };
 
-class SHVCHAINPACK_DECL_EXPORT CreateTunnelRespCtl : public TunnelCtl
+class LIBSHVCHAINPACK_CPP_EXPORT CreateTunnelRespCtl : public TunnelCtl
 {
 	using Super = TunnelCtl;
 
@@ -97,7 +97,7 @@ public:
 	CreateTunnelRespCtl(const TunnelCtl &o);
 };
 
-class SHVCHAINPACK_DECL_EXPORT CloseTunnelCtl : public TunnelCtl
+class LIBSHVCHAINPACK_CPP_EXPORT CloseTunnelCtl : public TunnelCtl
 {
 	using Super = TunnelCtl;
 

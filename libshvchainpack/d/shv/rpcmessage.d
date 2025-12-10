@@ -162,7 +162,7 @@ private:
 /+
 struct RpcResponse;
 
-struct SHVCHAINPACK_DECL_EXPORT RpcRequest : public RpcMessage
+struct LIBSHVCHAINPACK_CPP_EXPORT RpcRequest : public RpcMessage
 {
 private:
 	using Super = RpcMessage;
@@ -183,7 +183,7 @@ public:
 	//size_t write(AbstractStreamWriter &wr) const override;
 };
 
-struct SHVCHAINPACK_DECL_EXPORT RpcSignal : public RpcRequest
+struct LIBSHVCHAINPACK_CPP_EXPORT RpcSignal : public RpcRequest
 {
 private:
 	using Super = RpcRequest;
@@ -197,7 +197,7 @@ public:
 	void write(AbstractStreamWriter &wr, const std::string &method, std::function<void (AbstractStreamWriter &)> write_params_callback);
 };
 
-struct SHVCHAINPACK_DECL_EXPORT RpcException : public Exception
+struct LIBSHVCHAINPACK_CPP_EXPORT RpcException : public Exception
 {
 	using Super = Exception;
 public:
@@ -209,12 +209,12 @@ protected:
 	int m_errorCode;
 };
 
-struct SHVCHAINPACK_DECL_EXPORT RpcResponse : public RpcMessage
+struct LIBSHVCHAINPACK_CPP_EXPORT RpcResponse : public RpcMessage
 {
 private:
 	using Super = RpcMessage;
 public:
-	struct SHVCHAINPACK_DECL_EXPORT Error : public RpcValue::IMap
+	struct LIBSHVCHAINPACK_CPP_EXPORT Error : public RpcValue::IMap
 	{
 	private:
 		using Super = RpcValue::IMap;

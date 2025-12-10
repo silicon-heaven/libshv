@@ -6,7 +6,7 @@
 
 namespace shv::chainpack {
 
-class SHVCHAINPACK_DECL_EXPORT SocketRpcDriver : public RpcDriver
+class LIBSHVCHAINPACK_CPP_EXPORT SocketRpcDriver : public RpcDriver
 {
 	using Super = RpcDriver;
 public:

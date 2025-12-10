@@ -8,7 +8,7 @@
 
 namespace shv::chainpack {
 
-class SHVCHAINPACK_DECL_EXPORT MetaMethod
+class LIBSHVCHAINPACK_CPP_EXPORT MetaMethod
 {
 public:
 	enum class Signature {VoidVoid = 0, VoidParam, RetVoid, RetParam};
@@ -35,7 +35,7 @@ public:
 	static constexpr auto KEY_TAGS = "tags";
 	static constexpr auto KEY_SIGNALS = "signals";
 public:
-	struct SHVCHAINPACK_DECL_EXPORT Signal {
+	struct LIBSHVCHAINPACK_CPP_EXPORT Signal {
 		Signal(const std::string& name, const std::optional<std::string>& param_type = {});
 		std::string name;
 		std::optional<std::string> param_type;

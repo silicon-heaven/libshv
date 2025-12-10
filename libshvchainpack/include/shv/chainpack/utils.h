@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/chainpack/shvchainpackglobal.h>
+#include <shv/chainpack/shvchainpack_export.h>
 
 #include <limits>
 #include <string>
@@ -15,11 +15,11 @@ class RpcValue;
 
 namespace utils {
 
-SHVCHAINPACK_DECL_EXPORT std::string hexArray(const char *bytes, size_t n);
-SHVCHAINPACK_DECL_EXPORT std::string hexDump(const char *bytes, size_t n);
-SHVCHAINPACK_DECL_EXPORT std::string hexDump(const std::string_view &bytes);
-SHVCHAINPACK_DECL_EXPORT std::string byteToHex( uint8_t i );
-SHVCHAINPACK_DECL_EXPORT void byteToHex( std::array<char, 2> &arr, uint8_t i );
+LIBSHVCHAINPACK_CPP_EXPORT std::string hexArray(const char *bytes, size_t n);
+LIBSHVCHAINPACK_CPP_EXPORT std::string hexDump(const char *bytes, size_t n);
+LIBSHVCHAINPACK_CPP_EXPORT std::string hexDump(const std::string_view &bytes);
+LIBSHVCHAINPACK_CPP_EXPORT std::string byteToHex( uint8_t i );
+LIBSHVCHAINPACK_CPP_EXPORT void byteToHex( std::array<char, 2> &arr, uint8_t i );
 
 template <typename I>
 std::string intToHex(I n)
@@ -40,7 +40,7 @@ std::string intToHex(I n)
 
 }
 
-class SHVCHAINPACK_DECL_EXPORT Utils
+class LIBSHVCHAINPACK_CPP_EXPORT Utils
 {
 public:
 	std::string binaryDump(const std::string &bytes);
@@ -65,7 +65,7 @@ public:
 };
 
 namespace utils {
-char SHVCHAINPACK_DECL_EXPORT hexNibble(char i);
+char LIBSHVCHAINPACK_CPP_EXPORT hexNibble(char i);
 }
 
 } // namespace shv::chainpack
