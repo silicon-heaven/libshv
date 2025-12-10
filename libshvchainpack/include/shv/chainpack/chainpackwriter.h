@@ -4,7 +4,7 @@
 
 namespace shv::chainpack {
 
-class SHVCHAINPACK_DECL_EXPORT ChainPackWriter : public shv::chainpack::AbstractStreamWriter
+class LIBSHVCHAINPACK_CPP_EXPORT ChainPackWriter : public shv::chainpack::AbstractStreamWriter
 {
 	using Super = AbstractStreamWriter;
 public:

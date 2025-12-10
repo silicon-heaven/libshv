@@ -5,7 +5,7 @@
 #include <shv/chainpack/rpc.h>
 
 #include <shv/chainpack/exception.h>
-#include <shv/chainpack/shvchainpackglobal.h>
+#include <shv/chainpack/shvchainpack_export.h>
 
 #include <functional>
 
@@ -16,7 +16,7 @@ class TunnelCtl;
 class RpcMessage;
 struct AccessGrant;
 
-struct SHVCHAINPACK_DECL_EXPORT RpcFrame
+struct LIBSHVCHAINPACK_CPP_EXPORT RpcFrame
 {
 	Rpc::ProtocolType protocol = Rpc::ProtocolType::ChainPack;
 	RpcValue::MetaData meta;
@@ -31,7 +31,7 @@ struct SHVCHAINPACK_DECL_EXPORT RpcFrame
 	static RpcFrame fromFrameData(const std::string &frame_data);
 };
 
-class SHVCHAINPACK_DECL_EXPORT RpcMessage
+class LIBSHVCHAINPACK_CPP_EXPORT RpcMessage
 {
 public:
 	class MetaType : public meta::MetaType
@@ -168,7 +168,7 @@ protected:
 
 class RpcResponse;
 
-class SHVCHAINPACK_DECL_EXPORT RpcRequest : public RpcMessage
+class LIBSHVCHAINPACK_CPP_EXPORT RpcRequest : public RpcMessage
 {
 private:
 	using Super = RpcMessage;
@@ -186,7 +186,7 @@ public:
 	RpcResponse makeResponse() const;
 };
 
-class SHVCHAINPACK_DECL_EXPORT RpcSignal : public RpcRequest
+class LIBSHVCHAINPACK_CPP_EXPORT RpcSignal : public RpcRequest
 {
 private:
 	using Super = RpcRequest;
@@ -200,7 +200,7 @@ public:
 	static void write(AbstractStreamWriter &wr, const std::string &method, const std::function<void (AbstractStreamWriter &)>& write_params_callback);
 };
 
-class SHVCHAINPACK_DECL_EXPORT RpcException : public Exception
+class LIBSHVCHAINPACK_CPP_EXPORT RpcException : public Exception
 {
 	using Super = Exception;
 public:
@@ -212,7 +212,7 @@ protected:
 	int m_errorCode;
 };
 
-class SHVCHAINPACK_DECL_EXPORT RpcError
+class LIBSHVCHAINPACK_CPP_EXPORT RpcError
 {
 private:
 	enum { KeyCode = 1, KeyMessage, KeyData };
@@ -263,7 +263,7 @@ private:
 	RpcValue m_value;
 };
 
-class SHVCHAINPACK_DECL_EXPORT RpcResponse : public RpcMessage
+class LIBSHVCHAINPACK_CPP_EXPORT RpcResponse : public RpcMessage
 {
 private:
 	using Super = RpcMessage;

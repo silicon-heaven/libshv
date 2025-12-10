@@ -7,7 +7,7 @@
 
 namespace shv::chainpack {
 
-class SHVCHAINPACK_DECL_EXPORT ParseException : public std::runtime_error
+class LIBSHVCHAINPACK_CPP_EXPORT ParseException : public std::runtime_error
 {
 	using Super = std::runtime_error;
 public:
@@ -20,7 +20,7 @@ private:
 	long long m_pos = -1;
 };
 
-class SHVCHAINPACK_DECL_EXPORT AbstractStreamReader
+class LIBSHVCHAINPACK_CPP_EXPORT AbstractStreamReader
 {
 public:
 	friend size_t unpack_underflow_handler(ccpcp_unpack_context *ctx);

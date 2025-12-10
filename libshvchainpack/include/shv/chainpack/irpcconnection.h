@@ -5,7 +5,7 @@
 
 namespace shv::chainpack {
 
-class SHVCHAINPACK_DECL_EXPORT IRpcConnection
+class LIBSHVCHAINPACK_CPP_EXPORT IRpcConnection
 {
 public:
 	enum class ShvApiVersion {V2, V3};

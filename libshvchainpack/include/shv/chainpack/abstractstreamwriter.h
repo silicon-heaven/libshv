@@ -8,7 +8,7 @@
 
 namespace shv::chainpack {
 
-class SHVCHAINPACK_DECL_EXPORT AbstractStreamWriter
+class LIBSHVCHAINPACK_CPP_EXPORT AbstractStreamWriter
 {
 	friend void pack_overflow_handler(ccpcp_pack_context *ctx, size_t size_hint);
 public:

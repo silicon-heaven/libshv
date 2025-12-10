@@ -1,10 +1,10 @@
 #pragma once
 
-#include <shv/chainpack/shvchainpackglobal.h>
+#include <shv/chainpack/shvchainpack_export.h>
 
 namespace shv::chainpack {
 
-class SHVCHAINPACK_DECL_EXPORT Rpc
+class LIBSHVCHAINPACK_CPP_EXPORT Rpc
 {
 public:
 	enum class ProtocolType {Invalid = 0, ChainPack, Cpon};

@@ -1,39 +1,62 @@
-add_library(libshvchainpack-cpp
-	src/abstractstreamreader.cpp
-	src/abstractstreamwriter.cpp
-	src/accesslevel.cpp
-	src/accessgrant.cpp
-	src/chainpack.cpp
-	src/chainpackreader.cpp
-	src/chainpackwriter.cpp
-	src/cponreader.cpp
-	src/cponwriter.cpp
-	src/datachange.cpp
-	src/exception.cpp
-	src/irpcconnection.cpp
-	src/metamethod.cpp
-	src/metatypes.cpp
-	src/rpc.cpp
-	src/rpcdriver.cpp
-	src/rpcmessage.cpp
-	src/rpcvalue.cpp
-	src/tunnelctl.cpp
-	src/utils.cpp
-	include/shv/chainpack/crc32.h
+libshv_add_library(libshvchainpack-cpp
+	NAMESPACE chainpack
+	SOURCES
+		src/abstractstreamreader.cpp
+		src/abstractstreamwriter.cpp
+		src/accessgrant.cpp
+		src/accesslevel.cpp
+		src/chainpack.cpp
+		src/chainpackreader.cpp
+		src/chainpackwriter.cpp
+		src/cponreader.cpp
+		src/cponwriter.cpp
+		src/datachange.cpp
+		src/exception.cpp
+		src/irpcconnection.cpp
+		src/metamethod.cpp
+		src/metatypes.cpp
+		src/rpc.cpp
+		src/rpcdriver.cpp
+		src/rpcmessage.cpp
+		src/rpcvalue.cpp
+		src/tunnelctl.cpp
+		src/utils.cpp
+	HEADERS
+		include/shv/chainpack/abstractstreamreader.h
+		include/shv/chainpack/abstractstreamwriter.h
+		include/shv/chainpack/accessgrant.h
+		include/shv/chainpack/accesslevel.h
+		include/shv/chainpack/chainpack.h
+		include/shv/chainpack/chainpackreader.h
+		include/shv/chainpack/chainpackwriter.h
+		include/shv/chainpack/cponreader.h
+		include/shv/chainpack/cponwriter.h
+		include/shv/chainpack/crc32.h
+		include/shv/chainpack/datachange.h
+		include/shv/chainpack/exception.h
+		include/shv/chainpack/irpcconnection.h
+		include/shv/chainpack/metamethod.h
+		include/shv/chainpack/metatypes.h
+		include/shv/chainpack/rpc.h
+		include/shv/chainpack/rpcdriver.h
+		include/shv/chainpack/rpcmessage.h
+		include/shv/chainpack/rpcvalue.h
+		include/shv/chainpack/tunnelctl.h
+		include/shv/chainpack/utils.h
 	)
-add_library(libshv::libshvchainpack-cpp ALIAS libshvchainpack-cpp)
 
 if (NOT WIN32)
-	target_sources(libshvchainpack-cpp PRIVATE src/socketrpcdriver.cpp)
+	target_sources(libshvchainpack-cpp
+		PRIVATE
+			src/socketrpcdriver.cpp
+		PUBLIC
+			FILE_SET HEADERS
+				FILES
+					include/shv/chainpack/socketrpcdriver.h
+		)
 endif()
 
 target_link_libraries(libshvchainpack-cpp libnecrolog::libnecrolog libshvchainpack-c)
-target_include_directories(libshvchainpack-cpp PUBLIC
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-	$<INSTALL_INTERFACE:include>
-	)
-
-target_compile_definitions(libshvchainpack-cpp PRIVATE SHVCHAINPACK_BUILD_DLL)
 
 function(add_shv_test test_name)
 	add_executable(test_${test_name}
@@ -75,8 +98,3 @@ if(BUILD_TESTING)
 		add_fuzz_test(fromChainpack)
 	endif()
 endif()
-
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/shv" TYPE INCLUDE)
-
-install(TARGETS libshvchainpack-cpp EXPORT libshvConfig)
-export(TARGETS libshvchainpack-cpp NAMESPACE libshv:: FILE "${CMAKE_CURRENT_BINARY_DIR}/libshvConfig.cmake")

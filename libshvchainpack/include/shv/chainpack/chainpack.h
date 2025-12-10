@@ -1,11 +1,11 @@
 #pragma once
 
 #include <shv/chainpack/cchainpack.h>
-#include <shv/chainpack/shvchainpackglobal.h>
+#include <shv/chainpack/shvchainpack_export.h>
 
 namespace shv::chainpack {
 
-class SHVCHAINPACK_DECL_EXPORT ChainPack
+class LIBSHVCHAINPACK_CPP_EXPORT ChainPack
 {
 public:
 	// UTC msec since 2.2. 2018 folowed by signed UTC offset in 1/4 hour
@@ -14,7 +14,7 @@ public:
 public:
 	static constexpr uint8_t ARRAY_FLAG_MASK = 64;
 	static constexpr uint8_t STRING_META_KEY_PREFIX = 0xFE;
-	struct SHVCHAINPACK_DECL_EXPORT PackingSchema {
+	struct LIBSHVCHAINPACK_CPP_EXPORT PackingSchema {
 		enum Enum {
 			INVALID = -1,
 

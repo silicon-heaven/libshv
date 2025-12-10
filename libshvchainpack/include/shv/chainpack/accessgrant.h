@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/chainpack/shvchainpackglobal.h>
+#include <shv/chainpack/shvchainpack_export.h>
 
 #include <shv/chainpack/metamethod.h>
 #include <shv/chainpack/rpcmessage.h>
@@ -12,7 +12,7 @@ namespace shv::chainpack {
 
 struct UserLogin;
 
-struct SHVCHAINPACK_DECL_EXPORT UserLoginContext
+struct LIBSHVCHAINPACK_CPP_EXPORT UserLoginContext
 {
 	std::optional<std::string> serverNounce;
 	std::string clientType;
@@ -23,7 +23,7 @@ struct SHVCHAINPACK_DECL_EXPORT UserLoginContext
 	shv::chainpack::UserLogin userLogin() const;
 };
 
-struct SHVCHAINPACK_DECL_EXPORT UserLoginResult
+struct LIBSHVCHAINPACK_CPP_EXPORT UserLoginResult
 {
 	bool passwordOk = false;
 	std::string loginError;
@@ -38,7 +38,7 @@ struct SHVCHAINPACK_DECL_EXPORT UserLoginResult
 	shv::chainpack::RpcValue toRpcValue() const;
 };
 
-struct SHVCHAINPACK_DECL_EXPORT UserLogin
+struct LIBSHVCHAINPACK_CPP_EXPORT UserLogin
 {
 public:
 	enum class LoginType {Invalid = 0, Plain, Sha1, RsaOaep, None, AzureAccessToken, Token};
@@ -55,7 +55,7 @@ public:
 	static UserLogin fromRpcValue(const RpcValue &val);
 };
 
-struct SHVCHAINPACK_DECL_EXPORT AccessGrant
+struct LIBSHVCHAINPACK_CPP_EXPORT AccessGrant
 {
 	AccessLevel accessLevel = AccessLevel::None;
 	std::string access;

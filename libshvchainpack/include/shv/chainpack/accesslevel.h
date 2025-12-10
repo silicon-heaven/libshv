@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/chainpack/shvchainpackglobal.h>
+#include <shv/chainpack/shvchainpack_export.h>
 
 #include <optional>
 #include <string_view>
@@ -84,8 +84,8 @@ enum class AccessLevel {
 	Admin = 63,
 };
 
-SHVCHAINPACK_DECL_EXPORT const char* accessLevelToAccessString(AccessLevel access_level);
-SHVCHAINPACK_DECL_EXPORT std::optional<AccessLevel> accessLevelFromAccessString(std::string_view s);
-SHVCHAINPACK_DECL_EXPORT std::optional<AccessLevel> accessLevelFromInt(int i);
+LIBSHVCHAINPACK_CPP_EXPORT const char* accessLevelToAccessString(AccessLevel access_level);
+LIBSHVCHAINPACK_CPP_EXPORT std::optional<AccessLevel> accessLevelFromAccessString(std::string_view s);
+LIBSHVCHAINPACK_CPP_EXPORT std::optional<AccessLevel> accessLevelFromInt(int i);
 
 } // namespace chainpack

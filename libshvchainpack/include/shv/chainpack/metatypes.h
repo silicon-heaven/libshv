@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/chainpack/shvchainpackglobal.h>
+#include <shv/chainpack/shvchainpack_export.h>
 
 #include <cstddef>
 #include <map>
@@ -19,7 +19,7 @@ struct Tag {
 	};
 };
 
-class SHVCHAINPACK_DECL_EXPORT MetaInfo
+class LIBSHVCHAINPACK_CPP_EXPORT MetaInfo
 {
 public:
 	int id = 0;
@@ -32,7 +32,7 @@ public:
 };
 
 class MetaType;
-class SHVCHAINPACK_DECL_EXPORT MetaNameSpace
+class LIBSHVCHAINPACK_CPP_EXPORT MetaNameSpace
 {
 public:
 	MetaNameSpace(const char *name = nullptr);
@@ -46,7 +46,7 @@ protected:
 	std::map<int, MetaType*> m_types;
 };
 
-class SHVCHAINPACK_DECL_EXPORT MetaType
+class LIBSHVCHAINPACK_CPP_EXPORT MetaType
 {
 public:
 	MetaType(const char *name);
@@ -60,10 +60,10 @@ protected:
 	std::map<int, MetaInfo> m_keys;
 };
 
-SHVCHAINPACK_DECL_EXPORT void registerNameSpace(int ns_id, MetaNameSpace *ns);
-SHVCHAINPACK_DECL_EXPORT void registerType(int ns_id, int type_id, MetaType *tid);
-SHVCHAINPACK_DECL_EXPORT const MetaNameSpace& registeredNameSpace(int ns_id);
-SHVCHAINPACK_DECL_EXPORT const MetaType& registeredType(int ns_id, int type_id);
+LIBSHVCHAINPACK_CPP_EXPORT void registerNameSpace(int ns_id, MetaNameSpace *ns);
+LIBSHVCHAINPACK_CPP_EXPORT void registerType(int ns_id, int type_id, MetaType *tid);
+LIBSHVCHAINPACK_CPP_EXPORT const MetaNameSpace& registeredNameSpace(int ns_id);
+LIBSHVCHAINPACK_CPP_EXPORT const MetaType& registeredType(int ns_id, int type_id);
 
 enum class NameSpaceID
 {
@@ -72,7 +72,7 @@ enum class NameSpaceID
 	Eyas,
 };
 
-class SHVCHAINPACK_DECL_EXPORT GlobalNS : public meta::MetaNameSpace
+class LIBSHVCHAINPACK_CPP_EXPORT GlobalNS : public meta::MetaNameSpace
 {
 	using Super = meta::MetaNameSpace;
 public:
@@ -95,7 +95,7 @@ public:
 	static void registerMetaTypes();
 };
 
-class SHVCHAINPACK_DECL_EXPORT ElesysNS : public meta::MetaNameSpace
+class LIBSHVCHAINPACK_CPP_EXPORT ElesysNS : public meta::MetaNameSpace
 {
 	using Super = meta::MetaNameSpace;
 public:
