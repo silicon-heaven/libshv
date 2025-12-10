@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/iotqt/shviotqtglobal.h>
+#include <shv/iotqt/shviotqt_export.h>
 #include <shv/iotqt/acl/aclpassword.h>
 
 #include <vector>
@@ -8,7 +8,7 @@
 namespace shv::chainpack { class RpcValue; }
 namespace shv::iotqt::acl {
 
-struct SHVIOTQT_DECL_EXPORT AclUser
+struct LIBSHVIOTQT_EXPORT AclUser
 {
 	AclPassword password;
 	std::vector<std::string> roles;

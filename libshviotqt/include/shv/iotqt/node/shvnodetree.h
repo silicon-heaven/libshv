@@ -6,7 +6,7 @@
 
 namespace shv::iotqt::node {
 
-class SHVIOTQT_DECL_EXPORT ShvNodeTree : public QObject
+class LIBSHVIOTQT_EXPORT ShvNodeTree : public QObject
 {
 	Q_OBJECT
 public:

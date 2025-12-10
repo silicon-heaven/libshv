@@ -22,7 +22,7 @@ namespace shv::iotqt::rpc {
 
 class ClientAppCliOptions;
 
-class SHVIOTQT_DECL_EXPORT ClientConnection : public SocketRpcConnection
+class LIBSHVIOTQT_EXPORT ClientConnection : public SocketRpcConnection
 {
 	Q_OBJECT
 	using Super = SocketRpcConnection;

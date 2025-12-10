@@ -2,11 +2,11 @@
 
 #include <shv/core/utils/clioptions.h>
 
-#include <shv/iotqt/shviotqtglobal.h>
+#include <shv/iotqt/shviotqt_export.h>
 
 namespace shv::iotqt::rpc {
 
-class SHVIOTQT_DECL_EXPORT ClientAppCliOptions : public shv::core::utils::ConfigCLIOptions
+class LIBSHVIOTQT_EXPORT ClientAppCliOptions : public shv::core::utils::ConfigCLIOptions
 {
 private:
 	using Super = shv::core::utils::ConfigCLIOptions;

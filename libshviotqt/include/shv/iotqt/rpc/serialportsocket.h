@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/iotqt/shviotqtglobal.h>
+#include <shv/iotqt/shviotqt_export.h>
 #include <shv/iotqt/rpc/socket.h>
 
 #include <shv/chainpack/crc32.h>
@@ -11,7 +11,7 @@ class QTimer;
 
 namespace shv::iotqt::rpc {
 
-class SHVIOTQT_DECL_EXPORT SerialFrameReader : public FrameReader
+class LIBSHVIOTQT_EXPORT SerialFrameReader : public FrameReader
 {
 	using Super = FrameReader;
 public:
@@ -36,7 +36,7 @@ private:
 	bool m_withCrcCheck = true;
 };
 
-class SHVIOTQT_DECL_EXPORT SerialFrameWriter : public FrameWriter
+class LIBSHVIOTQT_EXPORT SerialFrameWriter : public FrameWriter
 {
 public:
 	enum class CrcCheck {No, Yes};
@@ -51,7 +51,7 @@ private:
 	bool m_withCrcCheck = true;
 };
 
-class SHVIOTQT_DECL_EXPORT SerialPortSocket : public Socket
+class LIBSHVIOTQT_EXPORT SerialPortSocket : public Socket
 {
 	Q_OBJECT
 

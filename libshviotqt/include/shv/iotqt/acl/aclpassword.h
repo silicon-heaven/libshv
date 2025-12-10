@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/iotqt/shviotqtglobal.h>
+#include <shv/iotqt/shviotqt_export.h>
 
 #include <string>
 
@@ -8,7 +8,7 @@ namespace shv::chainpack { class RpcValue; }
 
 namespace shv::iotqt::acl {
 
-struct SHVIOTQT_DECL_EXPORT AclPassword
+struct LIBSHVIOTQT_EXPORT AclPassword
 {
 	enum class Format {Invalid, Plain, Sha1};
 

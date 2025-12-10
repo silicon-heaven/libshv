@@ -5,8 +5,8 @@
 /// Declaration of macros required for exporting symbols
 /// into shared libraries
 #if defined(SHVIOTQT_BUILD_DLL)
-#  define SHVIOTQT_DECL_EXPORT Q_DECL_EXPORT
+#  define LIBSHVIOTQT_EXPORT Q_DECL_EXPORT
 #else
-#  define SHVIOTQT_DECL_EXPORT Q_DECL_IMPORT
+#  define LIBSHVIOTQT_EXPORT Q_DECL_IMPORT
 #endif
 

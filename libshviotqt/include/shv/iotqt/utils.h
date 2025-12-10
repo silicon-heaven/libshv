@@ -1,8 +1,8 @@
 #pragma once
 
-#include <shv/iotqt/shviotqtglobal.h>
+#include <shv/iotqt/shviotqt_export.h>
 #include <string>
 
 namespace shv::iotqt::utils {
-std::string SHVIOTQT_DECL_EXPORT sha1Hex(const std::string &s);
+std::string LIBSHVIOTQT_EXPORT sha1Hex(const std::string &s);
 }

@@ -1,48 +1,49 @@
-qt_add_library(libshviotqt
-	src/acl/aclmountdef.cpp
-	src/acl/aclpassword.cpp
-	src/acl/aclrole.cpp
-	src/acl/aclroleaccessrules.cpp
-	src/acl/acluser.cpp
-	src/node/filenode.cpp
-	src/node/localfsnode.cpp
-	src/node/propertynode.cpp
-	src/node/shvnode.cpp
-	src/node/shvnodetree.cpp
-	src/rpc/clientappclioptions.cpp
-	src/rpc/clientconnection.cpp
-	src/rpc/deviceappclioptions.cpp
-	src/rpc/deviceconnection.cpp
-	src/rpc/rpccall.cpp
-	src/rpc/socket.cpp
-	src/rpc/localsocket.cpp
-	src/rpc/socketrpcconnection.cpp
-	src/utils.cpp
-	src/utils/network.cpp
-
-	include/shv/iotqt/acl/aclmountdef.h
-	include/shv/iotqt/acl/acluser.h
-	include/shv/iotqt/acl/aclrole.h
-	include/shv/iotqt/acl/aclpassword.h
-	include/shv/iotqt/acl/aclroleaccessrules.h
-	include/shv/iotqt/node/shvnodetree.h
-	include/shv/iotqt/node/shvnode.h
-	include/shv/iotqt/node/localfsnode.h
-	include/shv/iotqt/node/filenode.h
-	include/shv/iotqt/node/propertynode.h
-	include/shv/iotqt/utils/network.h
-	include/shv/iotqt/rpc/deviceconnection.h
-	include/shv/iotqt/rpc/rpccall.h
-	include/shv/iotqt/rpc/socket.h
-	include/shv/iotqt/rpc/localsocket.h
-	include/shv/iotqt/rpc/clientconnection.h
-	include/shv/iotqt/rpc/clientappclioptions.h
-	include/shv/iotqt/rpc/deviceappclioptions.h
-	include/shv/iotqt/rpc/rpccall.h
-	include/shv/iotqt/rpc/socketrpcconnection.h
-	include/shv/iotqt/utils.h
+libshv_add_library(libshviotqt
+	QT
+	NAMESPACE iotqt
+	SOURCES
+		src/acl/aclmountdef.cpp
+		src/acl/aclpassword.cpp
+		src/acl/aclrole.cpp
+		src/acl/aclroleaccessrules.cpp
+		src/acl/acluser.cpp
+		src/node/filenode.cpp
+		src/node/localfsnode.cpp
+		src/node/propertynode.cpp
+		src/node/shvnode.cpp
+		src/node/shvnodetree.cpp
+		src/rpc/clientappclioptions.cpp
+		src/rpc/clientconnection.cpp
+		src/rpc/deviceappclioptions.cpp
+		src/rpc/deviceconnection.cpp
+		src/rpc/localsocket.cpp
+		src/rpc/rpccall.cpp
+		src/rpc/socket.cpp
+		src/rpc/socketrpcconnection.cpp
+		src/utils.cpp
+		src/utils/network.cpp
+	HEADERS
+		include/shv/iotqt/acl/aclmountdef.h
+		include/shv/iotqt/acl/aclpassword.h
+		include/shv/iotqt/acl/aclrole.h
+		include/shv/iotqt/acl/aclroleaccessrules.h
+		include/shv/iotqt/acl/acluser.h
+		include/shv/iotqt/node/filenode.h
+		include/shv/iotqt/node/localfsnode.h
+		include/shv/iotqt/node/propertynode.h
+		include/shv/iotqt/node/shvnode.h
+		include/shv/iotqt/node/shvnodetree.h
+		include/shv/iotqt/rpc/clientappclioptions.h
+		include/shv/iotqt/rpc/clientconnection.h
+		include/shv/iotqt/rpc/deviceappclioptions.h
+		include/shv/iotqt/rpc/deviceconnection.h
+		include/shv/iotqt/rpc/localsocket.h
+		include/shv/iotqt/rpc/rpccall.h
+		include/shv/iotqt/rpc/socket.h
+		include/shv/iotqt/rpc/socketrpcconnection.h
+		include/shv/iotqt/utils.h
+		include/shv/iotqt/utils/network.h
 	)
-add_library(libshv::libshviotqt ALIAS libshviotqt)
 
 target_link_libraries(libshviotqt PUBLIC Qt::Network libshvcoreqt)
 
@@ -57,12 +58,6 @@ if(NOT EMSCRIPTEN)
 				include/shv/iotqt/rpc/serialportsocket.h
 			)
 endif()
-
-target_include_directories(libshviotqt PUBLIC
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-	$<INSTALL_INTERFACE:include>
-	)
-target_compile_definitions(libshviotqt PRIVATE SHVIOTQT_BUILD_DLL)
 
 if(LIBSHV_WITH_WEBSOCKETS)
 	target_sources(libshviotqt PRIVATE
@@ -106,8 +101,3 @@ if(BUILD_TESTING)
 	file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test_serialportsocket")
 	target_compile_definitions(test_iotqt_serialportsocket PRIVATE TESTS_DIR="${CMAKE_CURRENT_BINARY_DIR}/test_serialportsocket")
 endif()
-
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/shv" TYPE INCLUDE)
-
-install(TARGETS libshviotqt EXPORT libshvConfig)
-export(TARGETS libshviotqt NAMESPACE libshv:: FILE "${CMAKE_CURRENT_BINARY_DIR}/libshvConfig.cmake")

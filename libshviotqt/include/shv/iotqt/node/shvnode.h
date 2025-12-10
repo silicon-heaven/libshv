@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/iotqt/shviotqtglobal.h>
+#include <shv/iotqt/shviotqt_export.h>
 
 #include <shv/chainpack/metamethod.h>
 #include <shv/chainpack/rpcvalue.h>
@@ -18,7 +18,7 @@ namespace shv::chainpack { struct AccessGrant; }
 namespace shv::core::utils { class ShvJournalEntry; }
 namespace shv::iotqt::node {
 
-class SHVIOTQT_DECL_EXPORT ShvNode : public QObject
+class LIBSHVIOTQT_EXPORT ShvNode : public QObject
 {
 	Q_OBJECT
 public:
@@ -93,7 +93,7 @@ private:
 
 /// helper class to save lines when creating root node
 /// any ShvNode descendant with m_isRootNode = true may be RootNode
-class SHVIOTQT_DECL_EXPORT ShvRootNode : public ShvNode
+class LIBSHVIOTQT_EXPORT ShvRootNode : public ShvNode
 {
 	using Super = ShvNode;
 public:
@@ -101,7 +101,7 @@ public:
 	~ShvRootNode() override;
 };
 
-class SHVIOTQT_DECL_EXPORT MethodsTableNode : public shv::iotqt::node::ShvNode
+class LIBSHVIOTQT_EXPORT MethodsTableNode : public shv::iotqt::node::ShvNode
 {
 	Q_OBJECT
 	using Super = shv::iotqt::node::ShvNode;
@@ -115,7 +115,7 @@ protected:
 };
 
 
-class SHVIOTQT_DECL_EXPORT RpcValueMapNode : public shv::iotqt::node::ShvNode
+class LIBSHVIOTQT_EXPORT RpcValueMapNode : public shv::iotqt::node::ShvNode
 {
 	Q_OBJECT
 	using Super = shv::iotqt::node::ShvNode;
@@ -158,7 +158,7 @@ protected:
 	shv::chainpack::RpcValue m_values;
 };
 
-class SHVIOTQT_DECL_EXPORT RpcValueConfigNode : public RpcValueMapNode
+class LIBSHVIOTQT_EXPORT RpcValueConfigNode : public RpcValueMapNode
 {
 	Q_OBJECT
 
@@ -189,7 +189,7 @@ protected:
 	shv::chainpack::RpcValue m_templateValues;
 };
 
-class SHVIOTQT_DECL_EXPORT ValueProxyShvNode : public shv::iotqt::node::ShvNode
+class LIBSHVIOTQT_EXPORT ValueProxyShvNode : public shv::iotqt::node::ShvNode
 {
 	Q_OBJECT
 
@@ -205,7 +205,7 @@ public:
 		WriteSignal = 6,
 		ReadWriteSignal = 7,
 	};
-	class SHVIOTQT_DECL_EXPORT Handle
+	class LIBSHVIOTQT_EXPORT Handle
 	{
 		friend class ValueProxyShvNode;
 	public:

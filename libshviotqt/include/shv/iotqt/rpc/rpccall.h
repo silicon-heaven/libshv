@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/iotqt/shviotqtglobal.h>
+#include <shv/iotqt/shviotqt_export.h>
 
 #include <shv/coreqt/rpc.h>
 
@@ -26,7 +26,7 @@ namespace iotqt::rpc {
 
 class ClientConnection;
 
-class SHVIOTQT_DECL_EXPORT RpcResponseCallBack : public QObject
+class LIBSHVIOTQT_EXPORT RpcResponseCallBack : public QObject
 {
 	Q_OBJECT
 public:
@@ -60,7 +60,7 @@ private:
 	bool m_isFinished = false;
 };
 
-class SHVIOTQT_DECL_EXPORT RpcCall : public QObject
+class LIBSHVIOTQT_EXPORT RpcCall : public QObject
 {
 	Q_OBJECT
 public:

@@ -10,8 +10,8 @@ enum class PropertyNodeAccessType {
 	ReadWrite
 };
 
-extern SHVIOTQT_DECL_EXPORT const std::vector<shv::chainpack::MetaMethod> READONLY_PROPERTY_NODE_METHODS;
-extern SHVIOTQT_DECL_EXPORT const std::vector<shv::chainpack::MetaMethod> PROPERTY_NODE_METHODS;
+extern LIBSHVIOTQT_EXPORT const std::vector<shv::chainpack::MetaMethod> READONLY_PROPERTY_NODE_METHODS;
+extern LIBSHVIOTQT_EXPORT const std::vector<shv::chainpack::MetaMethod> PROPERTY_NODE_METHODS;
 template <typename PropertyType, auto ACCESS_TYPE>
 class BasePropertyNode : public shv::iotqt::node::MethodsTableNode
 {

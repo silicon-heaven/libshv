@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/iotqt/shviotqtglobal.h>
+#include <shv/iotqt/shviotqt_export.h>
 
 #include <shv/chainpack/rpcvalue.h>
 
@@ -11,7 +11,7 @@
 	
 namespace shv::iotqt::acl {
 
-struct SHVIOTQT_DECL_EXPORT AclRole
+struct LIBSHVIOTQT_EXPORT AclRole
 {
 	std::vector<std::string> roles;
 	shv::chainpack::RpcValue profile;
