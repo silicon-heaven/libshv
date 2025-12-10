@@ -100,7 +100,7 @@ void SocketRpcConnection::onSocketError(QAbstractSocket::SocketError socket_erro
 		// needed especially in case of serial port connection
 		closeSocket();
 	}
-	emit socketError(m_socket->errorString());
+	emit socketError(m_socket->errorString(), socket_error);
 }
 
 void SocketRpcConnection::onParseDataException(const chainpack::ParseException &e)
