@@ -23,7 +23,7 @@ using CssAttributes = Types::CssAttributes;
 
 class RectItem;
 
-class SHVVISU_DECL_EXPORT SaxHandler
+class LIBSHVVISU_EXPORT SaxHandler
 {
 public:
 	struct SvgElement

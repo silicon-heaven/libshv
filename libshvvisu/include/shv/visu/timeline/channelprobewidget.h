@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <QSet>
 #include <QWidget>
@@ -13,7 +13,7 @@ class ChannelProbeWidget;
 
 class ChannelProbe;
 
-class SHVVISU_DECL_EXPORT ChannelProbeWidget : public QWidget
+class LIBSHVVISU_EXPORT ChannelProbeWidget : public QWidget
 {
 	Q_OBJECT
 

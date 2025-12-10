@@ -1,13 +1,13 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <QSet>
 #include <QRegularExpression>
 
 namespace shv::visu::timeline {
 
-class SHVVISU_DECL_EXPORT ChannelFilter
+class LIBSHVVISU_EXPORT ChannelFilter
 {
 public:
 	ChannelFilter();

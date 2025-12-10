@@ -1,12 +1,12 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <QGraphicsView>
 
 namespace shv::visu::svgscene {
 
-class SHVVISU_DECL_EXPORT GraphicsView : public QGraphicsView
+class LIBSHVVISU_EXPORT GraphicsView : public QGraphicsView
 {
 	Q_OBJECT
 

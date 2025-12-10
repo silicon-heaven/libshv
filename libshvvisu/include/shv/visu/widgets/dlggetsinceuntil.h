@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <QDialog>
 #include <QList>
@@ -18,7 +18,7 @@ namespace Ui {
 class DlgGetSinceUntil;
 }
 
-class SHVVISU_DECL_EXPORT DlgGetSinceUntil : public QDialog
+class LIBSHVVISU_EXPORT DlgGetSinceUntil : public QDialog
 {
 	Q_OBJECT
 	using Super = QDialog;

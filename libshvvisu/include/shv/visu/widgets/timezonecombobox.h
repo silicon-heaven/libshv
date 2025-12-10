@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <QComboBox>
 #include <QList>
@@ -11,7 +11,7 @@
 #endif
 namespace shv::visu::widgets {
 
-class SHVVISU_DECL_EXPORT TimeZoneComboBox : public QComboBox
+class LIBSHVVISU_EXPORT TimeZoneComboBox : public QComboBox
 {
 	using Super = QComboBox;
 public:

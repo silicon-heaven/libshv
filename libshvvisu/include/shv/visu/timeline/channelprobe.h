@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <QObject>
 
@@ -10,7 +10,7 @@ class Graph;
 
 using timemsec_t = int64_t;
 
-class SHVVISU_DECL_EXPORT ChannelProbe: public QObject
+class LIBSHVVISU_EXPORT ChannelProbe: public QObject
 {
 	Q_OBJECT
 

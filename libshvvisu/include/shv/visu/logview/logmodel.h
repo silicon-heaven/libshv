@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/core/utils/shvmemoryjournal.h>
@@ -12,7 +12,7 @@
 
 namespace shv::visu::logview {
 
-class SHVVISU_DECL_EXPORT LogModel : public QAbstractTableModel
+class LIBSHVVISU_EXPORT LogModel : public QAbstractTableModel
 {
 	Q_OBJECT
 

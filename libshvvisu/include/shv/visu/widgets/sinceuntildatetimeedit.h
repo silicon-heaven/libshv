@@ -1,12 +1,12 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <QDateTimeEdit>
 
 namespace shv::visu::widgets {
 
-class SHVVISU_DECL_EXPORT SinceUntilDateTimeEdit : public QDateTimeEdit
+class LIBSHVVISU_EXPORT SinceUntilDateTimeEdit : public QDateTimeEdit
 {
 	Q_OBJECT
 	using Super = QDateTimeEdit;

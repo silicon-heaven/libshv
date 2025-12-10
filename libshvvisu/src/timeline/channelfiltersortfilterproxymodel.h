@@ -1,12 +1,12 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <QSortFilterProxyModel>
 
 namespace shv::visu::timeline {
 
-class SHVVISU_DECL_EXPORT ChannelFilterSortFilterProxyModel : public QSortFilterProxyModel
+class LIBSHVVISU_EXPORT ChannelFilterSortFilterProxyModel : public QSortFilterProxyModel
 {
 	Q_OBJECT
 

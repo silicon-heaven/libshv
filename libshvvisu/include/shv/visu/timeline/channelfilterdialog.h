@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 #include <shv/visu/timeline/graph.h>
 
 #include <QDialog>
@@ -15,7 +15,7 @@ class ChannelFilterDialog;
 class ChannelFilterModel;
 class ChannelFilterSortFilterProxyModel;
 
-class SHVVISU_DECL_EXPORT ChannelFilterDialog : public QDialog
+class LIBSHVVISU_EXPORT ChannelFilterDialog : public QDialog
 {
 	Q_OBJECT
 

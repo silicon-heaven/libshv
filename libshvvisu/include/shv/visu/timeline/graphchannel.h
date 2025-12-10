@@ -3,7 +3,7 @@
 #include <shv/visu/timeline/channelprobe.h>
 #include <shv/visu/timeline/sample.h>
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <shv/coreqt/utils.h>
 
@@ -17,13 +17,13 @@ namespace shv::visu::timeline {
 class Graph;
 class GraphButtonBox;
 
-class SHVVISU_DECL_EXPORT GraphChannel : public QObject
+class LIBSHVVISU_EXPORT GraphChannel : public QObject
 {
 	Q_OBJECT
 
 	friend class Graph;
 public:
-	class SHVVISU_DECL_EXPORT Style : public QVariantMap
+	class LIBSHVVISU_EXPORT Style : public QVariantMap
 	{
 	public:
 		struct Interpolation { enum Enum {None = 0, Line, Stepped};};

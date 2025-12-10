@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/visu/shvvisuglobal.h>
+#include <shv/visu/shvvisu_export.h>
 
 #include <shv/visu/logtablemodelbase.h>
 
@@ -31,7 +31,7 @@ protected:
 	void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
 };
 
-class SHVVISU_DECL_EXPORT LogWidget : public QWidget
+class LIBSHVVISU_EXPORT LogWidget : public QWidget
 {
 	Q_OBJECT
 private:
