@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/coreqt/shvcoreqtglobal.h>
+#include <shv/coreqt/shvcoreqt_export.h>
 
 #include <shv/core/utils.h>
 #include <shv/core/exception.h>
@@ -123,7 +123,7 @@ T findParent(const QObject *_o, bool throw_exc = shv::core::Exception::Throw)
 }
 }
 
-class SHVCOREQT_DECL_EXPORT Utils
+class LIBSHVCOREQT_EXPORT Utils
 {
 
 public:
@@ -143,8 +143,8 @@ public:
 };
 
 namespace utils {
-SHVCOREQT_DECL_EXPORT QString joinPath(const QString &p1, const QString &p2);
-SHVCOREQT_DECL_EXPORT std::string joinPath(const std::string& p1, const std::string& p2);
+LIBSHVCOREQT_EXPORT QString joinPath(const QString &p1, const QString &p2);
+LIBSHVCOREQT_EXPORT std::string joinPath(const std::string& p1, const std::string& p2);
 
 template <typename ReturnType>
 ReturnType joinPath()
@@ -175,8 +175,8 @@ ReturnType joinPath(const HeadStringType& head, const StringTypes& ...rest)
 	}
 }
 
-SHVCOREQT_DECL_EXPORT QJsonValue rpcValueToJson(const shv::chainpack::RpcValue& v);
-SHVCOREQT_DECL_EXPORT QByteArray jsonValueToByteArray(const QJsonValue& json);
+LIBSHVCOREQT_EXPORT QJsonValue rpcValueToJson(const shv::chainpack::RpcValue& v);
+LIBSHVCOREQT_EXPORT QByteArray jsonValueToByteArray(const QJsonValue& json);
 
 [[noreturn]] void qcoro_unhandled_exception(std::exception& ex);
 
@@ -198,7 +198,7 @@ auto findLongestPrefix(const QMap<QString, Value>& map, QString value) -> typena
 	return map.end();
 }
 
-void SHVCOREQT_DECL_EXPORT loadTranslations(QCoreApplication* the_app, const QString& locale_string, const std::vector<QString>& modules_to_load);
+void LIBSHVCOREQT_EXPORT loadTranslations(QCoreApplication* the_app, const QString& locale_string, const std::vector<QString>& modules_to_load);
 }
 } // namespace coreqt
 } // namespace shv

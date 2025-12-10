@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/coreqt/shvcoreqtglobal.h>
+#include <shv/coreqt/shvcoreqt_export.h>
 
 #include <shv/core/log.h>
 
@@ -21,18 +21,18 @@ class QRect;
 class QRectF;
 class QUrl;
 
-NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QString &s);
-NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QDateTime &d);
-NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QDate &d);
-NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QTime &d);
-NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QUrl &url);
-NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QStringList &sl);
-NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QByteArray &ba);
-NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QPoint &p);
-NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QPointF &p);
-NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QSize &sz);
-NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QSizeF &sz);
-NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QRect &r);
-NecroLog SHVCOREQT_DECL_EXPORT operator<<(NecroLog log, const QRectF &r);
+NecroLog LIBSHVCOREQT_EXPORT operator<<(NecroLog log, const QString &s);
+NecroLog LIBSHVCOREQT_EXPORT operator<<(NecroLog log, const QDateTime &d);
+NecroLog LIBSHVCOREQT_EXPORT operator<<(NecroLog log, const QDate &d);
+NecroLog LIBSHVCOREQT_EXPORT operator<<(NecroLog log, const QTime &d);
+NecroLog LIBSHVCOREQT_EXPORT operator<<(NecroLog log, const QUrl &url);
+NecroLog LIBSHVCOREQT_EXPORT operator<<(NecroLog log, const QStringList &sl);
+NecroLog LIBSHVCOREQT_EXPORT operator<<(NecroLog log, const QByteArray &ba);
+NecroLog LIBSHVCOREQT_EXPORT operator<<(NecroLog log, const QPoint &p);
+NecroLog LIBSHVCOREQT_EXPORT operator<<(NecroLog log, const QPointF &p);
+NecroLog LIBSHVCOREQT_EXPORT operator<<(NecroLog log, const QSize &sz);
+NecroLog LIBSHVCOREQT_EXPORT operator<<(NecroLog log, const QSizeF &sz);
+NecroLog LIBSHVCOREQT_EXPORT operator<<(NecroLog log, const QRect &r);
+NecroLog LIBSHVCOREQT_EXPORT operator<<(NecroLog log, const QRectF &r);
 
 Q_DECLARE_METATYPE(NecroLog::Level)

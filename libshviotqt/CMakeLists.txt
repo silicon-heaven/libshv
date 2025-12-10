@@ -48,10 +48,14 @@ target_link_libraries(libshviotqt PUBLIC Qt::Network libshvcoreqt)
 
 if(NOT EMSCRIPTEN)
 	target_link_libraries(libshviotqt PUBLIC Qt::SerialPort)
-	target_sources(libshviotqt PRIVATE
-		include/shv/iotqt/rpc/serialportsocket.h
-		src/rpc/serialportsocket.cpp
-		)
+	target_sources(libshviotqt
+		PRIVATE
+			src/rpc/serialportsocket.cpp
+		PUBLIC
+			FILE_SET HEADERS
+			FILES
+				include/shv/iotqt/rpc/serialportsocket.h
+			)
 endif()
 
 target_include_directories(libshviotqt PUBLIC
