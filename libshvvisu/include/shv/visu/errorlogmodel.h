@@ -4,7 +4,7 @@
 
 #include <shv/visu/shvvisuglobal.h>
 
-#include <necrologlevel.h>
+#include <necrolog/necrologlevel.h>
 
 namespace shv::visu {
 

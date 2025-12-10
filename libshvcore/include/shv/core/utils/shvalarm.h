@@ -2,7 +2,7 @@
 
 #include <shv/core/shvcoreglobal.h>
 
-#include <necrologlevel.h>
+#include <necrolog/necrologlevel.h>
 
 #include <string>
 #include <vector>
