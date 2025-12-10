@@ -216,7 +216,7 @@ bool ChainPackReader::readPath(RpcValue& val, const std::vector<std::string>& ke
 			}
 
 			if (isList) {
-				if (index == std::stoi(requested_key)) {
+				if (std::to_string(index) == requested_key) {
 					break;
 				}
 
