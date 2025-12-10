@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/broker/shvbrokerglobal.h>
+#include <shv/broker/shvbroker_export.h>
 
 #include <shv/iotqt/acl/aclrole.h>
 #include <shv/iotqt/acl/aclroleaccessrules.h>
@@ -17,7 +17,7 @@ namespace shv::broker {
 
 class BrokerApp;
 
-class SHVBROKER_DECL_EXPORT AclManager : public QObject
+class LIBSHVBROKER_EXPORT AclManager : public QObject
 {
 	Q_OBJECT
 public:
@@ -101,7 +101,7 @@ public:
 #endif
 };
 
-class SHVBROKER_DECL_EXPORT AclManagerConfigFiles : public AclManager
+class LIBSHVBROKER_EXPORT AclManagerConfigFiles : public AclManager
 {
 	using Super = AclManager;
 public:

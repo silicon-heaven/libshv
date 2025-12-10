@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shv/broker/shvbrokerglobal.h>
+#include <shv/broker/shvbroker_export.h>
 
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/core/utils/clioptions.h>
@@ -9,7 +9,7 @@
 
 namespace shv::broker {
 
-class SHVBROKER_DECL_EXPORT AppCliOptions : public shv::core::utils::ConfigCLIOptions
+class LIBSHVBROKER_EXPORT AppCliOptions : public shv::core::utils::ConfigCLIOptions
 {
 private:
 	using Super = shv::core::utils::ConfigCLIOptions;
