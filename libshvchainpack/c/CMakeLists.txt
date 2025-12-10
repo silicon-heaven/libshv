@@ -1,11 +1,21 @@
-add_library(libshvchainpack-c STATIC
-	cchainpack.c
-	ccpcp.c
-	ccpcp_convert.c
-	ccpon.c
-	)
-target_include_directories(libshvchainpack-c PUBLIC
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+add_library(libshvchainpack-c STATIC)
+
+target_sources(libshvchainpack-c
+	PRIVATE
+		cchainpack.c
+		ccpcp.c
+		ccpcp_convert.c
+		ccpon.c
+	PUBLIC
+		FILE_SET HEADERS
+			BASE_DIRS include
+			FILES
+				include/shv/chainpack/ccpcp.h
+				include/shv/chainpack/ccpcp_convert.h
+				include/shv/chainpack/compat.h
+				include/shv/chainpack/cchainpack.h
+				include/shv/chainpack/pack_double.h
+				include/shv/chainpack/ccpon.h
 	)
 
 function(add_shv_test test_name)
@@ -20,7 +30,5 @@ if(BUILD_TESTING)
 	add_shv_test(ccpcp)
 endif()
 
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/shv" TYPE INCLUDE)
-
-install(TARGETS libshvchainpack-c EXPORT libshvConfig)
+install(TARGETS libshvchainpack-c EXPORT libshvConfig FILE_SET HEADERS)
 export(TARGETS libshvchainpack-c NAMESPACE libshvchainpack-c:: FILE "${CMAKE_CURRENT_BINARY_DIR}/libshvConfig.cmake")
