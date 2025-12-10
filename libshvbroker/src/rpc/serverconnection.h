@@ -1,7 +1,7 @@
 #pragma once
 
 #include <shv/broker/azureconfig.h>
-#include <shv/broker/shvbrokerglobal.h>
+#include <shv/broker/shvbroker_export.h>
 #include <shv/iotqt/rpc/socketrpcconnection.h>
 
 #include <shv/chainpack/irpcconnection.h>
@@ -17,7 +17,7 @@ namespace shv::iotqt::rpc {
 
 class Socket;
 
-class SHVBROKER_DECL_EXPORT ServerConnection : public SocketRpcConnection
+class LIBSHVBROKER_EXPORT ServerConnection : public SocketRpcConnection
 {
 	Q_OBJECT
 

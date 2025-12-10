@@ -6,7 +6,7 @@ class QSqlQuery;
 
 namespace shv::broker {
 
-class SHVBROKER_DECL_EXPORT AclManagerSqlite : public AclManager
+class LIBSHVBROKER_EXPORT AclManagerSqlite : public AclManager
 {
 	Q_OBJECT
 	using Super = AclManager;

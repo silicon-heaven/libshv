@@ -12,7 +12,7 @@ inline unsigned qHash(const std::string &s) noexcept //Q_DECL_NOEXCEPT_EXPR(noex
 #include <QCache>
 #endif
 
-#include <shv/broker/shvbrokerglobal.h>
+#include <shv/broker/shvbroker_export.h>
 #include <shv/broker/appclioptions.h>
 #include <shv/broker/currentclientshvnode.h>
 #include <shv/broker/tunnelsecretlist.h>
@@ -46,7 +46,7 @@ namespace rpc { class WebSocketServer; class BrokerTcpServer; class ClientConnec
 
 class AclManager;
 
-class SHVBROKER_DECL_EXPORT BrokerApp : public QCoreApplication
+class LIBSHVBROKER_EXPORT BrokerApp : public QCoreApplication
 {
 	Q_OBJECT
 
