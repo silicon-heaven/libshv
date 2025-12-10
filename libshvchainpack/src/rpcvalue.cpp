@@ -911,7 +911,7 @@ std::optional<RpcValue> RpcValue::fromChainPackWithPath(std::istream& in, const 
 {
 	RpcValue ret;
 	ChainPackReader rd(in, progress_callback);
-	bool success;
+	bool success = false;
 	if (err) {
 		err->clear();
 		try {
