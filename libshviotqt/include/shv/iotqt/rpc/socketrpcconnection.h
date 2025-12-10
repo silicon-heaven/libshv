@@ -36,7 +36,7 @@ public:
 
 	bool isSocketConnected() const;
 	Q_SIGNAL void socketConnectedChanged(bool is_connected);
-	Q_SIGNAL void socketError(const QString &error_msg, std::optional<QAbstractSocket::SocketError> socket_error_code = std::nullopt);
+	Q_SIGNAL void socketError(const QString &error_msg, QAbstractSocket::SocketError socket_error_code);
 	Q_SIGNAL void sslErrors(const QList<QSslError> &errors);
 
 	// following two signals allows correct RPC call timeout implementation
