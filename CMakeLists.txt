@@ -238,11 +238,6 @@ if(LIBSHV_WITH_WEBSOCKETS AND NOT QtWebSockets_FOUND)
 	message(FATAL_ERROR "SHV websocket support explicitly enabled, but Qt WebSockets weren't found!")
 endif()
 
-# We'll error out if the user has explicitly enabled Azure OAuth2 support, but Qt NetworkAuth isn't available.
-if(LIBSHV_WITH_OAUTH2_AZURE AND NOT QtNetworkAuth_FOUND)
-	message(FATAL_ERROR "OAuth2 Azure explicitly enabled, but Qt NetworkAuth wasn't found!")
-endif()
-
 # Otherwise enable websocket support based on whether we found Qt6 WebSockets.
 if(NOT DEFINED LIBSHV_WITH_WEBSOCKETS)
 	set(LIBSHV_WITH_WEBSOCKETS ${QtWebSockets_FOUND})
@@ -274,6 +269,11 @@ endif()
 
 if(LIBSHV_WITH_CORE)
 	if(Qt_FOUND)
+		# We'll error out if the user has explicitly enabled Azure OAuth2 support, but Qt NetworkAuth isn't available.
+		if(LIBSHV_WITH_OAUTH2_AZURE AND NOT QtNetworkAuth_FOUND)
+			message(FATAL_ERROR "OAuth2 Azure explicitly enabled, but Qt NetworkAuth wasn't found!")
+		endif()
+
 		set(CMAKE_AUTOMOC ON)
 		if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 			set(CMAKE_AUTOMOC_MOC_OPTIONS "-b${CMAKE_CURRENT_SOURCE_DIR}/cmake/qt_moc_disable_warnings.h")
