@@ -82,8 +82,6 @@ function(libshv_add_library target_name)
 
 	install(TARGETS "${target_name}" EXPORT libshvConfig FILE_SET HEADERS FILE_SET generated_headers)
 	export(TARGETS "${target_name}" NAMESPACE libshv:: FILE "${CMAKE_CURRENT_BINARY_DIR}/libshvConfig.cmake")
-	install(EXPORT libshvConfig DESTINATION share/libshv/cmake NAMESPACE libshv::)
-
 endfunction()
 
 function(libshv_set_translations target langs)
