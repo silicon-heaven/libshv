@@ -3,7 +3,7 @@ qt_add_executable(minimalshvbroker
 	src/application.cpp
 	)
 
-target_link_libraries(minimalshvbroker PRIVATE libshvbroker Qt::Gui)
+target_link_libraries(minimalshvbroker PRIVATE libshvbroker)
 
 if(ANDROID)
 	install(TARGETS minimalshvbroker LIBRARY DESTINATION lib)
