@@ -296,7 +296,7 @@ if(LIBSHV_WITH_CORE)
 			endif()
 		endif()
 
-		if(LIBSHV_WITH_CLI_EXAMPLES AND NOT EMSCRIPTEN)
+		if(LIBSHV_WITH_CLI_EXAMPLES AND NOT EMSCRIPTEN AND NOT ANDROID)
 			message(STATUS "CLI examples will be built")
 			add_subdirectory(examples/cli/minimalshvclient)
 			add_subdirectory(examples/cli/shvdevice)
