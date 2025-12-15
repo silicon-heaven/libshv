@@ -23,7 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Qt 5.15.2 / Ubuntu
+          - name: Qt 5 / Ubuntu
             container: gcc:15
             qt_version: 5.15.2
             qt_arch: gcc_64
@@ -31,22 +31,22 @@ jobs:
             modules: NONE
             asan: true
 
-          - name: Qt 6.10.0 / Ubuntu
+          - name: Qt 6 / Ubuntu
             container: gcc:15
             qt_arch: linux_gcc_64
             asan: true
 
-          - name: Qt 6.10.0 / Android
+          - name: Qt 6 / Android
             qt_target: android
             qt_arch: android_arm64_v8a
             additional_cmake_args: -DLIBSHV_WITH_LDAP=OFF
 
-          - name: Qt 6.10.0 / WebAssembly
+          - name: Qt 6 / WebAssembly
             qt_target: wasm
             qt_arch: wasm_singlethread
             modules: qtwebsockets
 
-          - name: Qt 6.10.0 / Windows MinGW
+          - name: Qt 6 / Windows MinGW
             os: &windows windows-2025
             qt_arch: win64_mingw
             additional_cmake_args: &windows_args >-
@@ -54,7 +54,7 @@ jobs:
               -DCMAKE_RUNTIME_OUTPUT_DIRECTORY="$GITHUB_WORKSPACE/build/bin"
               -DCMAKE_LIBRARY_OUTPUT_DIRECTORY="$GITHUB_WORKSPACE/build/bin"
 
-          - name: Qt 6.10.0 / Windows MSVC
+          - name: Qt 6 / Windows MSVC
             os: *windows
             qt_arch: win64_msvc2022_64
             additional_cmake_args: *windows_args
@@ -106,7 +106,7 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: ${{ matrix.qt_version || '6.10.0' }}
+          qt_version: ${{ matrix.qt_version || '6.10.1' }}
           qt_target: ${{ matrix.qt_target || 'desktop' }}
           qt_arch: ${{ matrix.qt_arch }}
           use_qt6: ${{ matrix.use_qt6 || 'ON' }}
