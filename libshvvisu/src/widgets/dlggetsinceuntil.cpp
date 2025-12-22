@@ -36,13 +36,15 @@ static constexpr int64_t WEEK = 7 * DAY;
 	ui->cbxRecentValuesDuration->addItem(tr("last 7 days"), QVariant::fromValue(-WEEK));
 	ui->cbxRecentValuesDuration->setCurrentIndex(2);
 
-	ui->dteSince->setDateTime(QDateTime::currentDateTime());
-	ui->dteUntil->setDateTime(ui->dteUntil->minimumDateTime());
+	ui->dteSince->setDateTime(ui->dteSince->minimumDateTime());
+	ui->dteUntil->setDateTime(QDateTime::currentDateTime());
 
+	updateOkButtonState();
 	createSinceUntilMenu();
 
-	connect(ui->tabWidget, &QTabWidget::currentChanged, this, &DlgGetSinceUntil::enableOk);
-	connect(ui->dteUntil, &QDateTimeEdit::dateTimeChanged, this, &DlgGetSinceUntil::enableOk);
+	connect(ui->tabWidget, &QTabWidget::currentChanged, this, &DlgGetSinceUntil::updateOkButtonState);
+	connect(ui->dteSince, &QDateTimeEdit::dateTimeChanged, this, &DlgGetSinceUntil::updateOkButtonState);
+	connect(ui->dteUntil, &QDateTimeEdit::dateTimeChanged, this, &DlgGetSinceUntil::updateOkButtonState);
 }
 
 DlgGetSinceUntil::~DlgGetSinceUntil()
@@ -61,11 +63,11 @@ void DlgGetSinceUntil::setTimeZone(const QTimeZone &time_zone) {
 }
 #endif
 
-void DlgGetSinceUntil::enableOk()
+void DlgGetSinceUntil::updateOkButtonState()
 {
 	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(
 				ui->tabWidget->currentWidget() == ui->tRecentValues ||
-				ui->dteUntil->dateTime() > ui->dteSince->dateTime()
+				(ui->dteSince->dateTime() != ui->dteSince->minimumDateTime() && ui->dteUntil->dateTime() > ui->dteSince->dateTime())
 	);
 }
 
