@@ -11,11 +11,11 @@ updates:
     schedule:
       interval: weekly
       day: monday
-      time: 06:00
+      time: "06:00"
   - package-ecosystem: gitsubmodule
     directories:
       - /
     schedule:
       interval: weekly
       day: monday
-      time: 06:00
+      time: "06:00"
