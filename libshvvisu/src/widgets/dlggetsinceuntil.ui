@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>383</width>
-    <height>203</height>
+    <height>205</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -109,13 +109,6 @@
            <property name="alignment">
             <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
-           <property name="date">
-            <date>
-             <year>1999</year>
-             <month>12</month>
-             <day>12</day>
-            </date>
-           </property>
            <property name="displayFormat">
             <string notr="true">yyyy-MM-dd hh:mm:ss</string>
            </property>
@@ -134,16 +127,6 @@
            </property>
            <property name="alignment">
             <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-           </property>
-           <property name="dateTime">
-            <datetime>
-             <hour>0</hour>
-             <minute>0</minute>
-             <second>0</second>
-             <year>1987</year>
-             <month>1</month>
-             <day>1</day>
-            </datetime>
            </property>
            <property name="displayFormat">
             <string notr="true">yyyy-MM-dd hh:mm:ss</string>
