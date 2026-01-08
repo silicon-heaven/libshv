@@ -39,7 +39,7 @@ public:
 #endif
 
 private:
-	void enableOk();
+	void updateOkButtonState();
 	void createSinceUntilMenu();
 	qlonglong recentValuesDuration() const;
 	void adjustDateTime(QDateTimeEdit *from_dte, QDateTimeEdit *to_dte, int64_t msecs);
