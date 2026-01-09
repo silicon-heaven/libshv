@@ -452,7 +452,7 @@ void GraphWidget::mouseReleaseEvent(QMouseEvent *event)
 		}
 	}
 	else if(event->button() == Qt::RightButton) {
-		if(old_mouse_op == MouseOperation::GraphDataAreaRightPress) {
+		if(old_mouse_op == MouseOperation::GraphDataAreaRightPress || old_mouse_op == MouseOperation::GraphAreaSelection) {
 			if(event->modifiers() == Qt::NoModifier) {
 				auto ch_ix = posToChannel(event->pos());
 				if(ch_ix) {
@@ -463,15 +463,8 @@ void GraphWidget::mouseReleaseEvent(QMouseEvent *event)
 				}
 			}
 		}
-		else if(old_mouse_op == MouseOperation::GraphAreaSelection) {
-			if(event->modifiers() == Qt::NoModifier) {
-				// keep selection visible for context menu
-				event->accept();
-				update();
-				return;
-			}
-		}
 	}
+
 	Super::mouseReleaseEvent(event);
 }
 
