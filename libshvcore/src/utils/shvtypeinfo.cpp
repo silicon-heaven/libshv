@@ -1242,7 +1242,7 @@ void ShvTypeInfo::forEachDeviceProperty(const std::string &device_type, const st
 
 	for(const auto &property_descr : it->second.properties) {
 		fn(property_descr);
-	};
+	}
 }
 
 void ShvTypeInfo::forEachProperty(const std::function<void (const std::string &shv_path, const ShvPropertyDescr &)>& fn) const

@@ -872,7 +872,7 @@ void GraphWidget::dragEnterEvent(QDragEnterEvent *event)
 
 void GraphWidget::dragLeaveEvent(QDragLeaveEvent *event)
 {
-	Q_UNUSED(event);
+	Q_UNUSED(event)
 }
 
 void GraphWidget::dragMoveEvent(QDragMoveEvent *event)
