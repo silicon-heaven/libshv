@@ -104,6 +104,21 @@ int IRpcConnection::callShvMethod(int rq_id, const std::string &shv_path, const 
 	return rq_id;
 }
 
+int IRpcConnection::callMethodSubscribeGlob(const std::string& glob)
+{
+	logSubscriptionsD() << "call subscribe for connection id:" << connectionId() << "glob:" << glob;
+	int rq_id = nextRequestId();
+	if(m_shvApiVersion == ShvApiVersion::V3) {
+		return callShvMethod(rq_id
+							 , Rpc::DIR_BROKER_CURRENTCLIENT
+							 , Rpc::METH_SUBSCRIBE
+							 , RpcList{ glob, nullptr }
+							 );
+	}
+	nError() << "Glob subscribe is supported on SHV3 devices only.";
+	return 0;
+}
+
 int IRpcConnection::callMethodSubscribe(const std::string &shv_path, const std::string& method, const std::string& source)
 {
 	int rq_id = nextRequestId();
