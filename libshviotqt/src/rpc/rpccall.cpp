@@ -181,8 +181,14 @@ RpcCall::RpcCall(ClientConnection *connection)
 RpcCall *RpcCall::createSubscriptionRequest(ClientConnection *connection, const QString &shv_path, const QString &signal, const QString &source)
 {
 	RpcCall *rpc = create(connection);
-	rpc->setShvPath(Rpc::DIR_BROKER_APP)
-			->setMethod(Rpc::METH_SUBSCRIBE)
+	using ShvApiVersion = shv::iotqt::rpc::ClientConnection::ShvApiVersion;
+	if (ShvApiVersion::V3 == connection->shvApiVersion()) {
+		rpc->setShvPath(Rpc::DIR_BROKER_CURRENTCLIENT);
+	}
+	else {
+		rpc->setShvPath(Rpc::DIR_BROKER_APP);
+	}
+	rpc->setMethod(Rpc::METH_SUBSCRIBE)
 			->setParams(RpcValue::Map {
 							{Rpc::PAR_PATH, shv_path.toStdString()},
 							{Rpc::PAR_METHOD, signal.toStdString()}, // SHV API2 compatibility field
