@@ -36,7 +36,7 @@ bool VersionInfo::operator==(const VersionInfo &v) const
 
 std::strong_ordering VersionInfo::operator<=>(const VersionInfo &v) const
 {
-#if __ANDROID__
+#ifdef __ANDROID__
 	if (operator==(v)) {
 		return std::strong_ordering::equal;
 	}
