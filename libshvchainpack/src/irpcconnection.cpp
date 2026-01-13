@@ -104,6 +104,12 @@ int IRpcConnection::callShvMethod(int rq_id, const std::string &shv_path, const 
 	return rq_id;
 }
 
+int IRpcConnection::callMethodSubscribe(const std::string &shv_path, const std::string& method, const std::string& source)
+{
+	int rq_id = nextRequestId();
+	return callMethodSubscribe(rq_id, shv_path, method, source);
+}
+
 std::pair<std::string, RpcValue> IRpcConnection::makeSubscribeParams(IRpcConnection::ShvApiVersion api_ver, const std::string &shv_path, const std::string& method, const std::string& source)
 {
 	if(api_ver == ShvApiVersion::V3) {
@@ -126,34 +132,6 @@ int IRpcConnection::callMethodSubscribe(int rq_id, const std::string &shv_path, 
 						 , subscribe_path
 						 , Rpc::METH_SUBSCRIBE
 						 , params);
-}
-
-int IRpcConnection::callMethodSubscribe(const std::string &shv_path, const std::string& method, const std::string& source)
-{
-	int rq_id = nextRequestId();
-	return callMethodSubscribe(rq_id, shv_path, method, source);
-}
-
-int IRpcConnection::callMethodSubscribe(int rq_id, const std::string &shv_path, const std::string& method, const std::string& source)
-{
-	logSubscriptionsD() << "call subscribe for connection id:" << connectionId() << "path:" << shv_path << "method:" << method << "source:" << source;
-	if(m_shvApiVersion == ShvApiVersion::V3) {
-		auto path = shv_path + "/**"; // make V3 glob from V2 path
-		auto ri = path + ':' + (source.empty()? "*": source) + ':' + (method.empty()? "*": method);
-		return callShvMethod(rq_id
-							 , Rpc::DIR_BROKER_CURRENTCLIENT
-							 , Rpc::METH_SUBSCRIBE
-							 , RpcList{ ri, nullptr }
-							 );
-	}
-	return callShvMethod(rq_id
-						 , Rpc::DIR_BROKER_APP
-						 , Rpc::METH_SUBSCRIBE
-						 , RpcValue::Map{
-							 {Rpc::PAR_PATH, shv_path},
-							 {Rpc::PAR_METHOD, method},
-							 {Rpc::PAR_SOURCE, source},
-						 });
 }
 
 int IRpcConnection::callMethodUnsubscribe(const std::string &shv_path, const std::string& method, const std::string& source)
