@@ -13,6 +13,33 @@ runs:
       env:
         CC: clang-15
         CXX: clang++-15
+        CXXFLAGS: >-
+          -Weverything
+          -Wno-c++20-compat
+          -Wno-c++98-compat
+          -Wno-c++98-compat-pedantic
+          -Wno-covered-switch-default
+          -Wno-ctad-maybe-unsupported
+          -Wno-deprecated-copy-with-user-provided-dtor
+          -Wno-disabled-macro-expansion
+          -Wno-exit-time-destructors
+          -Wno-float-equal
+          -Wno-global-constructors
+          -Wno-missing-noreturn
+          -Wno-missing-prototypes
+          -Wno-padded
+          -Wno-pre-c++20-compat-pedantic
+          -Wno-range-loop-bind-reference
+          -Wno-shadow-field-in-constructor
+          -Wno-switch-default
+          -Wno-switch-enum
+          -Wno-unreachable-code
+          -Wno-unused-exception-parameter
+          -Wno-unused-macros
+          -Wno-unused-member-function
+          -Wno-unused-template
+          -Wno-weak-vtables
+
       with:
         qt_version: 6.10.0
         qt_target: desktop
