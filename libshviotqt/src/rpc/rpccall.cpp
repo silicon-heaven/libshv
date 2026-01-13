@@ -181,14 +181,10 @@ RpcCall::RpcCall(ClientConnection *connection)
 RpcCall *RpcCall::createSubscriptionRequest(ClientConnection *connection, const QString &shv_path, const QString &signal, const QString &source)
 {
 	RpcCall *rpc = create(connection);
-	rpc->setShvPath(Rpc::DIR_BROKER_APP)
+	const auto &[subscribe_path, params] = shv::chainpack::IRpcConnection::makeSubscribeParams(connection->shvApiVersion(), shv_path.toStdString(), signal.toStdString(), source.toStdString());
+	rpc->setShvPath(subscribe_path)
 			->setMethod(Rpc::METH_SUBSCRIBE)
-			->setParams(RpcValue::Map {
-							{Rpc::PAR_PATH, shv_path.toStdString()},
-							{Rpc::PAR_METHOD, signal.toStdString()}, // SHV API2 compatibility field
-							{Rpc::PAR_SIGNAL, signal.toStdString()},
-							{Rpc::PAR_SOURCE, source.toStdString()},
-						});
+			->setParams(params);
 	return rpc;
 }
 
