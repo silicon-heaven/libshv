@@ -66,6 +66,7 @@ public:
 
 	void setCheckBrokerConnectedInterval(int ms);
 	int checkBrokerConnectedInterval() const;
+	void checkBrokerShvApiVersion();
 
 	void onRpcFrameReceived(chainpack::RpcFrame&&) override;
 	Q_SIGNAL void rpcFrameReceived();
@@ -101,7 +102,6 @@ protected:
 
 	void checkBrokerConnected();
 	void whenBrokerConnectedChanged(bool b);
-	void checkBrokerShvApiVersion();
 
 	void onSocketConnectedChanged(bool is_connected);
 
