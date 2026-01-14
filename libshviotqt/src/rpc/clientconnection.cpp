@@ -384,10 +384,15 @@ void ClientConnection::setState(ClientConnection::State state)
 	State old_state = m_connectionState.state;
 	m_connectionState.state = state;
 	emit stateChanged(state);
-	if(old_state == State::BrokerConnected)
+	if(old_state == State::BrokerConnected) {
 		whenBrokerConnectedChanged(false);
-	else if(state == State::BrokerConnected)
-		whenBrokerConnectedChanged(true);
+	}
+	else if(state == State::BrokerConnected) {
+		connect(this, &ClientConnection::brokerShvApiDiscovered, [this]{
+			whenBrokerConnectedChanged(true);
+		}, Qt::SingleShotConnection);
+		checkBrokerShvApiVersion();
+	}
 }
 
 void ClientConnection::sendHello()
@@ -424,7 +429,6 @@ void ClientConnection::whenBrokerConnectedChanged(bool b)
 {
 	if(b) {
 		shvInfo() << "Connected to broker" << "client id:" << brokerClientId();// << "mount point:" << brokerMountPoint();
-		checkBrokerShvApiVersion();
 		if(heartBeatInterval() > 0) {
 			if(!m_heartBeatTimer) {
 				shvInfo() << "Creating heart-beat timer, interval:" << heartBeatInterval() << "sec.";

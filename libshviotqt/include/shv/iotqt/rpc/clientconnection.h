@@ -75,6 +75,7 @@ public:
 	Q_SIGNAL void authorizeWithBrowser(const QUrl& url);
 	Q_SIGNAL void brokerConnectedChanged(bool is_connected);
 	Q_SIGNAL void brokerLoginError(const shv::chainpack::RpcError &err);
+	Q_SIGNAL void brokerShvApiDiscovered();
 
 	State state() const;
 	Q_SIGNAL void stateChanged(State state);
