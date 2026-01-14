@@ -100,6 +100,7 @@ protected:
 
 	void checkBrokerConnected();
 	void whenBrokerConnectedChanged(bool b);
+	void checkBrokerShvApiVersion();
 
 	void onSocketConnectedChanged(bool is_connected);
 

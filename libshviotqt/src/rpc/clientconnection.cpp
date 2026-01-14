@@ -5,6 +5,7 @@
 #include <shv/iotqt/rpc/localsocket.h>
 #include <shv/iotqt/rpc/socketrpcconnection.h>
 #include <shv/iotqt/rpc/websocket.h>
+#include <shv/iotqt/rpc/rpccall.h>
 
 #include <shv/iotqt/utils.h>
 
@@ -423,6 +424,7 @@ void ClientConnection::whenBrokerConnectedChanged(bool b)
 {
 	if(b) {
 		shvInfo() << "Connected to broker" << "client id:" << brokerClientId();// << "mount point:" << brokerMountPoint();
+		checkBrokerShvApiVersion();
 		if(heartBeatInterval() > 0) {
 			if(!m_heartBeatTimer) {
 				shvInfo() << "Creating heart-beat timer, interval:" << heartBeatInterval() << "sec.";
@@ -449,6 +451,33 @@ void ClientConnection::whenBrokerConnectedChanged(bool b)
 			m_heartBeatTimer->stop();
 	}
 	emit brokerConnectedChanged(b);
+}
+
+void ClientConnection::checkBrokerShvApiVersion()
+{
+	auto *rpc_call = shv::iotqt::rpc::RpcCall::create(this)->setShvPath(shv::chainpack::Rpc::DIR_BROKER)->setMethod(shv::chainpack::Rpc::METH_LS);
+
+	connect(rpc_call, &shv::iotqt::rpc::RpcCall::maybeResult, this, [this](const ::shv::chainpack::RpcValue &result, const shv::chainpack::RpcError &error) {
+		if (error.isValid()) {
+			shvError() << "SHV API version discovery error:" << error.toString();
+		}
+		else {
+			const auto &dirs = result.asList();
+			if (std::find(dirs.begin(), dirs.end(), "clients") != dirs.end()) {
+				shvInfo() << "Setting SHV API to ver 2";
+				setShvApiVersion(ShvApiVersion::V2);
+			}
+			else if (std::find(dirs.begin(), dirs.end(), "client") != dirs.end()) {
+				shvInfo() << "Setting SHV API to ver 3";
+				setShvApiVersion(ShvApiVersion::V3);
+			}
+			else {
+				shvWarning() << "SHV API version cannot be discovered from ls result, setting V3.";
+				setShvApiVersion(ShvApiVersion::V3);
+			}
+		}
+	});
+	rpc_call->start();
 }
 
 void ClientConnection::onSocketConnectedChanged(bool is_connected)
