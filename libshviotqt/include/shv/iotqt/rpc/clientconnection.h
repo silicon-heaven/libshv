@@ -75,6 +75,7 @@ public:
 	Q_SIGNAL void authorizeWithBrowser(const QUrl& url);
 	Q_SIGNAL void brokerConnectedChanged(bool is_connected);
 	Q_SIGNAL void brokerLoginError(const shv::chainpack::RpcError &err);
+	Q_SIGNAL void brokerShvApiDiscovered(ShvApiVersion api_ver);
 
 	State state() const;
 	Q_SIGNAL void stateChanged(State state);
@@ -100,7 +101,7 @@ protected:
 
 	void checkBrokerConnected();
 	void whenBrokerConnectedChanged(bool b);
-	void checkBrokerShvApiVersion(const std::function<void()>& broker_shv_api_discovered_callback);
+	void checkBrokerShvApiVersion();
 
 	void onSocketConnectedChanged(bool is_connected);
 
