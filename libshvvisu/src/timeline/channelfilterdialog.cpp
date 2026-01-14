@@ -247,13 +247,13 @@ void ChannelFilterDialog::onPbUncheckItemsWithoutChangesClicked()
 
 void ChannelFilterDialog::onLeMatchingFilterTextChanged(const QString &text)
 {
-	Q_UNUSED(text);
+	Q_UNUSED(text)
 	applyTextFilter();
 }
 
 void ChannelFilterDialog::onChbFindRegexChanged(int state)
 {
-	Q_UNUSED(state);
+	Q_UNUSED(state)
 	applyTextFilter();
 }
 

@@ -20,8 +20,8 @@ RectItem::RectItem(qreal x_radius, qreal y_radius, QGraphicsItem *parent)
 
 void RectItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-	Q_UNUSED(option);
-	Q_UNUSED(widget);
+	Q_UNUSED(option)
+	Q_UNUSED(widget)
 	painter->setPen(pen());
 	painter->setBrush(brush());
 	painter->drawRoundedRect(rect(), m_xRadius, m_yRadius);

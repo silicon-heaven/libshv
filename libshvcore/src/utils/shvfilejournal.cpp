@@ -426,7 +426,6 @@ void ShvFileJournal::updateJournalStatus()
 	auto dir_iter = std::filesystem::directory_iterator(m_journalContext.journalDir.c_str(), code);
 	if (code) {
 		SHV_EXCEPTION("Cannot read content of dir: " + m_journalContext.journalDir + " (" + std::to_string(code.value()) + ")");
-		return;
 	}
 	m_journalContext.journalSize = 0;
 	const std::string &ext = FILE_EXT;

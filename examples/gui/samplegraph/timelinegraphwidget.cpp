@@ -61,7 +61,6 @@ void TimelineGraphWidget::generateSampleData(int count)
 		case SparseData: return "Sparse";
 		case Discrete: return "Discrete";
 		case CHANNEL_COUNT: return "CHANNEL_COUNT";
-		break;
 		}
 		return "???";
 	};

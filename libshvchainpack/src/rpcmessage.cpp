@@ -789,7 +789,7 @@ std:: string RpcError::errorCodeToString(int code)
 	case ErrorCode::UserIdRequired: return "UserIdRequired";
 	case ErrorCode::Unknown:  return "Unknown";
 	default: return std::to_string(code);
-	};
+	}
 }
 
 RpcValue::String RpcError::toString() const

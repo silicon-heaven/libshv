@@ -27,7 +27,7 @@ QVariant ErrorLogModel::headerData(int section, Qt::Orientation orientation, int
 			return tr("Data");
 		default:
 			break;
-		};
+		}
 		return Super::headerData(section, orientation, role);
 	}
 	return Super::headerData(section, orientation, role);
@@ -61,7 +61,7 @@ QVariant ErrorLogModel::data(const QModelIndex &index, int role) const
 	}
 	default:
 		break;
-	};
+	}
 	return Super::data(index, role);
 }
 

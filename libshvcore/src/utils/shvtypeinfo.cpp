@@ -443,19 +443,19 @@ RpcValue ShvTypeDescr::defaultRpcValue() const
 	using namespace chainpack;
 
 	switch (type()) {
-	case Type::Invalid: return RpcValue::fromType(RpcValue::Type::Invalid); break;
-	case Type::BitField: return RpcValue::fromType(RpcValue::Type::UInt); break;
-	case Type::Enum: return RpcValue::fromType(RpcValue::Type::Int); break;
-	case Type::Bool: return RpcValue::fromType(RpcValue::Type::Bool); break;
-	case Type::UInt: return RpcValue::fromType(RpcValue::Type::UInt); break;
-	case Type::Int: return RpcValue::fromType(RpcValue::Type::Int); break;
-	case Type::Decimal: return RpcValue::fromType(RpcValue::Type::Decimal); break;
-	case Type::Double: return RpcValue::fromType(RpcValue::Type::Double); break;
-	case Type::String: return RpcValue::fromType(RpcValue::Type::String); break;
-	case Type::DateTime: return RpcValue::fromType(RpcValue::Type::DateTime); break;
-	case Type::List: return RpcValue::fromType(RpcValue::Type::List); break;
-	case Type::Map: return RpcValue::fromType(RpcValue::Type::Map); break;
-	case Type::IMap: return RpcValue::fromType(RpcValue::Type::IMap); break;
+	case Type::Invalid: return RpcValue::fromType(RpcValue::Type::Invalid);
+	case Type::BitField: return RpcValue::fromType(RpcValue::Type::UInt);
+	case Type::Enum: return RpcValue::fromType(RpcValue::Type::Int);
+	case Type::Bool: return RpcValue::fromType(RpcValue::Type::Bool);
+	case Type::UInt: return RpcValue::fromType(RpcValue::Type::UInt);
+	case Type::Int: return RpcValue::fromType(RpcValue::Type::Int);
+	case Type::Decimal: return RpcValue::fromType(RpcValue::Type::Decimal);
+	case Type::Double: return RpcValue::fromType(RpcValue::Type::Double);
+	case Type::String: return RpcValue::fromType(RpcValue::Type::String);
+	case Type::DateTime: return RpcValue::fromType(RpcValue::Type::DateTime);
+	case Type::List: return RpcValue::fromType(RpcValue::Type::List);
+	case Type::Map: return RpcValue::fromType(RpcValue::Type::Map);
+	case Type::IMap: return RpcValue::fromType(RpcValue::Type::IMap);
 	}
 
 	return RpcValue::fromType(RpcValue::Type::Null);
@@ -1242,7 +1242,7 @@ void ShvTypeInfo::forEachDeviceProperty(const std::string &device_type, const st
 
 	for(const auto &property_descr : it->second.properties) {
 		fn(property_descr);
-	};
+	}
 }
 
 void ShvTypeInfo::forEachProperty(const std::function<void (const std::string &shv_path, const ShvPropertyDescr &)>& fn) const

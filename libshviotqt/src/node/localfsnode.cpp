@@ -237,7 +237,6 @@ chainpack::RpcValue LocalFSNode::ndWrite(const QString &path, const chainpack::R
 	}
 
 	SHV_EXCEPTION("Unsupported param type.");
-	return false;
 }
 
 chainpack::RpcValue LocalFSNode::ndDelete(const QString &path)

@@ -1366,7 +1366,7 @@ void Graph::setVisualSettingsAndChannelFilter(const VisualSettings &settings)
 				permitted_paths.insert(channel_settings.shvPath);
 
 				if (!channel_settings.style.isEmpty()) {
-					channel->setStyle(channel_settings.style);;
+					channel->setStyle(channel_settings.style);
 				}
 
 				m_channels.insert(i, m_channels.takeAt(j));
@@ -2913,7 +2913,7 @@ void Graph::applyZoomRange(const ZoomRange &r)
 	}
 	if (r.yRange.isValid()) {
 		setYRangeZoom(r.channelIx, r.yRange.normalized());
-	};
+	}
 }
 
 void Graph::pushZoomRange(const ZoomRange &r)

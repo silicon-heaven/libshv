@@ -15,7 +15,7 @@ MockSerialPort::MockSerialPort(const QString &name,  QObject *parent)
 
 bool MockSerialPort::open(OpenMode mode)
 {
-	Q_UNUSED(mode);
+	Q_UNUSED(mode)
 	close();
 	{
 		const auto tests_dir = TESTS_DIR;

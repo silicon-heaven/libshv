@@ -796,7 +796,7 @@ void ClientConnection::processLoginPhase(const chainpack::RpcMessage &msg)
 
 				CHECK_FIELD("clientId", client_id)
 				CHECK_FIELD("authorizeUrl", authorize_url)
-				CHECK_FIELD("tokenUrl", token_url);
+				CHECK_FIELD("tokenUrl", token_url)
 				if (!oauth2_azure_workflow_map.contains("scopes")) {
 					azure_unsupported("no scopes");
 					return;
