@@ -384,15 +384,10 @@ void ClientConnection::setState(ClientConnection::State state)
 	State old_state = m_connectionState.state;
 	m_connectionState.state = state;
 	emit stateChanged(state);
-	if(old_state == State::BrokerConnected) {
+	if(old_state == State::BrokerConnected)
 		whenBrokerConnectedChanged(false);
-	}
-	else if(state == State::BrokerConnected) {
-		connect(this, &ClientConnection::brokerShvApiDiscovered, this, [this]{
-			whenBrokerConnectedChanged(true);
-		}, Qt::SingleShotConnection);
-		checkBrokerShvApiVersion();
-	}
+	else if(state == State::BrokerConnected)
+		checkBrokerShvApiVersion([this]{ whenBrokerConnectedChanged(true); });
 }
 
 void ClientConnection::sendHello()
@@ -457,11 +452,11 @@ void ClientConnection::whenBrokerConnectedChanged(bool b)
 	emit brokerConnectedChanged(b);
 }
 
-void ClientConnection::checkBrokerShvApiVersion()
+void ClientConnection::checkBrokerShvApiVersion(const std::function<void ()> &broker_shv_api_discovered_callback)
 {
 	auto *rpc_call = shv::iotqt::rpc::RpcCall::create(this)->setShvPath(shv::chainpack::Rpc::DIR_BROKER)->setMethod(shv::chainpack::Rpc::METH_LS);
 
-	connect(rpc_call, &shv::iotqt::rpc::RpcCall::maybeResult, this, [this](const ::shv::chainpack::RpcValue &result, const shv::chainpack::RpcError &error) {
+	connect(rpc_call, &shv::iotqt::rpc::RpcCall::maybeResult, this, [this, broker_shv_api_discovered_callback](const ::shv::chainpack::RpcValue &result, const shv::chainpack::RpcError &error) {
 		if (error.isValid()) {
 			shvError() << "SHV API version discovery error:" << error.toString();
 		}
@@ -479,6 +474,7 @@ void ClientConnection::checkBrokerShvApiVersion()
 				shvWarning() << "SHV API version cannot be discovered from ls result, setting V3.";
 				setShvApiVersion(ShvApiVersion::V3);
 			}
+			broker_shv_api_discovered_callback();
 		}
 	});
 	rpc_call->start();

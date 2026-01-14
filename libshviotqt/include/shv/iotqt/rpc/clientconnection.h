@@ -101,7 +101,7 @@ protected:
 
 	void checkBrokerConnected();
 	void whenBrokerConnectedChanged(bool b);
-	void checkBrokerShvApiVersion();
+	void checkBrokerShvApiVersion(const std::function<void()>& broker_shv_api_discovered_callback);
 
 	void onSocketConnectedChanged(bool is_connected);
 
