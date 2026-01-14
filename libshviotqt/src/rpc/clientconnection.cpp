@@ -388,7 +388,7 @@ void ClientConnection::setState(ClientConnection::State state)
 		whenBrokerConnectedChanged(false);
 	}
 	else if(state == State::BrokerConnected) {
-		connect(this, &ClientConnection::brokerShvApiDiscovered, [this]{
+		connect(this, &ClientConnection::brokerShvApiDiscovered, this, [this]{
 			whenBrokerConnectedChanged(true);
 		}, Qt::SingleShotConnection);
 		checkBrokerShvApiVersion();
