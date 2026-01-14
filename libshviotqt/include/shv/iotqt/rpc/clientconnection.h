@@ -66,6 +66,7 @@ public:
 
 	void setCheckBrokerConnectedInterval(int ms);
 	int checkBrokerConnectedInterval() const;
+	void checkBrokerShvApiVersion();
 
 	void onRpcFrameReceived(chainpack::RpcFrame&&) override;
 	Q_SIGNAL void rpcFrameReceived();
@@ -75,6 +76,7 @@ public:
 	Q_SIGNAL void authorizeWithBrowser(const QUrl& url);
 	Q_SIGNAL void brokerConnectedChanged(bool is_connected);
 	Q_SIGNAL void brokerLoginError(const shv::chainpack::RpcError &err);
+	Q_SIGNAL void brokerShvApiDiscovered(ShvApiVersion api_ver);
 
 	State state() const;
 	Q_SIGNAL void stateChanged(State state);
@@ -100,7 +102,6 @@ protected:
 
 	void checkBrokerConnected();
 	void whenBrokerConnectedChanged(bool b);
-	void checkBrokerShvApiVersion();
 
 	void onSocketConnectedChanged(bool is_connected);
 
