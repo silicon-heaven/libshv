@@ -1166,7 +1166,7 @@ bool SaxHandler::startElement()
 
 RectItem *SaxHandler::createRectItem(const SvgElement &el)
 {
-	Q_UNUSED(el);
+	Q_UNUSED(el)
 	auto *item = new RectItem();
 	return item;
 }

@@ -610,7 +610,7 @@ DOCTEST_TEST_CASE("getLog")
 		DOCTEST_SUBCASE("withSnapshot == true")
 		{
 			get_log_params.withSnapshot = true;
-			expected_since = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.950Z");;
+			expected_since = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.950Z");
 			expected_until = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.950Z");
 			expected_record_count = 3;
 		}
@@ -618,7 +618,7 @@ DOCTEST_TEST_CASE("getLog")
 		DOCTEST_SUBCASE("withSnapshot == false")
 		{
 			get_log_params.withSnapshot = false;
-			expected_since = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.950Z");;
+			expected_since = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.950Z");
 			expected_until = RpcValue::DateTime::fromIsoString("2022-07-07T18:06:17.950Z");
 			expected_record_count = 1;
 		}

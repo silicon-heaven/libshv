@@ -79,7 +79,6 @@ enum class AccessLevel {
 	Devel4,
 	Devel5,
 	Devel6,
-	Devel7,
 
 	Admin = 63,
 };

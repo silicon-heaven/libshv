@@ -134,7 +134,14 @@ void do_open_function(const auto& ldap_lib, auto fn_name, auto& fn_field)
 {
 	auto fn = dlsym(ldap_lib.get(), fn_name);
 	check_open_success(fn, fn_name);
+#ifdef __clang__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wundefined-reinterpret-cast"
+#endif
 	fn_field = reinterpret_cast<decltype(fn_field)>(fn);
+#ifdef __clang__
+#pragma GCC diagnostic pop
+#endif
 }
 }
 #endif

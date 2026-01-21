@@ -15,9 +15,6 @@ jobs:
   clang-tidy:
     name: clang-tidy
     runs-on: ubuntu-24.04
-    env:
-      CC: clang-18
-      CXX: clang++-18
     steps:
       - uses: actions/checkout@v6
         with:
@@ -31,9 +28,6 @@ jobs:
   clazy:
     name: clazy
     runs-on: ubuntu-24.04
-    env:
-      CC: clang-18
-      CXX: clang++-18
     steps:
       - uses: actions/checkout@v6
         with:

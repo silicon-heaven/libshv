@@ -53,7 +53,7 @@ QVariant ChannelFilterModel::data(const QModelIndex &index, int role) const
 			return (locname.isEmpty())? it->data(UserData::DirName): locname;
 		}
 	}
-	};
+	}
 	return Super::data(index, role);
 }
 

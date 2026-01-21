@@ -872,7 +872,7 @@ void GraphWidget::dragEnterEvent(QDragEnterEvent *event)
 
 void GraphWidget::dragLeaveEvent(QDragLeaveEvent *event)
 {
-	Q_UNUSED(event);
+	Q_UNUSED(event)
 }
 
 void GraphWidget::dragMoveEvent(QDragMoveEvent *event)
@@ -1088,7 +1088,6 @@ bool GraphWidget::isMouseAboveChannelResizeHandle(const QPoint &mouse_pos, Qt::E
 	switch (header_edge) {
 	case Qt::Edge::BottomEdge:
 		return (header_rect.bottom() - mouse_pos.y() < MARGIN);
-		break;
 	case Qt::Edge::RightEdge: {
 		int right_edge_x = header_rect.right();
 		if (gr->isYAxisVisible()) {
