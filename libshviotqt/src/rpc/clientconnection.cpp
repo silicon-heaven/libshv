@@ -424,7 +424,6 @@ void ClientConnection::whenBrokerConnectedChanged(bool b)
 {
 	if(b) {
 		shvInfo() << "Connected to broker" << "client id:" << brokerClientId();// << "mount point:" << brokerMountPoint();
-		checkBrokerShvApiVersion();
 		if(heartBeatInterval() > 0) {
 			if(!m_heartBeatTimer) {
 				shvInfo() << "Creating heart-beat timer, interval:" << heartBeatInterval() << "sec.";
@@ -475,6 +474,7 @@ void ClientConnection::checkBrokerShvApiVersion()
 				shvWarning() << "SHV API version cannot be discovered from ls result, setting V3.";
 				setShvApiVersion(ShvApiVersion::V3);
 			}
+			emit brokerShvApiDiscovered(shvApiVersion());
 		}
 	});
 	rpc_call->start();
