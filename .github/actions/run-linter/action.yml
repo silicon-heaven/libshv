@@ -47,7 +47,7 @@ runs:
         use_qt6: ON
         modules: qtserialport qtwebsockets
         ccache: 'false'
-        additional_cmake_args: -DCMAKE_GLOBAL_AUTOGEN_TARGET=ON -DCMAKE_AUTOGEN_ORIGIN_DEPENDS=OFF
+        additional_cmake_args: -DCMAKE_GLOBAL_AUTOGEN_TARGET=ON -DCMAKE_AUTOGEN_ORIGIN_DEPENDS=OFF -DLIBSHV_PRECOMPILED_HEADERS=OFF
 
     # https://bugs.launchpad.net/ubuntu/+source/clazy/+bug/2086665/comments/4
     - name: Workaround for clazy
