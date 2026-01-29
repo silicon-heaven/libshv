@@ -19,6 +19,14 @@ libshv_add_library(libshvcoreqt
 		include/shv/coreqt/utils/versioninfo.h
 	)
 
+if(LIBSHV_PRECOMPILED_HEADERS)
+	target_precompile_headers(libshvcoreqt
+		PRIVATE
+		include/shv/coreqt/rpc.h
+		include/shv/coreqt/utils.h
+	)
+endif()
+
 target_link_libraries(libshvcoreqt PUBLIC Qt::Core libshvcore)
 
 function(add_shvcoreqt_test test_name)
