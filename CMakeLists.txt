@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.18.4)
 set(LIBSHV_USE_QT6 ON CACHE BOOL "Qt6 build")
 set(BUILD_SHARED_LIBS ON CACHE BOOL "Build shared libraries instead of static")
 
+set(LIBSHV_PRECOMPILED_HEADERS ON CACHE BOOL "Precompile some headers")
+
 set(LIBSHV_WITH_CHAINPACK ON CACHE BOOL "Build libshvchainpack (C)")
 set(LIBSHV_WITH_CHAINPACK_CPP ON CACHE BOOL "Build libshvchainpack (C++)")
 set(LIBSHV_WITH_CORE ON CACHE BOOL "Build libshvcore")

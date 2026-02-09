@@ -45,6 +45,15 @@ libshv_add_library(libshvchainpack-cpp
 		include/shv/chainpack/utils.h
 	)
 
+if(LIBSHV_PRECOMPILED_HEADERS)
+	target_precompile_headers(libshvchainpack-cpp
+		PRIVATE
+		include/shv/chainpack/datachange.h
+		include/shv/chainpack/rpcvalue.h
+		include/shv/chainpack/utils.h
+	)
+endif()
+
 if (NOT WIN32)
 	target_sources(libshvchainpack-cpp
 		PRIVATE
