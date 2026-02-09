@@ -628,6 +628,7 @@ void Graph::setYRangeZoom(qsizetype channel_ix, const YRange &r)
 	ch->m_state.yRangeZoom = r;
 	ch->m_state.yRangeZoom.min = std::max(ch->m_state.yRangeZoom.min, ch->m_state.yRange.min);
 	ch->m_state.yRangeZoom.max = std::min(ch->m_state.yRangeZoom.max, ch->m_state.yRange.max);
+	clearGraphCache();
 	makeYAxis(channel_ix);
 }
 
