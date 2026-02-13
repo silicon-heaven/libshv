@@ -49,6 +49,7 @@ public:
 								UserId = 16,
 								AccessLevel = 17,
 								Source = 19,
+								Repeat = 20,
 								MAX};};
 		struct Key { enum Enum {Params = 1, Result, Error, Delay, MAX};};
 
@@ -196,6 +197,12 @@ public:
 	~RpcSignal() override;
 public:
 	RpcRequest& setRequestId(const RpcValue::Int requestId) = delete;
+
+	RpcValue::String signal() const;
+	RpcSignal& setSignal(const RpcValue::String &name);
+
+	RpcValue::String source() const;
+	RpcSignal& setSource(const RpcValue::String &name);
 
 	static void write(AbstractStreamWriter &wr, const std::string &method, const std::function<void (AbstractStreamWriter &)>& write_params_callback);
 };

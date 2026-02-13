@@ -699,6 +699,28 @@ RpcSignal::RpcSignal(const RpcMessage &msg)
 
 RpcSignal::~RpcSignal() = default;
 
+RpcValue::String RpcSignal::signal() const
+{
+	return method().asString();
+}
+
+RpcSignal &RpcSignal::setSignal(const RpcValue::String &name)
+{
+	setMethod(name);
+	return *this;
+}
+
+RpcValue::String RpcSignal::source() const
+{
+	return metaValue(RpcMessage::MetaType::Tag::Source).asString();
+}
+
+RpcSignal &RpcSignal::setSource(const RpcValue::String &name)
+{
+	setMetaValue(RpcMessage::MetaType::Tag::Source, RpcValue{name});
+	return *this;
+}
+
 void RpcSignal::write(AbstractStreamWriter &wr, const std::string &method, const std::function<void (AbstractStreamWriter &)>& write_params_callback)
 {
 	RpcValue::MetaData md;
