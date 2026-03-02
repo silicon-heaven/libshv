@@ -235,7 +235,8 @@ void GraphModel::appendValue(qsizetype channel, Sample &&sample)
 						 << "ignoring value with lower timestamp than last value (check possibly wrong short-time correction):"
 						 << samples.last().time << shv::chainpack::RpcValue::DateTime::fromMSecsSinceEpoch(samples.last().time).toIsoString()
 						 << "val:"
-						 << sample.time << shv::chainpack::RpcValue::DateTime::fromMSecsSinceEpoch(sample.time).toIsoString();
+						 << sample.time << shv::chainpack::RpcValue::DateTime::fromMSecsSinceEpoch(sample.time).toIsoString()
+						 << "diff:" << (sample.time - samples.last().time) << "msec.";
 			return;
 		}
 		if (!samples.isEmpty()

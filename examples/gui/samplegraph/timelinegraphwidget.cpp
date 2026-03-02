@@ -2,9 +2,13 @@
 #include "ui_timelinegraphwidget.h"
 
 #include <shv/coreqt/log.h>
+#include <shv/coreqt/rpc.h>
 #include <shv/visu/timeline/graph.h>
 #include <shv/visu/timeline/graphmodel.h>
 #include <shv/visu/timeline/graphwidget.h>
+
+#include <QFile>
+#include <QMessageBox>
 
 #include <random>
 
@@ -171,6 +175,150 @@ void TimelineGraphWidget::generateSampleData(int count)
 			style.setLineAreaStyle(tl::GraphChannel::Style::LineAreaStyle::Filled);
 		}
 		//style.setInterpolation(tl::GraphChannel::Style::Interpolation::None);
+		ch->setStyle(style);
+	}
+	ui->graphView->makeLayout();
+}
+
+void TimelineGraphWidget::loadCsvFile(const QString &file_name)
+{
+	m_graphModel->clear();
+
+	QFile file(file_name);
+
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		shvError() << "Failed to open CSV file:" << file_name;
+		QMessageBox::critical(this, "Error", "Failed to open CSV file: " + file_name);
+		return;
+	}
+
+	auto read_line = [](QTextStream &in) {
+		while (!in.atEnd()) {
+			auto line = in.readLine();
+			if (!line.isEmpty() && !line.startsWith('#')) {
+				return line;
+			}
+		}
+		return QString();
+	};
+
+	auto split_line = [](const QString &line) {
+		auto fields = line.split(',');
+		return fields;
+	};
+
+	QTextStream in(&file);
+
+	static const std::array colors = {
+		Qt::magenta,
+		Qt::cyan,
+		Qt::yellow,
+		Qt::green,
+		Qt::red,
+		Qt::blue
+	};
+
+	QStringList columns;
+	QMap<QString, shv::visu::timeline::GraphChannel::Style> styles;
+	shv::visu::timeline::GraphChannel::Style default_style;
+	default_style.setInterpolation(tl::GraphChannel::Style::Interpolation::Stepped);
+	default_style.setLineAreaStyle(tl::GraphChannel::Style::LineAreaStyle::Filled);
+	while (!in.atEnd()) {
+		auto line = in.readLine();
+		if (line.isEmpty()) {
+			continue;
+		}
+		if (line.startsWith('#')) {
+			line = line.mid(1).trimmed();
+			static auto CHANNEL_STYLE = QStringLiteral("style:");
+			if (line.startsWith(CHANNEL_STYLE)) {
+				line = line.mid(CHANNEL_STYLE.size()).trimmed();
+				std::string err;
+				auto rv = shv::chainpack::RpcValue::fromCpon(line.toStdString(), &err);
+				if (!err.empty()) {
+					shvError() << "Failed to parse channel style from line:" << line << "error:" << err;
+					continue;
+				}
+				const auto &m = rv.asMap();
+				for (const auto &[chname, chstyle] : m) {
+					auto &style = styles[QString::fromStdString(chname)];
+					style = default_style;
+					for (const auto &[key, val] : chstyle.asMap()) {
+						if (key == "color") {
+							style.setColor(QColor(val.to<QString>()));
+							continue;
+						}
+						if (key == "interpolation") {
+							auto ip = tl::GraphChannel::Style::Interpolation::None;
+							if (val == "line") {
+								ip = tl::GraphChannel::Style::Interpolation::Line;
+							}
+							else if (val == "stepped") {
+								ip = tl::GraphChannel::Style::Interpolation::Stepped;
+							}
+							style.setInterpolation(ip);
+							continue;
+						}
+					}
+				}
+			}
+			continue;
+		}
+		auto csv_header = split_line(line);
+		for (auto i = 1; i < csv_header.size(); ++i) {
+			auto column = csv_header[i].trimmed();
+			columns << column;
+			m_graphModel->appendChannel(column, {}, {});
+		}
+		break;
+	}
+
+	m_graphModel->beginAppendValues();
+	qsizetype n = 0;
+	while (!in.atEnd()) {
+		++n;
+		auto values = split_line(read_line(in));
+		auto tss = values.value(0).trimmed();
+		int64_t ts;
+		if (tss.contains('T')) {
+			// try to parse ISO datetime
+			auto dt = RpcValue::DateTime::fromIsoString(tss.toStdString());
+			ts = dt.msecsSinceEpoch();
+			if (ts == 0) {
+				shvError() << "Invalid timestamp:" << tss;
+				continue;
+			}
+		}
+		else {
+			bool ok = false;
+			ts = values.value(0).trimmed().toLongLong(&ok);
+			if (!ok) {
+				shvError() << "Invalid timestamp:" << tss;
+				continue;
+			}
+		}
+		for (auto i = 0; i < columns.size(); ++i) {
+			if (auto valstr = values.value(i+1).trimmed(); !valstr.isEmpty()) {
+				bool ok = false;
+				double val = valstr.toDouble(&ok);
+				if (ok) {
+					m_graphModel->appendValue(i, tl::Sample{ts, val});
+				} else {
+					shvError() << "Invalid value:" << valstr << "in line:" << values.join(',');
+				}
+			}
+		}
+	}
+	m_graphModel->endAppendValues();
+	shvInfo() << n << "CSV lines read";
+
+	m_graph->createChannelsFromModel(shv::visu::timeline::Graph::SortChannels::No);
+	for (int i = 0; i < m_graph->channelCount(); ++i) {
+		shv::visu::timeline::GraphChannel *ch = m_graph->channelAt(i);
+		auto style = styles.value(columns.value(i), default_style);
+		if (!style.color_isset()) {
+			style.setColor(QColor(colors[i % colors.size()]));
+		}
 		ch->setStyle(style);
 	}
 	ui->graphView->makeLayout();
