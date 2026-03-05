@@ -89,8 +89,8 @@ YRange GraphModel::yRange(qsizetype channel_ix) const
 		bool ok;
 		double d = valueToDouble(v, type, &ok);
 		if(ok) {
-			ret.min = qMin(ret.min, d);
-			ret.max = qMax(ret.max, d);
+			ret.min = qMin(ret.isValid() ? ret.min : std::numeric_limits<double>::max(), d);
+			ret.max = qMax(ret.isValid() ? ret.max : std::numeric_limits<double>::lowest(), d);
 		}
 	}
 	return ret;
