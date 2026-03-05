@@ -17,6 +17,7 @@ public:
 	~TimelineGraphWidget() override;
 
 	void generateSampleData(int count);
+	void loadCsvFile(const QString &file_name);
 
 private:
 	Ui::TimelineGraphWidget *ui;

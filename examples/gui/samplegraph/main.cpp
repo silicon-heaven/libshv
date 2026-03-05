@@ -3,6 +3,7 @@
 #include <necrolog.h>
 #include <shv/core/utils.h>
 #include <shv/coreqt/utils.h>
+#include <shv/coreqt/log.h>
 #include <shv/iotqt/utils/network.h>
 #include <shv/chainpack/chainpack.h>
 
@@ -22,10 +23,19 @@ int main(int argc, char *argv[])
 	QCoreApplication::setApplicationName("samplegraph");
 	QCoreApplication::setApplicationVersion("0.0.2");
 
-	NecroLog::setCLIOptions(argc, argv);
+	auto opts = NecroLog::setCLIOptions(argc, argv);
+	QString csv_file;
+	if (opts.size() == 2) {
+		const auto &file_name = opts[1];
+		if (!file_name.ends_with(".csv")) {
+			shvError() << "Only CSV data file is supported currently";
+			return -1;
+		}
+		csv_file = QString::fromStdString(file_name);
+	}
 
 	QApplication a(argc, argv);
-	MainWindow w;
+	MainWindow w(csv_file);
 	w.show();
 	return QApplication::exec();
 }
