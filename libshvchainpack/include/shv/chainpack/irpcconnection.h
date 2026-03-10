@@ -11,7 +11,7 @@ public:
 	enum class ShvApiVersion {V2, V3};
 
 	static constexpr int DEFAULT_RPC_BROKER_PORT_NONSECURED = 3755;
-	static constexpr int DEFAULT_RPC_BROKER_PORT_SECURED = 37555;
+	static constexpr int DEFAULT_RPC_BROKER_PORT_SECURED = 3756;
 	static constexpr int DEFAULT_RPC_BROKER_WEB_SOCKET_PORT_NONSECURED = 3777;
 	static constexpr int DEFAULT_RPC_BROKER_WEB_SOCKET_PORT_SECURED = 3778;
 
