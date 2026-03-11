@@ -60,6 +60,7 @@ public:
 	void setCliOptions(const ClientAppCliOptions *cli_opts);
 
 	void setTunnelOptions(const shv::chainpack::RpcValue &opts);
+	void setRequestSessionToken(bool b);
 
 	// for CPON clients
 	void setProtocolType(shv::chainpack::Rpc::ProtocolType protocol_type);
@@ -81,7 +82,7 @@ public:
 	State state() const;
 	Q_SIGNAL void stateChanged(State state);
 
-	const shv::chainpack::RpcValue::Map &loginResult() const;
+	const shv::chainpack::RpcValue &loginResult() const;
 
 	int brokerClientId() const;
 	void muteShvPathInLog(const std::string &shv_path, const std::string &method);
