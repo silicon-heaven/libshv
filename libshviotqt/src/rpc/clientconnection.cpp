@@ -43,6 +43,10 @@
 #include <fstream>
 #include <regex>
 
+namespace {
+constexpr std::string REQUEST_SESSION_KEY = "session";
+}
+
 namespace cp = shv::chainpack;
 using namespace std;
 
@@ -214,6 +218,13 @@ void ClientConnection::setTunnelOptions(const chainpack::RpcValue &opts)
 {
 	shv::chainpack::RpcValue::Map conn_opts = connectionOptions().asMap();
 	conn_opts[cp::Rpc::KEY_TUNNEL] = opts;
+	setConnectionOptions(conn_opts);
+}
+
+void ClientConnection::setRequestSessionToken(bool b)
+{
+	shv::chainpack::RpcValue::Map conn_opts = connectionOptions().asMap();
+	conn_opts[REQUEST_SESSION_KEY] = b;
 	setConnectionOptions(conn_opts);
 }
 
@@ -641,9 +652,9 @@ ClientConnection::State ClientConnection::state() const
 	return m_connectionState.state;
 }
 
-const shv::chainpack::RpcValue::Map &ClientConnection::loginResult() const
+const chainpack::RpcValue &ClientConnection::loginResult() const
 {
-	return m_connectionState.loginResult.asMap();
+	return m_connectionState.loginResult;
 }
 
 int ClientConnection::brokerClientId() const
