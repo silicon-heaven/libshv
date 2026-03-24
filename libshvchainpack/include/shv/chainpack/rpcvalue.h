@@ -175,6 +175,8 @@ public:
 
 	static RpcDecimal normalize(const RpcDecimal &d);
 
+	void setDecPlaces(int dec_places);
+
 	std::strong_ordering operator<=>(const RpcDecimal& other) const;
 	bool operator==(const RpcDecimal& other) const;
 };
