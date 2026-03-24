@@ -1536,6 +1536,28 @@ RpcDecimal RpcDecimal::normalize(const RpcDecimal &d)
 	return RpcDecimal(m, e);
 }
 
+void RpcDecimal::setDecPlaces(int dec_places)
+{
+	int target_exp = -dec_places;
+	if (exponent() > target_exp) {
+		int exp_diff = exponent() - target_exp;
+		if (auto mul = pow10(exp_diff)) {
+			if (auto scaled = safeMul(mantissa(), mul.value())) {
+				m_num.mantissa = scaled.value();
+				m_num.exponent = target_exp;
+			}
+		}
+	} else if (exponent() < target_exp) {
+		int exp_diff = target_exp - exponent();
+		int64_t m = mantissa();
+		for (int i = 0; i < exp_diff; ++i) {
+			m /= 10;
+		}
+		m_num.mantissa = m;
+		m_num.exponent = target_exp;
+	}
+}
+
 std::strong_ordering RpcDecimal::operator<=>(const RpcDecimal& other) const
 {
 	RpcDecimal a = normalize(*this);
