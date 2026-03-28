@@ -25,7 +25,7 @@ jobs:
       - name: Setup CMake
         uses: ./.github/actions/cmake
         with:
-          qt_version: 6.10.0
+          qt_version: 6.11.0
           qt_arch: linux_gcc_64
           qt_target: desktop
           use_qt6: ON

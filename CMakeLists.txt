@@ -271,6 +271,7 @@ endif()
 
 if(LIBSHV_WITH_CORE)
 	if(Qt_FOUND)
+		message(STATUS "Qt version: ${Qt_VERSION}")
 		# We'll error out if the user has explicitly enabled Azure OAuth2 support, but Qt NetworkAuth isn't available.
 		if(LIBSHV_WITH_OAUTH2_AZURE AND NOT QtNetworkAuth_FOUND)
 			message(FATAL_ERROR "OAuth2 Azure explicitly enabled, but Qt NetworkAuth wasn't found!")
