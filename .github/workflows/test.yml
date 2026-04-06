@@ -83,7 +83,7 @@ jobs:
 
       - name: Setup emsdk
         if: matrix.qt_target == 'wasm'
-        uses: mymindstorm/setup-emsdk@v14
+        uses: mymindstorm/setup-emsdk@v15
         with:
           version: ${{ env.emscripten_version }}
           actions-cache-folder: ${{ env.emsdk_cache_dir }}
