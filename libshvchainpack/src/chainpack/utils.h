@@ -7,6 +7,7 @@
 #include <vector>
 #include <array>
 #include <algorithm>
+#include <cstdint>
 
 #if defined LIBC_NEWLIB || defined SHV_ANDROID_BUILD
 #include <sstream>
