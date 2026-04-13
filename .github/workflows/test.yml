@@ -83,7 +83,7 @@ jobs:
 
       - name: Setup emsdk
         if: matrix.qt_target == 'wasm'
-        uses: mymindstorm/setup-emsdk@v15
+        uses: mymindstorm/setup-emsdk@v16
         with:
           version: ${{ env.emscripten_version }}
           actions-cache-folder: ${{ env.emsdk_cache_dir }}
@@ -125,7 +125,7 @@ jobs:
     steps:
       - *checkout_step
       - name: Install Nix
-        uses: cachix/install-nix-action@v31.10.3
+        uses: cachix/install-nix-action@v31.10.4
         with:
           nix_path: nixpkgs=channel:nixos-unstable
       - name: Build
