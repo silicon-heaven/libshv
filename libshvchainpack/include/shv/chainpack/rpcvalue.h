@@ -3,6 +3,7 @@
 #include <shv/chainpack/shvchainpack_export.h>
 #include <shv/chainpack/metatypes.h>
 
+#include <cstdint>
 #include <functional>
 #include <ios>
 #include <map>
