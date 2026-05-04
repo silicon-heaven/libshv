@@ -3,6 +3,7 @@
 #include <shv/chainpack/shvchainpackglobal.h>
 #include <shv/chainpack/metatypes.h>
 
+#include <cstdint>
 #include <stdexcept>
 #include <string>
 #include <vector>
