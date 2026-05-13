@@ -272,21 +272,33 @@ chainpack::RpcValue ShvNode::processRpcRequest(const chainpack::RpcRequest &rq)
 	auto rq_grant = rq.accessGrant();
 	auto rq_access_level = rq_grant.accessLevel;
 	auto mm_access_level = mm->accessLevel();
-	if(mm_access_level > rq_access_level)
+	if(mm_access_level > rq_access_level) {
 		SHV_EXCEPTION(std::string("Call method: '") + method + "' on path '" + shv::core::utils::joinPath(shvPath().asString(), rq.shvPath().toString())
 					  + "' permission denied, grant: " + rq_grant.toPrettyString()
 					  + " required: " + accessLevelToAccessString(mm_access_level));
+	}
 
-	if(mm_access_level > AccessLevel::Write) {
+	std::string user_id_str;
+	if(auto user_id = rq.userId(); user_id.isValid()) {
+		if (user_id.isString()) {
+			user_id_str = user_id.asString();
+		} else {
+			user_id_str = user_id.toCpon();
+		}
+	}
+	if(mm->flags() & MetaMethod::Flag::UserIDRequired && user_id_str.empty()) {
+		SHV_EXCEPTION(std::string("Call method: '") + method + "' on path '" + shv::core::utils::joinPath(shvPath().asString(), rq.shvPath().toString())
+					  + "' user id required.");
+	}
+
+	if( mm_access_level > AccessLevel::Write || mm->flags() & MetaMethod::Flag::UserIDRequired ) {
 		shv::core::utils::ShvJournalEntry e(shv::core::utils::joinPath(shvPath().asString(), rq.shvPath().asString())
 											, method + '(' + rq.params().toCpon() + ')'
 											, shv::chainpack::Rpc::SIG_COMMAND_LOGGED
 											, shv::core::utils::ShvJournalEntry::NO_SHORT_TIME
 											, (1 << DataChange::ValueFlag::Spontaneous));
 		e.epochMsec = RpcValue::DateTime::now().msecsSinceEpoch();
-		chainpack::RpcValue user_id = rq.userId();
-		if(user_id.isValid())
-			e.userId = user_id.toCpon();
+		e.userId = user_id_str;
 		rootNode()->emitLogUserCommand(e);
 	}
 
