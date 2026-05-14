@@ -533,7 +533,8 @@ void ShvNode::emitLogUserCommand(const shv::core::utils::ShvJournalEntry &e)
 		RpcSignal sig;
 		sig.setMethod(Rpc::SIG_COMMAND_LOGGED);
 		sig.setShvPath(e.path);
-		sig.setParams(e.toRpcValue());
+		sig.setParams(e.value);
+		sig.setUserId(e.userId);
 		emitSendRpcMessage(sig);
 	}
 	else {
