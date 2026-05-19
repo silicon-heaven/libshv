@@ -9,26 +9,26 @@
     </message>
     <message>
         <source>Time stamp</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Timbro temporale</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Messaggio</translation>
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dati</translation>
     </message>
 </context>
 <context>
     <name>shv::visu::LogWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Modulo</translation>
     </message>
     <message>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Filtro</translation>
     </message>
     <message>
         <source>Clear</source>
@@ -36,7 +36,7 @@
     </message>
     <message>
         <source>Resize columns to fit content</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ridimensionare le colonne per adattarle al contenuto</translation>
     </message>
     <message>
         <source>Event log options</source>
@@ -44,7 +44,7 @@
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">...</translation>
     </message>
     <message>
         <source>Maximal log length</source>
@@ -63,7 +63,7 @@
     <name>shv::visu::LogWidgetTableView</name>
     <message>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Copia</translation>
     </message>
     <message>
         <source>Ctrl+C</source>
@@ -79,7 +79,7 @@
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">...</translation>
     </message>
     <message>
         <source>Show filter dialog</source>
@@ -102,7 +102,7 @@
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Allerta</translation>
     </message>
     <message>
         <source>Invalid ChainPack file: </source>
@@ -114,7 +114,7 @@
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Copia</translation>
     </message>
     <message>
         <source>Loadfile</source>
@@ -122,7 +122,7 @@
     </message>
     <message>
         <source>Cannot open file &apos;%1&apos; for read.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Impossibile aprire il file &apos;%1&apos; per la lettura.</translation>
     </message>
     <message>
         <source>Savefile</source>
@@ -130,7 +130,7 @@
     </message>
     <message>
         <source>Cannot open file &apos;%1&apos; for write.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Impossibile aprire il file &apos;%1&apos; per la scrittura.</translation>
     </message>
     <message>
         <source>Log inspector</source>
@@ -138,7 +138,7 @@
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">TextLabel</translation>
     </message>
     <message>
         <source>&amp;Since</source>
@@ -154,7 +154,7 @@
     </message>
     <message>
         <source>Time zone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fuso orario</translation>
     </message>
     <message>
         <source>&amp;Options</source>
@@ -178,7 +178,7 @@
     </message>
     <message>
         <source>SHV &amp;Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">SHV Path</translation>
     </message>
     <message>
         <source>paths dict</source>
@@ -214,15 +214,15 @@
     </message>
     <message>
         <source>Graph</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Grafico</translation>
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dati</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Informazioni</translation>
     </message>
     <message>
         <source>Resize columns to fit width</source>
@@ -241,23 +241,23 @@
     <name>shv::visu::logview::LogModel</name>
     <message>
         <source>DateTime</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Appuntamento</translation>
     </message>
     <message>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Percorso</translation>
     </message>
     <message>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Valore</translation>
     </message>
     <message>
         <source>ShortTime</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Poco tempo</translation>
     </message>
     <message>
         <source>Domain</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dominio</translation>
     </message>
     <message>
         <source>ValueFlags</source>
@@ -265,7 +265,7 @@
     </message>
     <message>
         <source>UserId</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ID utente</translation>
     </message>
 </context>
 <context>
@@ -276,19 +276,19 @@
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Salva</translation>
     </message>
     <message>
         <source>Save as</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Salva come</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cancella</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Esportazione</translation>
     </message>
     <message>
         <source>Import</source>
@@ -300,7 +300,7 @@
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Errore</translation>
     </message>
     <message>
         <source>Cannot open graph setting file.</source>
@@ -320,11 +320,11 @@
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Espandere</translation>
     </message>
     <message>
         <source>Collapse</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Crollo</translation>
     </message>
     <message>
         <source>Expand all nodes</source>
@@ -363,15 +363,15 @@
     <name>shv::visu::timeline::ChannelProbeWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Modulo</translation>
     </message>
     <message>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Titolo</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">...</translation>
     </message>
     <message>
         <source>Property</source>
@@ -379,7 +379,7 @@
     </message>
     <message>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Valore</translation>
     </message>
 </context>
 <context>
@@ -519,7 +519,7 @@
     </message>
     <message>
         <source>Reset zoom</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Reimposta zoom</translation>
     </message>
     <message>
         <source>Previous zoom (Middle mouse)</source>
@@ -554,7 +554,7 @@
     </message>
     <message>
         <source>Timezone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fuso orario</translation>
     </message>
     <message>
         <source>last 10 minutes</source>
