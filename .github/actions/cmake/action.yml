@@ -85,7 +85,7 @@ runs:
 
     # Qt
     - name: Install Qt
-      uses: Kidev/install-qt-action@v5 # Fork is needed for WASM
+      uses: jurplel/install-qt-action@v4
       with:
         cache: true
         aqtversion: ">=3.2.0"
@@ -96,6 +96,8 @@ runs:
         modules: ${{ inputs.modules }}
         target: ${{ inputs.qt_target }}
         extra: --autodesktop
+        # Needed for Qt 6.11
+        aqtsource: git+https://github.com/miurahr/aqtinstall.git@75ea7944aeac985e226df0a882cd5b3470e51a97
 
     - name: ccache
       if: inputs.ccache == 'true'

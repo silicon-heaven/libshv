@@ -37,7 +37,7 @@ public:
 protected:
 	// NOLINTNEXTLINE(cppcoreguidelines-avoid-const-or-ref-data-members)
 	std::istream &m_in;
-	char m_unpackBuff;
+	char m_unpackBuff = 0;
 	ccpcp_unpack_context m_inCtx;
 };
 } // namespace shv::chainpack
