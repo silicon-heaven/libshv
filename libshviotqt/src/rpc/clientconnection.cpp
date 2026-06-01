@@ -44,7 +44,7 @@
 #include <regex>
 
 namespace {
-constexpr std::string REQUEST_SESSION_KEY = "session";
+constexpr auto REQUEST_SESSION_KEY = "session";
 }
 
 namespace cp = shv::chainpack;
