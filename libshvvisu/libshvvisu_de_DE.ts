@@ -558,6 +558,40 @@
     </message>
 </context>
 <context>
+    <name>shv::visu::toast::ToastHistoryDialog</name>
+    <message>
+        <source>Notifications history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Timestamp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation type="unfinished">Nachricht</translation>
+    </message>
+</context>
+<context>
+    <name>shv::visu::toast::ToastWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Formular</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished">TextLabel</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>shv::visu::widgets::DlgGetSinceUntil</name>
     <message>
         <source>Load history data</source>

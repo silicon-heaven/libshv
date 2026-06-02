@@ -40,6 +40,13 @@ libshv_add_library(libshvvisu
 		src/widgets/dlggetsinceuntil.ui
 		src/widgets/sinceuntildatetimeedit.cpp
 		src/widgets/timezonecombobox.cpp
+		src/toast/toasthistorydialog.cpp
+		src/toast/toasthistorydialog.ui
+		src/toast/toastmessage.cpp
+		src/toast/toastswidget.cpp
+		src/toast/toastswidget.ui
+		src/toast/toastwidget.cpp
+		src/toast/toastwidget.ui
 	HEADERS
 		include/shv/visu/errorlogmodel.h
 		include/shv/visu/logtablemodelbase.h
@@ -71,6 +78,10 @@ libshv_add_library(libshvvisu
 		include/shv/visu/widgets/dlggetsinceuntil.h
 		include/shv/visu/widgets/sinceuntildatetimeedit.h
 		include/shv/visu/widgets/timezonecombobox.h
+		include/shv/visu/toast/toasthistorydialog.h
+		include/shv/visu/toast/toastmessage.h
+		include/shv/visu/toast/toastswidget.h
+		include/shv/visu/toast/toastwidget.h
 	)
 
 libshv_set_translations(libshvvisu "${LIBSHV_PROJECT_TRANSLATIONS}")
