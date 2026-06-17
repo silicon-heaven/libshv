@@ -120,7 +120,7 @@ bool ShvNodeTree::mount(const ShvNode::String &path, ShvNode *node)
 	return true;
 }
 
-chainpack::RpcValue ShvNodeTree::invokeMethod(const std::string &shv_path, const std::string &method, const chainpack::RpcValue &params, const chainpack::RpcValue &user_id)
+chainpack::RpcValue ShvNodeTree::invokeMethodThrow(const std::string &shv_path, const std::string &method, const chainpack::RpcValue &params, const chainpack::RpcValue &user_id)
 {
 	chainpack::RpcRequest rq;
 	rq.setShvPath(shv_path);
@@ -129,14 +129,20 @@ chainpack::RpcValue ShvNodeTree::invokeMethod(const std::string &shv_path, const
 	rq.setUserId(user_id);
 	rq.setAccessGrant(chainpack::AccessGrant(chainpack::AccessLevel::Service));
 	if(auto *root_nd = root()) {
-		try {
-			return root_nd->handleRpcRequestImpl(rq);
-		}
-		catch (const std::exception &e) {
-			shvError().nospace() << "Method call exception: " << shv_path << ":" << method << " - " << e.what();
-		}
+		return root_nd->handleRpcRequestImpl(rq);
 	}
-	shvError() << "Root node is NULL";
+	throw shv::core::Exception("Root node is NULL");
+	return {};
+}
+
+chainpack::RpcValue ShvNodeTree::invokeMethod(const std::string &shv_path, const std::string &method, const chainpack::RpcValue &params, const chainpack::RpcValue &user_id)
+{
+	try {
+		return invokeMethodThrow(shv_path, method, params, user_id);
+	}
+	catch (const std::exception &e) {
+		shvError().nospace() << "Method call exception: " << shv_path << ":" << method << " - " << e.what();
+	}
 	return {};
 }
 
