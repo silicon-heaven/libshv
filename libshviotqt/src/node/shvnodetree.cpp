@@ -132,7 +132,6 @@ chainpack::RpcValue ShvNodeTree::invokeMethodThrow(const std::string &shv_path, 
 		return root_nd->handleRpcRequestImpl(rq);
 	}
 	throw shv::core::Exception("Root node is NULL");
-	return {};
 }
 
 chainpack::RpcValue ShvNodeTree::invokeMethod(const std::string &shv_path, const std::string &method, const chainpack::RpcValue &params, const chainpack::RpcValue &user_id)
