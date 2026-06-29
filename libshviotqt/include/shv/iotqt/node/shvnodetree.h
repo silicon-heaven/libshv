@@ -27,6 +27,10 @@ public:
 										  const std::string &method,
 										  const shv::chainpack::RpcValue &params = {},
 										  const shv::chainpack::RpcValue &user_id = {});
+	shv::chainpack::RpcValue invokeMethodThrow(const std::string &shv_path,
+										  const std::string &method,
+										  const shv::chainpack::RpcValue &params = {},
+										  const shv::chainpack::RpcValue &user_id = {});
 
 	std::string dumpTree();
 protected:
