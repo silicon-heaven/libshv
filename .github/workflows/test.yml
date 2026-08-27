@@ -26,7 +26,7 @@ jobs:
       matrix:
         include:
           - name: Qt 5 / Ubuntu
-            container: gcc:15
+            container: gcc:16
             qt_version: 5.15.2
             qt_arch: gcc_64
             use_qt6: OFF
@@ -34,7 +34,7 @@ jobs:
             asan: true
 
           - name: Qt 6 / Ubuntu
-            container: gcc:15
+            container: gcc:16
             qt_arch: linux_gcc_64
             asan: true
 
