@@ -1,28 +1,38 @@
-#define DOCTEST_CONFIG_IMPLEMENT
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <shv/visu/timeline/graph.h>
 #include <shv/visu/timeline/graphmodel.h>
 #include <shv/core/log.h>
 
 #include <doctest/doctest.h>
-#include <QApplication>
 #include <QImage>
 #include <QPainter>
 
 using namespace shv::visu::timeline;
 
+class TestGraphChannel : public GraphChannel
+{
+public:
+	using GraphChannel::GraphChannel;
+
+	void setGraphAreaRect(const QRect &rect)
+	{
+		m_layout.graphAreaRect = rect;
+	}
+};
+
 class TestGraph : public Graph
 {
 public:
 	using Graph::drawCurrentTime;
-};
 
-int main(int argc, char **argv)
-{
-	qputenv("QT_QPA_PLATFORM", "offscreen");
-	QApplication app(argc, argv);
-	doctest::Context context(argc, argv);
-	return context.run();
-}
+	void addChannel(const QRect &graph_area)
+	{
+		auto *channel = new TestGraphChannel(this);
+		channel->setGraphAreaRect(graph_area);
+		m_channels.append(channel);
+		m_layout.xAxisRect = graph_area;
+	}
+};
 
 DOCTEST_TEST_CASE("Graph current time visibility")
 {
@@ -77,17 +87,12 @@ DOCTEST_TEST_CASE("Graph current time visibility")
 
 DOCTEST_TEST_CASE("Graph draws current time at range boundary")
 {
-	GraphModel graph_model;
-	shv::core::utils::ShvTypeDescr type_descr(shv::core::utils::ShvTypeDescr::Type::Int);
-	graph_model.appendChannel("channel", {}, type_descr);
-	graph_model.appendValueShvPath("channel", Sample(10, 1));
-	graph_model.appendValueShvPath("channel", Sample(100, 2));
-
 	TestGraph graph;
-	graph.setModel(&graph_model);
-	graph.createChannelsFromModel();
-	graph.makeLayout({0, 0, 800, 400});
-	graph.setCurrentTime(graph.xRange().min);
+	const QRect graph_area(100, 50, 600, 300);
+	graph.addChannel(graph_area);
+	graph.setXRange({10, 100});
+	graph.setXRangeZoom({10, 100});
+	graph.setCurrentTime(10);
 
 	QImage image(800, 400, QImage::Format_ARGB32_Premultiplied);
 	image.fill(Qt::transparent);
@@ -95,7 +100,6 @@ DOCTEST_TEST_CASE("Graph draws current time at range boundary")
 	graph.drawCurrentTime(&painter, 0);
 	painter.end();
 
-	const QRect graph_area = graph.channelAt(0)->graphAreaRect();
 	REQUIRE(image.pixelColor(graph_area.left(), graph_area.center().y()).alpha() > 0);
 }
 
