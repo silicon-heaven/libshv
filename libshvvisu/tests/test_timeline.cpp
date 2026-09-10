@@ -1,10 +1,107 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <shv/visu/timeline/graph.h>
 #include <shv/visu/timeline/graphmodel.h>
 #include <shv/core/log.h>
 
 #include <doctest/doctest.h>
+#include <QImage>
+#include <QPainter>
 
 using namespace shv::visu::timeline;
+
+class TestGraphChannel : public GraphChannel
+{
+public:
+	using GraphChannel::GraphChannel;
+
+	void setGraphAreaRect(const QRect &rect)
+	{
+		m_layout.graphAreaRect = rect;
+	}
+};
+
+class TestGraph : public Graph
+{
+public:
+	using Graph::drawCurrentTime;
+
+	void addChannel(const QRect &graph_area)
+	{
+		auto *channel = new TestGraphChannel(this);
+		channel->setGraphAreaRect(graph_area);
+		m_channels.append(channel);
+		m_layout.xAxisRect = graph_area;
+	}
+};
+
+DOCTEST_TEST_CASE("Graph current time visibility")
+{
+	GraphModel graph_model;
+	Graph graph;
+	graph.setModel(&graph_model);
+	graph.setXRange({0, 100});
+	graph.setXRangeZoom({20, 40});
+
+	DOCTEST_SUBCASE("visible time keeps zoom")
+	{
+		graph.setCurrentTime(30);
+
+		REQUIRE(graph.currentTime() == 30);
+		REQUIRE(graph.xRangeZoom() == XRange{20, 40});
+	}
+
+	DOCTEST_SUBCASE("hidden time recenters zoom")
+	{
+		graph.setCurrentTime(60);
+
+		REQUIRE(graph.currentTime() == 60);
+		REQUIRE(graph.xRangeZoom() == XRange{50, 70});
+	}
+
+	DOCTEST_SUBCASE("time outside full range is rejected")
+	{
+		graph.setCurrentTime(30);
+		graph.setCurrentTime(110);
+
+		REQUIRE(graph.currentTime() == 30);
+		REQUIRE(graph.xRangeZoom() == XRange{20, 40});
+	}
+
+	DOCTEST_SUBCASE("empty current time hides marker")
+	{
+		graph.setCurrentTime(30);
+		graph.setCurrentTime(std::nullopt);
+
+		REQUIRE(!graph.currentTime());
+		REQUIRE(graph.xRangeZoom() == XRange{20, 40});
+	}
+
+	DOCTEST_SUBCASE("zero is a valid time")
+	{
+		graph.setCurrentTime(0);
+
+		REQUIRE(graph.currentTime() == 0);
+		REQUIRE(graph.xRangeZoom().contains(0));
+	}
+}
+
+DOCTEST_TEST_CASE("Graph draws current time at range boundary")
+{
+	TestGraph graph;
+	const QRect graph_area(100, 50, 600, 300);
+	graph.addChannel(graph_area);
+	graph.setXRange({10, 100});
+	graph.setXRangeZoom({10, 100});
+	graph.setCurrentTime(10);
+
+	QImage image(800, 400, QImage::Format_ARGB32_Premultiplied);
+	image.fill(Qt::transparent);
+	QPainter painter(&image);
+	graph.drawCurrentTime(&painter, 0);
+	painter.end();
+
+	REQUIRE(image.pixelColor(graph_area.left(), graph_area.center().y()).alpha() > 0);
+}
 
 DOCTEST_TEST_CASE("Graph model")
 {

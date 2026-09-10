@@ -488,24 +488,36 @@ void Graph::setCrossHairPos(const Graph::CrossHairPos &pos)
 	emit presentationDirty(dirty_rect);
 }
 
-timemsec_t Graph::currentTime() const
+std::optional<timemsec_t> Graph::currentTime() const
 {
 	return m_state.currentTime;
 }
 
-void Graph::setCurrentTime(timemsec_t new_time)
+void Graph::setCurrentTime(std::optional<timemsec_t> new_time)
 {
-	auto dirty_rect = [this](timemsec_t time) {
+	if(new_time && !xRange().contains(new_time.value())) {
+		shvWarning() << "Current time is outside the visible graph range";
+		return;
+	}
+
+	auto dirty_rect = [this](std::optional<timemsec_t> time) {
 		QRect r;
-		if(time > 0) {
+		if(time) {
 			r = m_layout.rect;
-			r.setX(timeToPos(time));
+			r.setX(timeToPos(time.value()));
 			r.adjust(-10, 0, 10, 0);
 		}
 		return r;
 	};
 	emit presentationDirty(dirty_rect(m_state.currentTime));
 	m_state.currentTime = new_time;
+
+	if(new_time && !xRangeZoom().contains(new_time.value())) {
+		const timemsec_t half_interval = xRangeZoom().interval() / 2;
+		setXRangeZoom({new_time.value() - half_interval, new_time.value() + half_interval});
+		emit presentationDirty(rect());
+		return;
+	}
 	emit presentationDirty(dirty_rect(m_state.currentTime));
 	emit presentationDirty(m_layout.xAxisRect);
 }
@@ -1901,12 +1913,12 @@ void Graph::drawXAxis(QPainter *painter)
 			painter->drawText(r, text);
 		}
 	}
-	auto current_time = m_state.currentTime;
-	if(current_time > 0) {
-		int x = timeToPos(current_time);
+	const auto current_time = m_state.currentTime;
+	if(current_time.has_value()) {
+		int x = timeToPos(current_time.value());
 		if(x > m_layout.xAxisRect.left() + 10) {
 			// draw marker + time string only if current time is slightly greater than graph leftmost time
-			drawCurrentTimeMarker(painter, current_time);
+			drawCurrentTimeMarker(painter, current_time.value());
 		}
 	}
 	painter->restore();
@@ -2804,12 +2816,13 @@ void Graph::drawSelection(QPainter *painter)
 
 void Graph::drawCurrentTime(QPainter *painter, int channel_ix)
 {
-	auto time = m_state.currentTime;
-	if(time <= 0)
+	if(!m_state.currentTime.has_value()) {
 		return;
-	int x = timeToPos(time);
+	}
+
+	int x = timeToPos(m_state.currentTime.value());
 	const GraphChannel *ch = channelAt(channel_ix);
-	if(ch->graphAreaRect().left() >= x || ch->graphAreaRect().right() <= x)
+	if(ch->graphAreaRect().left() > x || ch->graphAreaRect().right() < x)
 		return;
 
 	painter->save();
@@ -2827,8 +2840,6 @@ void Graph::drawCurrentTime(QPainter *painter, int channel_ix)
 
 void Graph::drawCurrentTimeMarker(QPainter *painter, time_t time)
 {
-	if(time <= 0)
-		return;
 	QColor color = m_style.colorCurrentTime();
 	int x = timeToPos(time);
 	QPoint p1{x, m_layout.xAxisRect.top()};
