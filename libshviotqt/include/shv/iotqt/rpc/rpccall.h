@@ -78,6 +78,7 @@ public:
 	RpcCall* setParams(const ::shv::chainpack::RpcValue &params);
 	RpcCall* setTimeout(int timeout);
 	RpcCall* setUserId(const ::shv::chainpack::RpcValue &user_id);
+	RpcCall* setExtraMetaData(const chainpack::RpcValue::Map &extra_meta_data);
 
 	std::string shvPath() const;
 	int start();
@@ -99,6 +100,7 @@ private:
 	int m_timeout = 0;
 	shv::chainpack::RpcValue m_userId;
 	int m_requestId = 0;
+	shv::chainpack::RpcValue::Map m_extraMetaData;
 };
 
 } // namespace iotqt::rpc

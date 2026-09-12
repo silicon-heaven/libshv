@@ -41,7 +41,7 @@ public:
 	int callShvMethod(const std::string &shv_path, const std::string& method, const shv::chainpack::RpcValue &params = shv::chainpack::RpcValue());
 	int callShvMethod(const std::string &shv_path, const std::string& method, const shv::chainpack::RpcValue &params, const shv::chainpack::RpcValue &user_id);
 	int callShvMethod(int rq_id, const std::string &shv_path, const std::string& method, const shv::chainpack::RpcValue &params = shv::chainpack::RpcValue());
-	int callShvMethod(int rq_id, const std::string &shv_path, const std::string& method, const shv::chainpack::RpcValue &params, const shv::chainpack::RpcValue &user_id);
+	int callShvMethod(int rq_id, const std::string &shv_path, const std::string& method, const shv::chainpack::RpcValue &params, const shv::chainpack::RpcValue &user_id, const shv::chainpack::RpcValue::Map &extra_meta_data = shv::chainpack::RpcValue::Map());
 
 	static std::pair<std::string, RpcValue> makeSubscribeParams(IRpcConnection::ShvApiVersion api_ver, const std::string &shv_path, const std::string& method, const std::string& source);
 	int callMethodSubscribeGlob(const std::string& glob);
