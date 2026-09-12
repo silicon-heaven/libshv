@@ -255,9 +255,9 @@ RpcCall *RpcCall::setUserId(const chainpack::RpcValue &user_id)
 	return this;
 }
 
-RpcCall *RpcCall::setMetaValues(const chainpack::RpcValue::Map &meta_values) 
+RpcCall *RpcCall::setExtraMetaData(const chainpack::RpcValue::Map &extra_meta_data)
 {
-	m_metaValues = meta_values;
+	m_extraMetaData = extra_meta_data;
 	return this;
 }
 
@@ -292,7 +292,7 @@ int RpcCall::start()
 		}
 		deleteLater();
 	});
-	m_rpcConnection->callShvMethod(rq_id, m_shvPath, m_method, m_params, m_userId, m_metaValues);
+	m_rpcConnection->callShvMethod(rq_id, m_shvPath, m_method, m_params, m_userId, m_extraMetaData);
 	return rq_id;
 }
 
