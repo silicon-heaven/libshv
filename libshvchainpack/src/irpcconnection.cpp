@@ -89,7 +89,7 @@ int IRpcConnection::callShvMethod(int rq_id, const std::string &shv_path, const 
 	return callShvMethod(rq_id, shv_path, method, params, {});
 }
 
-int IRpcConnection::callShvMethod(int rq_id, const std::string &shv_path, const std::string& method, const RpcValue &params, const RpcValue &user_id)
+int IRpcConnection::callShvMethod(int rq_id, const std::string &shv_path, const std::string& method, const RpcValue &params, const RpcValue &user_id, const shv::chainpack::RpcValue::Map &extra_meta_data)
 {
 	RpcRequest rq;
 	rq.setRequestId(rq_id);
@@ -100,6 +100,9 @@ int IRpcConnection::callShvMethod(int rq_id, const std::string &shv_path, const 
 		rq.setUserId(user_id);
 	if(!shv_path.empty())
 		rq.setShvPath(shv_path);
+	for(const auto &[key, value] : extra_meta_data) {
+		rq.setMetaValue(key, value);
+	}
 	sendRpcMessage(rq);
 	return rq_id;
 }

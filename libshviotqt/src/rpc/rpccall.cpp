@@ -255,6 +255,12 @@ RpcCall *RpcCall::setUserId(const chainpack::RpcValue &user_id)
 	return this;
 }
 
+RpcCall *RpcCall::setExtraMetaData(const chainpack::RpcValue::Map &extra_meta_data)
+{
+	m_extraMetaData = extra_meta_data;
+	return this;
+}
+
 std::string RpcCall::shvPath() const
 {
 	return m_shvPath;
@@ -286,7 +292,7 @@ int RpcCall::start()
 		}
 		deleteLater();
 	});
-	m_rpcConnection->callShvMethod(rq_id, m_shvPath, m_method, m_params, m_userId);
+	m_rpcConnection->callShvMethod(rq_id, m_shvPath, m_method, m_params, m_userId, m_extraMetaData);
 	return rq_id;
 }
 
