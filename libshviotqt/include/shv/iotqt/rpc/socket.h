@@ -118,6 +118,8 @@ public:
 	Q_SIGNAL void readyRead();
 	Q_SIGNAL void responseMetaReceived(int request_id);
 	Q_SIGNAL void dataChunkReceived();
+	// Nonfatal receive failure; the request ID comes from unverified response metadata.
+	Q_SIGNAL void responseReceiveError(int request_id, const QString &error);
 
 	Q_SIGNAL void stateChanged(QAbstractSocket::SocketState state);
 	Q_SIGNAL void error(QAbstractSocket::SocketError socket_error);
@@ -173,5 +175,4 @@ protected:
 };
 #endif
 } // namespace shv::iotqt::rpc
-
 

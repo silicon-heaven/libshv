@@ -42,6 +42,7 @@ public:
 	// following two signals allows correct RPC call timeout implementation
 	Q_SIGNAL void responseMetaReceived(int request_id);
 	Q_SIGNAL void dataChunkReceived();
+	Q_SIGNAL void responseReceiveError(int request_id, const QString &error);
 
 	void ignoreSslErrors();
 
@@ -62,4 +63,3 @@ protected:
 };
 
 }
-
