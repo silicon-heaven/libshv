@@ -101,6 +101,9 @@ function(add_shvvisu_test test_name)
 		)
 	target_link_libraries(test_visu_${test_name} libshvvisu doctest::doctest)
 	add_test(NAME test_visu_${test_name} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:test_visu_${test_name}>)
+	set_tests_properties(test_visu_${test_name} PROPERTIES
+		ENVIRONMENT "LSAN_OPTIONS=suppressions=${CMAKE_CURRENT_SOURCE_DIR}/tests/lsan.supp"
+	)
 endfunction(add_shvvisu_test)
 
 if(BUILD_TESTING)

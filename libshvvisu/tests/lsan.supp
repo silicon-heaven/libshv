@@ -1,0 +1,9 @@
+# Qt's offscreen platform retains process-global objects at shutdown.
+leak:libfontconfig.so
+leak:QOffscreenIntegration
+leak:QOffscreenScreen
+leak:QScreen::QScreen
+leak:QWindowSystemInterface::handleScreenAdded
+leak:QPlatformScreen::QPlatformScreen
+leak:QtSharedPointer::ExternalRefCountData::getAndRef
+leak:QObject::QObject
