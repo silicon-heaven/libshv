@@ -24,7 +24,7 @@ namespace shv::iotqt::rpc {
 class LIBSHVIOTQT_EXPORT FrameReader {
 public:
 	virtual ~FrameReader() = default;
-	virtual QList<int> addData(std::string_view data) = 0;
+	virtual QList<int64_t> addData(std::string_view data) = 0;
 	bool isEmpty() const { return m_frames.empty(); }
 	std::vector<chainpack::RpcFrame> takeFrames() {
 		auto frames = std::move(m_frames);
@@ -33,7 +33,7 @@ public:
 	}
 	virtual void resetCommunication();
 protected:
-	int tryToReadMeta(std::istringstream &in);
+	int64_t tryToReadMeta(std::istringstream &in);
 protected:
 	std::vector<chainpack::RpcFrame> m_frames;
 	chainpack::Rpc::ProtocolType m_protocol;
@@ -64,7 +64,7 @@ class LIBSHVIOTQT_EXPORT StreamFrameReader : public FrameReader
 public:
 	~StreamFrameReader() override = default;
 
-	QList<int> addData(std::string_view data) override;
+	QList<int64_t> addData(std::string_view data) override;
 	void resetCommunication() override;
 private:
 	std::string m_readBuffer;
@@ -116,10 +116,10 @@ public:
 	Q_SIGNAL void connected();
 	Q_SIGNAL void disconnected();
 	Q_SIGNAL void readyRead();
-	Q_SIGNAL void responseMetaReceived(int request_id);
+	Q_SIGNAL void responseMetaReceived(int64_t request_id);
 	Q_SIGNAL void dataChunkReceived();
 	// Nonfatal receive failure; the request ID comes from unverified response metadata.
-	Q_SIGNAL void responseReceiveError(int request_id, const QString &error);
+	Q_SIGNAL void responseReceiveError(int64_t request_id, const QString &error);
 
 	Q_SIGNAL void stateChanged(QAbstractSocket::SocketState state);
 	Q_SIGNAL void error(QAbstractSocket::SocketError socket_error);
@@ -175,4 +175,3 @@ protected:
 };
 #endif
 } // namespace shv::iotqt::rpc
-

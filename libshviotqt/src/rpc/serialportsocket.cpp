@@ -40,10 +40,10 @@ SerialFrameReader::SerialFrameReader(CrcCheck crc)
 
 }
 
-QList<int> SerialFrameReader::addData(std::string_view data)
+QList<int64_t> SerialFrameReader::addData(std::string_view data)
 {
 	logRpcData().nospace() << "FRAME DATA READ " << data.size() << " bytes of data read:\n" << shv::chainpack::utils::hexDump(data);
-	QList<int> response_request_ids;
+	QList<int64_t> response_request_ids;
 	auto check_response_id = [this, &response_request_ids]() {
 		std::istringstream in(m_readBuffer);
 		if (auto rqid = tryToReadMeta(in); rqid > 0) {
@@ -120,7 +120,7 @@ QList<int> SerialFrameReader::addData(std::string_view data)
 	return response_request_ids;
 }
 
-std::vector<std::pair<int, QString>> SerialFrameReader::takeResponseErrors()
+std::vector<std::pair<int64_t, QString>> SerialFrameReader::takeResponseErrors()
 {
 	auto errors = std::move(m_responseErrors);
 	m_responseErrors = {};
@@ -180,9 +180,8 @@ void SerialFrameReader::finishFrame()
 			if (m_dataStart.has_value() && chainpack::RpcMessage::isResponse(m_meta)
 				&& chainpack::RpcMessage::peekCallerId(m_meta) == 0) {
 				const auto request_id = chainpack::RpcMessage::requestId(m_meta);
-				if ((request_id.isInt() || request_id.isUInt()) && request_id.toUInt64() > 0
-					&& request_id.toUInt64() <= std::numeric_limits<int>::max()) {
-					m_responseErrors.emplace_back(request_id.toInt(), err);
+				if ((request_id.isInt() || request_id.isUInt()) && request_id.toInt64() > 0) {
+					m_responseErrors.emplace_back(request_id.toInt64(), err);
 				}
 			}
 			setState(ReadState::WaitingForStx);

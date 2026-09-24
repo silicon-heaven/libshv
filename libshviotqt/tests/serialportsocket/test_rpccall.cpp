@@ -72,7 +72,7 @@ struct CallResult : QObject
 	RpcError signalError;
 };
 
-RpcResponse response(int request_id)
+RpcResponse response(int64_t request_id)
 {
 	RpcResponse resp;
 	resp.setRequestId(request_id);
@@ -114,18 +114,18 @@ DOCTEST_TEST_CASE("Serial CRC error fails only the matching RpcCall once")
 	CallResult other(conn, 102);
 	QPointer<RpcResponseCallBack> callback = failed.call->findChild<RpcResponseCallBack*>();
 	REQUIRE(!callback.isNull());
-	std::vector<std::pair<int, QString>> socket_errors;
-	std::vector<std::pair<int, QString>> connection_errors;
-	QList<int> meta_ids;
+	std::vector<std::pair<int64_t, QString>> socket_errors;
+	std::vector<std::pair<int64_t, QString>> connection_errors;
+	QList<int64_t> meta_ids;
 	QList<int> delivered_ids;
 	QObject context;
-	QObject::connect(conn.socket(), &Socket::responseReceiveError, &context, [&](int id, const QString &error) {
+	QObject::connect(conn.socket(), &Socket::responseReceiveError, &context, [&](int64_t id, const QString &error) {
 		socket_errors.emplace_back(id, error);
 	});
-	QObject::connect(&conn, &ClientConnection::responseReceiveError, &context, [&](int id, const QString &error) {
+	QObject::connect(&conn, &ClientConnection::responseReceiveError, &context, [&](int64_t id, const QString &error) {
 		connection_errors.emplace_back(id, error);
 	});
-	QObject::connect(&conn, &ClientConnection::responseMetaReceived, &context, [&](int id) { meta_ids << id; });
+	QObject::connect(&conn, &ClientConnection::responseMetaReceived, &context, [&](int64_t id) { meta_ids << id; });
 	QObject::connect(&conn, &ClientConnection::rpcMessageReceived, &context, [&](const RpcMessage &message) {
 		delivered_ids << message.requestId().toInt();
 	});
@@ -138,7 +138,7 @@ DOCTEST_TEST_CASE("Serial CRC error fails only the matching RpcCall once")
 		REQUIRE(split > 0);
 		conn.serial->setDataToReceive(corrupt.left(split));
 		QCoreApplication::processEvents();
-		REQUIRE(meta_ids == QList<int>{101});
+		REQUIRE(meta_ids == QList<int64_t>{101});
 		REQUIRE(socket_errors.empty());
 		REQUIRE(failed.maybeCount == 0);
 		REQUIRE(other.maybeCount == 0);
@@ -192,6 +192,51 @@ DOCTEST_TEST_CASE("Serial CRC error fails only the matching RpcCall once")
 	REQUIRE(other.call.isNull());
 }
 
+DOCTEST_TEST_CASE("Serial response signals preserve 64-bit IDs without matching a narrowed call ID")
+{
+	auto protocol = Rpc::ProtocolType::ChainPack;
+	DOCTEST_SUBCASE("ChainPack") {}
+	DOCTEST_SUBCASE("Cpon") { protocol = Rpc::ProtocolType::Cpon; }
+
+	TestConnection conn;
+	CallResult pending(conn, 101);
+	auto *callback = pending.call->findChild<RpcResponseCallBack*>();
+	REQUIRE(callback);
+	auto *timer = callback->findChild<QTimer*>();
+	REQUIRE(timer);
+	timer->stop();
+	QList<int64_t> socket_meta_ids;
+	QList<int64_t> connection_meta_ids;
+	QList<int64_t> socket_error_ids;
+	QList<int64_t> connection_error_ids;
+	QObject context;
+	QObject::connect(conn.socket(), &Socket::responseMetaReceived, &context, [&](int64_t id) { socket_meta_ids << id; });
+	QObject::connect(&conn, &ClientConnection::responseMetaReceived, &context, [&](int64_t id) { connection_meta_ids << id; });
+	QObject::connect(conn.socket(), &Socket::responseReceiveError, &context, [&](int64_t id, const QString &) { socket_error_ids << id; });
+	QObject::connect(&conn, &ClientConnection::responseReceiveError, &context, [&](int64_t id, const QString &) { connection_error_ids << id; });
+
+	constexpr int64_t request_id = 4294967397;
+	const auto corrupt = corrupt_payload(serial_frame(response(request_id), protocol));
+	const auto split = corrupt.indexOf("Crc-payload");
+	REQUIRE(split > 0);
+	conn.serial->setDataToReceive(corrupt.left(split));
+	REQUIRE(socket_meta_ids == QList<int64_t>{request_id});
+	REQUIRE(connection_meta_ids == socket_meta_ids);
+	// Neither metadata nor data chunks for the large ID may restart this call's timer.
+	REQUIRE_FALSE(timer->isActive());
+	conn.serial->setDataToReceive(corrupt.mid(split));
+	REQUIRE(socket_error_ids == QList<int64_t>{request_id});
+	REQUIRE(connection_error_ids == socket_error_ids);
+	REQUIRE(pending.maybeCount == 0);
+	REQUIRE_FALSE(timer->isActive());
+
+	conn.serial->setDataToReceive(serial_frame(response(101), protocol));
+	QCoreApplication::sendPostedEvents(&conn, QEvent::MetaCall);
+	REQUIRE(pending.maybeCount == 1);
+	REQUIRE(pending.resultCount == 1);
+	REQUIRE(pending.errorCount == 0);
+}
+
 DOCTEST_TEST_CASE("Unidentifiable serial CRC errors leave RpcCall to time out")
 {
 	auto message = RpcMessage(response(101));
@@ -213,7 +258,6 @@ DOCTEST_TEST_CASE("Unidentifiable serial CRC errors leave RpcCall to time out")
 	DOCTEST_SUBCASE("Routed response") { message.setCallerIds(RpcList{7}); }
 	DOCTEST_SUBCASE("Zero request ID") { message.setRequestId(0); }
 	DOCTEST_SUBCASE("Negative request ID") { message.setRequestId(-1); }
-	DOCTEST_SUBCASE("Request ID would narrow to a pending call ID") { message.setRequestId(int64_t{4294967397}); }
 	DOCTEST_SUBCASE("Fractional request ID") { message.setRequestId(101.5); }
 	DOCTEST_SUBCASE("String request ID") { message.setRequestId("101"); }
 
@@ -234,7 +278,7 @@ DOCTEST_TEST_CASE("Unidentifiable serial CRC errors leave RpcCall to time out")
 	CallResult pending(conn, 101, 20);
 	int receive_errors = 0;
 	QEventLoop loop;
-	QObject::connect(&conn, &ClientConnection::responseReceiveError, &loop, [&](int, const QString &) { ++receive_errors; });
+	QObject::connect(&conn, &ClientConnection::responseReceiveError, &loop, [&](int64_t, const QString &) { ++receive_errors; });
 	QObject::connect(pending.call, &RpcCall::maybeResult, &loop, &QEventLoop::quit);
 	conn.serial->setDataToReceive(data);
 	REQUIRE(pending.maybeCount == 0);
@@ -290,7 +334,7 @@ DOCTEST_TEST_CASE("Serial response CRC error queue drains and resets")
 	REQUIRE(reader.takeFrames().empty());
 	const auto split = valid.indexOf("crc-payload");
 	REQUIRE(split > 0);
-	REQUIRE(reader.addData(corrupt.left(split).toStdString()) == QList<int>{101});
+	REQUIRE(reader.addData(corrupt.left(split).toStdString()) == QList<int64_t>{101});
 	reader.resetCommunication();
 	reader.addData(corrupt.mid(split).toStdString());
 	REQUIRE(reader.takeResponseErrors().empty());
