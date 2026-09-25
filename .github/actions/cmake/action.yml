@@ -83,6 +83,12 @@ runs:
         echo cmake_extra_args="${CMAKE_EXTRA_ARGS}" >> "$GITHUB_ENV"
       shell: bash
 
+    # Setup Python required for aqtinstall
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
     # Qt
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
