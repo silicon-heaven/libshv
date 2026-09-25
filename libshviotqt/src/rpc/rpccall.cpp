@@ -21,6 +21,12 @@ RpcResponseCallBack::RpcResponseCallBack(ClientConnection *conn, int rq_id, QObj
 	connect(conn, &ClientConnection::rpcMessageReceived, this, &RpcResponseCallBack::onRpcMessageReceived);
 	connect(conn, &ClientConnection::responseMetaReceived, this, &RpcResponseCallBack::onResponseMetaReceived);
 	connect(conn, &ClientConnection::dataChunkReceived, this, &RpcResponseCallBack::onDataChunkReceived);
+	connect(conn, &ClientConnection::responseReceiveError, this, [this](int64_t request_id, const QString &error) {
+		RpcResponse resp;
+		resp.setRequestId(request_id);
+		resp.setError(RpcError(error.toStdString()));
+		onRpcMessageReceived(resp);
+	});
 	setTimeout(conn->rpcTimeoutMsec());
 }
 
@@ -134,7 +140,7 @@ void RpcResponseCallBack::onRpcMessageReceived(const chainpack::RpcMessage &msg)
 	deleteLater();
 }
 
-void RpcResponseCallBack::onResponseMetaReceived(int request_id)
+void RpcResponseCallBack::onResponseMetaReceived(int64_t request_id)
 {
 	if(m_isFinished)
 		return;

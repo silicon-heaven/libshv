@@ -98,6 +98,8 @@ if(BUILD_TESTING)
 	add_shviotqt_test(frame_reader)
 
 	add_shviotqt_serialportsocket_test(serialportsocket)
+	add_shviotqt_serialportsocket_test(rpccall)
 	file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test_serialportsocket")
 	target_compile_definitions(test_iotqt_serialportsocket PRIVATE TESTS_DIR="${CMAKE_CURRENT_BINARY_DIR}/test_serialportsocket")
+	target_compile_definitions(test_iotqt_rpccall PRIVATE TESTS_DIR="${CMAKE_CURRENT_BINARY_DIR}/test_serialportsocket")
 endif()

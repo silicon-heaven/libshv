@@ -8,6 +8,8 @@
 #include <QUrl>
 #include <QTimer>
 
+#include <limits>
+
 #define logSerialPortSocketD() nCDebug("SerialPortSocket")
 #define logSerialPortSocketM() nCMessage("SerialPortSocket")
 #define logSerialPortSocketW() nCWarning("SerialPortSocket")
@@ -38,10 +40,10 @@ SerialFrameReader::SerialFrameReader(CrcCheck crc)
 
 }
 
-QList<int> SerialFrameReader::addData(std::string_view data)
+QList<int64_t> SerialFrameReader::addData(std::string_view data)
 {
 	logRpcData().nospace() << "FRAME DATA READ " << data.size() << " bytes of data read:\n" << shv::chainpack::utils::hexDump(data);
-	QList<int> response_request_ids;
+	QList<int64_t> response_request_ids;
 	auto check_response_id = [this, &response_request_ids]() {
 		std::istringstream in(m_readBuffer);
 		if (auto rqid = tryToReadMeta(in); rqid > 0) {
@@ -118,6 +120,13 @@ QList<int> SerialFrameReader::addData(std::string_view data)
 	return response_request_ids;
 }
 
+std::vector<std::pair<int64_t, QString>> SerialFrameReader::takeResponseErrors()
+{
+	auto errors = std::move(m_responseErrors);
+	m_responseErrors = {};
+	return errors;
+}
+
 void SerialFrameReader::resetCommunication()
 {
 	m_readState = ReadState::WaitingForStx;
@@ -125,6 +134,7 @@ void SerialFrameReader::resetCommunication()
 	m_readBuffer.clear();
 	m_crcBuffer.clear();
 	m_crcDigest = {};
+	m_responseErrors.clear();
 	Super::resetCommunication();
 }
 
@@ -166,6 +176,14 @@ void SerialFrameReader::finishFrame()
 					.arg(m_crcDigest.result(), 4, 16, QChar('0'))
 					.arg(msg_crc, 4, 16, QChar('0'));
 			shvWarning() << err;
+			// The metadata is unverified, so matching a failed response is best-effort.
+			if (m_dataStart.has_value() && chainpack::RpcMessage::isResponse(m_meta)
+				&& chainpack::RpcMessage::peekCallerId(m_meta) == 0) {
+				const auto request_id = chainpack::RpcMessage::requestId(m_meta);
+				if ((request_id.isInt() || request_id.isUInt()) && request_id.toInt64() > 0) {
+					m_responseErrors.emplace_back(request_id.toInt64(), err);
+				}
+			}
 			setState(ReadState::WaitingForStx);
 			return;
 		}
@@ -384,6 +402,9 @@ void SerialPortSocket::onDataReadyRead()
 		emit responseMetaReceived(rqid);
 	}
 	emit dataChunkReceived();
+	for (const auto &[rqid, error] : static_cast<SerialFrameReader&>(frameReader()).takeResponseErrors()) {
+		emit responseReceiveError(rqid, error);
+	}
 	if (!frameReader().isEmpty()) {
 		emit readyRead();
 	}
