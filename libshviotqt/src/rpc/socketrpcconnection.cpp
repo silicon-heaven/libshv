@@ -38,6 +38,7 @@ void SocketRpcConnection::setSocket(Socket *socket)
 	m_socket = socket;
 	connect(socket, &Socket::responseMetaReceived, this, &SocketRpcConnection::responseMetaReceived);
 	connect(socket, &Socket::dataChunkReceived, this, &SocketRpcConnection::dataChunkReceived);
+	connect(socket, &Socket::responseReceiveError, this, &SocketRpcConnection::responseReceiveError);
 	connect(socket, &Socket::sslErrors, this, &SocketRpcConnection::sslErrors);
 	connect(socket, &Socket::error, this, &SocketRpcConnection::onSocketError);
 

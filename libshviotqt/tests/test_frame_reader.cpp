@@ -22,7 +22,7 @@ doctest::String toString(const QString& str)
 	return str.toLatin1().data();
 }
 
-doctest::String toString(const QList<int>& lst)
+doctest::String toString(const QList<int64_t>& lst)
 {
 	QStringList sl;
 	for(auto i : lst) {
@@ -101,17 +101,17 @@ void test_valid_data(FrameReader *rd, const vector<string> &data)
 	}
 	{
 		auto ret = rd->addData(rs1);
-		REQUIRE(ret == QList<int>{3,});
+		REQUIRE(ret == QList<int64_t>{3,});
 		REQUIRE(rd->takeFrames().size() == 1);
 	}
 	{
 		auto ret = rd->addData(rs1 + rs2);
-		REQUIRE(ret == QList<int>{3,2});
+		REQUIRE(ret == QList<int64_t>{3,2});
 		REQUIRE(rd->takeFrames().size() == 2);
 	}
 	{
 		auto ret = rd->addData(rs1 + sig1 + rs2 + sig1);
-		REQUIRE(ret == QList<int>{3,2});
+		REQUIRE(ret == QList<int64_t>{3,2});
 		REQUIRE(rd->takeFrames().size() == 4);
 	}
 }
@@ -126,17 +126,17 @@ void test_incomplete_data(FrameReader *rd, const vector<string> &data)
 	}
 	{
 		auto ret = rd->addData(chunks[0]);
-		REQUIRE(ret == QList<int>{});
+		REQUIRE(ret == QList<int64_t>{});
 		REQUIRE(rd->takeFrames().size() == 0);
 	}
 	{
 		auto ret = rd->addData(chunks[1]);
-		REQUIRE(ret == QList<int>{3,});
+		REQUIRE(ret == QList<int64_t>{3,});
 		REQUIRE(rd->takeFrames().size() == 0);
 	}
 	{
 		auto ret = rd->addData(chunks[2]);
-		REQUIRE(ret == QList<int>{});
+		REQUIRE(ret == QList<int64_t>{});
 		REQUIRE(rd->takeFrames().size() == 1);
 	}
 }
@@ -206,6 +206,36 @@ DOCTEST_TEST_CASE("Stream FrameReader 3 messaqes at once")
 	}
 }
 
+DOCTEST_TEST_CASE("Frame readers preserve 64-bit response request IDs")
+{
+	const vector<string> messages = {
+		R"(<1:1,8:4294967397>i{2:true})",
+		R"(<1:1,8:9223372036854775807>i{2:true})",
+	};
+	std::unique_ptr<FrameReader> reader;
+	vector<string> data;
+	DOCTEST_SUBCASE("Stream") {
+		reader = std::make_unique<StreamFrameReader>();
+		data = msg_to_raw_stream_data(messages);
+	}
+	DOCTEST_SUBCASE("Serial with CRC") {
+		reader = std::make_unique<SerialFrameReader>(SerialFrameReader::CrcCheck::Yes);
+		data = msg_to_raw_data_serial(messages, SerialFrameWriter::CrcCheck::Yes);
+	}
+	DOCTEST_SUBCASE("Serial without CRC") {
+		reader = std::make_unique<SerialFrameReader>(SerialFrameReader::CrcCheck::No);
+		data = msg_to_raw_data_serial(messages, SerialFrameWriter::CrcCheck::No);
+	}
+	QList<int64_t> request_ids;
+	for (const auto &frame : data) {
+		for (const char byte : frame) {
+			request_ids.append(reader->addData(std::string_view(&byte, 1)));
+		}
+	}
+	REQUIRE(request_ids == QList<int64_t>{4294967397, 9223372036854775807});
+	REQUIRE(reader->takeFrames().size() == 2);
+}
+
 DOCTEST_TEST_CASE("Serial FrameReader with CRC check")
 {
 	auto crc_check_wr = SerialFrameWriter::CrcCheck::Yes;
@@ -241,4 +271,3 @@ DOCTEST_TEST_CASE("Serial FrameReader without CRC check")
 		test_incomplete_data(&rd, data);
 	}
 }
-

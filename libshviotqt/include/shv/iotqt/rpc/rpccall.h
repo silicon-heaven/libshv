@@ -50,7 +50,7 @@ public:
 	virtual void onRpcMessageReceived(const shv::chainpack::RpcMessage &msg);
 	void onRpcFrameReceived();
 private:
-	void onResponseMetaReceived(int request_id);
+	void onResponseMetaReceived(int64_t request_id);
 	void onDataChunkReceived();
 private:
 	CallBackFunction m_callBackFunction;

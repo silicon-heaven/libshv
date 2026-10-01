@@ -40,8 +40,9 @@ public:
 	Q_SIGNAL void sslErrors(const QList<QSslError> &errors);
 
 	// following two signals allows correct RPC call timeout implementation
-	Q_SIGNAL void responseMetaReceived(int request_id);
+	Q_SIGNAL void responseMetaReceived(int64_t request_id);
 	Q_SIGNAL void dataChunkReceived();
+	Q_SIGNAL void responseReceiveError(int64_t request_id, const QString &error);
 
 	void ignoreSslErrors();
 
@@ -62,4 +63,3 @@ protected:
 };
 
 }
-

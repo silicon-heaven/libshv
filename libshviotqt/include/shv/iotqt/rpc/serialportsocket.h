@@ -6,6 +6,8 @@
 #include <shv/chainpack/crc32.h>
 #include <shv/coreqt/log.h>
 
+#include <utility>
+
 class QSerialPort;
 class QTimer;
 
@@ -21,7 +23,8 @@ public:
 	SerialFrameReader(CrcCheck crc);
 	~SerialFrameReader() override = default;
 
-	QList<int> addData(std::string_view data) override;
+	QList<int64_t> addData(std::string_view data) override;
+	std::vector<std::pair<int64_t, QString>> takeResponseErrors();
 	ReadState readState() const { return m_readState; }
 	void resetCommunication() override;
 private:
@@ -34,6 +37,7 @@ private:
 	std::string m_crcBuffer;
 	shv::chainpack::Crc32Shv3 m_crcDigest;
 	bool m_withCrcCheck = true;
+	std::vector<std::pair<int64_t, QString>> m_responseErrors;
 };
 
 class LIBSHVIOTQT_EXPORT SerialFrameWriter : public FrameWriter
