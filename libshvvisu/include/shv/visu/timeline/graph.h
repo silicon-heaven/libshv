@@ -177,8 +177,8 @@ public:
 	CrossHairPos crossHairPos() const;
 	void setCrossHairPos(const CrossHairPos &pos);
 
-	void setCurrentTime(timemsec_t time);
-	timemsec_t currentTime() const;
+	void setCurrentTime(std::optional<timemsec_t> time);
+	std::optional<timemsec_t> currentTime() const;
 
 	void setSelectionRect(const QRect &rect);
 	QRect selectionRect() const;
@@ -329,7 +329,7 @@ protected:
 		XRange xRange;
 		XRange xRangeZoom;
 		CrossHairPos crossHairPos;
-		timemsec_t currentTime = 0;
+		std::optional<timemsec_t> currentTime = std::nullopt;
 		QRect selectionRect;
 		XAxis xAxis;
 	} m_state;
