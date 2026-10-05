@@ -197,6 +197,7 @@ public:
 	YRange yRangeZoom(qsizetype channel_ix) const;
 	void setYRangeZoom(qsizetype channel_ix, const YRange &r);
 	void resetYZoom(qsizetype channel_ix);
+	void zoomYtoFit(qsizetype channel_ix);
 
 	enum class ZoomType { Horizontal, Vertical, ZoomToRect };
 	void zoomToSelection(ZoomType zoom_type);

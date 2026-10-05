@@ -665,6 +665,21 @@ void Graph::resetYZoom(qsizetype channel_ix)
 	setYRangeZoom(channel_ix, ch->yRange());
 }
 
+void Graph::zoomYtoFit(qsizetype channel_ix)
+{
+	GraphChannel *ch = channelAt(channel_ix);
+	Q_ASSERT(ch);
+	auto range = model()->yRange(channel_ix);
+
+	if (range == ch->m_state.yRangeZoom) {
+		return;
+	}
+
+	ch->m_state.yRangeZoom = range;
+	clearGraphCache();
+	makeYAxis(channel_ix);
+}
+
 void Graph::zoomToSelection(shv::visu::timeline::Graph::ZoomType zoom_type)
 {
 	shvLogFuncFrame();
@@ -1291,8 +1306,9 @@ void Graph::makeLayout(const QRect &pref_rect)
 	shvDebug() << "m_layout.rect:" << rstr(m_layout.rect);
 
 	makeXAxis();
-	for (auto i = visible_channels.count() - 1; i >= 0; --i)
-		makeYAxis(i);
+	for (auto i = visible_channels.count() - 1; i >= 0; --i) {
+		makeYAxis(visible_channels[i]);
+	}
 }
 
 void Graph::drawRectText(QPainter *painter, const QRect &rect, const QString &text, const QFont &font, const QColor &color, const QColor &background, int inset)

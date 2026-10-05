@@ -572,6 +572,10 @@
         <source>Previous zoom (Middle mouse)</source>
         <translation>Predchádzajúci zoom</translation>
     </message>
+    <message>
+        <source>Zoom Y to fit</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>shv::visu::toast::ToastHistoryDialog</name>
