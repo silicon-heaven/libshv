@@ -530,6 +530,10 @@
         <source>Previous zoom (Middle mouse)</source>
         <translation type="unfinished">Ingrandimento precedente (tasto centrale del mouse)</translation>
     </message>
+    <message>
+        <source>Zoom Y to fit</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>shv::visu::toast::ToastHistoryDialog</name>

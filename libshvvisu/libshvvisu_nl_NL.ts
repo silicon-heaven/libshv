@@ -529,6 +529,10 @@
         <source>Show Y axis</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Zoom Y to fit</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>shv::visu::toast::ToastHistoryDialog</name>

@@ -970,6 +970,11 @@ QMenu *GraphWidget::createChannelContextMenu(qsizetype channel_ix, const QPoint 
 		m_graph->resetYZoom(channel_ix);
 		this->update();
 	});
+	menu->addAction(tr("Zoom Y to fit"), this, [this, channel_ix]() {
+		m_graph->zoomYtoFit(channel_ix);
+		this->update();
+	});
+
 	{
 		auto sel_rect = m_graph->selectionRect().normalized();
 		auto *a = menu->addAction(tr("Show selection info"), this, [this, sel_rect, channel_ix]() {

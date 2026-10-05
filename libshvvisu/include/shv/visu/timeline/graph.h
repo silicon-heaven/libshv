@@ -197,6 +197,7 @@ public:
 	YRange yRangeZoom(qsizetype channel_ix) const;
 	void setYRangeZoom(qsizetype channel_ix, const YRange &r);
 	void resetYZoom(qsizetype channel_ix);
+	void zoomYtoFit(qsizetype channel_ix);
 
 	enum class ZoomType { Horizontal, Vertical, ZoomToRect };
 	void zoomToSelection(ZoomType zoom_type);
@@ -292,7 +293,7 @@ protected:
 
 	QVariantMap mergeMaps(const QVariantMap &base, const QVariantMap &overlay) const;
 	void makeXAxis();
-	void makeYAxis(qsizetype channel);
+	void makeYAxis(qsizetype channel_ix);
 
 	void moveSouthFloatingBarBottom(int bottom);
 	QString elidedText(const QString &text, const QFont &font, const QRect &rect);
