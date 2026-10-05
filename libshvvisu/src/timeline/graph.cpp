@@ -625,6 +625,12 @@ void Graph::resetXZoom()
 void Graph::setYRange(qsizetype channel_ix, const YRange &r)
 {
 	GraphChannel *ch = channelAt(channel_ix);
+
+	if (!ch) {
+		shvWarning() << "Invalid channel index" << channel_ix;
+		return;
+	}
+
 	ch->m_state.yRange = r;
 	resetYZoom(channel_ix);
 }
@@ -632,6 +638,12 @@ void Graph::setYRange(qsizetype channel_ix, const YRange &r)
 void Graph::enlargeYRange(qsizetype channel_ix, double step)
 {
 	GraphChannel *ch = channelAt(channel_ix);
+
+	if (!ch) {
+		shvWarning() << "Invalid channel index" << channel_ix;
+		return;
+	}
+
 	YRange r = ch->m_state.yRange;
 	r.min -= step;
 	r.max += step;
@@ -641,20 +653,28 @@ void Graph::enlargeYRange(qsizetype channel_ix, double step)
 YRange Graph::yRangeZoom(qsizetype channel_ix) const
 {
 	auto *ch = channelAt(channel_ix);
-	Q_ASSERT(ch);
+
+	if (!ch) {
+		shvWarning() << "Invalid channel index" << channel_ix;
+		return {};
+	}
+
 	return ch->m_state.yRangeZoom;
 }
 
 void Graph::setYRangeZoom(qsizetype channel_ix, const YRange &r)
 {
 	GraphChannel *ch = channelAt(channel_ix);
-	Q_ASSERT(ch);
+
+	if (!ch) {
+		shvWarning() << "Invalid channel index" << channel_ix;
+		return;
+	}
+
 	if (r == ch->m_state.yRangeZoom) {
 		return;
 	}
 	ch->m_state.yRangeZoom = r;
-	ch->m_state.yRangeZoom.min = std::max(ch->m_state.yRangeZoom.min, ch->m_state.yRange.min);
-	ch->m_state.yRangeZoom.max = std::min(ch->m_state.yRangeZoom.max, ch->m_state.yRange.max);
 	clearGraphCache();
 	makeYAxis(channel_ix);
 }
@@ -662,39 +682,40 @@ void Graph::setYRangeZoom(qsizetype channel_ix, const YRange &r)
 void Graph::resetYZoom(qsizetype channel_ix)
 {
 	GraphChannel *ch = channelAt(channel_ix);
+
+	if (!ch) {
+		shvWarning() << "Invalid channel index" << channel_ix;
+		return;
+	}
+
 	setYRangeZoom(channel_ix, ch->yRange());
 }
 
 void Graph::zoomYtoFit(qsizetype channel_ix)
 {
-	GraphChannel *ch = channelAt(channel_ix);
-	Q_ASSERT(ch);
 	auto range = model()->yRange(channel_ix);
-
-	if (range == ch->m_state.yRangeZoom) {
-		return;
-	}
-
-	ch->m_state.yRangeZoom = range;
-	clearGraphCache();
-	makeYAxis(channel_ix);
+	setYRangeZoom(channel_ix, range);
 }
 
 void Graph::zoomToSelection(shv::visu::timeline::Graph::ZoomType zoom_type)
 {
 	shvLogFuncFrame();
 	auto r = selectionRect().normalized();
-	auto chix = posToChannel(r.topLeft());
-	if (!chix) {
+	auto channel_ix = posToChannel(r.topLeft());
+	if (!channel_ix) {
+		shvWarning() << "Invalid channel on selection top left" << r.topLeft();
 		return;
 	}
-	const GraphChannel *ch = channelAt(chix.value());
-	Q_ASSERT(ch);
+	const GraphChannel *ch = channelAt(channel_ix.value());
+	if (!ch) {
+		shvWarning() << "Invalid channel index" << channel_ix.value();
+		return;
+	}
 
 	auto new_zoom = ZoomRange {
 		.xRange = xRangeZoom(),
-		.yRange = yRangeZoom(chix.value()),
-		.channelIx = chix.value()
+		.yRange = yRangeZoom(channel_ix.value()),
+		.channelIx = channel_ix.value()
 	};
 
 
@@ -938,10 +959,16 @@ void Graph::makeXAxis()
 	}
 }
 
-void Graph::makeYAxis(qsizetype channel)
+void Graph::makeYAxis(qsizetype channel_ix)
 {
 	shvLogFuncFrame();
-	GraphChannel *ch = channelAt(channel);
+	GraphChannel *ch = channelAt(channel_ix);
+
+	if (!ch) {
+		shvWarning() << "Invalid channel index" << channel_ix;
+		return;
+	}
+
 	if(ch->yAxisRect().height() == 0)
 		return;
 	YRange range = ch->yRangeZoom();
@@ -953,7 +980,7 @@ void Graph::makeYAxis(qsizetype channel)
 	double d2 = ch->posToValue(tick_px);
 	double tick_interval = d1 - d2;
 	if(qFuzzyIsNull(tick_interval)) {
-		shvError() << "channel:" << channel << "Y axis interval == 0";
+		shvError() << "channel:" << channel_ix << "Y axis interval == 0";
 		return;
 	}
 	shvDebug() << "range min:" << range.min << "max:"<< range.max << "interval:" << range.interval() << "tick interval:" << tick_interval;
@@ -991,7 +1018,7 @@ void Graph::makeYAxis(qsizetype channel)
 	}
 	else
 		shvWarning() << "snapping interval error, interval:" << tick_interval;
-	shvDebug() << channel << "axis.tickInterval:" << axis.tickInterval << "subtickEvery:" << axis.subtickEvery;
+	shvDebug() << channel_ix << "axis.tickInterval:" << axis.tickInterval << "subtickEvery:" << axis.subtickEvery;
 }
 
 void Graph::moveSouthFloatingBarBottom(int bottom)

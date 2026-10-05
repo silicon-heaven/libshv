@@ -293,7 +293,7 @@ protected:
 
 	QVariantMap mergeMaps(const QVariantMap &base, const QVariantMap &overlay) const;
 	void makeXAxis();
-	void makeYAxis(qsizetype channel);
+	void makeYAxis(qsizetype channel_ix);
 
 	void moveSouthFloatingBarBottom(int bottom);
 	QString elidedText(const QString &text, const QFont &font, const QRect &rect);
