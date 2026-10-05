@@ -703,7 +703,7 @@ void Graph::zoomToSelection(shv::visu::timeline::Graph::ZoomType zoom_type)
 	auto r = selectionRect().normalized();
 	auto channel_ix = posToChannel(r.topLeft());
 	if (!channel_ix) {
-		shvWarning() << "Invalid channel on selection top left" << r.topLeft();
+		shvWarning() << "Invalid channel on selection top left x:" << r.topLeft().x() << "y:" << r.topLeft().y();
 		return;
 	}
 	const GraphChannel *ch = channelAt(channel_ix.value());
