@@ -89,7 +89,7 @@ void FrameReader::resetCommunication()
 	m_dataStart = {};
 }
 
-int FrameReader::tryToReadMeta(std::istringstream &in)
+int64_t FrameReader::tryToReadMeta(std::istringstream &in)
 {
 	if (!m_dataStart.has_value()) {
 		using namespace chainpack;
@@ -116,7 +116,7 @@ int FrameReader::tryToReadMeta(std::istringstream &in)
 				}
 				m_dataStart = static_cast<size_t>(data_start);
 				if (chainpack::RpcMessage::isResponse(m_meta)) {
-					if (auto rqid = chainpack::RpcMessage::requestId(m_meta).toInt(); rqid > 0) {
+					if (auto rqid = chainpack::RpcMessage::requestId(m_meta).toInt64(); rqid > 0) {
 						return rqid;
 					}
 				}
@@ -134,11 +134,11 @@ int FrameReader::tryToReadMeta(std::istringstream &in)
 //======================================================
 // StreamFrameReader
 //======================================================
-QList<int> StreamFrameReader::addData(std::string_view data)
+QList<int64_t> StreamFrameReader::addData(std::string_view data)
 {
 	logRpcData().nospace() << "FRAME DATA READ " << data.size() << " bytes of data read:\n" << shv::chainpack::utils::hexDump(data);
 	using namespace chainpack;
-	QList<int> response_request_ids;
+	QList<int64_t> response_request_ids;
 	m_readBuffer += data;
 	while (true) {
 		std::istringstream in(m_readBuffer);
