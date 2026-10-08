@@ -285,10 +285,27 @@ std::vector<std::string> AclManager::azureUserFlattenRoles(const std::string &us
 	return userFlattenRoles("_Azure#Key:" + user_name, roles);
 }
 
+std::vector<std::string> AclManager::userFlattenRoles(const std::string &user_name)
+{
+	if (auto user_def = user(user_name); user_def.isValid()) {
+		return userFlattenRoles(user_name, user_def.roles);
+	}
+#ifdef WITH_SHV_LDAP
+	// I don't have to check if ldap is enabled - if m_ldapUserGroups is non-empty, it must've been enabled.
+	if (auto ldap_it = m_ldapUserGroups.find(user_name); ldap_it != m_ldapUserGroups.end()) {
+		return ldapUserFlattenRoles(user_name, ldap_it->second);
+	}
+#endif
+	if (auto azure_it = m_azureUserGroups.find(user_name); azure_it != m_azureUserGroups.end()) {
+		return azureUserFlattenRoles(user_name, azure_it->second);
+	}
+	return {};
+}
+
 chainpack::RpcValue AclManager::userProfile(const std::string &user_name)
 {
 	chainpack::RpcValue ret;
-	for(const auto &rn : userFlattenRoles(user_name, user(user_name).roles)) {
+	for(const auto &rn : userFlattenRoles(user_name)) {
 		shv::iotqt::acl::AclRole r = role(rn);
 		ret = chainpack::Utils::mergeMaps(ret, r.profile);
 	}
@@ -297,13 +314,19 @@ chainpack::RpcValue AclManager::userProfile(const std::string &user_name)
 
 void AclManager::setGroupForAzureUser(const std::string_view& user_name, const std::vector<std::string>& group_name)
 {
-	m_azureUserGroups.emplace(user_name, group_name);
+	// The groups may have changed since the last login, so replace them and drop the cached flatten roles.
+	std::string user_name_str{user_name};
+	m_azureUserGroups.insert_or_assign(user_name_str, group_name);
+	m_cache.userFlattenRoles.erase("_Azure#Key:" + user_name_str);
 }
 
 #ifdef WITH_SHV_LDAP
 void AclManager::setGroupForLdapUser(const std::string_view& user_name, const std::vector<std::string>& group_name)
 {
-	m_ldapUserGroups.emplace(user_name, group_name);
+	// The groups may have changed since the last login, so replace them and drop the cached flatten roles.
+	std::string user_name_str{user_name};
+	m_ldapUserGroups.insert_or_assign(user_name_str, group_name);
+	m_cache.userFlattenRoles.erase("_Ldap#Key:" + user_name_str);
 }
 #endif
 chainpack::AccessGrant AclManager::accessGrantForShvPath(
@@ -350,18 +373,7 @@ chainpack::AccessGrant AclManager::accessGrantForShvPath(
 		flatten_user_roles = flattenRole(cp::Rpc::ROLE_MASTER_BROKER);
 	}
 	else {
-		if (auto user_def = user(user_name); user_def.isValid()) {
-			flatten_user_roles = userFlattenRoles(user_name, user_def.roles);
-		}
-	#ifdef WITH_SHV_LDAP
-		// I don't have to check if ldap is enabled - if m_ldapUserGroups is non-empty, it must've been enabled.
-		else if (auto ldap_it = m_ldapUserGroups.find(user_name); ldap_it != m_ldapUserGroups.end()) {
-			flatten_user_roles = ldapUserFlattenRoles(user_name, ldap_it->second);
-		}
-	#endif
-		else if (auto azure_it = m_azureUserGroups.find(user_name); azure_it != m_azureUserGroups.end()) {
-			flatten_user_roles = azureUserFlattenRoles(user_name, azure_it->second);
-		}
+		flatten_user_roles = userFlattenRoles(user_name);
 	}
 	logAclResolveM() << "searched rules:" << [this, &flatten_user_roles]()
 	{

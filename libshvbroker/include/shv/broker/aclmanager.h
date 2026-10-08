@@ -47,6 +47,8 @@ public:
 	std::string mountPointForDevice(const shv::chainpack::RpcValue &device_id);
 
 	std::vector<std::string> userFlattenRoles(const std::string &user_name, const std::vector<std::string>& roles);
+	// Roles of the user defined in ACL, or of the user logged in over LDAP or Azure.
+	std::vector<std::string> userFlattenRoles(const std::string &user_name);
 	std::vector<std::string> flattenRole(const std::string &role);
 
 	chainpack::RpcValue userProfile(const std::string &user_name);

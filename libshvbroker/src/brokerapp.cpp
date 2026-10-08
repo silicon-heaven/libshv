@@ -766,7 +766,10 @@ void BrokerApp::checkLogin(const chainpack::UserLoginContext &ctx, const QObject
 #if QT_VERSION >= QT_VERSION_CHECK(6, 4, 0)
 		auto azure_auth = new AzureAuth(user_login, *m_azureConfig);
 		connect(azure_auth, &AzureAuth::resultReady, connection_ctx, [cb, azure_auth] (const auto& azure_result, const auto& user_name, const auto& shv_groups) {
-			BrokerApp::instance()->aclManager()->setGroupForAzureUser(user_name, shv_groups);
+			// A failed login must not touch the groups of the user's sessions that are already logged in.
+			if (azure_result.passwordOk) {
+				BrokerApp::instance()->aclManager()->setGroupForAzureUser(user_name, shv_groups);
+			}
 			cb(azure_result);
 			azure_auth->deleteLater();
 		});
@@ -787,7 +790,10 @@ void BrokerApp::checkLogin(const chainpack::UserLoginContext &ctx, const QObject
 		if (user_login.loginType == chainpack::IRpcConnection::LoginType::Plain) {
 				auto auth_thread = new LdapAuthThread(ctx, *m_ldapConfig);
 				connect(auth_thread, &LdapAuthThread::resultReady, connection_ctx, [cb] (const auto& ldap_result, const auto& user_name, const auto& shv_groups) {
-					BrokerApp::instance()->aclManager()->setGroupForLdapUser(user_name, shv_groups);
+					// A failed login must not touch the groups of the user's sessions that are already logged in.
+					if (ldap_result.passwordOk) {
+						BrokerApp::instance()->aclManager()->setGroupForLdapUser(user_name, shv_groups);
+					}
 					cb(ldap_result);
 				});
 				connect(auth_thread, &LdapAuthThread::finished, auth_thread, &QObject::deleteLater);

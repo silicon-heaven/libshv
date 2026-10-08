@@ -311,9 +311,73 @@ DOCTEST_TEST_CASE("accessGrantForShvPath")
 		}
 	}
 
+	DOCTEST_SUBCASE("user logged in over Azure")
+	{
+		user = "azure:john.doe@example.com";
+		shv_path = "shv/test";
+		method = "ls";
+		expected_valid = true;
+		expected_access_level = shv::chainpack::AccessLevel::Read;
+		acl->setGroupForAzureUser(user, {user, "my_role"});
+		EXPECT_aclUsers();
+		EXPECT_aclRole(user, {});
+		EXPECT_aclRole("my_role", {});
+		EXPECT_aclAccessRoles({"my_role"});
+		EXPECT_aclAccessRoleRules("my_role", R"([
+			{"method":"", "pathPattern":"shv/**", "role":"rd"}
+		])"_cpon);
+	}
+
 	auto acg = acl->accessGrantForShvPath(user, shv_path, method, is_request_from_master_broker, {});
 	REQUIRE((acg.accessLevel > shv::chainpack::AccessLevel::None) == expected_valid);
 	if (expected_valid) {
 		REQUIRE(acg.accessLevel == expected_access_level);
+	}
+}
+
+DOCTEST_TEST_CASE("user logged in over Azure")
+{
+	auto acl = std::make_unique<MockAclManager>(nullptr);
+	const std::string user = "azure:john.doe@example.com";
+
+	auto make_role = [](std::vector<std::string> subroles, const shv::chainpack::RpcValue &profile) {
+		shv::iotqt::acl::AclRole role(std::move(subroles));
+		role.profile = profile;
+		return role;
+	};
+
+	// The user isn't defined in the ACL, the roles come from Azure groups only.
+	std::vector<std::unique_ptr<trompeloeil::expectation>> expectations;
+	expectations.emplace_back(NAMED_ALLOW_CALL(*acl, aclUsers()).RETURN(std::vector<std::string>{}));
+	expectations.emplace_back(NAMED_ALLOW_CALL(*acl, aclRoles()).RETURN(std::vector<std::string>{user, "viewer", "client", "operator"}));
+	expectations.emplace_back(NAMED_ALLOW_CALL(*acl, aclRole(user)).RETURN(shv::iotqt::acl::AclRole()));
+	expectations.emplace_back(NAMED_ALLOW_CALL(*acl, aclRole("viewer")).RETURN(make_role({"client"}, R"({"FL":{"sitesRoot":"cz"}})"_cpon)));
+	expectations.emplace_back(NAMED_ALLOW_CALL(*acl, aclRole("client")).RETURN(shv::iotqt::acl::AclRole()));
+	expectations.emplace_back(NAMED_ALLOW_CALL(*acl, aclRole("operator")).RETURN(make_role({}, R"({"FL":{"sitesRoot":"pl"}})"_cpon)));
+
+	DOCTEST_SUBCASE("roles")
+	{
+		acl->setGroupForAzureUser(user, {user, "viewer"});
+		REQUIRE(acl->userFlattenRoles(user) == std::vector<std::string>{user, "viewer", "client"});
+	}
+
+	DOCTEST_SUBCASE("profile")
+	{
+		acl->setGroupForAzureUser(user, {user, "viewer"});
+		REQUIRE(acl->userProfile(user) == R"({"FL":{"sitesRoot":"cz"}})"_cpon);
+	}
+
+	DOCTEST_SUBCASE("groups are replaced on the next login")
+	{
+		acl->setGroupForAzureUser(user, {user, "viewer"});
+		REQUIRE(acl->userFlattenRoles(user) == std::vector<std::string>{user, "viewer", "client"});
+		acl->setGroupForAzureUser(user, {user, "operator"});
+		REQUIRE(acl->userFlattenRoles(user) == std::vector<std::string>{user, "operator"});
+		REQUIRE(acl->userProfile(user) == R"({"FL":{"sitesRoot":"pl"}})"_cpon);
+	}
+
+	DOCTEST_SUBCASE("unknown user has no roles")
+	{
+		REQUIRE(acl->userFlattenRoles("azure:nobody@example.com").empty());
 	}
 }
