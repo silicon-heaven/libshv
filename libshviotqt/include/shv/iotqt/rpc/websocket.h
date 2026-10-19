@@ -2,7 +2,7 @@
 
 #include <shv/iotqt/rpc/socket.h>
 
-class QWebSocket;
+#include <QWebSocket>
 
 namespace shv::iotqt::rpc {
 
@@ -22,8 +22,9 @@ public:
 	QHostAddress peerAddress() const override;
 	quint16 peerPort() const override;
 	void ignoreSslErrors() override;
-private:
+protected:
 	void flushWriteBuffer() override;
+private:
 	void onTextMessageReceived(const QString &message);
 	void onBinaryMessageReceived(const QByteArray &message);
 private:

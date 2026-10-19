@@ -3,8 +3,6 @@
 #include <shv/chainpack/utils.h>
 #include <shv/coreqt/log.h>
 
-#include <QWebSocket>
-
 namespace shv::iotqt::rpc {
 
 WebSocket::WebSocket(QWebSocket *socket, QObject *parent)
