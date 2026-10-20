@@ -40,6 +40,7 @@ libshv_add_library(libshviotqt
 		include/shv/iotqt/rpc/localsocket.h
 		include/shv/iotqt/rpc/rpccall.h
 		include/shv/iotqt/rpc/socket.h
+		include/shv/iotqt/rpc/websocket.h
 		include/shv/iotqt/rpc/socketrpcconnection.h
 		include/shv/iotqt/utils.h
 		include/shv/iotqt/utils/network.h
