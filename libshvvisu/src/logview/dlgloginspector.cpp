@@ -28,6 +28,7 @@
 #include <QSettings>
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
+#include <optional>
 #if QT_CONFIG(timezone)
 #include <QTimeZone>
 #endif
@@ -38,6 +39,8 @@ namespace tl = shv::visu::timeline;
 namespace shv::visu::logview {
 
 enum { TabGraph = 0, TabData, TabInfo };
+
+std::optional<DlgLogInspector::SessionSettings> DlgLogInspector::s_sessionSettings;
 
 DlgLogInspector::DlgLogInspector(const QString &shv_path, QWidget *parent) :
 	QDialog(parent),
@@ -231,6 +234,7 @@ DlgLogInspector::DlgLogInspector(const QString &shv_path, QWidget *parent) :
 	ui->wDataViewFilterSelector->init(ui->edShvPath->text(), m_graph);
 
 #if QT_CONFIG(timezone)
+	ui->cbxTimeZone->setTimeZones();
 	connect(ui->cbxTimeZone, &QComboBox::currentTextChanged, this, [this](const QString &) {
 		auto tz = ui->cbxTimeZone->currentTimeZone();
 		setTimeZone(tz);
@@ -260,15 +264,49 @@ DlgLogInspector::~DlgLogInspector()
 void DlgLogInspector::loadSettings()
 {
 	QSettings settings;
-	QByteArray ba = settings.value("ui/DlgLogInspector/geometry").toByteArray();
-	restoreGeometry(ba);
+	settings.beginGroup("ui/DlgLogInspector");
+	restoreGeometry(settings.value("geometry").toByteArray());
+	if (s_sessionSettings) {
+		ui->edSince->setDateTime(s_sessionSettings->since);
+		ui->edUntil->setDateTime(s_sessionSettings->until);
+	}
+	ui->btMoreOptions->setChecked(settings.value("showOptions", ui->btMoreOptions->isChecked()).toBool());
+	ui->edPathPattern->setText(settings.value("pathPattern", ui->edPathPattern->text()).toString());
+	ui->chkIsPathPatternRexex->setChecked(settings.value("pathPatternIsRegex", ui->chkIsPathPatternRexex->isChecked()).toBool());
+	ui->edMaxRecordCount->setValue(settings.value("maxRecordCount", ui->edMaxRecordCount->value()).toInt());
+	ui->chkPathsDict->setChecked(settings.value("withPathsDict", ui->chkPathsDict->isChecked()).toBool());
+	ui->chkUseHistoryProvider->setChecked(settings.value("useHistoryProvider", ui->chkUseHistoryProvider->isChecked()).toBool());
+	ui->edTimeout->setValue(settings.value("timeout", ui->edTimeout->value()).toInt());
+	ui->chkWithSnapshot->setChecked(settings.value("withSnapshot", ui->chkWithSnapshot->isChecked()).toBool());
+	ui->chkWithTypeInfo->setChecked(settings.value("withTypeInfo", ui->chkWithTypeInfo->isChecked()).toBool());
+#if QT_CONFIG(timezone)
+	QTimeZone time_zone(settings.value("timeZone").toByteArray());
+	if (time_zone.isValid())
+		ui->cbxTimeZone->setCurrentTimeZone(time_zone);
+#endif
 }
 
 void DlgLogInspector::saveSettings()
 {
 	QSettings settings;
-	QByteArray ba = saveGeometry();
-	settings.setValue("ui/DlgLogInspector/geometry", ba);
+	settings.beginGroup("ui/DlgLogInspector");
+	settings.setValue("geometry", saveGeometry());
+	s_sessionSettings = SessionSettings {
+		.since = ui->edSince->dateTime(),
+		.until = ui->edUntil->dateTime()
+	};
+	settings.setValue("showOptions", ui->btMoreOptions->isChecked());
+	settings.setValue("pathPattern", ui->edPathPattern->text());
+	settings.setValue("pathPatternIsRegex", ui->chkIsPathPatternRexex->isChecked());
+	settings.setValue("maxRecordCount", ui->edMaxRecordCount->value());
+	settings.setValue("withPathsDict", ui->chkPathsDict->isChecked());
+	settings.setValue("useHistoryProvider", ui->chkUseHistoryProvider->isChecked());
+	settings.setValue("timeout", ui->edTimeout->value());
+	settings.setValue("withSnapshot", ui->chkWithSnapshot->isChecked());
+	settings.setValue("withTypeInfo", ui->chkWithTypeInfo->isChecked());
+#if QT_CONFIG(timezone)
+	settings.setValue("timeZone", ui->cbxTimeZone->currentTimeZone().id());
+#endif
 }
 
 shv::iotqt::rpc::ClientConnection *DlgLogInspector::rpcConnection()
