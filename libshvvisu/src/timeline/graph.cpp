@@ -2056,17 +2056,17 @@ std::function<QPoint (const Sample &s, Graph::TypeId meta_type_id)> Graph::dataT
 		return nullptr;
 	}
 
-	const auto zoom_pixel_size = static_cast<int64_t>(dest.width());
+	const auto zoom_pixel_size = static_cast<int64_t>(ri - le);
 	const auto all_pixel_size = zoom_pixel_size * all_time_size / zoom_time_size;
 	if (all_pixel_size <= 0) {
 		return nullptr;
 	}
 
 	auto time_to_pixel = [all_pixel_size, all_time_size, t1 = x_range.min](timemsec_t t) {
-		return static_cast<int64_t>(static_cast<double>(t - t1) * all_pixel_size / all_time_size);
+		return static_cast<int64_t>(static_cast<double>(t - t1) * static_cast<double>(all_pixel_size) / static_cast<double>(all_time_size));
 	};
 	auto pixel_to_time = [all_pixel_size, all_time_size, t1 = x_range.min](int64_t pixel) {
-		return static_cast<timemsec_t>(t1 + static_cast<double>(pixel) * all_time_size / all_pixel_size);
+		return static_cast<timemsec_t>(static_cast<double>(t1) + static_cast<double>(pixel) * static_cast<double>(all_time_size) / static_cast<double>(all_pixel_size));
 	};
 
 	const auto px1_norm = time_to_pixel(t1);
