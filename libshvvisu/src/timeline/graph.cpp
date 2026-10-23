@@ -2326,10 +2326,6 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 		xrange = xRangeZoom();
 		yrange = ch->yRangeZoom();
 	}
-	if(xrange.isEmpty()) {
-		// if we want to show snapshot only, add one second to make graph drawable
-		xrange.max = xrange.min + 1000;
-	}
 	shvDebug() << "x-range min:" << xrange.min << "max:" << xrange.max << "interval:" << xrange.interval();
 	auto sample2point = dataToPointFn(DataRect{xrange, yrange}, effective_dest_rect, xRange());
 
