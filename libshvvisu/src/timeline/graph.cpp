@@ -2065,23 +2065,17 @@ std::function<QPoint (const Sample &s, Graph::TypeId meta_type_id)> Graph::dataT
 	auto time_to_pixel = [all_pixel_size, all_time_size, t1 = x_range.min](timemsec_t t) {
 		return static_cast<int64_t>(static_cast<double>(t - t1) * static_cast<double>(all_pixel_size) / static_cast<double>(all_time_size));
 	};
-	auto pixel_to_time = [all_pixel_size, all_time_size, t1 = x_range.min](int64_t pixel) {
-		return static_cast<timemsec_t>(static_cast<double>(t1) + static_cast<double>(pixel) * static_cast<double>(all_time_size) / static_cast<double>(all_pixel_size));
-	};
 
 	const auto px1_norm = time_to_pixel(t1);
-	const auto t1_norm = pixel_to_time(px1_norm);
-	t1 = t1_norm;
-	t2 = t1_norm + zoom_time_size;
 
-	double kx = static_cast<double>(ri - le) / static_cast<double>(t2 - t1);
 	if(std::abs(d2 - d1) < 1e-6)
 		return nullptr;
 	double ky = (to - bo) / (d2 - d1);
 
-	return  [le, bo, kx, t1, d1, ky](const Sample &s, TypeId meta_type_id) -> QPoint {
+	return  [le, bo, time_to_pixel, px1_norm, d1, ky](const Sample &s, TypeId meta_type_id) -> QPoint {
 		const timemsec_t t = s.time;
-		double x = le + static_cast<double>(t - t1) * kx;
+		const auto pixel = time_to_pixel(t) - px1_norm;
+		double x = static_cast<double>(le) + static_cast<double>(pixel);
 		// too big or too small pixel sizes can make painting problems
 		static constexpr int MIN_INT2 = std::numeric_limits<int>::min() / 2;
 		static constexpr int MAX_INT2 = std::numeric_limits<int>::max() / 2;
