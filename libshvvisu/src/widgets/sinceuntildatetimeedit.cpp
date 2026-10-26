@@ -10,7 +10,7 @@ namespace shv::visu::widgets {
 SinceUntilDateTimeEdit::SinceUntilDateTimeEdit(QWidget *parent)
 	: Super(parent)
 {
-#if QT_VERSION_MAJOR >=6 && QT_VERSION_MINOR >= 8
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
 	setTimeZone(QTimeZone::LocalTime);
 #else
 	setTimeSpec(Qt::TimeSpec::LocalTime);

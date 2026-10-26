@@ -8,6 +8,7 @@
 #include <shv/visu/timeline/graphwidget.h>
 #include <shv/visu/timeline/graph.h>
 #include <shv/visu/timeline/channelfilterdialog.h>
+#include <shv/visu/widgets/sinceuntildatetimeedit.h>
 
 #include <shv/chainpack/rpcvalue.h>
 #include <shv/core/exception.h>
@@ -44,13 +45,6 @@ DlgLogInspector::DlgLogInspector(const QString &shv_path, QWidget *parent) :
 	ui(new Ui::DlgLogInspector)
 {
 	ui->setupUi(this);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
-	ui->edSince->setTimeZone(QTimeZone::UTC);
-	ui->edUntil->setTimeZone(QTimeZone::UTC);
-#else
-	ui->edSince->setTimeSpec(Qt::UTC);
-	ui->edUntil->setTimeSpec(Qt::UTC);
-#endif
 	setShvPath(shv_path);
 	{
 		auto *m = new QMenu(this);
@@ -231,6 +225,7 @@ DlgLogInspector::DlgLogInspector(const QString &shv_path, QWidget *parent) :
 	ui->wDataViewFilterSelector->init(ui->edShvPath->text(), m_graph);
 
 #if QT_CONFIG(timezone)
+	ui->cbxTimeZone->setTimeZones();
 	connect(ui->cbxTimeZone, &QComboBox::currentTextChanged, this, [this](const QString &) {
 		auto tz = ui->cbxTimeZone->currentTimeZone();
 		setTimeZone(tz);
@@ -296,7 +291,7 @@ void DlgLogInspector::setShvPath(const QString &s)
 shv::chainpack::RpcValue DlgLogInspector::getLogParams()
 {
 	shv::core::utils::ShvGetLogParams params;
-#if QT_CONFIG(timezone)
+#if QT_CONFIG(timezone) && QT_VERSION < QT_VERSION_CHECK(6, 7, 0)
 	auto get_dt = [this](QDateTimeEdit *ed) {
 #else
 	auto get_dt = [](QDateTimeEdit *ed) {
@@ -304,10 +299,8 @@ shv::chainpack::RpcValue DlgLogInspector::getLogParams()
 		QDateTime dt = ed->dateTime();
 		if(dt == ed->minimumDateTime())
 			return  cp::RpcValue();
-#if QT_CONFIG(timezone)
+#if QT_CONFIG(timezone) && QT_VERSION < QT_VERSION_CHECK(6, 7, 0)
 		dt = QDateTime(dt.date(), dt.time(), m_timeZone);
-#else
-		dt = QDateTime(dt.date(), dt.time());
 #endif
 		return cp::RpcValue(cp::RpcValue::DateTime::fromMSecsSinceEpoch(dt.toMSecsSinceEpoch()));
 	};
@@ -484,6 +477,10 @@ void DlgLogInspector::setTimeZone(const QTimeZone &tz)
 {
 	shvDebug() << "Setting timezone to:" << tz.id();
 	m_timeZone = tz;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+	ui->edSince->setTimeZone(tz);
+	ui->edUntil->setTimeZone(tz);
+#endif
 	m_logModel->setTimeZone(tz);
 	m_graphWidget->setTimeZone(tz);
 }

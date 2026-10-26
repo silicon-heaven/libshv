@@ -54,7 +54,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QDateTimeEdit" name="edSince">
+        <widget class="shv::visu::widgets::SinceUntilDateTimeEdit" name="edSince">
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
@@ -102,7 +102,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QDateTimeEdit" name="edUntil">
+        <widget class="shv::visu::widgets::SinceUntilDateTimeEdit" name="edUntil">
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
@@ -556,6 +556,11 @@
    <class>shv::visu::widgets::TimeZoneComboBox</class>
    <extends>QComboBox</extends>
    <header>shv/visu/widgets/timezonecombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>shv::visu::widgets::SinceUntilDateTimeEdit</class>
+   <extends>QDateTimeEdit</extends>
+   <header>shv/visu/widgets/sinceuntildatetimeedit.h</header>
   </customwidget>
   <customwidget>
    <class>shv::visu::timeline::GraphView</class>
