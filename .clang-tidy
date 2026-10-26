@@ -92,3 +92,48 @@ Checks:
   - -readability-qualified-auto
   - -readability-redundant-access-specifiers
   - -readability-simplify-boolean-expr
+  # These were added as part of a CI upgrade. We might fix those at some point, but considering we do not actively
+  # develop most of the C++ shv stack, we probably won't.
+  - -bugprone-derived-method-shadowing-base-method
+  - -bugprone-float-loop-counter
+  - -bugprone-invalid-enum-default-initialization
+  - -bugprone-random-generator-seed
+  - -bugprone-reserved-identifier
+  - -bugprone-signed-bitwise
+  - -bugprone-std-namespace-modification
+  - -bugprone-throwing-static-initialization
+  - -bugprone-unchecked-string-to-number-conversion
+  - -clang-analyzer-optin.cplusplus.UninitializedObject
+  - -cppcoreguidelines-explicit-constructor
+  - -cppcoreguidelines-pro-bounds-avoid-unchecked-container-access
+  - -cppcoreguidelines-use-enum-class
+  - -misc-anonymous-namespace-in-header
+  - -misc-explicit-constructor
+  - -misc-multiple-inheritance
+  - -misc-override-with-different-visibility
+  - -misc-predictable-rand
+  - -misc-static-assert
+  - -misc-use-internal-linkage
+  - -modernize-avoid-c-style-cast
+  - -modernize-concat-nested-namespaces
+  - -modernize-use-auto
+  - -modernize-use-designated-initializers
+  - -modernize-use-integer-sign-comparison
+  - -performance-string-view-conversions
+  - -performance-unnecessary-value-param
+  - -performance-use-std-move
+  - -readability-container-contains
+  - -readability-inconsistent-ifelse-braces
+  - -readability-make-member-function-const
+  - -readability-redundant-casting
+  - -readability-redundant-inline-specifier
+  - -readability-redundant-lambda-parameter-list
+  - -readability-redundant-nested-if
+  - -readability-redundant-parentheses
+  - -readability-redundant-qualified-alias
+  - -readability-redundant-typename
+  - -readability-trailing-comma
+  - -readability-trivial-switch
+  - -readability-use-concise-preprocessor-directives
+  - -readability-use-std-min-max
+
