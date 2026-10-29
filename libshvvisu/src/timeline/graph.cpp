@@ -463,7 +463,7 @@ Sample Graph::posToData(const QPoint &pos) const
 QPoint Graph::dataToPos(qsizetype ch_ix, const Sample &s) const
 {
 	const GraphChannel *ch = channelAt(ch_ix);
-	auto data2point = dataToPointFn(DataRect{xRangeZoom(), ch->yRangeZoom()}, ch->graphDataGridRect());
+	auto data2point = dataToPointFn(DataRect{xRangeZoom(), ch->yRangeZoom()}, ch->graphDataGridRect(), xRange());
 	return data2point? data2point(s, channelTypeId(ch_ix)): QPoint();
 }
 
@@ -2030,29 +2030,52 @@ void Graph::drawYAxis(QPainter *painter, int channel)
 	painter->restore();
 }
 
-std::function<QPoint (const Sample &s, Graph::TypeId meta_type_id)> Graph::dataToPointFn(const DataRect &src, const QRect &dest)
+std::function<QPoint (const Sample &s, Graph::TypeId meta_type_id)> Graph::dataToPointFn(const DataRect &src, const QRect &dest, const XRange &x_range)
 {
-	using Int = int;
-	Int le = dest.left();
-	Int ri = dest.right();
-	Int to = dest.top();
-	Int bo = dest.bottom();
+	int le = dest.left();
+	int ri = dest.right();
+	int to = dest.top();
+	int bo = dest.bottom();
 
 	timemsec_t t1 = src.xRange.min;
 	timemsec_t t2 = src.xRange.max;
 	double d1 = src.yRange.min;
 	double d2 = src.yRange.max;
 
-	if(t2 - t1 == 0)
+	if (t2 - t1 == 0) {
 		return nullptr;
-	double kx = static_cast<double>(ri - le) / static_cast<double>(t2 - t1);
+	}
+
+	if (!x_range.isValid() || x_range.isEmpty()) {
+		return nullptr;
+	}
+
+	const timemsec_t all_time_size = x_range.interval();
+	const timemsec_t zoom_time_size = src.xRange.interval();
+	if (all_time_size <= 0 || zoom_time_size <= 0) {
+		return nullptr;
+	}
+
+	const auto zoom_pixel_size = static_cast<int64_t>(ri - le);
+	const auto all_pixel_size = zoom_pixel_size * all_time_size / zoom_time_size;
+	if (all_pixel_size <= 0) {
+		return nullptr;
+	}
+
+	auto time_to_pixel = [all_pixel_size, all_time_size, t1 = x_range.min](timemsec_t t) {
+		return static_cast<int64_t>(static_cast<double>(t - t1) * static_cast<double>(all_pixel_size) / static_cast<double>(all_time_size));
+	};
+
+	const auto px1_norm = time_to_pixel(t1);
+
 	if(std::abs(d2 - d1) < 1e-6)
 		return nullptr;
 	double ky = (to - bo) / (d2 - d1);
 
-	return  [le, bo, kx, t1, d1, ky](const Sample &s, TypeId meta_type_id) -> QPoint {
+	return  [le, bo, time_to_pixel, px1_norm, d1, ky](const Sample &s, TypeId meta_type_id) -> QPoint {
 		const timemsec_t t = s.time;
-		double x = le + static_cast<double>(t - t1) * kx;
+		const auto pixel = time_to_pixel(t) - px1_norm;
+		double x = static_cast<double>(le) + static_cast<double>(pixel);
 		// too big or too small pixel sizes can make painting problems
 		static constexpr int MIN_INT2 = std::numeric_limits<int>::min() / 2;
 		static constexpr int MAX_INT2 = std::numeric_limits<int>::max() / 2;
@@ -2297,12 +2320,8 @@ void Graph::drawSamples(QPainter *painter, int channel_ix, const DataRect &src_r
 		xrange = xRangeZoom();
 		yrange = ch->yRangeZoom();
 	}
-	if(xrange.isEmpty()) {
-		// if we want to show snapshot only, add one second to make graph drawable
-		xrange.max = xrange.min + 1000;
-	}
 	shvDebug() << "x-range min:" << xrange.min << "max:" << xrange.max << "interval:" << xrange.interval();
-	auto sample2point = dataToPointFn(DataRect{xrange, yrange}, effective_dest_rect);
+	auto sample2point = dataToPointFn(DataRect{xrange, yrange}, effective_dest_rect, xRange());
 
 	if(!sample2point) {
 		shvDebug() << "cannot construct sample2point() function";
