@@ -4,6 +4,8 @@
 
 #include <shv/core/utils.h>
 
+#include <optional>
+#include <QDateTime>
 #include <QDialog>
 
 #if QT_CONFIG(timezone)
@@ -36,6 +38,12 @@ public:
 	QString shvPath() const;
 
 private:
+	struct SessionSettings {
+		QDateTime since;
+		QDateTime until;
+	};
+	static std::optional<SessionSettings> s_sessionSettings;
+
 	void setShvPath(const QString &s);
 	void downloadLog();
 	void loadSettings();
