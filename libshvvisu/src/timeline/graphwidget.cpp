@@ -9,6 +9,8 @@
 #include <shv/coreqt/log.h>
 
 #include <QApplication>
+#include <QFocusEvent>
+#include <QKeyEvent>
 #include <QPainter>
 #include <QFontMetrics>
 #include <QLabel>
@@ -36,6 +38,7 @@ GraphWidget::GraphWidget(QWidget *parent)
 	: Super(parent)
 {
 	setMouseTracking(true);
+	setFocusPolicy(Qt::StrongFocus);
 	setContextMenuPolicy(Qt::DefaultContextMenu);
 }
 
@@ -300,6 +303,7 @@ void GraphWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
 void GraphWidget::mousePressEvent(QMouseEvent *event)
 {
+	setFocus(Qt::MouseFocusReason);
 	QPoint pos = event->pos();
 	if(event->button() == Qt::LeftButton) {
 		if(isMouseAboveLeftMiniMapHandle(pos)) {
@@ -398,6 +402,9 @@ void GraphWidget::mouseReleaseEvent(QMouseEvent *event)
 {
 	logMouseSelection() << "mouseReleaseEvent, button:" << event->button() << "op:" << static_cast<int>(m_mouseOperation);
 	auto old_mouse_op = m_mouseOperation;
+	if (old_mouse_op == MouseOperation::GraphAreaAxisZoom || old_mouse_op == MouseOperation::GraphAreaRectSelection) {
+		updateGraphAreaSelection(event->pos());
+	}
 	m_mouseOperation = MouseOperation::None;
 	if(event->button() == Qt::LeftButton) {
 		if(old_mouse_op == MouseOperation::GraphDataAreaLeftPress || old_mouse_op == MouseOperation::GraphDataAreaLeftAltPress) {
@@ -561,42 +568,7 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 	}
 	case MouseOperation::GraphAreaAxisZoom:
 	case MouseOperation::GraphAreaRectSelection: {
-		auto ch1_ix = m_graph->posToChannel(m_mouseOperationStartPos);
-		if (!ch1_ix) {
-			break;
-		}
-
-		auto *ch1 = m_graph->channelAt(ch1_ix.value());
-		Q_ASSERT(ch1);
-
-		auto ga = ch1->graphAreaRect();
-		if (pos.x() < ga.left()) {
-			pos.setX(ga.left());
-		}
-		else if (pos.x() > ga.right()) {
-			pos.setX(ga.right());
-		}
-
-		if (pos.y() < ga.top()) {
-			pos.setY(ga.top());
-		}
-		else if (pos.y() > ga.bottom()) {
-			pos.setY(ga.bottom());
-		}
-
-		QRect sr(m_mouseOperationStartPos, pos);
-		m_zoomType = m_mouseOperation == MouseOperation::GraphAreaRectSelection
-				? Graph::ZoomType::ZoomToRect
-				: zoomTypeFromRect(sr);
-		switch (m_zoomType) {
-		case Graph::ZoomType::Horizontal: sr = QRect(QPoint(sr.left(), ga.top()), QSize(sr.width(), ga.height())); break;
-		case Graph::ZoomType::Vertical: sr = QRect(QPoint(ga.left(), sr.top()), QSize(ga.width(), sr.height())); break;
-		case Graph::ZoomType::ZoomToRect: break;
-		}
-
-		gr->setSelectionRect(sr);
-		update();
-
+		updateGraphAreaSelection(pos);
 		break;
 	}
 	case MouseOperation::GraphAreaMove:
@@ -688,6 +660,137 @@ void GraphWidget::mouseMoveEvent(QMouseEvent *event)
 	else {
 		hideCrossHair();
 	}
+}
+
+void GraphWidget::keyPressEvent(QKeyEvent *event)
+{
+	if (!m_graph) {
+		Super::keyPressEvent(event);
+		return;
+	}
+
+	const auto disallowed_modifiers = Qt::ControlModifier | Qt::AltModifier | Qt::MetaModifier;
+	if (event->modifiers() & disallowed_modifiers) {
+		Super::keyPressEvent(event);
+		return;
+	}
+
+	switch (event->key()) {
+	case Qt::Key_H:
+		if (!event->isAutoRepeat()) {
+			m_graph->resetXZoom();
+			for (qsizetype channel_ix = 0; channel_ix < m_graph->channelCount(); ++channel_ix) {
+				m_graph->resetYZoom(channel_ix);
+			}
+			update();
+		}
+		event->accept();
+		return;
+	case Qt::Key_U:
+		if (!event->isAutoRepeat()) {
+			m_graph->zoomToPreviousZoom();
+			update();
+		}
+		event->accept();
+		return;
+	case Qt::Key_X:
+		m_isHorizontalZoomKeyDown = true;
+		if (m_mouseOperation == MouseOperation::GraphAreaAxisZoom) {
+			updateGraphAreaSelection(mapFromGlobal(QCursor::pos()));
+		}
+		event->accept();
+		return;
+	case Qt::Key_Y:
+		m_isVerticalZoomKeyDown = true;
+		if (m_mouseOperation == MouseOperation::GraphAreaAxisZoom) {
+			updateGraphAreaSelection(mapFromGlobal(QCursor::pos()));
+		}
+		event->accept();
+		return;
+	default:
+		Super::keyPressEvent(event);
+		return;
+	}
+}
+
+void GraphWidget::keyReleaseEvent(QKeyEvent *event)
+{
+	if (event->isAutoRepeat()) {
+		event->accept();
+		return;
+	}
+
+	if (event->key() == Qt::Key_X) {
+		m_isHorizontalZoomKeyDown = false;
+	}
+	else if (event->key() == Qt::Key_Y) {
+		m_isVerticalZoomKeyDown = false;
+	}
+	else {
+		Super::keyReleaseEvent(event);
+		return;
+	}
+
+	if (m_mouseOperation == MouseOperation::GraphAreaAxisZoom) {
+		updateGraphAreaSelection(mapFromGlobal(QCursor::pos()));
+	}
+	event->accept();
+}
+
+void GraphWidget::focusOutEvent(QFocusEvent *event)
+{
+	m_isHorizontalZoomKeyDown = false;
+	m_isVerticalZoomKeyDown = false;
+	if (m_mouseOperation == MouseOperation::GraphAreaAxisZoom) {
+		updateGraphAreaSelection(mapFromGlobal(QCursor::pos()));
+	}
+	Super::focusOutEvent(event);
+}
+
+void GraphWidget::updateGraphAreaSelection(const QPoint &mouse_pos)
+{
+	auto ch1_ix = m_graph->posToChannel(m_mouseOperationStartPos);
+	if (!ch1_ix) {
+		return;
+	}
+
+	auto *ch1 = m_graph->channelAt(ch1_ix.value());
+	Q_ASSERT(ch1);
+
+	QPoint pos = mouse_pos;
+	auto ga = ch1->graphAreaRect();
+	if (pos.x() < ga.left()) {
+		pos.setX(ga.left());
+	}
+	else if (pos.x() > ga.right()) {
+		pos.setX(ga.right());
+	}
+
+	if (pos.y() < ga.top()) {
+		pos.setY(ga.top());
+	}
+	else if (pos.y() > ga.bottom()) {
+		pos.setY(ga.bottom());
+	}
+
+	QRect sr(m_mouseOperationStartPos, pos);
+	if (m_mouseOperation == MouseOperation::GraphAreaRectSelection) {
+		m_zoomType = Graph::ZoomType::ZoomToRect;
+	}
+	else if (m_isHorizontalZoomKeyDown != m_isVerticalZoomKeyDown) {
+		m_zoomType = m_isHorizontalZoomKeyDown ? Graph::ZoomType::Horizontal : Graph::ZoomType::Vertical;
+	}
+	else {
+		m_zoomType = zoomTypeFromRect(sr);
+	}
+	switch (m_zoomType) {
+	case Graph::ZoomType::Horizontal: sr = QRect(QPoint(sr.left(), ga.top()), QSize(sr.width(), ga.height())); break;
+	case Graph::ZoomType::Vertical: sr = QRect(QPoint(ga.left(), sr.top()), QSize(ga.width(), sr.height())); break;
+	case Graph::ZoomType::ZoomToRect: break;
+	}
+
+	m_graph->setSelectionRect(sr);
+	update();
 }
 
 void GraphWidget::moveDropMarker(const QPoint &mouse_pos)

@@ -10,6 +10,8 @@
 #include <QTimer>
 #include <QWidget>
 
+class QFocusEvent;
+class QKeyEvent;
 class QMenu;
 namespace shv::visu::timeline {
 
@@ -44,6 +46,9 @@ protected:
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseReleaseEvent(QMouseEvent *event) override;
 	void mouseMoveEvent(QMouseEvent *event) override;
+	void keyPressEvent(QKeyEvent *event) override;
+	void keyReleaseEvent(QKeyEvent *event) override;
+	void focusOutEvent(QFocusEvent *event) override;
 	void leaveEvent(QEvent *event) override;
 	void wheelEvent(QWheelEvent *event) override;
 	void contextMenuEvent(QContextMenuEvent *event) override;
@@ -72,6 +77,7 @@ protected:
 	bool scrollByMouseOuterOverlap(const QPoint &mouse_pos);
 	void moveDropMarker(const QPoint &mouse_pos);
 	int moveChannelTargetIndex(const QPoint &mouse_pos) const;
+	void updateGraphAreaSelection(const QPoint &mouse_pos);
 
 	static Graph::ZoomType zoomTypeFromRect(const QRect &rect);
 	void updateXZoomOnPinch(std::pair<int, int> new_pos);
@@ -118,5 +124,7 @@ protected:
 	bool m_probesEnabled = true;
 private:
 	Graph::ZoomType m_zoomType = Graph::ZoomType::ZoomToRect;
+	bool m_isHorizontalZoomKeyDown = false;
+	bool m_isVerticalZoomKeyDown = false;
 };
 }
