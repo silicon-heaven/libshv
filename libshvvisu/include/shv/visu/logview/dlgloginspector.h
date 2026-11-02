@@ -4,6 +4,8 @@
 
 #include <shv/core/utils.h>
 
+#include <optional>
+#include <QDateTime>
 #include <QDialog>
 
 #if QT_CONFIG(timezone)
@@ -36,6 +38,13 @@ public:
 	QString shvPath() const;
 
 private:
+	struct SessionSettings {
+		QDateTime since;
+		QDateTime until;
+	};
+	//save since/until only to memory, so the newly opened dialog has tha last hour interval
+	static std::optional<SessionSettings> s_sessionSettings;
+
 	void setShvPath(const QString &s);
 	void downloadLog();
 	void loadSettings();
