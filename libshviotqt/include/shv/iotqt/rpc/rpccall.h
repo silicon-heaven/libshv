@@ -65,6 +65,7 @@ class LIBSHVIOTQT_EXPORT RpcCall : public QObject
 	Q_OBJECT
 public:
 	static RpcCall* createSubscriptionRequest(::shv::iotqt::rpc::ClientConnection *connection, const QString &shv_path, const QString &method, const QString &source = QString(shv::chainpack::Rpc::METH_GET));
+	static RpcCall* createSubscriptionRequestV3(::shv::iotqt::rpc::ClientConnection *connection, const QString &shv_path, const QString &method, const QString &source = QString(shv::chainpack::Rpc::METH_GET));
 	static RpcCall* create(::shv::iotqt::rpc::ClientConnection *connection);
 
 	RpcCall* setRequestId(int rq_id);
