@@ -194,6 +194,16 @@ RpcCall *RpcCall::createSubscriptionRequest(ClientConnection *connection, const 
 	return rpc;
 }
 
+RpcCall *RpcCall::createSubscriptionRequestV3(ClientConnection *connection, const QString &shv_path, const QString &method, const QString &source)
+{
+	RpcCall *rpc = create(connection);
+	auto ri = shv_path + ':' + (source.isEmpty()? "*": source) + ':' + (method.isEmpty()? "*": method);
+	rpc->setShvPath(Rpc::DIR_BROKER_CURRENTCLIENT)
+			->setMethod(Rpc::METH_SUBSCRIBE)
+			->setParams(RpcList{ ri.toStdString(), nullptr });
+	return rpc;
+}
+
 RpcCall *RpcCall::create(ClientConnection *connection)
 {
 	return new RpcCall(connection);
