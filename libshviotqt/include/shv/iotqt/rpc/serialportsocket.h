@@ -86,5 +86,6 @@ private:
 	QSerialPort *m_port = nullptr;
 	QAbstractSocket::SocketState m_state = QAbstractSocket::UnconnectedState;
 	QTimer *m_readDataTimeout = nullptr;
+	QTimer *m_writeStallTimer = nullptr;
 };
 }
