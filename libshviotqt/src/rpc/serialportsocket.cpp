@@ -259,21 +259,43 @@ SerialPortSocket::SerialPortSocket(QSerialPort *port, QObject *parent)
 	m_port->setParent(this);
 
 	connect(m_port, &QSerialPort::readyRead, this, &SerialPortSocket::onDataReadyRead);
-	connect(m_port, &QSerialPort::bytesWritten, this, &SerialPortSocket::flushWriteBuffer);
+
+	// A ResourceError may be caused by a temporary EAGAIN while Qt has
+	// outgoing bytes queued. Defer reporting it while waiting for write progress.
+	m_writeStallTimer = new QTimer(this);
+	m_writeStallTimer->setSingleShot(true);
+	m_writeStallTimer->setInterval(5000);
+	connect(m_writeStallTimer, &QTimer::timeout, this, [this]() {
+		if (m_port->isOpen() && m_port->bytesToWrite() > 0) {
+			shvWarning() << "Serial write stalled:" << m_port->bytesToWrite() << "bytes pending";
+			emit error(QAbstractSocket::SocketResourceError);
+		}
+	});
+	connect(m_port, &QSerialPort::bytesWritten, this, [this](qint64) {
+		if (m_writeStallTimer->isActive()) {
+			if (m_port->bytesToWrite() == 0) {
+				m_writeStallTimer->stop();
+			} else {
+				m_writeStallTimer->start();
+			}
+		}
+		flushWriteBuffer();
+	});
+
 	connect(m_port, &QSerialPort::errorOccurred, this, [this](QSerialPort::SerialPortError port_error) {
 		switch (port_error) {
 		case QSerialPort::NoError:
 			break;
 		case QSerialPort::DeviceNotFoundError:
-			shvDebug() << "DeviceNotFoundError";
+			shvMessage() << "DeviceNotFoundError";
 			emit error(QAbstractSocket::HostNotFoundError);
 			break;
 		case QSerialPort::PermissionError:
-			shvDebug() << "PermissionError";
+			shvMessage() << "PermissionError";
 			emit error(QAbstractSocket::SocketAccessError);
 			break;
 		case QSerialPort::OpenError:
-			shvDebug() << "OpenError";
+			shvMessage() << "OpenError";
 			emit error(QAbstractSocket::ConnectionRefusedError);
 			break;
 #if QT_VERSION_MAJOR < 6
@@ -282,31 +304,39 @@ SerialPortSocket::SerialPortSocket(QSerialPort *port, QObject *parent)
 		case QSerialPort::BreakConditionError:
 #endif
 		case QSerialPort::WriteError:
-			shvDebug() << "WriteError";
+			shvMessage() << "WriteError";
 			emit error(QAbstractSocket::OperationError);
 			break;
 		case QSerialPort::ReadError:
-			shvDebug() << "ReadError";
+			shvMessage() << "ReadError";
 			emit error(QAbstractSocket::OperationError);
 			break;
 		case QSerialPort::ResourceError:
-			shvDebug() << "ResourceError";
-			emit error(QAbstractSocket::SocketResourceError);
+			shvMessage() << "ResourceError or EAGAIN";
+			if (m_port->isOpen() && m_port->bytesToWrite() > 0) {
+				shvMessage() << "Deferring ResourceError; pending bytes:" << m_port->bytesToWrite() << "error:" << m_port->errorString();
+				if (!m_writeStallTimer->isActive()) {
+					m_writeStallTimer->start();
+				}
+			}
+			else {
+				emit error(QAbstractSocket::SocketResourceError);
+			}
 			break;
 		case QSerialPort::UnsupportedOperationError:
-			shvDebug() << "UnsupportedOperationError";
+			shvMessage() << "UnsupportedOperationError";
 			emit error(QAbstractSocket::OperationError);
 			break;
 		case QSerialPort::UnknownError:
-			shvDebug() << "UnknownError";
+			shvMessage() << "UnknownError";
 			emit error(QAbstractSocket::UnknownSocketError);
 			break;
 		case QSerialPort::TimeoutError:
-			shvDebug() << "TimeoutError";
+			shvMessage() << "TimeoutError";
 			emit error(QAbstractSocket::SocketTimeoutError);
 			break;
 		case QSerialPort::NotOpenError:
-			shvDebug() << "NotOpenError";
+			shvMessage() << "NotOpenError";
 			emit error(QAbstractSocket::SocketAccessError);
 			break;
 		}
@@ -359,6 +389,7 @@ void SerialPortSocket::close()
 		return;
 	}
 
+	m_writeStallTimer->stop();
 	setState(QAbstractSocket::ClosingState);
 	Super::close();
 	shvInfo() << "Closing serial port:" << m_port->portName();
