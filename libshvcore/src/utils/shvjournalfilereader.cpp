@@ -33,18 +33,30 @@ std::string getLine(std::istream &in, char sep)
 }
 
 ShvJournalFileReader::ShvJournalFileReader(const std::string &file_name)
-	: m_fileName(file_name)
+	: ShvJournalFileReader(std::filesystem::path{file_name})
 {
-	m_inputFileStream.open(file_name, std::ios::binary);
-	if(!m_inputFileStream)
-		SHV_EXCEPTION("Cannot open file " + file_name + " for reading.");
-	m_snapshotMsec = fileNameToFileMsec(file_name, !shv::core::Exception::Throw);
-	m_istream = &m_inputFileStream;
 }
 
 ShvJournalFileReader::ShvJournalFileReader(std::istream &istream)
 {
 	m_istream = &istream;
+}
+
+ShvJournalFileReader::ShvJournalFileReader(const std::filesystem::path &path)
+	: m_fileName(path.string())
+{
+	m_inputFileStream.open(path, std::ios::binary);
+	if (!m_inputFileStream)
+		SHV_EXCEPTION("Cannot open file " + m_fileName + " for reading.");
+
+	m_inputFileStream.exceptions(std::ios::badbit);
+	m_snapshotMsec = fileNameToFileMsec(m_fileName, !shv::core::Exception::Throw);
+	m_istream = &m_inputFileStream;
+}
+
+ShvJournalFileReader::ShvJournalFileReader(const char *file_name)
+	: ShvJournalFileReader(std::string{file_name})
+{
 }
 
 bool ShvJournalFileReader::next()
