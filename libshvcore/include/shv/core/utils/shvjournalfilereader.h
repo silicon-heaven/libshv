@@ -6,6 +6,7 @@
 
 #include <string>
 #include <fstream>
+#include <filesystem>
 
 namespace shv::core::utils {
 
@@ -14,6 +15,8 @@ class LIBSHVCORE_EXPORT ShvJournalFileReader
 public:
 	ShvJournalFileReader(const std::string &file_name);
 	ShvJournalFileReader(std::istream &istream);
+	ShvJournalFileReader(const std::filesystem::path &path);
+	ShvJournalFileReader(const char *file_name);  // avoid ambiguity of call ShvJournalFileReader("file.log")
 
 	bool next();
 	bool last();
